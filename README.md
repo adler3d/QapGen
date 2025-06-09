@@ -1,86 +1,103 @@
 # QapGen
 
-> Подробный обзор: [QapDSL: декларативный AST и парсеры для C++ (Хабр)](https://habr.com/ru/articles/916006/)
+> Detailed overview: [QapDSL: declarative AST and parsers for C++ (Habr)](https://habr.com/ru/articles/916006/)
 
-QapGen — автогенератор C++-структур, AST и парсеров по декларативной схеме (QapDSL).
+QapGen is an autogenerator of C++ structures, AST and parsers according to the declarative scheme (QapDSL).
 
 ...
 
-# Сравнение: QapDSL, tree-sitter, syn, TreeDL, Clang LibTooling
+# How to use it in general?
+<pre>
+Like this:
+    Write a script/code in QapDSL.
+    Save it in samples/input.qapdsl
+    Run QapGen.exe
+    Take the generated C++ code from the opened window.
+    Paste it into a project like Sgon somewhere near the main function (you still need to find it). // this point needs to be improved.
+    In main, write TAutoPtr&lt;your_root_node&gt; root;
+    load_obj(Env,root,your_string_from_which_you_need_to_load_code_into_AST);
+    Use the AST you just loaded into root.
+    ...
+    Profit!
+</pre>
+...
 
-## 1. Общая цель и область применения
+# Comparison: QapDSL, tree-sitter, syn, TreeDL, Clang LibTooling
 
-| Система          | Основное назначение                                           | Тип задачи                |
-|------------------|--------------------------------------------------------------|---------------------------|
-| QapDSL           | Парсинг, AST, компактные DSL, автогенерация кода             | Трансляторы, DSL, анализ  |
-| tree-sitter      | Быстрый парсер для редакторов, инкрементальный синтакс-анализ | IDE, редакторы, подсветка |
-| syn (Rust)       | Парсинг Rust-кода в procedural macros                        | Макросы, code-gen для Rust|
-| TreeDL           | Декларативное описание AST, генерация кода для AST           | Компиляторы, анализаторы  |
-| Clang LibTooling | Инструменты работы с C/C++ AST, разбор, рефакторинг          | Анализ, рефакторинг, IDE  |
+## 1. General purpose and scope
 
----
-
-## 2. Подход к описанию грамматики и структуры
-
-| Система          | Описание грамматики         | Описание AST                 | Интеграция действий          |
-|------------------|----------------------------|------------------------------|------------------------------|
-| QapDSL           | Да (гибко, в стиле C++ кода)| Да (через классы/структуры)  | Нет                          |
-| tree-sitter      | Да (JS/C объект-правила)    | Автоматически из грамматики  | Нет                          |
-| syn (Rust)       | Нет (ручной разбор syn::*)  | Да (Rust-структуры/Enums)    | Да, вне синтаксиса           |
-| TreeDL           | Нет (только структура AST)  | Да (очень формально)         | Нет                          |
-| Clang LibTooling | Нет (готовая грамматика)    | Да (готовые C++ AST классы)  | Да, через C++ API            |
-
----
-
-## 3. Инкрементальность, скорость, интеграция
-
-| Система          | Инкрементальный разбор | Скорость        | Встраивание в IDE/редакторы | Языки поддержки         |
-|------------------|-----------------------|-----------------|-----------------------------|-------------------------|
-| QapDSL           | Нет                   | Высокая         | Можно встроить, но вручную  | Любые при описании      |
-| tree-sitter      | Да                    | Очень высокая   | IDE, редакторы (VSCode, NeoVim)| Многоязычный (через грамм.)|
-| syn (Rust)       | Нет                   | Средняя/высокая | Только Rust (build/macros)  | Только Rust             |
-| TreeDL           | Нет                   | Высокая         | Нет (ген-код для AST)       | Любые (C++, Java, Py...)|
-| Clang LibTooling | Нет                   | Средняя         | Отлично для IDE/рефакторов  | Только C/C++            |
+| System | Main purpose | Task type |
+|------------------|---------------------------------------------|---------------------------|
+| QapDSL | Parsing, AST, compact DSL, code autogeneration | Translators, DSL, analysis |
+| tree-sitter | Fast parser for editors, incremental syntax analysis | IDE, editors, highlighting |
+| syn (Rust) | Parsing Rust code into procedural macros | Macros, code-gen for Rust|
+| TreeDL | Declarative AST description, code generation for AST | Compilers, analyzers |
+| Clang LibTooling | Tools for working with C/C++ AST, parsing, refactoring | Analysis, refactoring, IDE |
 
 ---
 
-## 4. Работа с AST и действиями
+## 2. Approach to describing grammar and structure
 
-| Система          | Явное AST | Сопутствующие действия | Генерация кода/преобразования | API для пользовательской логики |
-|------------------|-----------|------------------------|-------------------------------|----------------------------------|
-| QapDSL           | Да        | Нет                    | Нет                           | Нет (только через расширение C++-кода, вне QapDSL) |
-| tree-sitter      | Нет       | Нет                    | Нет                           | Да (через tree-sitter API)       |
-| syn (Rust)       | Да        | Да (в procedural macros)| Да (build macros/derive)       | Да (Rust-API)                    |
-| TreeDL           | Да        | Нет                    | Да (генерация AST-кода)        | Нет (только структура)           |
-| Clang LibTooling | Да        | Да (C++ AST visitors)  | Да (через трансформации)       | Да (C++-API)                     |
-
----
-
-## 5. Крутость для разных задач
-
-| Система          | Парсер для редактора | Генерация кода | Компилятор | Анализатор | Рефакторинг | Быстрый старт |
-|------------------|---------------------|----------------|------------|------------|-------------|--------------|
-| QapDSL           | +-                  | -              | ++         | +          | +-          | ++           |
-| tree-sitter      | +++                 | -              | -          | +          | -           | +++          |
-| syn (Rust)       | -                   | ++             | -          | +          | -           | +            |
-| TreeDL           | -                   | +++            | ++         | ++         | -           | +            |
-| Clang LibTooling | +                   | +              | +          | +++        | +++         | -            |
-
-**Легенда:**  
-+++ — идеально подходит  
-++ — хорошо подходит  
-+ — можно использовать  
-+- — ограниченно  
-- — не предназначен
+| System | Grammar description | AST description | Integration of actions |
+|------------------|----------------------------|------------------------------|-------------------------------|
+| QapDSL | Yes (flexibly, in the style of C++ code)| Yes (via classes/structures) | No |
+| tree-sitter | Yes (JS/C object rules) | Automatically from grammar | No |
+| syn (Rust) | No (manual parsing of syn::*) | Yes (Rust structures/Enums) | Yes, outside syntax |
+| TreeDL | No (AST structure only) | Yes (very formal) | No |
+| Clang LibTooling | No (ready-made grammar) | Yes (ready-made C++ AST classes) | Yes, via C++ API |
 
 ---
 
-## QapDSL: "API для пользовательской логики"
+## 3. Incrementality, speed, integration
 
-QapDSL **не предоставляет явного API для пользовательской логики** внутри самого DSL.  
-Вся логика реализуется только на стороне C++ в виде методов/классов вне QapDSL-файла.  
-Внутри QapDSL допустимы только вызовы go*-методов, которые возвращают флажок (bool), и после каждого вызова обязательно идёт проверка этого флажка для выхода из функции при ошибке.  
-Пример:
+| System | Incremental parsing | Speed ​​| Embedding in IDEs/editors | Support languages ​​|
+|------------------|----------------------------|-----------------|----------------------------|-------------------------|
+| QapDSL | No | High | Can be embedded, but manually | Any in description |
+| tree-sitter | Yes | Very high | IDE, editors (VSCode, NeoVim)| Multilingual (via gram.)|
+| syn (Rust) | No | Medium/high | Rust only (build/macros) | Rust only |
+| TreeDL | No | High | No (gen-code for AST) | Any (C++, Java, Py...)|
+| Clang LibTooling | No | Medium | Great for IDE/refactors | C/C++ only |
+
+---
+
+## 4. Working with AST and actions
+
+| System | Explicit AST | Related actions | Code generation/transformations | API for custom logic |
+|------------------|-----------|------------------------|------------------------------|----------------------------------|
+| QapDSL | Yes | No | No | No (only via C++ code extension, outside QapDSL) |
+| tree-sitter | No | No | No | Yes (via tree-sitter API) |
+| syn (Rust) | Yes | Yes (in procedural macros)| Yes (build macros/derive) | Yes (Rust API) |
+| TreeDL | Yes | No | Yes (AST code generation) | No (structure only) |
+| Clang LibTooling | Yes | Yes (C++ AST visitors) | Yes (via transformations) | Yes (C++ API) |
+
+---
+
+## 5. Coolness for different tasks
+
+| System | Parser for editor | Code generation | Compiler | Analyzer | Refactoring | Quick start |
+|------------------|---------------------|----------------|------------|-------------|--------------|--------------|
+| QapDSL | +- | - | ++ | + | +- | ++ |
+| tree-sitter | +++ | - | - | + | - | +++ |
+| syn (Rust) | - | ++ | - | + | - | + |
+| TreeDL | - | +++ | ++ | ++ | - | + |
+| Clang LibTooling | + | + | + | +++ | +++ | - |
+
+**Legend:**
+<pre>
+  +++ — ideal
+  ++ — good
+  + — usable
+  +- — limited
+  - — not intended
+</pre>
+---
+
+## QapDSL: "API for custom logic"
+
+QapDSL **does not provide an explicit API for custom logic** inside the DSL itself.
+All logic is implemented only on the C++ side as methods/classes outside the QapDSL file.
+Inside QapDSL, only go* method calls that return a flag (bool) are allowed, and after each call, this flag is checked to exit the function on error.
+Example:
 
 ```cpp
 bool go(i_dev& dev) {
@@ -89,11 +106,7 @@ bool go(i_dev& dev) {
   auto& M = scope.mandatory;
   M += dev.go_str<t_type>(type_name);
   if (!ok) return ok;
-  // ... остальные шаги
+  // ... other steps
   return ok;
 }
 ```
-
-Внутри DSL — только декларация структуры и последовательность go*-вызовов (без условий, циклов, пользовательского кода).
-
----
