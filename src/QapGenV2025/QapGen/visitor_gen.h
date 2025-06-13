@@ -49,7 +49,7 @@ public:
     if(arr.empty())return source;
     return sep+join(arr,"\n"+sep);
   }
-  static vector<string> get_parent_list(const vector<t_target_item::t_out>&arr)
+  static vector<string> get_iarr(const vector<t_target_item::t_out>&arr)
   {
     vector<string> out;
     for(int i=0;i<arr.size();i++){
@@ -105,13 +105,14 @@ public:
     const string&name,
     const string&parent,
     const string&owner,
+    const string&full_owner,
     const vector<string>&nested_list
   ){
     string out;
     string parent_part=!parent.empty()?":public "+parent:"";
     string parent_info=!parent.empty()?"PARENT("+parent+")":"";
     string owner_info=!owner.empty()?"OWNER("+owner+")":"";
-    string target_code=get_target_code(/*Env,*/arr,name);
+    string target_code=get_target_code(/*Env,*/arr,name,full_owner.empty()?name:full_owner+"::"+name);
     bool hasVirtual=false;
     for(int i=0;i<arr.size();i++)if(!arr[i].parent.empty())hasVirtual=true;
     string class_code;
@@ -150,7 +151,25 @@ public:
     return out;
   }
 public:
-  string iclass_to_code(/*IEnvRTTI&Env,*/const string&name,const vector<string>&arr,const string&owner)
+  struct t_at_end{
+    string full_owner;
+    string base;
+    string list;
+    string get_impl()const{
+      vector<string> v={
+        //"template<int>\n",
+        "bool "+(full_owner.empty()?"":full_owner+"::")+base+"::t_poly_impl::load()\n",
+        "{\n",
+        "  #define F(TYPE)go_for<struct TYPE>();\n",
+        list,
+        "  #undef F\n",
+        "}\n"
+      };
+      return join(v,"");
+    }
+  };
+  vector<t_at_end> at_end;
+  string iclass_to_code(/*IEnvRTTI&Env,*/const string&name,const vector<string>&arr,const string&owner,const string&full_owner)
   {
     string out;
     {
@@ -165,7 +184,7 @@ public:
     {
       const vector<t_struct_body::t_target_item_out> no_arr;
       vector<string> no_nested;
-      out+=make_head(/*Env,*/no_arr,name,"",owner,no_nested);
+      out+=make_head(/*Env,*/no_arr,name,"",owner,full_owner,no_nested);
     }
     string body;
     {
@@ -180,12 +199,15 @@ public:
       body+=get_templ("USE_BASE").eval(inp);
     }
     {
-      string list;
+      string list,qist;
       for(int i=0;i<arr.size();i++)list+="      F("+arr[i]+");\n";
+      for(int i=0;i<arr.size();i++)qist+="  F("+arr[i]+");\n";
       t_templ_sys_v02::t_inp inp;
       inp.add("NAME",name);
       inp.add("LIST",list);
       body+=get_templ("GO_BASE").eval(inp);
+      t_at_end ae={full_owner,name,qist};
+      at_end.push_back(ae);
     }
     out+=move_block(body,owner.empty()?"":"  ");
     {
@@ -193,14 +215,19 @@ public:
     }
     return out;
   }
-  string class_to_code(/*IEnvRTTI&Env,*/const t_target_item::t_out&ex,const string&owner)
+  string get_at_end()const{
+    vector<string> v;
+    for(auto&ex:at_end)v.push_back(ex.get_impl());
+    return join(v,"\n");
+  }
+  string class_to_code(/*IEnvRTTI&Env,*/const t_target_item::t_out&ex,const string&owner,const string&full_owner)
   {
     string out;
     {
       auto nested_list=get_nested_list(ex.out.nested);
       const vector<t_struct_body::t_target_item_out> no_arr;
       vector<string> no_nested;
-      out+=make_head(/*Env,*/ex.out.nested,ex.name,ex.parent,owner,nested_list);
+      out+=make_head(/*Env,*/ex.out.nested,ex.name,ex.parent,owner,full_owner,nested_list);
     }
     string body;
     {
@@ -223,10 +250,10 @@ public:
     }
     if(!ex.out.nested.empty())if(ex.out.nested.size()>2)
     {
-      auto parents=get_parent_list(ex.out.nested);
+      auto iarr=get_iarr(ex.out.nested);
       auto nesteds=get_nested_list(ex.out.nested);
       vector<string> list;
-      for(int i=0;i<parents.size();i++)list.push_back("  //  F("+parents[i]+");");
+      for(int i=0;i<iarr.size();i++)list.push_back("  //  F("+iarr[i]+");");
       for(int i=0;i<nesteds.size();i++)list.push_back("  //  F("+nesteds[i]+");");
       vector<string> dolist;
       for(int i=0;i<nesteds.size();i++)dolist.push_back("  //  void Do("+nesteds[i]+"&ref){}");
@@ -246,19 +273,19 @@ public:
     }
     return out;
   }
-  string get_target_code(/*IEnvRTTI&Env,*/const vector<t_target_item::t_out>&arr,const string&owner)
+  string get_target_code(/*IEnvRTTI&Env,*/const vector<t_target_item::t_out>&arr,const string&owner,const string&full_owner)
   {
     vector<string> out;
-    auto parents=get_parent_list(arr);
-    for(int i=0;i<parents.size();i++){
-      auto&ex=parents[i];
+    auto iarr=get_iarr(arr);
+    for(int i=0;i<iarr.size();i++){
+      auto&ex=iarr[i];
       auto list=get_child_list(arr,ex);
-      string tmp=iclass_to_code(/*Env,*/ex,list,owner);
+      string tmp=iclass_to_code(/*Env,*/ex,list,owner,full_owner);
       out.push_back(tmp);
     }
     for(int i=0;i<arr.size();i++){
       auto&ex=arr[i];
-      string tmp=class_to_code(/*Env,*/ex,owner);
+      string tmp=class_to_code(/*Env,*/ex,owner,full_owner);
       out.push_back(tmp);
     }
     return join(out,"\n");
@@ -282,12 +309,16 @@ public:
   {
     this->init(/*Env*/);
     t_target tar;
-    string status=load_obj_ex(/*Env,*/tar,data);
-    if(tar.arr.empty()){return "!target\n\n"+status;}
+    auto fs=load_obj_full(/*Env,*/tar,data);
+    if(!fs.ok){cerr<<fs.msg<<endl;return "fail";}
+    if(tar.arr.empty()){return "!target\n\n"+fs.msg;}
     vector<t_target_item::t_out> arr=tar.make_code();
     auto listoftypes=get_list_of_types(arr);
+    auto tc=get_target_code(/*Env,*/arr,"","");
+    auto ae=get_at_end();
     string result=(
-      get_target_code(/*Env,*/arr,"")+"\n"
+      tc+"\n"+
+      ae+
       "\n"
       "/*\n"
       "//list of types:\n"+
@@ -608,7 +639,7 @@ void test_2014_02_13(IEnvRTTI&Env)
 }*/
 #include <iostream>
 
-static void test_2025_06_10(/*IEnvRTTI&Env*/)
+static void test_2025_06_10(/*IEnvRTTI&Env*/string fn)
 {
   QapClock clock;
   string content=file_get_contents("LexemGenData.inl");
@@ -619,15 +650,17 @@ static void test_2025_06_10(/*IEnvRTTI&Env*/)
   t_templ_sys_v04 v4;
   v4.load(/*Env,*/templates_v03);
   gg=1;
-  //string asm_code=file_get_contents("input.qapdsl.hpp");
-  //auto out=v4.main(Env,asm_code);
-  string inp,line;
-  while(std::getline(std::cin,line)){
-    inp+=line+"\n";
+  string inp;
+  if(fn.empty()){
+    string line;
+    while(std::getline(std::cin,line)){
+      inp+=line+"\n";
+    }
+  }else{
+    inp=file_get_contents(fn);
   }
-  if(inp.size())inp.pop_back();
-  //std::cout<<inp<<std::endl<<std::endl;
-  string str=v4.main(/*Env,*/inp);
+  if(inp.size()&&inp.back()=='\n')inp.pop_back();
+  string str=v4.main(inp);
   string out="// "+FToS(clock.MS())+" ms\n"+str;
   std::cout<<out;
   gg=2;

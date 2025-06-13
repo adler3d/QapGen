@@ -15,11 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CommonUnit.cpp">
-      <Filter>StdAfx</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="main.inl">
       <Filter>Include</Filter>
     </None>
@@ -55,5 +50,10 @@
     <ClInclude Include="sys_core.h">
       <Filter>Include</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommonUnit.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

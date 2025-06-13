@@ -1,117 +1,24 @@
-t_branch_lexem{
-  t_hex_number{
-    string value;
+t_test20250613{
+  t_fozy=>i_yyy{{go_const("Y");}}
+  t_bazz=>i_yyy{{go_const("Z");}}
+  t_fooa=>i_xxx{{go_const("A");}}
+  t_barb=>i_xxx{{go_const("B");}}
+  t_baz=>i_xxx{
+    t_foo1=>i_xxx1{{go_const("foo");}}
+    t_bar1=>i_xxx1{{go_const("bar");}}
+    t_baz1=>i_xxx1{
+      t_foo2=>i_xxx2{{go_const("foo2");}}
+      t_bar2=>i_xxx2{{go_const("bar2");}}
+      {go_const("baz");}
+    }
+    TAutoPtr<i_xxx1> x;
     {
-      go_const("0x");
-      go_any(value,gen_dips("09afAF"));
+      go_auto(x);
     }
   }
-  t_bool{
-    string value;
-    {
-      go_any_str_from_vec(value,split("true,false",","));
-    }
-  }
-  t_number{
-    t_sign{char value;{go_any_char(value,"+-");}}
-    string sign;
-    string value;
-    {
-      O+=go_str<TAutoPtr<t_sign>>(sign);
-      M+=go_any(value,gen_dips("09"));
-    }
-  }
-  t_hard_barckets{string value;{go_const("[");go_str<t_number>(value);go_const("]");}}
-  t_hard=>i_case{vector<t_hard_barckets> arr;{go_auto(arr);}}
-  t_template{
-    t_param{
-      vector<t_name> arr;
-      {
-        go_vec(arr,"::");
-      }
-    }
-    string name;
-    {
-      go_const("{");
-      go_str<t_param>(name);
-      go_const("}");
-    }
-  }
-  t_soft=>i_case{
-    TAutoPtr<t_template> templ;
-    {
-      O+=go_auto(templ);
-      M+=go_const("()");
-    }
-  }
-  t_item{
-    string name;
-    TAutoPtr<i_case> ext;
-    {
-      M+=go_str<t_name>(name);
-      O+=go_auto(ext);
-    }
-  }
-  t_var_expr=>i_expr{
-    vector<t_item> arr;
-    {
-      go_vec(arr,".");
-    }
-  }
-  t_string_expr=>i_expr{string value;{go_str<t_str_item::t_impl>(value);}}
-  t_num_expr=>i_expr{string value;{go_str<t_number>(value);}}
-  t_hexnum_expr=>i_expr{string value;{go_str<t_hex_number>(value);}}
-  t_bool_expr=>i_expr{string value;{go_str<t_bool>(value);}}
-  t_alias_from_func_call=>i_alias{
-    string alias;
-    string func;
-    string str_param;
-    {
-      go_const("auto ");
-      go_str<t_name>(alias);
-      go_const("=");
-      go_str<t_name>(func);
-      go_const("(");
-      go_str<t_str_item::t_impl>(str_param);
-      go_const(")");
-    }
-  }
-  t_alias_from_var_expr=>i_alias{
-    string alias;
-    t_var_expr var_expr;
-    {
-      go_const("auto ");
-      go_str<t_name>(alias);
-      go_const("=");
-      go_auto(var_expr);
-    }
-  }
-  t_set_oper=>i_oper{
-    TAutoPtr<i_expr> value;
-    {
-      go_const("=");
-      go_auto(value);
-    }
-  }
-  t_inc_oper=>i_oper{{go_const("++");}}
-  t_dec_oper=>i_oper{{go_const("--");}}
-  t_oper{TAutoPtr<i_oper> value;{go_auto(value);}}
-  t_alias=>i_line{
-    TAutoPtr<i_alias> body;
-    {
-      go_auto(body);
-    }
-  }
-  t_line=>i_line{
-    t_var_expr bef;
-    TAutoPtr<t_oper> opt;
-    {
-      M+=go_auto(bef);
-      O+=go_auto(opt);
-    }
-  }
-  vector<TAutoPtr<i_line>> lines;
+  TAutoPtr<i_xxx> x;
+  TAutoPtr<i_yyy> y;
   {
-    go_vec(lines,"\n");
+    go_auto(x);
   }
 }
