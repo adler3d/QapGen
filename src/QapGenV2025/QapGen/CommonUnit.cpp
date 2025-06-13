@@ -111,9 +111,11 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   return 0;
 }
 #else
-int main()
+int main(int argc,char*argv[])
 {
-  test_2025_06_10();
+  string fn;
+  if(argc>1)fn=argv[1];
+  test_2025_06_10(fn);
   return 0;
 }
 #endif
