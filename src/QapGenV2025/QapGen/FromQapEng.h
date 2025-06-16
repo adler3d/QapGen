@@ -963,3 +963,4 @@ QapToolsVector<TYPE> QapToolsVectorEx(vector<TYPE>&ref)
 {
   QapToolsVector<TYPE> tmp={ref};return std::move(tmp);
 }
+template<class TYPE>int qap_includes(const vector<TYPE>&arr,const TYPE&value){for(int i=0;i<arr.size();i++){if(arr[i]==value)return true;}return false;}

@@ -1,3 +1,24 @@
+struct t_ic_dev{
+  struct t_level{
+    string name,full_name;
+    vector<string> iarr;
+    vector<string> carr;
+  };
+  vector<t_level> arr;
+  t_level top;
+  bool need_tautoptr(const string&name){
+    if(qap_includes(top.iarr,name))return true;
+    if(qap_includes(top.carr,name))return false;
+    for(auto&it=arr.rbegin();it!=arr.rend();it++){
+      if(qap_includes(it->iarr,name))return true;
+      if(qap_includes(it->carr,name))return false;
+    }
+    return false;
+  }
+  void push(const string&name,const string&full_name){arr.push_back(std::move(top));top.name=name;top.full_name=full_name;}
+  void pop(){top=std::move(arr.back());arr.pop_back();}
+};
+
 class i_code{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_code)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
@@ -1270,11 +1291,37 @@ public:
   };
 };
 
+class t_struct_cmd_mode{
+#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_struct_cmd_mode)
+#define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+ADDBEG()\
+ADDVAR(char,body,SET,'M',$)\
+ADDEND()
+//=====+>>>>>t_struct_cmd_mode
+#include "QapGenStruct.inl"
+//<<<<<+=====t_struct_cmd_mode
+public:
+  bool go(i_dev&dev){
+    t_fallback scope(dev,__FUNCTION__);
+    auto&ok=scope.ok;
+    auto&D=scope.mandatory;
+    auto&M=scope.mandatory;
+    auto&O=scope.optional;
+    M+=dev.go_any_char(body,"MO");
+    if(!ok)return ok;
+    M+=dev.go_const("+=");
+    if(!ok)return ok;
+    return ok;
+  }
+};
+
 class t_struct_field{
 public:
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_struct_field)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
 ADDBEG()\
+ADDVAR(TAutoPtr<t_struct_cmd_mode>,mode,DEF,$,$)\
+ADDVAR(t_sep,sepcm,DEF,$,$)\
 ADDVAR(t_type_expr,type,DEF,$,$)\
 ADDVAR(t_sep,sep0,DEF,$,$)\
 ADDVAR(t_name,name,DEF,$,$)\
@@ -1291,6 +1338,10 @@ public:
     auto&D=scope.mandatory;
     auto&M=scope.mandatory;
     auto&O=scope.optional;
+    O+=dev.go_auto(mode);
+    if(!ok)return ok;
+    O+=dev.go_auto(sepcm);
+    if(!ok)return ok;
     M+=dev.go_auto(type);
     if(!ok)return ok;
     M+=dev.go_auto(sep0);
@@ -1305,11 +1356,13 @@ public:
     if(!ok)return ok;
     return ok;
   }
-  string make_code(int id){
+  string make_code(int id,t_ic_dev&icdev)const{
     vector<string> out;
     string mode=value?"SET":"DEF";
     //out.push_back(IToS(id));
-    out.push_back(type.make_code());
+    auto t=type.make_code();
+    if(icdev.need_tautoptr(t))t="TAutoPtr<"+t+">";
+    out.push_back(t);
     out.push_back(name.get());
     out.push_back(mode);
     out.push_back(!value?"$":value->make_code());
@@ -1341,32 +1394,8 @@ public:
     if(!ok)return ok;
     return ok;
   }
-  string make_code(int id){
-    return body.make_code(id);
-  }
-};
-
-class t_struct_cmd_mode{
-#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_struct_cmd_mode)
-#define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-ADDBEG()\
-ADDVAR(char,body,SET,'M',$)\
-ADDEND()
-//=====+>>>>>t_struct_cmd_mode
-#include "QapGenStruct.inl"
-//<<<<<+=====t_struct_cmd_mode
-public:
-  bool go(i_dev&dev){
-    t_fallback scope(dev,__FUNCTION__);
-    auto&ok=scope.ok;
-    auto&D=scope.mandatory;
-    auto&M=scope.mandatory;
-    auto&O=scope.optional;
-    M+=dev.go_any_char(body,"MO");
-    if(!ok)return ok;
-    M+=dev.go_const("+=");
-    if(!ok)return ok;
-    return ok;
+  string make_code(int id,t_ic_dev&icdev)const{
+    return body.make_code(id,icdev);
   }
 };
 
@@ -1939,7 +1968,7 @@ public:
 public:
   struct t_target_item_out;
   struct t_out{
-    vector<t_target_item_out> nested;
+    vector<const t_target_item*> nested;
     string provars;
     string procmds;
     string cppcode;
@@ -1950,8 +1979,8 @@ public:
     t_out out;
   };
   template<int>
-  static t_target_item_out weak_make_code(t_target_item&ref);
-  t_out make_code(){
+  static t_target_item_out weak_make_code(const t_target_item&ref,t_ic_dev&icdev);
+  t_out make_code(t_ic_dev&icdev)const{
     t_out out;
     {
       auto&arr=nested;
@@ -1959,13 +1988,13 @@ public:
       for(int i=0;i<arr.size();i++){
         auto&ex=arr[i];
         auto&to=out.nested[i];
-        to=std::move(weak_make_code<0>(ex));
+        to=&ex;//std::move(weak_make_code<0>(ex,iarr));
       }
     }
     {
       vector<string> tmp;
       for(int i=0;i<arr.size();i++){
-        tmp.push_back(arr[i].make_code(i));
+        tmp.push_back(arr[i].make_code(i,icdev));
       }
       out.provars=join(tmp,"");
     }
@@ -2004,7 +2033,7 @@ public:
 public:
   struct t_out{
     string name;
-    string parant;
+    string parent;
   };
   virtual t_out make_code(){QapDebugMsg("no way.");return *(t_out*)nullptr;}
 };
@@ -2014,6 +2043,9 @@ class t_class_def:public i_def{
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
 ADDBEG()\
 ADDVAR(t_name,name,DEF,$,$)\
+ADDVAR(t_sep,sep0,DEF,$,$)\
+ADDVAR(string,arrow_or_colon,DEF,$,$)\
+ADDVAR(t_sep,sep1,DEF,$,$)\
 ADDVAR(t_name,parent,DEF,$,$)\
 ADDEND()
 //=====+>>>>>t_class_def
@@ -2028,7 +2060,12 @@ public:
     auto&O=scope.optional;
     M+=dev.go_auto(name);
     if(!ok)return ok;
-    M+=dev.go_const("=>");
+    O+=dev.go_auto(sep0);
+    if(!ok)return ok;
+    static auto static_var=split("=>,:",",");
+    M+=dev.go_any_str_from_vec(arrow_or_colon,static_var);
+    if(!ok)return ok;
+    O+=dev.go_auto(sep1);
     if(!ok)return ok;
     M+=dev.go_auto(parent);
     if(!ok)return ok;
@@ -2037,7 +2074,7 @@ public:
   t_out make_code(){
     t_out out;
     out.name=name.get();
-    out.parant=parent.get();
+    out.parent=parent.get();
     return out;
   }
 };
@@ -2096,14 +2133,14 @@ public:
     return ok;
   }
   typedef t_struct_body::t_target_item_out t_out;
-  t_out make_code(){
+  t_out make_code(t_ic_dev&icdev)const{
     t_out out;
     {
       auto tmp=def->make_code();
       out.name=tmp.name;
-      out.parent=tmp.parant;
+      out.parent=tmp.parent;
     }
-    auto tmp=body.make_code();
+    auto tmp=body.make_code(icdev);
     out.out=std::move(tmp);
     return out;
   }
@@ -2129,10 +2166,10 @@ public:
     if(!ok)return ok;
     return ok;
   }
-  vector<t_target_item::t_out> make_code(){
+  vector<t_target_item::t_out> make_code(t_ic_dev&icdev){
     vector<t_target_item::t_out> out;
     for(int i=0;i<arr.size();i++){
-      out.push_back(arr[i].make_code());
+      out.push_back(arr[i].make_code(icdev));
     }
     return out;
   }
@@ -2262,6 +2299,6 @@ bool i_def::t_poly_impl::load()
 }
 
 template<int>
-t_struct_body::t_target_item_out t_struct_body::weak_make_code(t_target_item&ref){
-  return std::move(ref.make_code());
+t_struct_body::t_target_item_out t_struct_body::weak_make_code(const t_target_item&ref,t_ic_dev&icdev){
+  return std::move(ref.make_code(icdev));
 }

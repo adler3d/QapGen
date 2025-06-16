@@ -49,34 +49,37 @@ public:
     if(arr.empty())return source;
     return sep+join(arr,"\n"+sep);
   }
-  static vector<string> get_iarr(const vector<t_target_item::t_out>&arr)
+  static vector<string> get_iarr(const vector<const t_target_item*>&arr)
   {
     vector<string> out;
     for(int i=0;i<arr.size();i++){
       auto&ex=arr[i];
-      if(ex.parent.empty())continue;
+      auto dc=ex->def->make_code();
+      if(dc.parent.empty())continue;
       bool flag=false;
-      for(int j=0;j<out.size();j++)flag=flag||(ex.parent==out[j]);
+      for(int j=0;j<out.size();j++)flag=flag||(dc.parent==out[j]);
       if(flag)continue;
-      out.push_back(ex.parent);
+      out.push_back(dc.parent);
     }
     return out;
   }
-  static vector<string> get_child_list(const vector<t_target_item::t_out>&arr,const string&parent)
+  static vector<string> get_child_list(const vector<const t_target_item*>&arr,const string&parent)
   {
+    t_ic_dev ic_dev{};
     vector<string> out;
     for(int i=0;i<arr.size();i++){
-      if(arr[i].parent==parent){
-        out.push_back(arr[i].name);
+      auto ex=arr[i]->make_code(ic_dev);
+      if(ex.parent==parent){
+        out.push_back(ex.name);
       }
     }
     return out;
   }
-  static vector<string> get_nested_list(const vector<t_struct_body::t_target_item_out>&arr){
+  static vector<string> get_nested_list(const vector<const t_target_item*>&arr){
     vector<string> out;
     for(int i=0;i<arr.size();i++){
-      auto&ex=arr[i];
-      out.push_back(ex.name);
+      auto&ex=*arr[i];
+      out.push_back(ex.def->make_code().name);
     }
     return out;
   }
@@ -101,26 +104,53 @@ public:
   }
   string make_head(
     //IEnvRTTI&Env,
-    const vector<t_struct_body::t_target_item_out>&arr,
+    const vector<const t_target_item*>&arr,
     const string&name,
     const string&parent,
     const string&owner,
     const string&full_owner,
-    const vector<string>&nested_list
+    const vector<string>&nested_list,
+    t_ic_dev&ic_dev
   ){
-    string out;
+    string out;/*
     string parent_part=!parent.empty()?":public "+parent:"";
     string parent_info=!parent.empty()?"PARENT("+parent+")":"";
     string owner_info=!owner.empty()?"OWNER("+owner+")":"";
-    string target_code=get_target_code(/*Env,*/arr,name,full_owner.empty()?name:full_owner+"::"+name);
+    string target_code=get_target_code(arr,name,full_owner.empty()?name:full_owner+"::"+name,ic_dev);
     bool hasVirtual=false;
-    for(int i=0;i<arr.size();i++)if(!arr[i].parent.empty())hasVirtual=true;
+    for(int i=0;i<arr.size();i++)if(!arr[i]->make_code(ic_dev).parent.empty())hasVirtual=true;
     string class_code;
     class_code+="class "+name+parent_part+"{\n";
     class_code+=target_code.empty()?"":((hasVirtual?"":"public:\n")+target_code+"\n");
     class_code+=get_nested_def(nested_list);
     class_code+="#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)";
     class_code+="NAME("+name+")"+parent_info+owner_info;
+    out+=move_block(class_code,owner.empty()?"":"  ")+"\n";
+    //out+="#define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\\\n";*/
+    return out;
+  }
+  string make_head_v2(
+    const t_target_item&ti,
+    const string&owner,
+    const string&full_owner,
+    //const vector<string>&nested_list,
+    t_ic_dev&ic_dev
+  ){
+    string out;
+    string target_code=get_target_code(ti,full_owner,ic_dev);
+    auto c=ti.make_code(ic_dev);
+    auto nested_list=get_nested_list(c.out.nested);
+    string parent_part=!c.parent.empty()?":public "+c.parent:"";
+    string parent_info=!c.parent.empty()?"PARENT("+c.parent+")":"";
+    string owner_info=!owner.empty()?"OWNER("+owner+")":"";
+    bool hasVirtual=false;
+    for(int i=0;i<c.out.nested.size();i++)if(!c.out.nested[i]->make_code(ic_dev).parent.empty())hasVirtual=true;
+    string class_code;
+    class_code+="class "+c.name+parent_part+"{\n";
+    class_code+=target_code.empty()?"":((hasVirtual?"":"public:\n")+target_code+"\n");
+    class_code+=get_nested_def(nested_list);
+    class_code+="#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)";
+    class_code+="NAME("+c.name+")"+parent_info+owner_info;
     out+=move_block(class_code,owner.empty()?"":"  ")+"\n";
     //out+="#define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\\\n";
     return out;
@@ -163,6 +193,7 @@ public:
         "  #define F(TYPE)go_for<struct TYPE>();\n",
         list,
         "  #undef F\n",
+        "  return scope.ok;\n"
         "}\n"
       };
       return join(v,"");
@@ -182,9 +213,10 @@ public:
       out+=get_templ("VISITOR").eval(inp);
     }
     {
-      const vector<t_struct_body::t_target_item_out> no_arr;
+      t_ic_dev no_dev;
+      const vector<const t_target_item*> no_arr;
       vector<string> no_nested;
-      out+=make_head(/*Env,*/no_arr,name,"",owner,full_owner,no_nested);
+      out+=make_head(/*Env,*/no_arr,name,"",owner,full_owner,no_nested,no_dev);
     }
     string body;
     {
@@ -220,74 +252,110 @@ public:
     for(auto&ex:at_end)v.push_back(ex.get_impl());
     return join(v,"\n");
   }
-  string class_to_code(/*IEnvRTTI&Env,*/const t_target_item::t_out&ex,const string&owner,const string&full_owner)
+  string class_to_code(const t_target_item&ex,const string&owner,const string&full_owner,t_ic_dev&ic_dev)
   {
     string out;
-    {
-      auto nested_list=get_nested_list(ex.out.nested);
-      const vector<t_struct_body::t_target_item_out> no_arr;
-      vector<string> no_nested;
-      out+=make_head(/*Env,*/ex.out.nested,ex.name,ex.parent,owner,full_owner,nested_list);
-    }
+    auto name=ex.def->make_code().name;
+    auto full_name=(full_owner.empty()?"":full_owner+"::")+name;
+    ic_dev.push(name,full_name);
+    out+=make_head_v2(ex,owner,full_owner,ic_dev);
+    auto c=ex.make_code(ic_dev);
+    ic_dev.pop();
     string body;
     {
       t_templ_sys_v02::t_inp inp;
-      inp.add("NAME",ex.name);
-      inp.add("PROVARS",ex.out.provars);
+      inp.add("NAME",c.name);
+      inp.add("PROVARS",c.out.provars);
       body+=get_templ("VARS").eval(inp);
     }
-    if(!ex.parent.empty())
+    if(!c.parent.empty())
     {
       t_templ_sys_v02::t_inp inp;
-      inp.add("I_BASE",ex.name);
+      inp.add("I_BASE",c.name);
       body+=get_templ("USE_IMPL").eval(inp);
     }
-    if(!ex.out.procmds.empty())
+    if(!c.out.procmds.empty())
     {
       t_templ_sys_v02::t_inp inp;
-      inp.add("PROCMDS",ex.out.procmds);
+      inp.add("PROCMDS",c.out.procmds);
       body+=get_templ("GO_IMPL").eval(inp);
     }
-    if(!ex.out.nested.empty())if(ex.out.nested.size()>2)
+    if(!c.out.nested.empty())if(c.out.nested.size()>2)
     {
-      auto iarr=get_iarr(ex.out.nested);
-      auto nesteds=get_nested_list(ex.out.nested);
+      auto iarr=get_iarr(c.out.nested);
+      auto nesteds=get_nested_list(c.out.nested);
       vector<string> list;
       for(int i=0;i<iarr.size();i++)list.push_back("  //  F("+iarr[i]+");");
       for(int i=0;i<nesteds.size();i++)list.push_back("  //  F("+nesteds[i]+");");
       vector<string> dolist;
       for(int i=0;i<nesteds.size();i++)dolist.push_back("  //  void Do("+nesteds[i]+"&ref){}");
       t_templ_sys_v02::t_inp inp;
-      inp.add("OWNER",ex.name);
+      inp.add("OWNER",c.name);
       inp.add("LIST",join(list,"\n"));
       inp.add("DO_LIST",join(dolist,"\n"));
       body+=get_templ("NESTED_VISITOR").eval(inp);
     }
     out+=move_block(body,owner.empty()?"":"  ");
-    if(!ex.out.cppcode.empty()){
+    if(!c.out.cppcode.empty()){
       QapDebugMsg("[2014.02.12 14:14]:\nuse 't_static_visitor' instead of 'usercode inside lexem'.");
     }
-    if(ex.out.cppcode.empty())
+    if(c.out.cppcode.empty())
     {
+      out+="};";
+    }else{
+      out+=c.out.cppcode;
       out+="};";
     }
     return out;
   }
-  string get_target_code(/*IEnvRTTI&Env,*/const vector<t_target_item::t_out>&arr,const string&owner,const string&full_owner)
+  string get_targets_code_orig(const vector<const t_target_item*>&arr,t_ic_dev&ic_dev)
   {
+    //auto c=ti.make_code(ic_dev);
     vector<string> out;
-    auto iarr=get_iarr(arr);
+    auto&iarr=ic_dev.top.iarr;
+    iarr=get_iarr(arr);
     for(int i=0;i<iarr.size();i++){
       auto&ex=iarr[i];
       auto list=get_child_list(arr,ex);
-      string tmp=iclass_to_code(/*Env,*/ex,list,owner,full_owner);
+      string tmp=iclass_to_code(ex,list,"","");
       out.push_back(tmp);
     }
     for(int i=0;i<arr.size();i++){
       auto&ex=arr[i];
-      string tmp=class_to_code(/*Env,*/ex,owner,full_owner);
+      ic_dev.top.carr.push_back(ex->def->make_code().name);
+    }
+    for(int i=0;i<arr.size();i++){
+      auto&ex=arr[i];
+      string tmp=class_to_code(*ex,"","",ic_dev);
       out.push_back(tmp);
     }
+    return join(out,"\n");
+  }
+  string get_target_code(const t_target_item&ti,const string&full_owner,t_ic_dev&ic_dev)
+  {
+    auto name=ti.def->make_code().name;
+    auto full_name=(full_owner.empty()?"":full_owner+"::")+name;
+    //ic_dev.push(name,full_name);
+    auto c=ti.make_code(ic_dev);
+    vector<string> out;
+    auto&iarr=ic_dev.top.iarr;
+    iarr=get_iarr(c.out.nested);
+    for(int i=0;i<iarr.size();i++){
+      auto&ex=iarr[i];
+      auto list=get_child_list(c.out.nested,ex);
+      string tmp=iclass_to_code(ex,list,name,full_name);
+      out.push_back(tmp);
+    }
+    for(int i=0;i<c.out.nested.size();i++){
+      auto&ex=c.out.nested[i];
+      ic_dev.top.carr.push_back(ex->def->make_code().name);
+    }
+    for(int i=0;i<c.out.nested.size();i++){
+      auto&ex=c.out.nested[i];
+      string tmp=class_to_code(*ex,name,full_name,ic_dev);
+      out.push_back(tmp);
+    }
+    //ic_dev.pop();
     return join(out,"\n");
   }
   static vector<string> get_list_of_types(vector<t_target_item::t_out>&arr)
@@ -312,9 +380,12 @@ public:
     auto fs=load_obj_full(/*Env,*/tar,data);
     if(!fs.ok){cerr<<fs.msg<<endl;return "fail";}
     if(tar.arr.empty()){return "!target\n\n"+fs.msg;}
-    vector<t_target_item::t_out> arr=tar.make_code();
-    auto listoftypes=get_list_of_types(arr);
-    auto tc=get_target_code(/*Env,*/arr,"","");
+    //vector<t_target_item::t_out> arr=tar.make_code({});
+    t_ic_dev ic_dev;
+    vector<const t_target_item*> tarr;
+    for(auto&ex:tar.arr)tarr.push_back(&ex);
+    auto tc=get_targets_code_orig(tarr,ic_dev);
+    //auto listoftypes=get_list_of_types(arr);
     auto ae=get_at_end();
     string result=(
       tc+"\n"+
@@ -322,7 +393,7 @@ public:
       "\n"
       "/*\n"
       "//list of types:\n"+
-      join(listoftypes,"\n")+"\n"
+      string()+//join(listoftypes,"\n")+"\n"
       "//app:\n"
       "adler3d.github.io/test2013/\n"
       "//code:\n"

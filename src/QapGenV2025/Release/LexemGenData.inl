@@ -26,7 +26,7 @@ public:
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
-    #ifdef QAP_FAST_UBER_CAST
+    #ifdef QAP_FAST_UBERCAST
     template<class TYPE,class Visitor>
     struct Is:public Visitor{
       TYPE*ptr{};
