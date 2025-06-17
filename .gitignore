@@ -3,3 +3,12 @@
 ################################################################################
 
 /src/QapGenV2025/.vs/QapGen/v15
+/src/QapGenV2025/QapGen/Debug
+/src/QapGenV2025/QapGen/Release
+*.iobj
+*.ipdb
+*.pdb
+/src/QapGenV2025/Debug
+/src/QapGenV2025/Release/QapGen.exe
+/src/QapGenV2025/QapGen/ReleaseO2
+/src/QapGenV2025/ReleaseO2

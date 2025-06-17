@@ -43,11 +43,13 @@ public:
     }
   }
 public:
-  static string move_block(const string&source,const string&sep){
-    //string tmp=moveleft(source);
+  static string move_block(const string&source,const string&sep,bool drop_last_line_spaces=false){
+    if(sep.empty())return source;
     auto arr=split(source,"\n");
     if(arr.empty())return source;
-    return sep+join(arr,"\n"+sep);
+    auto out=sep+join(arr,"\n"+sep);
+    if(drop_last_line_spaces)for(int i=0;out.size()&&out.back()==' ';i++)out.pop_back();
+    return out;
   }
   static vector<string> get_iarr(const vector<const t_target_item*>&arr)
   {
@@ -63,9 +65,8 @@ public:
     }
     return out;
   }
-  static vector<string> get_child_list(const vector<const t_target_item*>&arr,const string&parent)
+  static vector<string> get_child_list(const vector<const t_target_item*>&arr,const string&parent,t_ic_dev&ic_dev)
   {
-    t_ic_dev ic_dev{};
     vector<string> out;
     for(int i=0;i<arr.size();i++){
       auto ex=arr[i]->make_code(ic_dev);
@@ -146,7 +147,7 @@ public:
     bool hasVirtual=false;
     for(int i=0;i<c.out.nested.size();i++)if(!c.out.nested[i]->make_code(ic_dev).parent.empty())hasVirtual=true;
     string class_code;
-    class_code+="class "+c.name+parent_part+"{\n";
+    class_code+="struct "+c.name+parent_part+"{\n";
     class_code+=target_code.empty()?"":((hasVirtual?"":"public:\n")+target_code+"\n");
     class_code+=get_nested_def(nested_list);
     class_code+="#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)";
@@ -200,7 +201,7 @@ public:
     }
   };
   vector<t_at_end> at_end;
-  string iclass_to_code(/*IEnvRTTI&Env,*/const string&name,const vector<string>&arr,const string&owner,const string&full_owner)
+  string iclass_to_code(const string&name,const vector<string>&arr,const string&owner,const string&full_owner)
   {
     string out;
     {
@@ -210,13 +211,22 @@ public:
       inp.add("ADDLIST",join(viz_with_add(arr),"\n"));
       inp.add("DO_LIST",join(viz_with_doo(arr),"\n"));
       inp.add("COMMENT_DO_LIST",join(viz_with_cdo(arr),"\n"));
-      out+=get_templ("VISITOR").eval(inp);
+      out+=move_block(get_templ("VISITOR").eval(inp),owner.empty()?"":"  ",true);
     }
     {
       t_ic_dev no_dev;
-      const vector<const t_target_item*> no_arr;
-      vector<string> no_nested;
-      out+=make_head(/*Env,*/no_arr,name,"",owner,full_owner,no_nested,no_dev);
+      thread_local t_target_item ti;
+      thread_local t_struct_def*psd=nullptr;
+      if(!psd){
+        auto sd=make_unique<t_struct_def>();
+        psd=sd.get();
+        ti.def=std::move(sd);
+      }
+      psd->name.value=name;
+      //load_obj(ti,"t{}");
+      //auto*p=i_def_visitor::UberCast<t_struct_def>(ti.def.get());
+      //p->name.value=name;
+      out+=make_head_v2(ti,owner,full_owner,no_dev);
     }
     string body;
     {
@@ -316,7 +326,7 @@ public:
     iarr=get_iarr(arr);
     for(int i=0;i<iarr.size();i++){
       auto&ex=iarr[i];
-      auto list=get_child_list(arr,ex);
+      auto list=get_child_list(arr,ex,ic_dev);
       string tmp=iclass_to_code(ex,list,"","");
       out.push_back(tmp);
     }
@@ -342,7 +352,7 @@ public:
     iarr=get_iarr(c.out.nested);
     for(int i=0;i<iarr.size();i++){
       auto&ex=iarr[i];
-      auto list=get_child_list(c.out.nested,ex);
+      auto list=get_child_list(c.out.nested,ex,ic_dev);
       string tmp=iclass_to_code(ex,list,name,full_name);
       out.push_back(tmp);
     }
@@ -358,12 +368,12 @@ public:
     //ic_dev.pop();
     return join(out,"\n");
   }
-  static vector<string> get_list_of_types(vector<t_target_item::t_out>&arr)
+  static vector<string> get_list_of_types(const vector<const t_target_item*>&arr)
   {
     vector<string> out;
     string line;
     for(int i=0;i<arr.size();i++){
-      string item="F("+arr[i].name+")";
+      string item="F("+arr[i]->def->make_code().name+")";
       if(line.size()+item.size()>=80){
         out.push_back(std::move(line));
         line.clear();
@@ -385,7 +395,7 @@ public:
     vector<const t_target_item*> tarr;
     for(auto&ex:tar.arr)tarr.push_back(&ex);
     auto tc=get_targets_code_orig(tarr,ic_dev);
-    //auto listoftypes=get_list_of_types(arr);
+    auto listoftypes=get_list_of_types(tarr);
     auto ae=get_at_end();
     string result=(
       tc+"\n"+
@@ -393,7 +403,7 @@ public:
       "\n"
       "/*\n"
       "//list of types:\n"+
-      string()+//join(listoftypes,"\n")+"\n"
+      join(listoftypes,"\n")+"\n"
       "//app:\n"
       "adler3d.github.io/test2013/\n"
       "//code:\n"

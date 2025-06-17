@@ -1,61 +1,59 @@
 ----------------------------------------------------------------
 #####-VISITOR-#####
 ----------------------------------------------------------------
-public:
-  //===>>===^^^I_BASE^^^_visitor
-  #define DEF_PRO_BLANK()
-  #define LIST(ADDBEG,ADD,ADDEND)\
-  ADDBEG()\
+//===>>===^^^I_BASE^^^_visitor
+#define DEF_PRO_BLANK()
+#define LIST(ADDBEG,ADD,ADDEND)\
+ADDBEG()\
 ^^^ADDLIST^^^
-  ADDEND()
+ADDEND()
 
-  class ^^^I_BASE^^^;
+class ^^^I_BASE^^^;
 
-  #define ADD(TYPE)class TYPE;
+#define ADD(TYPE)class TYPE;
+LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+#undef ADD
+class ^^^I_BASE^^^_visitor{
+public:
+  typedef ^^^OWNER^^^::^^^I_BASE^^^ ^^^I_BASE^^^;
+public:
+  #define ADD(TYPE)virtual void Do(TYPE*p)=0;
   LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
   #undef ADD
-  class ^^^I_BASE^^^_visitor{
-  public:
-    typedef ^^^OWNER^^^::^^^I_BASE^^^ ^^^I_BASE^^^;
-  public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
-    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
-    #undef ADD
-  public:
-    #define ADD(U)typedef ^^^OWNER^^^::U U;
-    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
-    #undef ADD
-  public:
-    #ifdef QAP_FAST_UBERCAST
-    template<class TYPE,class Visitor>
-    struct Is:public Visitor{
-      TYPE*ptr{};
-    public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
-      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
-      #undef ADD
-    };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
-    template<class TYPE>
-    static TYPE*UberCast(^^^I_BASE^^^*p){
-      if(!p)return nullptr;Is<TYPE,^^^I_BASE^^^_visitor> IS;p->Use(IS);return IS.ptr;
-    }
-    #else
-    template<class TYPE>
-    static TYPE*UberCast(^^^I_BASE^^^*p){return dynamic_cast<TYPE*>(p);}
-    #endif
-  };
-  #undef LIST
-  #undef DEF_PRO_BLANK
-  //===<<===^^^I_BASE^^^_visitor
 public:
+  #define ADD(U)typedef ^^^OWNER^^^::U U;
+  LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+  #undef ADD
+public:
+  #ifdef QAP_FAST_UBERCAST
+  template<class TYPE,class Visitor>
+  struct Is:public Visitor{
+    TYPE*ptr{};
+  public:
+    #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+    #undef ADD
+  };
+  // 10kk bench:     31.81 ns/call               59.41 ns/call
+  // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
+  // Od   :          1678.17     vs              1610.70
+  // Debug:          4948.20     vs              4892.66
+  // compilation time:
+  // UC 32.21 // 4.61 sec //408%
+  // DC 28.73 // 1.13 sec
+  // empty 27.60 
+  template<class TYPE>
+  static TYPE*UberCast(^^^I_BASE^^^*p){
+    if(!p)return nullptr;Is<TYPE,^^^I_BASE^^^_visitor> IS;p->Use(IS);return IS.ptr;
+  }
+  #else
+  template<class TYPE>
+  static TYPE*UberCast(^^^I_BASE^^^*p){return dynamic_cast<TYPE*>(p);}
+  #endif
+};
+#undef LIST
+#undef DEF_PRO_BLANK
+//===<<===^^^I_BASE^^^_visitor
 ----------------------------------------------------------------
 #####-NESTED_VISITOR-#####
 ----------------------------------------------------------------

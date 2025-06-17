@@ -1,3 +1,65 @@
+t_debug2{
+  t_char_code=>i_code{
+    i_char_item body;
+    {
+      go_const("'");
+      go_auto(body);
+      go_const("'");
+    }
+  }
+
+  t_sign_code=>i_code{
+    t_sign body;
+    {
+      go_auto(body);
+    }
+  }
+
+  t_code{
+    vector<i_code> arr;
+    {
+      go_auto(arr);
+    }
+  }
+}
+t_debug{
+  t_class_def=>i_def{
+    t_name name;
+    t_name parent;
+    {
+      M+=go_auto(name);
+      M+=go_const("=>");
+      M+=go_auto(parent);
+    }
+  }
+  t_struct_def=>i_def{
+    t_name name;
+    {
+      M+=go_auto(name);
+    }
+  }
+}
+t_bar:i_b{}
+t_baz:i_b{}
+t_z{i_b b;{go_auto(b);}}
+t_lol_test{
+  t_more_levels{
+    i_b{string nope;{go_any(nope,"nope");}}
+    i_b fail_expected;
+    {go_auto(fail_expected);}
+  }
+  t_more_levels ml;
+  {go_auto(ml);}
+}
+t_lol_test2{
+  t_more_levels{
+    i_b fail_expected;
+    {go_auto(fail_expected);}
+  }
+  t_more_levels ml;
+  {go_auto(ml);}
+}
+t_foo{}
 t_test20250613{
   t_fozy=>i_yyy{{go_const("Y");}}
   t_bazz=>i_yyy{{go_const("Z");}}

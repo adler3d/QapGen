@@ -1361,6 +1361,15 @@ public:
     string mode=value?"SET":"DEF";
     //out.push_back(IToS(id));
     auto t=type.make_code();
+    if(bool vec_algo=true){
+      auto a=split(t,"<");
+      if(a.size()==2&&a[0]=="vector"){
+        auto b=split(a[1],">");
+        QapAssert(b.size()==2);
+        QapAssert(b[1]=="");
+        if(icdev.need_tautoptr(b[0]))t="vector<TAutoPtr<"+b[0]+">>";
+      }
+    }
     if(icdev.need_tautoptr(t))t="TAutoPtr<"+t+">";
     out.push_back(t);
     out.push_back(name.get());
@@ -2012,6 +2021,55 @@ public:
     return out;
   }
 };
+
+//===>>===i_def_visitor
+#define DEF_PRO_BLANK()
+#define LIST(ADDBEG,ADD,ADDEND)\
+ADDBEG()\
+ADD(t_class_def)\
+ADD(t_struct_def)\
+ADDEND()
+
+class i_def;
+
+#define ADD(TYPE)class TYPE;
+LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+#undef ADD
+class i_def_visitor{
+public:
+  #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+  LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+  #undef ADD
+public:
+  #ifdef QAP_FAST_UBERCAST
+  template<class TYPE,class Visitor>
+  struct Is:public Visitor{
+    TYPE*ptr{};
+  public:
+    #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+    #undef ADD
+  };
+  // 10kk bench:     31.81 ns/call               59.41 ns/call
+  // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
+  // Od   :          1678.17     vs              1610.70
+  // Debug:          4948.20     vs              4892.66
+  // compilation time:
+  // UC 32.21 // 4.61 sec //408%
+  // DC 28.73 // 1.13 sec
+  // empty 27.60 
+  template<class TYPE>
+  static TYPE*UberCast(i_def*p){
+    if(!p)return nullptr;Is<TYPE,i_def_visitor> IS;p->Use(IS);return IS.ptr;
+  }
+  #else
+  template<class TYPE>
+  static TYPE*UberCast(i_def*p){return dynamic_cast<TYPE*>(p);}
+  #endif
+};
+#undef LIST
+#undef DEF_PRO_BLANK
+//===<<===i_def_visitor
 
 class i_def{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_def)
