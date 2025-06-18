@@ -20,7 +20,9 @@ int main()
 {
   return WinMain(GetModuleHandle(NULL), NULL, GetCommandLineA(), SW_SHOWNORMAL);
 }
+namespace t_out_hpp{
 #include "out.hpp"
+};
 /*
   static i_foobarbaz*id2instance(int id){
     int i=0;

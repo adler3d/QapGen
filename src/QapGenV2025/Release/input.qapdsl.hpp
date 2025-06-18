@@ -1,86 +1,1021 @@
-t_debug2{
-  t_char_code=>i_code{
-    i_char_item body;
-    {
-      go_const("'");
-      go_auto(body);
-      go_const("'");
-    }
-  }
+i_code{
+  [::]
+  virtual string make_code()const{QapDebugMsg("no way.");return "";};
+}
 
-  t_sign_code=>i_code{
-    t_sign body;
-    {
-      go_auto(body);
-    }
-  }
-
-  t_code{
-    vector<i_code> arr;
-    {
-      go_auto(arr);
-    }
-  }
-}
-t_debug{
-  t_class_def=>i_def{
-    t_name name;
-    t_name parent;
-    {
-      M+=go_auto(name);
-      M+=go_const("=>");
-      M+=go_auto(parent);
-    }
-  }
-  t_struct_def=>i_def{
-    t_name name;
-    {
-      M+=go_auto(name);
-    }
-  }
-}
-t_bar:i_b{}
-t_baz:i_b{}
-t_z{i_b b;{go_auto(b);}}
-t_lol_test{
-  t_more_levels{
-    i_b{string nope;{go_any(nope,"nope");}}
-    i_b fail_expected;
-    {go_auto(fail_expected);}
-  }
-  t_more_levels ml;
-  {go_auto(ml);}
-}
-t_lol_test2{
-  t_more_levels{
-    i_b fail_expected;
-    {go_auto(fail_expected);}
-  }
-  t_more_levels ml;
-  {go_auto(ml);}
-}
-t_foo{}
-t_test20250613{
-  t_fozy=>i_yyy{{go_const("Y");}}
-  t_bazz=>i_yyy{{go_const("Z");}}
-  t_fooa=>i_xxx{{go_const("A");}}
-  t_barb=>i_xxx{{go_const("B");}}
-  t_baz=>i_xxx{
-    t_foo1=>i_xxx1{{go_const("foo");}}
-    t_bar1=>i_xxx1{{go_const("bar");}}
-    t_baz1=>i_xxx1{
-      t_foo2=>i_xxx2{{go_const("foo2");}}
-      t_bar2=>i_xxx2{{go_const("bar2");}}
-      {go_const("baz");}
-    }
-    TAutoPtr<i_xxx1> x;
-    {
-      go_auto(x);
-    }
-  }
-  TAutoPtr<i_xxx> x;
-  TAutoPtr<i_yyy> y;
+t_name_code=>i_code{
+  string value;
   {
-    go_auto(x);
+    M+=go_str<t_name::t_impl>(value);
+  }
+  [::]
+  string make_code()const{return value;};
+}
+
+t_num_code=>i_code{
+  t_number body;
+  {
+    M+=go_auto(body);
+  }
+  [::]
+  string make_code()const{return body.body;};
+}
+
+t_str_seq{
+  vector<TAutoPtr<i_str_item>> arr;
+  {
+    M+=go_const("\"");
+    O+=go_auto(arr);
+    M+=go_const("\"");
+  }
+  [::]
+  string get_code()const{
+    string out;
+    for(int i=0;i<arr.size();i++){
+      out+=arr[i]->get_code();
+    }
+    return out;
+  }
+  string get_value()const{
+    string out;
+    for(int i=0;i<arr.size();i++){
+      out+=arr[i]->get_value();
+    }
+    return out;
+  }
+  string make_code()const{return "\""+get_code()+"\"";}
+}
+
+t_sep_str_seq{
+  t_sep sep;
+  t_str_seq body;
+  {
+    go_auto(sep);
+    go_auto(body);
+  }
+  [::]
+}
+
+t_str_code=>i_code{
+  t_str_seq first;
+  vector<t_sep_str_seq> arr;
+  {
+    M+=go_auto(first);
+    O+=go_auto(arr);
+  }
+  [::]
+  string make_code()const{
+    string out=first.get_code();
+    if(!arr.empty())
+    {
+      for(int i=0;i<arr.size();i++)out+=arr[i].body.get_code();
+      int gg=1;
+    }
+    return "\""+out+"\"";
+  }
+}
+
+t_char_code=>i_code{
+  TAutoPtr<i_char_item> body;
+  {
+    go_const("'");
+    go_auto(body);
+    go_const("'");
+  }
+  [::]
+  string get_code()const{
+    return body->get_code();
+  }
+  string get_value()const{
+    return body->get_value();
+  }
+  string make_code()const{return "'"+get_code()+"'";}
+}
+
+t_sign_code=>i_code{
+  t_sign body;
+  {
+    go_auto(body);
+  }
+  [::]
+  string make_code()const{return CToS(body.body);}
+}
+
+i_code_with_sep{
+  [::]
+  virtual string make_code()const{QapDebugMsg("no way.");return "";}
+}
+
+t_name_code_with_sep=>i_code_with_sep{
+  t_name_code body;
+  t_sep sep;
+  {
+    M+=go_auto(body);
+    O+=go_auto(sep);
+  }
+  [::]
+  string make_code()const{
+    return body.make_code()+sep.make_code();
+  }
+}
+
+t_num_code_with_sep=>i_code_with_sep{
+  t_num_code body;
+  t_sep sep;
+  {
+    M+=go_auto(body);
+    O+=go_auto(sep);
+  }
+  [::]
+  string make_code()const{
+    return body.make_code()+sep.make_code();
+  }
+}
+
+t_str_code_with_sep=>i_code_with_sep{
+  t_str_code body;
+  t_sep sep;
+  {
+    M+=go_auto(body);
+    O+=go_auto(sep);
+  }
+  [::]
+  string make_code()const{
+    return body.make_code()+sep.make_code();
+  }
+}
+
+t_char_code_with_sep=>i_code_with_sep{
+  t_char_code body;
+  t_sep sep;
+  {
+    M+=go_auto(body);
+    O+=go_auto(sep);
+  }
+  [::]
+  string make_code()const{
+    return body.make_code()+sep.make_code();
+  }
+}
+
+t_sign_code_with_sep=>i_code_with_sep{
+  t_sign_code body;
+  t_sep sep;
+  {
+    M+=go_auto(body);
+    O+=go_auto(sep);
+  }
+  [::]
+  string make_code()const{
+    return body.make_code()+sep.make_code();
+  }
+}
+
+t_soft_brackets_code_with_sep=>i_code_with_sep{
+  t_sep sep0;
+  vector<TAutoPtr<i_code_with_sep>> body;
+  t_sep sep1;
+  {
+    M+=go_const("(");
+    O+=go_auto(sep0);
+    O+=go_auto(body);
+    M+=go_const(")");
+    O+=go_auto(sep1);
+  }
+  [::]
+  string make_code()const{
+    string v[]={
+      sep0.make_code(),
+      vector_make_code(body),
+      sep1.make_code(),
+    };
+    return "("+v[0]+v[1]+")"+v[2];
+  }
+}
+
+t_hard_brackets_code_with_sep=>i_code_with_sep{
+  t_sep sep0;
+  vector<TAutoPtr<i_code_with_sep>> body;
+  t_sep sep1;
+  {
+    M+=go_const("[");
+    O+=go_auto(sep0);
+    O+=go_auto(body);
+    M+=go_const("]");
+    O+=go_auto(sep1);
+  }
+  [::]
+  string make_code()const{
+    string v[]={
+      sep0.make_code(),
+      vector_make_code(body),
+      sep1.make_code(),
+    };
+    return "["+v[0]+v[1]+"]"+v[2];
+  }
+}
+
+t_curly_brackets_code_with_sep=>i_code_with_sep{
+  t_sep sep0;
+  vector<TAutoPtr<i_code_with_sep>> body;
+  t_sep sep1;
+  {
+    M+=go_const("{");
+    O+=go_auto(sep0);
+    O+=go_auto(body);
+    M+=go_const("}");
+    O+=go_auto(sep1);
+  }
+  [::]
+  string make_code()const{
+    string v[]={
+      sep0.make_code(),
+      vector_make_code(body),
+      sep1.make_code(),
+    };
+    return "{"+v[0]+v[1]+"}"+v[2];
+  }
+}
+
+t_code{
+  vector<TAutoPtr<i_code>> arr;
+  {
+    go_auto(arr);
+  }
+  [::]
+  string make_code()const{return vector_make_code(arr);};
+}
+
+t_soft_brackets_code=>i_code{
+  t_sep sep0;
+  TAutoPtr<t_code> body;
+  t_sep sep1;
+  {
+    M+=go_const("(");
+    O+=go_auto(sep0);
+    O+=go_auto(body);
+    O+=go_auto(sep1);
+    M+=go_const(")");
+  }
+  [::]
+  string make_code()const{
+    string v[3]={
+      sep0.make_code(),
+      body?body->make_code():"",
+      sep1.make_code()
+    };
+    return "("+v[0]+v[1]+v[2]+")";
+  };
+}
+
+t_hard_brackets_code=>i_code{
+  t_sep sep0;
+  TAutoPtr<t_code> body;
+  t_sep sep1;
+  {
+    M+=go_const("[");
+    O+=go_auto(sep0);
+    O+=go_auto(body);
+    O+=go_auto(sep1);
+    M+=go_const("]");
+  }
+  [::]
+  string make_code()const{
+    string v[3]={
+      sep0.make_code(),
+      body?body->make_code():"",
+      sep1.make_code()
+    };
+    return "["+v[0]+v[1]+v[2]+"]";
+  };
+}
+
+t_curly_brackets_code=>i_code{
+  t_sep sep0;
+  TAutoPtr<t_code> body;
+  t_sep sep1;
+  {
+    M+=go_const("{");
+    O+=go_auto(sep0);
+    O+=go_auto(body);
+    O+=go_auto(sep1);
+    M+=go_const("}");
+  }
+  [::]
+  string make_code()const{
+    string v[3]={
+      sep0.make_code(),
+      body?body->make_code():"",
+      sep1.make_code()
+    };
+    return "{"+v[0]+v[1]+v[2]+"}";
+  };
+}
+
+t_semicolon{
+  {
+    go_const(";");
+  }
+  [::]
+}
+
+t_value_item{
+  TAutoPtr<i_code_with_sep> body;
+  {
+    go_minor<t_semicolon>(body);
+  }
+  [::]
+  string make_code()const{
+    return body->make_code();
+  }
+}
+
+t_value{
+  t_sep sep;
+  string body;
+  {
+    O+=go_auto(sep);
+    M+=go_const("=");
+    M+=go_str<vector<t_value_item>>(body);
+  }
+  [::]
+  string make_code()const
+  {
+    string out=body;
+    //for(int i=0;i<arr.size();i++)out+=arr[i].make_code();
+    return out;
+  }
+}
+
+i_type_templ{
+  [::]
+  virtual string make_code()const{QapDebugMsg("no way."); return "";};
+}
+
+t_type_scope{
+  {
+    go_const("::");
+  }
+  [::]
+  string make_code()const{
+    return "::";
+  }
+}
+
+t_type_templ{
+  TAutoPtr<i_type_templ> body;
+  {
+    go_auto(body);
+  }
+  [::]
+}
+
+i_type_item{
+  [::]
+  virtual string make_code()const{QapDebugMsg("no way.");return "";};
+}
+
+t_type_item_string=>i_type_item{
+  t_str_item body;
+  {
+    go_auto(body);
+  }
+  [::]
+  string make_code()const{
+    return body.get_code();
+  };
+}
+
+t_type_item_char=>i_type_item{
+  t_char_item body;
+  {
+    go_auto(body);
+  }
+  [::]
+  string make_code()const{
+    return body.get_code();
+  };
+}
+
+t_type_item_number=>i_type_item{
+  t_number body;
+  {
+    go_auto(body);
+  }
+  [::]
+  string make_code()const{
+    return body.body;
+  };
+}
+
+t_scope_type_item;
+t_type_item_type=>i_type_item{
+  TAutoPtr<t_type_scope> scope;
+  t_name type;
+  TAutoPtr<t_type_templ> param;
+  vector<t_scope_type_item> arr;
+  {
+    O+=go_auto(scope);
+    M+=go_auto(type);
+    O+=go_auto(param);
+    O+=go_auto(arr);
+  }
+  [::]
+  template<class TYPE>
+  static string weak_arr_make_code(const vector<TYPE>&arr){
+    string out;
+    for(int i=0;i<arr.size();i++){
+      auto&ex=arr[i];
+      out+=ex.make_code();
+    }
+    return out;
+  }
+  string make_code()const{
+    string out;
+    if(scope)out+=scope->make_code();
+    out+=type.get();
+    if(param){
+      auto*p=param.get();
+      auto*pParam=p->body.get();
+      QapAssert(pParam);
+      out+=pParam->make_code();
+    }
+    out+=weak_arr_make_code(this->arr);
+    return out;
+  }
+}
+
+t_scope_type_item{
+  t_type_scope scope;
+  t_type_item_type body;
+  {
+    go_auto(scope);
+    go_auto(body);
+  }
+  [::]
+  string make_code()const{
+    string out;
+    out+=scope.make_code();
+    out+=body.make_code();
+    /*if(body){
+      auto*p=body.get();
+      out+=p->make_code();
+    }*/
+    return out;
+  }
+}
+
+t_type_expr{
+  TAutoPtr<t_type_scope> scope;
+  t_type_item_type body;
+  {
+    O+=go_auto(scope);
+    M+=go_auto(body);
+  }
+  [::]
+  string make_code()const{
+    string out;
+    if(scope)out+=scope->make_code();
+    out+=body.make_code();
+    return out;
+  }
+}
+
+t_type_templ_param{
+  TAutoPtr<i_type_item> body;
+  {
+    go_auto(body);
+  }
+  [::]
+  string make_code()const{
+    return body->make_code();
+  };
+}
+
+t_sep_type_templ_param{
+  t_type_templ_param body;
+  {
+    go_const(",");
+    go_auto(body);
+  }
+  [::]
+  string make_code()const{
+    string out;
+    out+=",";
+    out+=body.make_code();
+    return out;
+  };
+}
+
+t_type_templ_params{
+  t_type_templ_param first;
+  vector<t_sep_type_templ_param> arr;
+  {
+    M+=go_auto(first);
+    O+=go_auto(arr);
+  }
+  [::]
+  string make_code()const{
+    string out;
+    out+=first.make_code();
+    for(int i=0;i<arr.size();i++){
+      auto&ex=arr[i];
+      out+=ex.make_code();
+    }
+    return out;
+  };
+}
+
+t_type_templ_angle=>i_type_templ{
+  TAutoPtr<t_type_templ_params> params;
+  {
+    M+=go_const("<");
+    O+=go_auto(params);
+    M+=go_const(">");
+  }
+  [::]
+  string make_code()const{
+    string out;
+    out+="<";
+    if(params){
+      auto*p=params.get();
+      out+=p->make_code();
+    }
+    out+=">";
+    return out;
+  };
+}
+
+t_type_templ_soft=>i_type_templ{
+  TAutoPtr<t_type_templ_params> params;
+  {
+    M+=go_const("(");
+    O+=go_auto(params);
+    M+=go_const(")");
+  }
+  [::]
+  string make_code()const{
+    string out;
+    out+="(";
+    if(params){
+      auto*p=params.get();
+      out+=p->make_code();
+    }
+    out+=")";
+    return out;
+  };
+}
+
+t_struct_cmd_mode{
+  char body;
+  {
+    M+=go_any_char(body,"MO");
+    M+=go_const("+=");
+  }
+  [::]
+}
+
+t_struct_field{
+  TAutoPtr<t_struct_cmd_mode> mode;
+  t_sep sepcm;
+  t_type_expr type;
+  t_sep sep0;
+  t_name name;
+  t_sep sep1;
+  TAutoPtr<t_value> value;
+  {
+    O+=go_auto(mode);
+    O+=go_auto(sepcm);
+    M+=go_auto(type);
+    M+=go_auto(sep0);
+    M+=go_auto(name);
+    O+=go_auto(value);
+    O+=go_auto(sep1);
+    M+=go_const(";");
+  }
+  [::]
+  string make_code(int id,t_ic_dev&icdev)const{
+    vector<string> out;
+    string mode=value?"SET":"DEF";
+    //out.push_back(IToS(id));
+    auto t=type.make_code();
+    if(bool vec_algo=true){
+      auto a=split(t,"<");
+      if(a.size()==2&&a[0]=="vector"){
+        auto b=split(a[1],">");
+        QapAssert(b.size()==2);
+        QapAssert(b[1]=="");
+        if(icdev.need_tautoptr(b[0]))t="vector<TAutoPtr<"+b[0]+">>";
+      }
+    }
+    if(icdev.need_tautoptr(t))t="TAutoPtr<"+t+">";
+    out.push_back(t);
+    out.push_back(name.get());
+    out.push_back(mode);
+    out.push_back(!value?"$":value->make_code());
+    return "ADDVAR("+join(out,",")+",$)\\\n";
+  }
+}
+
+t_sep_struct_field{
+  t_sep sep;
+  t_struct_field body;
+  {
+    O+=go_auto(sep);
+    M+=go_auto(body);
+  }
+  [::]
+  string make_code(int id,t_ic_dev&icdev)const{
+    return body.make_code(id,icdev);
+  }
+}
+
+t_templ_params{
+  string body;
+  {
+    go_const("<");
+    go_str<TAutoPtr<t_type_templ_params>>(body);
+    go_const(">");
+  }
+  [::]
+}
+
+t_cmd_param;
+t_cmd_params{
+  vector<t_cmd_param> arr;
+  {
+    go_vec(arr,",");
+  }
+  [::]
+}
+
+t_cmd_param{
+  t_impl{
+    vector<TAutoPtr<i_expr>> arr;
+    {
+      go_vec(arr,"+");
+    }
+  }
+  t_expr_call:i_expr{
+    t_name func;
+    TAutoPtr<t_cmd_params> params;
+    {
+      go_auto(func);
+      go_const("(");
+      go_auto(params);
+      go_const(")");
+    }
+  }
+  t_expr_str:i_expr{
+    string body;
+    {
+      go_str<t_str_seq>(body);
+    }
+  }
+  t_expr_var:i_expr{
+    t_this{
+      {
+        go_const("this->");
+      }
+    }
+    t_impl{
+      TAutoPtr<t_this> self;
+      t_name name;
+      {
+        O+=go_auto(self);
+        M+=go_auto(name);
+      }
+    }
+    string body;
+    {
+      go_str<t_impl>(body);
+    }
+  }
+  string body;
+  {
+    go_str<t_impl>(body);
+  }
+  [::]
+}
+
+t_struct_cmd{
+  TAutoPtr<t_struct_cmd_mode> mode;
+  t_name func;
+  string templ_params;
+  t_cmd_params params;
+  {
+    O+=go_auto(mode);
+    M+=go_auto(func);
+    O+=go_str<TAutoPtr<t_templ_params>>(templ_params);
+    M+=go_const("(");
+    M+=go_auto(params);
+    M+=go_const(");");
+  }
+  [::]
+  static bool find(const string&func){
+    static const vector<string> arr=split("go_any_str_from_vec|go_any_arr_char|go_any|go_any_char","|");
+    for(int i=0;i<arr.size();i++)if(arr[i]==func)return true;
+    return false;
+  }
+  string make_code(int i){
+    string out=mode?CToS(mode->body):"D";
+    vector<string> params_code;
+    {auto&arr=params.arr;for(int i=0;i<arr.size();i++)params_code.push_back(arr[i].body);}
+    string func_name=func.get();
+    bool smart_func=find(func_name);
+    if(smart_func)
+    {
+      QapAssert(params.arr.size()==2);
+      const auto&param0=params.arr[0].body;
+       const auto&param1=params.arr[1].body;
+      auto get_param1=[&func_name,&param1]()->string{
+        if(func_name=="go_any_str_from_vec")return "QapStrFinder::fromArr("+param1+")";
+        return "CharMask::fromStr("+param1+")";
+      };
+      string varname="g_static_var_"+IToS(i);
+      string vardecl="    static const auto "+varname+"="+get_param1()+";\n";
+      out=vardecl+"    "+out+"+="+func.get()+"("+param0+","+varname+");\n    if(!ok)return ok;\n";
+      return out;
+    }
+    out="    "+out+"+="+func.get()+templ_params+"("+join(params_code,",")+");\n    if(!ok)return ok;\n";
+    return out;
+  }
+  string make_code_gp(){
+    string out=mode?CToS(mode->body):"D";
+    vector<string> params_code;
+    {auto&arr=params.arr;for(int i=0;i<arr.size();i++)params_code.push_back(arr[i].body);}
+    out="    "+out+"+="+func.get()+templ_params+"("+join(params_code,",")+");\n    if(!ok)return ok;\n";
+    return out;
+  }
+}
+
+t_sep_struct_cmd{
+  t_sep sep;
+  t_struct_cmd body;
+  {
+    O+=go_auto(sep);
+    M+=go_auto(body);
+  }
+  [::]
+  string make_code(int i){
+    return body.make_code(i);
+  }
+}
+
+t_struct_cmds{
+  vector<t_sep_struct_cmd> arr;
+  t_sep sep;
+  {
+    M+=go_const("{");
+    M+=go_auto(arr);
+    O+=go_auto(sep);
+    M+=go_const("}");
+  }
+  [::]
+}
+
+t_sep_struct_cmds{
+  t_sep sep;
+  t_struct_cmds body;
+  {
+    O+=go_auto(sep);
+    M+=go_auto(body);
+  }
+  [::]
+}
+
+i_cpp_code{
+  [::]
+  virtual string make_code()const{QapDebugMsg("no way.");return "";}
+}
+
+t_cpp_code_sep => i_cpp_code{
+  t_sep sep;
+  {
+    go_auto(sep);
+  }
+  [::]
+  string make_code()const{
+    return sep.make_code();
+  }
+}
+
+t_cpp_code_main => i_cpp_code{
+  TAutoPtr<i_code_with_sep> body;
+  {
+    go_auto(body);
+  }
+  [::]
+  string make_code()const{
+    string out;
+    auto*p=body.get();
+    out=p->make_code();
+    return out;
+  }
+}
+
+t_cpp_code{
+  vector<TAutoPtr<i_cpp_code>> arr;
+  {
+    M+=go_const("[::]");
+    O+=go_auto(arr);
+  }
+  [::]
+  static string align(const string&source){
+    auto arr=split(source,"\n");
+    if(arr.empty())return source;
+    auto get=[](const string&line)->int{
+      if(line=="public:")return -2;
+      for(int i=0;i<line.size();i++)if(line[i]!=' ')return i;
+      return -1;
+    };
+    int count=-1;
+    for(int i=0;i<arr.size();i++){
+      auto m=get(arr[i]);
+      if(m<0)continue;
+      if(count<0){count=m;continue;}
+      count=std::min<int>(m,count);
+    }
+    if(count<0)return source;
+    vector<string> out;
+    for(int i=0;i<arr.size();i++){
+      auto m=get(arr[i]);
+      auto s=m<0?arr[i]:"  "+arr[i].substr(count);
+      if(m==-1)s.clear();
+      out.push_back(s);
+    }
+    return join(out,"\n");
+  }
+  string make_code()const{
+    string out;
+    for(int i=0;i<arr.size();i++){
+      auto&ex=arr[i];
+      QapAssert(ex);
+      auto*p=ex.get();
+      out+=p->make_code();
+    }
+    return out;
+  }
+}
+
+t_struct_body{
+  vector<t_target_item> nested;
+  t_sep sep0;
+  vector<t_sep_struct_field> arr;
+  TAutoPtr<t_sep_struct_cmds> cmds;
+  t_sep sep1;
+  TAutoPtr<t_cpp_code> cppcode;
+  {
+    M+=go_const("{");
+    O+=go_auto(nested);
+    O+=go_auto(sep0);
+    O+=go_auto(arr);
+    O+=go_auto(cmds);
+    O+=go_auto(sep1);
+    O+=go_auto(cppcode);
+    M+=go_const("}");
+  }
+  [::]
+  struct t_target_item_out;
+  struct t_out{
+    vector<const t_target_item*> nested;
+    string provars;
+    string procmds;
+    string cppcode;
+  };
+  struct t_target_item_out{
+    string name;
+    string parent;
+    t_out out;
+  };
+  template<int>
+  static t_target_item_out weak_make_code(const t_target_item&ref,t_ic_dev&icdev);
+  t_out make_code(t_ic_dev&icdev)const{
+    t_out out;
+    {
+      auto&arr=nested;
+      out.nested.resize(arr.size());
+      for(int i=0;i<arr.size();i++){
+        auto&ex=arr[i];
+        auto&to=out.nested[i];
+        to=&ex;
+      }
+    }
+    {
+      vector<string> tmp;
+      for(int i=0;i<arr.size();i++){
+        tmp.push_back(arr[i].make_code(i,icdev));
+      }
+      out.provars=join(tmp,"");
+    }
+    if(cmds)
+    {
+      auto*pCmds=cmds.get();
+      auto&arr=pCmds->body.arr;
+      vector<string> tmp;
+      for(int i=0;i<arr.size();i++){
+        tmp.push_back(arr[i].make_code(i));
+      }
+      out.procmds=join(tmp,"");
+    }
+    out.cppcode=cppcode?cppcode->make_code():"";
+    return out;
+  }
+}
+i_def{
+  [::]
+  struct t_out{
+    string name;
+    string parent;
+  };
+  virtual t_out make_code(){QapDebugMsg("no way.");return *(t_out*)nullptr;}
+}
+
+t_class_def => i_def{
+  t_name name;
+  t_sep sep0;
+  string arrow_or_colon;
+  t_sep sep1;
+  t_name parent;
+  {
+    M+=go_auto(name);
+    O+=go_auto(sep0);
+    M+=go_any_str_from_vec(arrow_or_colon,split("=>,:",","));
+    O+=go_auto(sep1);
+    M+=go_auto(parent);
+  }
+  [::]
+  t_out make_code(){
+    t_out out;
+    out.name=name.get();
+    out.parent=parent.get();
+    return out;
+  }
+}
+
+t_struct_def => i_def{
+  t_name name;
+  {
+    M+=go_auto(name);
+  }
+  [::]
+  t_out make_code(){
+    t_out out;
+    out.name=name.get();
+    return out;
+  }
+}
+
+t_struct_decl_def => i_def{
+  t_name name;
+  t_sep sep;
+  {
+    M+=go_auto(name);
+    M+=go_auto(sep);
+  }
+  [::]
+  t_out make_code(){
+    t_out out;
+    out.name=name.get();
+    return out;
+  }
+}
+
+t_target_item{
+  t_sep sep;
+  TAutoPtr<i_def> def;
+  t_struct_body body;
+  {
+    O+=go_auto(sep);
+    M+=go_auto(def);
+    M+=go_auto(body);
+  }
+  [::]
+  typedef t_struct_body::t_target_item_out t_out;
+  t_out make_code(t_ic_dev&icdev)const{
+    t_out out;
+    {
+      auto tmp=def->make_code();
+      out.name=tmp.name;
+      out.parent=tmp.parent;
+    }
+    auto tmp=body.make_code(icdev);
+    out.out=std::move(tmp);
+    return out;
+  }
+}
+
+t_target{
+  vector<t_target_item> arr;
+  {
+    M+=go_auto(arr);
+  }
+  [::]
+  vector<t_target_item::t_out> make_code(t_ic_dev&icdev){
+    vector<t_target_item::t_out> out;
+    for(int i=0;i<arr.size();i++){
+      out.push_back(arr[i].make_code(icdev));
+    }
+    return out;
   }
 }

@@ -19,6 +19,16 @@ struct t_ic_dev{
   void pop(){top=std::move(arr.back());arr.pop_back();}
 };
 
+template<class TYPE>
+static string vector_make_code(const vector<TYPE>&arr){
+  string out;
+  for(int i=0;i<arr.size();i++){
+    auto&ex=arr[i];
+    out+=ex->make_code();
+  }
+  return out;
+}
+
 class i_code{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_code)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
@@ -405,17 +415,6 @@ public:
     return body.make_code()+sep.make_code();
   }
 };
-
-
-template<class TYPE>
-static string vector_make_code(const vector<TYPE>&arr){
-  string out;
-  for(int i=0;i<arr.size();i++){
-    auto&ex=arr[i];
-    out+=ex->make_code();
-  }
-  return out;
-}
 
 class t_soft_brackets_code_with_sep:public i_code_with_sep{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_soft_brackets_code_with_sep)PARENT(i_code_with_sep)
@@ -1322,7 +1321,7 @@ public:
 ADDBEG()\
 ADDVAR(TAutoPtr<t_struct_cmd_mode>,mode,DEF,$,$)\
 ADDVAR(t_sep,sepcm,DEF,$,$)\
-ADDVAR(t_type_expr,type,DEF,$,$)\
+ADDVAR(string,type,DEF,$,$)\
 ADDVAR(t_sep,sep0,DEF,$,$)\
 ADDVAR(t_name,name,DEF,$,$)\
 ADDVAR(t_sep,sep1,DEF,$,$)\
@@ -1342,7 +1341,7 @@ public:
     if(!ok)return ok;
     O+=dev.go_auto(sepcm);
     if(!ok)return ok;
-    M+=dev.go_auto(type);
+    M+=dev.go_str<t_type_expr>(type);
     if(!ok)return ok;
     M+=dev.go_auto(sep0);
     if(!ok)return ok;
@@ -1360,7 +1359,7 @@ public:
     vector<string> out;
     string mode=value?"SET":"DEF";
     //out.push_back(IToS(id));
-    auto t=type.make_code();
+    auto t=type;//.make_code();
     if(bool vec_algo=true){
       auto a=split(t,"<");
       if(a.size()==2&&a[0]=="vector"){
@@ -2163,9 +2162,26 @@ public:
     return out;
   }
 };
-
-class t_target_item{
-#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_target_item)
+struct i_target_item{
+#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_target_item)
+#define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+ADDBEG()\
+ADDEND()
+//=====+>>>>>i_target_item
+#include "QapGenStruct.inl"
+//<<<<<+=====i_target_item
+public:
+  virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
+  struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
+  {
+    #include "QapLexPolyBeg.inl"
+    template<int>
+    bool load();
+    #include "QapLexPolyEnd.inl"
+  };
+};
+class t_target_item:public i_target_item{
+#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_target_item)PARENT(i_target_item)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
 ADDBEG()\
 ADDVAR(t_sep,sep,DEF,$,$)\
@@ -2203,12 +2219,41 @@ public:
     return out;
   }
 };
+class t_target_decl:public i_target_item{
+#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_target_decl)PARENT(i_target_item)
+#define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+ADDBEG()\
+ADDVAR(t_sep,sep0,DEF,$,$)\
+ADDVAR(string,name,DEF,$,$)\
+ADDVAR(t_sep,sep1,DEF,$,$)\
+ADDEND()
+//=====+>>>>>t_target_decl
+#include "QapGenStruct.inl"
+//<<<<<+=====t_target_decl
+public:
+  bool go(i_dev&dev){
+    t_fallback scope(dev,__FUNCTION__);
+    auto&ok=scope.ok;
+    auto&D=scope.mandatory;
+    auto&M=scope.mandatory;
+    auto&O=scope.optional;
+    O+=dev.go_auto(sep0);
+    if(!ok)return ok;
+    M+=dev.go_str<t_name>(name);
+    if(!ok)return ok;
+    O+=dev.go_auto(sep1);
+    if(!ok)return ok;
+    M+=dev.go_const(";");
+    if(!ok)return ok;
+    return ok;
+  }
+};
 
 class t_target{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_target)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
 ADDBEG()\
-ADDVAR(vector<t_target_item>,arr,DEF,$,$)\
+ADDVAR(vector<TAutoPtr<i_target_item>>,arr,DEF,$,$)\
 ADDEND()
 //=====+>>>>>t_target
 #include "QapGenStruct.inl"
@@ -2227,7 +2272,10 @@ public:
   vector<t_target_item::t_out> make_code(t_ic_dev&icdev){
     vector<t_target_item::t_out> out;
     for(int i=0;i<arr.size();i++){
-      out.push_back(arr[i].make_code(icdev));
+      auto&ex=arr[i];
+      if(auto*p=dynamic_cast<t_target_item*>(ex.get())){
+        out.push_back(p->make_code(icdev));
+      }
     }
     return out;
   }
@@ -2263,6 +2311,17 @@ public:
   F(t_cpp_code_main);
   #undef F
 }*/
+
+template<int>
+bool i_target_item::t_poly_impl::load()
+{
+  #define F(TYPE)go_for<struct TYPE>();
+  F(t_target_item);
+  F(t_target_decl);
+  #undef F
+  main();
+  return scope.ok;
+}
 
 template<int>
 bool i_code::t_poly_impl::load()

@@ -129,14 +129,16 @@ public:
   const string&mem;
   size_t pos;
   size_t maxpos;
+  size_t maxpos_pop;
 public:
-  t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos){}
+  t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos),maxpos_pop(pos){}
 public:
   void push(t_fallback*ptr){
     ptr->pos=pos;
     maxpos=std::max(maxpos,pos);
   }
   void pop(t_fallback*ptr){
+    maxpos_pop=std::max(maxpos_pop,pos);
     if(ptr->ok)return;
     if(pos==ptr->pos)return;
     pos=ptr->pos;
@@ -1119,7 +1121,7 @@ template<class TYPE>
 bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
 {
   TYPE tmp;
-  t_load_dev dev(/*Env,*/data);
+  t_load_dev dev(/*Env,*/data);auto&ldev=dev;
   bool ok=dev.go_auto(tmp);
   if(ok)
   {
@@ -1129,7 +1131,13 @@ bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
     QapAssert(ok==ret);
     if(ok&&ret)if(out!=data)
     {
-      QapDebugMsg(two_text_diff(out,data));
+      auto d=data;QapAssert(out.size()<=data.size());d.resize(out.size());
+      if(d==out){
+        auto out2=t_error_tool::get_codefrag(data,ldev.maxpos);
+        QapDebugMsg(out2);
+      }else{
+        QapDebugMsg(two_text_diff(out,data));
+      }
     }
   }
   if(!ok&&pmaxpos){

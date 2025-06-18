@@ -65,11 +65,40 @@ public:
     }
     return out;
   }
-  static vector<string> get_child_list(const vector<const t_target_item*>&arr,const string&parent,t_ic_dev&ic_dev)
+  static vector<string> get_iarr(const vector<const i_target_item*>&arr)
   {
     vector<string> out;
     for(int i=0;i<arr.size();i++){
-      auto ex=arr[i]->make_code(ic_dev);
+      auto&ex=arr[i];
+      auto*p=dynamic_cast<const t_target_item*>(ex);
+      if(!p)continue;
+      auto dc=p->def->make_code();
+      if(dc.parent.empty())continue;
+      bool flag=false;
+      for(int j=0;j<out.size();j++)flag=flag||(dc.parent==out[j]);
+      if(flag)continue;
+      out.push_back(dc.parent);
+    }
+    return out;
+  }
+  static vector<string> get_child_list(const vector<const i_target_item*>&arr,const string&parent,t_ic_dev&ic_dev)
+  {
+    vector<string> out;
+    for(int i=0;i<arr.size();i++){
+      auto*p=dynamic_cast<const t_target_item*>(arr[i]);
+      if(!p)continue;
+      auto ex=p->make_code(ic_dev);
+      if(ex.parent==parent){
+        out.push_back(ex.name);
+      }
+    }
+    return out;
+  }
+  static vector<string> get_child_list(const vector<const t_target_item*>&arr,const string&parent,t_ic_dev&ic_dev)
+  {
+    vector<string> out;
+    for(auto&p:arr){
+      auto ex=p->make_code(ic_dev);
       if(ex.parent==parent){
         out.push_back(ex.name);
       }
@@ -103,39 +132,13 @@ public:
     out.push_back("  /*</DEF_PRO_NESTED>*/");
     return "public:\n#define DEF_PRO_NESTED(F)\\\n"+join(out,"\n")+"\n";
   }
-  string make_head(
-    //IEnvRTTI&Env,
-    const vector<const t_target_item*>&arr,
-    const string&name,
-    const string&parent,
-    const string&owner,
-    const string&full_owner,
-    const vector<string>&nested_list,
-    t_ic_dev&ic_dev
-  ){
-    string out;/*
-    string parent_part=!parent.empty()?":public "+parent:"";
-    string parent_info=!parent.empty()?"PARENT("+parent+")":"";
-    string owner_info=!owner.empty()?"OWNER("+owner+")":"";
-    string target_code=get_target_code(arr,name,full_owner.empty()?name:full_owner+"::"+name,ic_dev);
-    bool hasVirtual=false;
-    for(int i=0;i<arr.size();i++)if(!arr[i]->make_code(ic_dev).parent.empty())hasVirtual=true;
-    string class_code;
-    class_code+="class "+name+parent_part+"{\n";
-    class_code+=target_code.empty()?"":((hasVirtual?"":"public:\n")+target_code+"\n");
-    class_code+=get_nested_def(nested_list);
-    class_code+="#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)";
-    class_code+="NAME("+name+")"+parent_info+owner_info;
-    out+=move_block(class_code,owner.empty()?"":"  ")+"\n";
-    //out+="#define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\\\n";*/
-    return out;
-  }
   string make_head_v2(
     const t_target_item&ti,
     const string&owner,
     const string&full_owner,
     //const vector<string>&nested_list,
-    t_ic_dev&ic_dev
+    t_ic_dev&ic_dev,
+    bool iclass
   ){
     string out;
     string target_code=get_target_code(ti,full_owner,ic_dev);
@@ -201,32 +204,36 @@ public:
     }
   };
   vector<t_at_end> at_end;
-  string iclass_to_code(const string&name,const vector<string>&arr,const string&owner,const string&full_owner)
+  string iclass_to_code(const string&name,const vector<string>&arr,const string&owner,const string&full_owner,const t_target_item*pti,t_ic_dev&ic_dev)
   {
     string out;
     {
       t_templ_sys_v02::t_inp inp;
       inp.add("I_BASE",name);
       inp.add("OWNER",owner);
+      inp.add("OWNER_TYPEDEF_I_BASE",owner.empty()?"":"typedef "+owner+"::"+name+" "+name+";");
+      inp.add("OWNER_TYPEDEF_U",owner.empty()?"":"typedef "+owner+"::U U;");
       inp.add("ADDLIST",join(viz_with_add(arr),"\n"));
       inp.add("DO_LIST",join(viz_with_doo(arr),"\n"));
       inp.add("COMMENT_DO_LIST",join(viz_with_cdo(arr),"\n"));
       out+=move_block(get_templ("VISITOR").eval(inp),owner.empty()?"":"  ",true);
     }
     {
-      t_ic_dev no_dev;
-      thread_local t_target_item ti;
-      thread_local t_struct_def*psd=nullptr;
+      //t_ic_dev no_dev;
+      static t_target_item ti;
+      static t_struct_def*psd=nullptr;
       if(!psd){
-        auto sd=make_unique<t_struct_def>();
-        psd=sd.get();
-        ti.def=std::move(sd);
+        ti.def=std::move(make_unique<t_struct_def>());
+        psd=dynamic_cast<t_struct_def*>(ti.def.get());
+        //ti={};
+        //load_obj(ti,"t{}");
+        //psd=dynamic_cast<t_struct_def*>(ti.def.get());
       }
       psd->name.value=name;
       //load_obj(ti,"t{}");
       //auto*p=i_def_visitor::UberCast<t_struct_def>(ti.def.get());
       //p->name.value=name;
-      out+=make_head_v2(ti,owner,full_owner,no_dev);
+      out+=make_head_v2(pti?*pti:ti,owner,full_owner,ic_dev,true);
     }
     string body;
     {
@@ -252,9 +259,18 @@ public:
       at_end.push_back(ae);
     }
     out+=move_block(body,owner.empty()?"":"  ");
-    {
-      out+="};";
-    }
+    if(pti){
+      auto c=pti->make_code(ic_dev);
+      if(!c.out.cppcode.empty()){
+        //QapDebugMsg("[2025.06.18 13:19:44.748]:\nuse 't_static_visitor' instead of 'usercode inside lexem'.");
+      }
+      if(c.out.cppcode.empty()){
+        out+="};";
+      }else{
+        out+=c.out.cppcode;
+        out+="};";
+      }
+    }else out+="};";
     return out;
   }
   string get_at_end()const{
@@ -268,7 +284,7 @@ public:
     auto name=ex.def->make_code().name;
     auto full_name=(full_owner.empty()?"":full_owner+"::")+name;
     ic_dev.push(name,full_name);
-    out+=make_head_v2(ex,owner,full_owner,ic_dev);
+    out+=make_head_v2(ex,owner,full_owner,ic_dev,false);
     auto c=ex.make_code(ic_dev);
     ic_dev.pop();
     string body;
@@ -307,7 +323,7 @@ public:
     }
     out+=move_block(body,owner.empty()?"":"  ");
     if(!c.out.cppcode.empty()){
-      QapDebugMsg("[2014.02.12 14:14]:\nuse 't_static_visitor' instead of 'usercode inside lexem'.");
+      //QapDebugMsg("[2014.02.12 14:14]:\nuse 't_static_visitor' instead of 'usercode inside lexem'.");
     }
     if(c.out.cppcode.empty())
     {
@@ -318,25 +334,47 @@ public:
     }
     return out;
   }
-  string get_targets_code_orig(const vector<const t_target_item*>&arr,t_ic_dev&ic_dev)
+  string get_targets_code_orig(const vector<const i_target_item*>&arr,t_ic_dev&ic_dev)
   {
     //auto c=ti.make_code(ic_dev);
     vector<string> out;
-    auto&iarr=ic_dev.top.iarr;
-    iarr=get_iarr(arr);
+    auto&topiarr=ic_dev.top.iarr;
+    topiarr=get_iarr(arr);
+    auto iarr=topiarr;
     for(int i=0;i<iarr.size();i++){
       auto&ex=iarr[i];
+      const t_target_item*pti=nullptr;
+      for(auto&p:arr){auto*pt=dynamic_cast<const t_target_item*>(p);if(pt&&pt->def->make_code().name==ex)pti=pt;}
       auto list=get_child_list(arr,ex,ic_dev);
-      string tmp=iclass_to_code(ex,list,"","");
+      string tmp=iclass_to_code(ex,list,"","",pti,ic_dev);
       out.push_back(tmp);
     }
     for(int i=0;i<arr.size();i++){
       auto&ex=arr[i];
-      ic_dev.top.carr.push_back(ex->def->make_code().name);
+      auto*pt=dynamic_cast<const t_target_item*>(ex);
+      if(!pt)continue;
+      auto name=pt->def->make_code().name;
+      if(qap_includes(iarr,name))continue;
+      ic_dev.top.carr.push_back(name);
     }
     for(int i=0;i<arr.size();i++){
       auto&ex=arr[i];
-      string tmp=class_to_code(*ex,"","",ic_dev);
+      auto*pt=dynamic_cast<const t_target_item*>(ex);
+      if(!pt){
+        auto*pd=dynamic_cast<const t_target_decl*>(ex);
+        out.push_back("struct "+pd->name+";");
+        continue;
+      }
+      bool found=qap_includes(iarr,pt->def->make_code().name);
+      if(found)continue;
+      //auto ex_name=pt->def->make_code().name;bool skip=false;
+      //for(auto&p:arr){
+      //  auto*pt=dynamic_cast<const t_target_item*>(p);
+      //  if(!pt)continue;
+      //  if(pt->def->make_code().name==ex_name){skip=true;break;}
+      //}
+      //if(skip)continue;
+      string tmp=class_to_code(*pt,"","",ic_dev);
       out.push_back(tmp);
     }
     return join(out,"\n");
@@ -348,12 +386,15 @@ public:
     //ic_dev.push(name,full_name);
     auto c=ti.make_code(ic_dev);
     vector<string> out;
-    auto&iarr=ic_dev.top.iarr;
-    iarr=get_iarr(c.out.nested);
+    auto&topiarr=ic_dev.top.iarr;
+    topiarr=get_iarr(c.out.nested);
+    auto iarr=topiarr;
     for(int i=0;i<iarr.size();i++){
       auto&ex=iarr[i];
+      //const t_target_item*pti=nullptr;
+      //{if(name==ex)pti=p;}
       auto list=get_child_list(c.out.nested,ex,ic_dev);
-      string tmp=iclass_to_code(ex,list,name,full_name);
+      string tmp=iclass_to_code(ex,list,name,full_name,nullptr,ic_dev);
       out.push_back(tmp);
     }
     for(int i=0;i<c.out.nested.size();i++){
@@ -368,12 +409,14 @@ public:
     //ic_dev.pop();
     return join(out,"\n");
   }
-  static vector<string> get_list_of_types(const vector<const t_target_item*>&arr)
+  static vector<string> get_list_of_types(const vector<const i_target_item*>&arr)
   {
     vector<string> out;
     string line;
     for(int i=0;i<arr.size();i++){
-      string item="F("+arr[i]->def->make_code().name+")";
+      auto*p=dynamic_cast<const t_target_item*>(arr[i]);
+      if(!p)continue;
+      string item="F("+p->def->make_code().name+")";
       if(line.size()+item.size()>=80){
         out.push_back(std::move(line));
         line.clear();
@@ -392,8 +435,14 @@ public:
     if(tar.arr.empty()){return "!target\n\n"+fs.msg;}
     //vector<t_target_item::t_out> arr=tar.make_code({});
     t_ic_dev ic_dev;
-    vector<const t_target_item*> tarr;
-    for(auto&ex:tar.arr)tarr.push_back(&ex);
+    vector<const i_target_item*> tarr;
+    //for(auto&ex:tar.arr)tarr.push_back(&ex);
+    for(auto&ex:tar.arr){
+      //if(auto*p=dynamic_cast<t_target_item*>(ex.get())){
+      //  tarr.push_back(p);
+      //}
+      tarr.push_back(ex.get());
+    }
     auto tc=get_targets_code_orig(tarr,ic_dev);
     auto listoftypes=get_list_of_types(tarr);
     auto ae=get_at_end();

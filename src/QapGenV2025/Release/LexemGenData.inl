@@ -15,13 +15,13 @@ LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
 #undef ADD
 class ^^^I_BASE^^^_visitor{
 public:
-  typedef ^^^OWNER^^^::^^^I_BASE^^^ ^^^I_BASE^^^;
+  ^^^OWNER_TYPEDEF_I_BASE^^^
 public:
   #define ADD(TYPE)virtual void Do(TYPE*p)=0;
   LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
   #undef ADD
 public:
-  #define ADD(U)typedef ^^^OWNER^^^::U U;
+  #define ADD(U)^^^OWNER_TYPEDEF_U^^^//typedef ^^^OWNER^^^::U U;
   LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
   #undef ADD
 public:
@@ -78,11 +78,11 @@ public:
 ----------------------------------------------------------------
 public:
   bool go(i_dev&dev){
-    t_fallback scope(dev,__FUNCTION__);
-    auto&ok=scope.ok;
-    auto&D=scope.mandatory;
-    auto&M=scope.mandatory;
-    auto&O=scope.optional;
+    t_fallback $scope(dev,__FUNCTION__);
+    auto&ok=$scope.ok;
+    auto&D=$scope.mandatory;
+    auto&M=$scope.mandatory;
+    auto&O=$scope.optional;
 ^^^PROCMDS^^^    return ok;
   }
 ----------------------------------------------------------------
