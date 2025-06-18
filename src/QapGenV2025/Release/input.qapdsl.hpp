@@ -734,17 +734,17 @@ t_struct_cmd{
       };
       string varname="g_static_var_"+IToS(i);
       string vardecl="    static const auto "+varname+"="+get_param1()+";\n";
-      out=vardecl+"    "+out+"+="+func.get()+"("+param0+","+varname+");\n    if(!ok)return ok;\n";
+      out=vardecl+"    "+out+"+=dev."+func.get()+"("+param0+","+varname+");\n    if(!ok)return ok;\n";
       return out;
     }
-    out="    "+out+"+="+func.get()+templ_params+"("+join(params_code,",")+");\n    if(!ok)return ok;\n";
+    out="    "+out+"+=dev."+func.get()+templ_params+"("+join(params_code,",")+");\n    if(!ok)return ok;\n";
     return out;
   }
   string make_code_gp(){
     string out=mode?CToS(mode->body):"D";
     vector<string> params_code;
     {auto&arr=params.arr;for(int i=0;i<arr.size();i++)params_code.push_back(arr[i].body);}
-    out="    "+out+"+="+func.get()+templ_params+"("+join(params_code,",")+");\n    if(!ok)return ok;\n";
+    out="    "+out+"+=dev."+func.get()+templ_params+"("+join(params_code,",")+");\n    if(!ok)return ok;\n";
     return out;
   }
 }

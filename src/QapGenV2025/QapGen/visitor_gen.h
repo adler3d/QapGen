@@ -197,6 +197,7 @@ public:
         "  #define F(TYPE)go_for<struct TYPE>();\n",
         list,
         "  #undef F\n",
+        "  main();\n",
         "  return scope.ok;\n"
         "}\n"
       };
