@@ -981,7 +981,7 @@ t_struct_decl_def => i_def{
   }
 }
 
-t_target_item{
+t_target_item=>i_target_item{
   t_sep sep;
   TAutoPtr<i_def> def;
   t_struct_body body;
@@ -1005,8 +1005,20 @@ t_target_item{
   }
 }
 
+t_target_decl=>i_target_item{
+  t_sep sep0;
+  string name;
+  t_sep sep1;
+  {
+    O+=go_auto(sep0);
+    M+=go_str<t_name>(name);
+    O+=go_auto(sep1);
+    M+=go_const(";");
+  }
+}
+
 t_target{
-  vector<t_target_item> arr;
+  vector<TAutoPtr<i_target_item>> arr;
   {
     M+=go_auto(arr);
   }
@@ -1014,7 +1026,10 @@ t_target{
   vector<t_target_item::t_out> make_code(t_ic_dev&icdev){
     vector<t_target_item::t_out> out;
     for(int i=0;i<arr.size();i++){
-      out.push_back(arr[i].make_code(icdev));
+      auto&ex=arr[i];
+      if(auto*p=dynamic_cast<t_target_item*>(ex.get())){
+        out.push_back(p->make_code(icdev));
+      }
     }
     return out;
   }
