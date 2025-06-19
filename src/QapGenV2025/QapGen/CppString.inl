@@ -146,6 +146,12 @@ std::string escape_cpp_string(const std::string& input) {
   }
   return "\""+escaped_string+"\"";
 }
+string drop_empty_lines(const string&s){
+  auto lines=split(s,"\n");
+  vector<string> o;
+  for(auto&ex:lines){if(ex.find_first_not_of(' ')==string::npos)continue;o.push_back(ex);}
+  return join(o,"\n");
+}
 class BinString{
 public:
   string data;

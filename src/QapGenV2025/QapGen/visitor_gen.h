@@ -303,7 +303,7 @@ public:
         out+="};";
       }
     }else out+="};";
-    return out;
+    return drop_empty_lines(out);
   }
   string get_at_end()const{
     vector<string> v;
@@ -318,6 +318,7 @@ public:
     ic_dev.push(name,full_name);
     out+=make_head_v2(ex,owner,full_owner,ic_dev,false);
     auto c=ex.make_code(ic_dev);
+    out=c.sep+"\n"+out;
     ic_dev.pop();
     string body;
     {
@@ -381,10 +382,7 @@ public:
       out+=c.out.cppcode;
       out+="};";
     }
-    auto lines=split(out,"\n");
-    vector<string> o;
-    for(auto&ex:lines){if(ex.find_first_not_of(' ')==string::npos)continue;o.push_back(ex);}
-    return join(o,"\n");
+    return drop_empty_lines(out);
   }
   string get_targets_code_orig(const vector<const i_target_item*>&arr,t_ic_dev&ic_dev)
   {
