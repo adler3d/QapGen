@@ -117,6 +117,35 @@ public:
     return mask.mask[uc];
   }
 };
+std::string escape_cpp_string(const std::string& input) {
+  std::string escaped_string;
+  for (char c : input) {
+    switch (c) {
+      case '"':
+        escaped_string += "\\\"";
+        break;
+      case '\\':
+        escaped_string += "\\\\";
+        break;
+      case '\n':
+        escaped_string += "\\n";
+        break;
+      case '\t':
+        escaped_string += "\\t";
+        break;
+      case '\r':
+        escaped_string += "\\r";
+        break;
+      case '\0':
+        escaped_string += "\\0";
+        break;
+      default:
+        escaped_string += c;
+        break;
+    }
+  }
+  return "\""+escaped_string+"\"";
+}
 class BinString{
 public:
   string data;

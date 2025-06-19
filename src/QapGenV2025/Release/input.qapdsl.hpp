@@ -1,12 +1,21 @@
-i_code{
-  [::]
+t_test20250618_atrr{
+  t_foo{{}[::]}
+  t_foo foo; [skip]
+  t_sep sep; [optimize,inline,"sep",("sep"),[sep],{ sep , sep }]
+  {
+    go_auto(foo);
+    go_auto(sep);
+  }
+}
+
+i_code {
   virtual string make_code()const{QapDebugMsg("no way.");return "";};
 }
 
-t_name_code=>i_code{
+t_name_code => i_code {
   string value;
   {
-    M+=go_str<t_name::t_impl>(value);
+    M += go_str<t_name::t_impl>(value);
   }
   [::]
   string make_code()const{return value;};
@@ -568,11 +577,37 @@ t_type_templ_soft=>i_type_templ{
 
 t_struct_cmd_mode{
   char body;
+  t_sep sep0;
+  t_sep sep1;
   {
     M+=go_any_char(body,"MO");
+    O+=go_auto(sep0);
     M+=go_const("+=");
+    O+=go_auto(sep1);
   }
   [::]
+}
+
+t_sep_value{
+  t_sep sep0;
+  t_value_item value;
+  t_sep sep1;
+  {
+    O+=go_auto(sep0);
+    M+=go_auto(value);
+    O+=go_auto(sep1);
+  }
+}
+
+t_attr{
+  vector<t_sep_value> arr;
+  t_sep sep;
+  {
+    M+=go_const("[");
+    O+=go_vec(arr,",");
+    O+=go_auto(sep);
+    M+=go_const("]");
+  }
 }
 
 t_struct_field{
@@ -583,6 +618,8 @@ t_struct_field{
   t_name name;
   t_sep sep1;
   TAutoPtr<t_value> value;
+  t_sep sep2;
+  TAutoPtr<t_attr> attr;
   {
     O+=go_auto(mode);
     O+=go_auto(sepcm);
@@ -592,6 +629,8 @@ t_struct_field{
     O+=go_auto(value);
     O+=go_auto(sep1);
     M+=go_const(";");
+    O+=go_auto(sep2);
+    O+=go_auto(attr);
   }
   [::]
   string make_code(int id,t_ic_dev&icdev)const{
@@ -613,7 +652,12 @@ t_struct_field{
     out.push_back(name.get());
     out.push_back(mode);
     out.push_back(!value?"$":value->make_code());
-    return "ADDVAR("+join(out,",")+",$)\\\n";
+    string s;
+    //if(attr){
+    //  bool ok=save_obj(*attr.get(),s);
+    //  QapAssert(ok);
+    //}
+    return "ADDVAR("+join(out,",")+","+(s.empty()?"$":s)+")\\\n";
   }
 }
 
@@ -767,7 +811,7 @@ t_struct_cmds{
   t_sep sep;
   {
     M+=go_const("{");
-    M+=go_auto(arr);
+    O+=go_auto(arr);
     O+=go_auto(sep);
     M+=go_const("}");
   }
@@ -815,9 +859,11 @@ t_cpp_code_main => i_cpp_code{
 }
 
 t_cpp_code{
+  t_bayan{{go_const("[:");go_const(":]");}}
+  TAutoPtr<t_bayan> bayan;
   vector<TAutoPtr<i_cpp_code>> arr;
   {
-    M+=go_const("[::]");
+    O+=go_auto(bayan);
     O+=go_auto(arr);
   }
   [::]
@@ -888,8 +934,8 @@ t_struct_body{
     string parent;
     t_out out;
   };
-  template<int>
-  static t_target_item_out weak_make_code(const t_target_item&ref,t_ic_dev&icdev);
+  //template<int>
+  //static t_target_item_out weak_make_code(const t_target_item&ref,t_ic_dev&icdev);
   t_out make_code(t_ic_dev&icdev)const{
     t_out out;
     {
@@ -966,28 +1012,15 @@ t_struct_def => i_def{
   }
 }
 
-t_struct_decl_def => i_def{
-  t_name name;
-  t_sep sep;
-  {
-    M+=go_auto(name);
-    M+=go_auto(sep);
-  }
-  [::]
-  t_out make_code(){
-    t_out out;
-    out.name=name.get();
-    return out;
-  }
-}
-
 t_target_item=>i_target_item{
-  t_sep sep;
+  t_sep sep0;
   TAutoPtr<i_def> def;
+  t_sep sep1;
   t_struct_body body;
   {
-    O+=go_auto(sep);
+    O+=go_auto(sep0);
     M+=go_auto(def);
+    O+=go_auto(sep1);
     M+=go_auto(body);
   }
   [::]

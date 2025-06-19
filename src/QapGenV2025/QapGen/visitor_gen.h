@@ -1,6 +1,37 @@
 //#include "StdAfx.h"
 
 #include "templ_lexer_v02.inl"
+
+struct t_ic_dev{
+  struct t_level{
+    string name,full_name;
+    vector<string> iarr;
+    vector<string> carr;
+  };
+  vector<t_level> arr;
+  t_level top;
+  bool need_tautoptr(const string&name){
+    if(qap_includes(top.iarr,name))return true;
+    if(qap_includes(top.carr,name))return false;
+    for(auto&it=arr.rbegin();it!=arr.rend();it++){
+      if(qap_includes(it->iarr,name))return true;
+      if(qap_includes(it->carr,name))return false;
+    }
+    return false;
+  }
+  void push(const string&name,const string&full_name){arr.push_back(std::move(top));top.name=name;top.full_name=full_name;}
+  void pop(){top=std::move(arr.back());arr.pop_back();}
+};
+template<class TYPE>
+static string vector_make_code(const vector<TYPE>&arr){
+  string out;
+  for(int i=0;i<arr.size();i++){
+    auto&ex=arr[i];
+    out+=ex->make_code();
+  }
+  return out;
+}
+
 #include "meta_lexer.inl"
 
 #include "templ_lexer_v03.inl"
@@ -301,7 +332,7 @@ public:
       inp.add("I_BASE",c.name);
       body+=get_templ("USE_IMPL").eval(inp);
     }
-    if(!c.out.procmds.empty())
+    //if(!c.out.procmds.empty())
     {
       t_templ_sys_v02::t_inp inp;
       inp.add("PROCMDS",c.out.procmds);
@@ -322,6 +353,23 @@ public:
       inp.add("DO_LIST",join(dolist,"\n"));
       body+=get_templ("NESTED_VISITOR").eval(inp);
     }
+    if(bool need_attrs=true){
+      vector<string> oarr;
+      for(auto&f:ex.body.arr){
+        if(!f.body.attr)continue;
+        auto&attrs=f.body.attr.get()->arr;
+        vector<string> ats;
+        for(auto&a:attrs){
+          string mem;
+          bool ok=save_obj(a,mem);
+          QapAssert(ok);
+          ats.push_back(escape_cpp_string(mem));
+        }
+        string scvs="static const vector<string>";
+        oarr.push_back("  "+scvs+"&"+f.body.name.value+"_attributes(){"+scvs+" a={"+join(ats,",")+"};return a;}");
+      }
+      body+=join(oarr,"\n")+"\n";
+    }
     out+=move_block(body,owner.empty()?"":"  ");
     if(!c.out.cppcode.empty()){
       //QapDebugMsg("[2014.02.12 14:14]:\nuse 't_static_visitor' instead of 'usercode inside lexem'.");
@@ -333,7 +381,10 @@ public:
       out+=c.out.cppcode;
       out+="};";
     }
-    return out;
+    auto lines=split(out,"\n");
+    vector<string> o;
+    for(auto&ex:lines){if(ex.find_first_not_of(' ')==string::npos)continue;o.push_back(ex);}
+    return join(o,"\n");
   }
   string get_targets_code_orig(const vector<const i_target_item*>&arr,t_ic_dev&ic_dev)
   {
