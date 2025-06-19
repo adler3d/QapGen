@@ -564,8 +564,10 @@ t_type_templ_soft=>i_type_templ{
     return out;
   };
 }
-
-t_struct_cmd_mode{
+i_struct_cmd_xxxx{
+  virtual char get_mode()const{QapDebugMsg("no way.");return 'D';}
+}
+t_struct_cmd_mode=>i_struct_cmd_xxxx{
   char body;
   t_sep sep0;
   t_sep sep1;
@@ -575,6 +577,7 @@ t_struct_cmd_mode{
     M+=go_const("+=");
     O+=go_auto(sep1);
   }
+  char get_mode()const{return body;}
 }
 
 t_sep_value{
@@ -600,7 +603,7 @@ t_attr{
 }
 
 t_struct_field{
-  TAutoPtr<t_struct_cmd_mode> mode;
+  TAutoPtr<i_struct_cmd_xxxx> mode;
   t_sep sepcm;
   t_type_expr type;
   t_sep sep0;
@@ -725,19 +728,68 @@ t_cmd_param{
     go_str<t_impl>(body);
   }
 }
+t_struct_cmd_anno=>i_struct_cmd_xxxx{
+  string mode;
+  t_sep sep;
+  {
+    go_any_str_from_vec(mode,split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));
+    go_auto(sep);
+  }
+  char get_mode()const{return mode.substr(0,2)=="@m"?'M':(mode[0]=='m'?'M':'D');}
+}
+
+i_struct_cmd_so{
+  virtual char get_mode()const{QapDebugMsg("no way.");return 'D';}
+}
+
+t_struct_cmd_suffix=>i_struct_cmd_so{
+  char value;
+  {
+    go_any_char(value,"?!");
+  }
+  char get_mode()const override{return value=='?'?'O':(value=='!'?'M':'D');}
+}
+
+t_struct_cmd_optional=>i_struct_cmd_so{
+  string value;
+  {
+    go_const("[");
+    go_any_str_from_vec(value,split("optional,mandatory",","));
+    go_const("]");
+  }
+  char get_mode()const override{return value=="optional"?'O':("mandatory"==value?'M':'D');}
+}
+
+t_struct_cmd_opt_v2=>i_struct_cmd_so{
+  t_sep sep;
+  string value;
+  {
+    go_const(";"); mandatory;
+    go_auto(sep) [optional];
+    go_any_str_from_vec(value,split("optional,mandatory",","));
+  }
+  char get_mode()const override{return value=="optional"?'O':("mandatory"==value?'M':'D');}
+}
 
 t_struct_cmd{
-  TAutoPtr<t_struct_cmd_mode> mode;
+  TAutoPtr<i_struct_cmd_xxxx> mode;
   t_name func;
   string templ_params;
   t_cmd_params params;
+  t_sep sep0;
+  TAutoPtr<i_struct_cmd_so> cmdso;
+  t_sep sep1;
   {
     O+=go_auto(mode);
     M+=go_auto(func);
     O+=go_str<TAutoPtr<t_templ_params>>(templ_params);
     M+=go_const("(");
     M+=go_auto(params);
-    M+=go_const(");");
+    M+=go_const(")");
+    O+=go_auto(sep0);
+    O+=go_auto(cmdso);
+    O+=go_auto(sep1);
+    M+=go_const(";");
   }
   static bool find(const string&func){
     static const vector<string> arr=split("go_any_str_from_vec|go_any_arr_char|go_any|go_any_char","|");
@@ -745,7 +797,12 @@ t_struct_cmd{
     return false;
   }
   string make_code(int i){
-    string out=mode?CToS(mode->body):"D";
+    if(mode&&t_struct_cmd_anno::UberCast(mode.get())){
+      int gg=1;
+    }
+    char m=cmdso?cmdso->get_mode():'D';
+    QapAssert(cmdso||mode?bool(cmdso)!=bool(mode):true);
+    string out=CToS(mode?mode->get_mode():m);
     vector<string> params_code;
     {auto&arr=params.arr;for(int i=0;i<arr.size();i++)params_code.push_back(arr[i].body);}
     string func_name=func.get();
@@ -768,7 +825,9 @@ t_struct_cmd{
     return out;
   }
   string make_code_gp(){
-    string out=mode?CToS(mode->body):"D";
+    char m=cmdso?cmdso->get_mode():'D';
+    QapAssert(cmdso||mode?bool(cmdso)!=bool(mode):true);
+    string out=CToS(mode?mode->get_mode():m);
     vector<string> params_code;
     {auto&arr=params.arr;for(int i=0;i<arr.size();i++)params_code.push_back(arr[i].body);}
     out="    "+out+"+=dev."+func.get()+templ_params+"("+join(params_code,",")+");\n    if(!ok)return ok;\n";

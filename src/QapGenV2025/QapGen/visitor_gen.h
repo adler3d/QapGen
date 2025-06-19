@@ -335,8 +335,16 @@ public:
     }
     //if(!c.out.procmds.empty())
     {
+      string s="$";bool fail=true;
+      for(int i=0;fail;i++){
+        fail=false;
+        for(auto&it:ex.body.arr){
+          if(it.body.name.value==s){s="$"+IToS(i);fail=true;break;}
+        }
+      }
       t_templ_sys_v02::t_inp inp;
       inp.add("PROCMDS",c.out.procmds);
+      inp.add("SCOPE",s);
       body+=get_templ("GO_IMPL").eval(inp);
     }
     if(!c.out.nested.empty())if(c.out.nested.size()>2)

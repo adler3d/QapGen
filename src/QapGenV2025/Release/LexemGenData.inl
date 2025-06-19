@@ -78,11 +78,11 @@ public:
 ----------------------------------------------------------------
 public:
   bool go(i_dev&dev){
-    t_fallback $scope(dev,__FUNCTION__);
-    auto&ok=$scope.ok;
-    auto&D=$scope.mandatory;
-    auto&M=$scope.mandatory;
-    auto&O=$scope.optional;
+    t_fallback ^^^SCOPE^^^(dev,__FUNCTION__);
+    auto&ok=^^^SCOPE^^^.ok;
+    auto&D=^^^SCOPE^^^.mandatory;
+    auto&M=^^^SCOPE^^^.mandatory;
+    auto&O=^^^SCOPE^^^.optional;
 ^^^PROCMDS^^^    return ok;
   }
 ----------------------------------------------------------------

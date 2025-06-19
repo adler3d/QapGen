@@ -215,6 +215,7 @@ public:
     QapAssert(ok);
     return ok;
   }
+  bool go_until(string&body,const string&aft){return go_end(body,aft);}
   bool go_any_char(char&body,const string&any){
     if(mem.empty())return false;
     if(pos>=mem.size())return false;
@@ -1118,32 +1119,33 @@ static string two_text_diff(const string&out,const string&data)
 };
 
 template<class TYPE>
-bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
+bool load_obj(TYPE&out,const string&data,int*pmaxpos=nullptr)
 {
-  TYPE tmp;
-  t_load_dev dev(/*Env,*/data);auto&ldev=dev;
-  bool ok=dev.go_auto(tmp);
+  out={};
+  t_load_dev dev(data);auto&ldev=dev;
+  bool ok=dev.go_auto(out);
   if(ok)
   {
-    string out;
-    t_save_dev dev(/*Env,*/out);
-    bool ret=dev.go_auto(tmp);
+    string output;
+    t_save_dev dev(output);
+    bool ret=dev.go_auto(out);
     QapAssert(ok==ret);
-    if(ok&&ret)if(out!=data)
+    if(ok&&ret)if(output!=data)
     {
-      auto d=data;QapAssert(out.size()<=data.size());d.resize(out.size());
-      if(d==out){
+      auto d=data;
+      QapAssert(output.size()<=data.size());
+      d.resize(output.size());
+      if(d==output){
         auto out2=t_error_tool::get_codefrag(data,ldev.maxpos);
         QapDebugMsg(out2);
       }else{
-        QapDebugMsg(two_text_diff(out,data));
+        QapDebugMsg(two_text_diff(output,data));
       }
     }
-  }
+  }else out={};
   if(!ok&&pmaxpos){
     *pmaxpos=Clamp<int>(dev.maxpos+1,1,data.size())-1;
   }
-  out=std::move(tmp);
   return ok;
 }
 
