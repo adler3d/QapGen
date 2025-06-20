@@ -56,6 +56,8 @@ public:
 public:
   virtual bool go_blob(string&body,size_t count){QapDebugMsg("no way.");return false;}
 public:
+  bool go_until(string&body,const string&aft){return go_end(body,aft);}
+public:
   template<size_t SIZE>
   bool go_any_arr_char(array<char,SIZE>&body,const string&any){
     bool ok=false;
@@ -92,6 +94,10 @@ public:
 public:
   template<class TYPE>
   bool go_str_without(string&ref);
+  template<class TYPE>
+  bool go_exclude(string&ref){return go_str_without<TYPE>(ref);}
+  template<class TYPE>
+  bool go_without(string&ref){return go_str_without<TYPE>(ref);}
 public:
   template<class TYPE_TEMP,class TYPE>
   bool go_diff(TYPE&ref);
@@ -101,6 +107,8 @@ public:
     //Adler: I think the old name completely wrong. [about go_sep]
     return old_go_sep<TYPE_TEMP>(ref);
   }
+  template<class TYPE_TEMP,class TYPE>
+  bool go_if_not_then(TYPE&ref){return old_go_sep<TYPE_TEMP>(ref);}
 public:
   template<class TYPE_TEMP,class TYPE>
   bool old_go_sep(TYPE&ref);
@@ -110,6 +118,10 @@ public:
 public:
   template<class TYPE>
   bool go_vec(vector<TYPE>&arr,const string&sep);
+  template<class TYPE>
+  bool go_sep_vec(vector<TYPE>&arr,const string&sep){return go_vec(arr,sep);}
+  template<class TYPE>
+  bool go_vec_sep(vector<TYPE>&arr,const string&sep){return go_vec(arr,sep);}
 public:
   template<class TYPE>
   bool go_bin_oper(vector<TYPE>&arr,const string&oper)
@@ -215,7 +227,6 @@ public:
     QapAssert(ok);
     return ok;
   }
-  bool go_until(string&body,const string&aft){return go_end(body,aft);}
   bool go_any_char(char&body,const string&any){
     if(mem.empty())return false;
     if(pos>=mem.size())return false;

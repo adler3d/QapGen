@@ -8,6 +8,16 @@ t_test20250618_atrr{
   }
 }
 
+t_test20250620_dev{
+  t_foo{{}}
+  string dev=any(";?'->=<`()/\\+")?;
+  t_foo $dev0;
+  {
+    go_auto(dev);
+    go_auto($dev0);
+  }
+}
+
 i_code {
   virtual string make_code()const{QapDebugMsg("no way.");return "";};
 }
@@ -603,14 +613,17 @@ t_attr{
 }
 
 t_struct_field{
+  t_qst{string s;{go_any(s,"*?");}}
   TAutoPtr<i_struct_cmd_xxxx> mode;
   t_sep sepcm;
   t_type_expr type;
   t_sep sep0;
   t_name name;
-  t_sep sep1;
   TAutoPtr<t_value> value;
+  t_sep sep1;
+  TAutoPtr<t_qst> qst;
   t_sep sep2;
+  t_sep sep3;
   TAutoPtr<t_attr> attr;
   {
     O+=go_auto(mode);
@@ -620,8 +633,10 @@ t_struct_field{
     M+=go_auto(name);
     O+=go_auto(value);
     O+=go_auto(sep1);
-    M+=go_const(";");
+    O+=go_auto(qst);
     O+=go_auto(sep2);
+    M+=go_const(";");
+    O+=go_auto(sep3);
     O+=go_auto(attr);
   }
   string make_code(int id,t_ic_dev&icdev)const{
@@ -649,6 +664,12 @@ t_struct_field{
     //  QapAssert(ok);
     //}
     return "ADDVAR("+join(out,",")+","+(s.empty()?"$":s)+")\\\n";
+  }
+  string make_cmd(t_ic_dev&icdev){
+    char m=qst?(qst->s.find('?')==string::npos?'M':'O'):'D';
+    QapAssert(qst||mode?bool(qst)!=bool(mode):true);
+    string out=CToS(!qst?mode->get_mode():m)+"=";
+    return out+="go_";
   }
 }
 

@@ -335,16 +335,30 @@ public:
     }
     //if(!c.out.procmds.empty())
     {
-      string s="$";bool fail=true;
-      for(int i=0;fail;i++){
-        fail=false;
-        for(auto&it:ex.body.arr){
-          if(it.body.name.value==s){s="$"+IToS(i);fail=true;break;}
+      auto f=[&](string&s,const char*pother){
+        bool fail=true;
+        for(int i=0;fail;i++){
+          fail=false;
+          for(auto&it:ex.body.arr){
+            if(it.body.name.value==s){s=pother+IToS(i);fail=true;break;}
+          }
+        }
+      };
+      string s="$";
+      f(s,"$");
+      string dev="dev";
+      f(dev,"$dev");
+      vector<string> pcs=split(c.out.procmds,"\n");
+      if(dev!="dev"){
+        for(auto&ex:pcs){
+          if(ex.find("dev")==string::npos)continue;
+          auto a=split(ex,"dev");a[1]=a[0]+dev+a[1];QapPopFront(a);ex=join(a,"dev");
         }
       }
       t_templ_sys_v02::t_inp inp;
-      inp.add("PROCMDS",c.out.procmds);
+      inp.add("PROCMDS",join(pcs,"\n"));
       inp.add("SCOPE",s);
+      inp.add("DEV",dev);
       body+=get_templ("GO_IMPL").eval(inp);
     }
     if(!c.out.nested.empty())if(c.out.nested.size()>2)
@@ -830,13 +844,13 @@ void test_2014_02_13(IEnvRTTI&Env)
 static void test_2025_06_10(/*IEnvRTTI&Env*/string fn)
 {
   QapClock clock;
-  string content=file_get_contents("LexemGenData.inl");
-  content=StrReplace(content,"\r","");
-  t_templ_sys_v03 templates_v03;
-  load_obj(/*Env,*/templates_v03,content);
+  //string content=file_get_contents("LexemGenData.inl");
+  //content=StrReplace(content,"\r","");
+  //t_templ_sys_v03 templates_v03;
+  //load_obj(/*Env,*/templates_v03,content);
   int gg=1;
   t_templ_sys_v04 v4;
-  v4.load(/*Env,*/templates_v03);
+  //v4.load(/*Env,*/templates_v03);
   gg=1;
   string inp;
   if(fn.empty()){

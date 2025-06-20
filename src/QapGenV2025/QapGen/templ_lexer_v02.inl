@@ -281,7 +281,7 @@ public:
       return "";
     }
   };
-  class t_item_visitor:public t_templ_sys_v02::i_item_visitor{
+  class t_item_visitor:public i_item::i_visitor{
   public:
     class t_dev{
     public:
