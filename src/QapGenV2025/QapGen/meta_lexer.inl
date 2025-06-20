@@ -4908,7 +4908,7 @@ public:
     auto&D=$.mandatory;
     auto&M=$.mandatory;
     auto&O=$.optional;
-    O+=dev.go_auto(bayan);
+    M+=dev.go_auto(bayan);
     if(!ok)return ok;
     O+=dev.go_auto(arr);
     if(!ok)return ok;

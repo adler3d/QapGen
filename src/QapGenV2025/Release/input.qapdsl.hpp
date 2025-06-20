@@ -457,25 +457,25 @@ t_test20250618_atrr{
   }
 }
 
-//t_test20250620_dev{
-//  t_foo{{}}
-//  t_bar{
-//    "more tests"
-//    "test"
-//    t_sep sep;
-//    "another test" /* yes ` ";" */ ;
-//    t_foo foo?;
-//    "nope";
-//  }
-//  string dev=any(";?'->=<`()/\\+")?;
-//  t_foo $dev0;
-//  t_bar $dev1;
-//  /*{
-//    go_any(dev,";?'->=<`()/\\+");
-//    go_auto($dev0);
-//    go_auto($dev1);
-//  }*/
-//}
+t_test20250620_dev{
+  t_foo{{}}
+  t_bar{
+    "more tests"
+    "test"
+    t_sep sep;
+    "another test" /* yes ` ";" */ ;
+    t_foo foo?;
+    "nope";
+  }
+  string dev=any(";?'->=<`()/\\+")?;
+  t_foo $dev0;
+  t_bar $dev1;
+  /*{
+    go_any(dev,";?'->=<`()/\\+");
+    go_auto($dev0);
+    go_auto($dev1);
+  }*/
+}
 
 i_code {
   virtual string make_code()const{QapDebugMsg("no way.");return "";};
@@ -1086,6 +1086,11 @@ t_const_field=>i_struct_field{
   string make_code(int id,t_ic_dev&icdev)const{return {};}
   string make_cmd(t_ic_dev&icdev)const{return "M+=go_const("+value+");";}
 }
+t_struct_field_value{
+  "="
+  t_sep sep?;
+  t_i_expr_impl::i_expr expr;
+}
 t_struct_field=>i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}
   TAutoPtr<i_struct_cmd_xxxx> mode;
@@ -1093,7 +1098,7 @@ t_struct_field=>i_struct_field{
   TAutoPtr<t_i_expr_impl::t_type_expr> type;
   t_sep sep0;
   t_name name;
-  TAutoPtr<t_i_expr_impl::i_expr> value;
+  TAutoPtr<t_struct_field_value> value;
   t_sep sep1;
   TAutoPtr<t_qst> qst;
   t_sep sep2;
