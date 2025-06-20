@@ -10,6 +10,7 @@ struct t_ic_dev{
   };
   vector<t_level> arr;
   t_level top;
+  //vector<int> ip;
   bool need_tautoptr(const string&name){
     if(qap_includes(top.iarr,name))return true;
     if(qap_includes(top.carr,name))return false;
@@ -19,8 +20,18 @@ struct t_ic_dev{
     }
     return false;
   }
-  void push(const string&name,const string&full_name){arr.push_back(std::move(top));top.name=name;top.full_name=full_name;}
-  void pop(){top=std::move(arr.back());arr.pop_back();}
+  void push(const string&name,const string&full_name){
+    //if(top.name==name&&full_name==top.name){ip.push_back(1);return;}
+    arr.push_back(std::move(top));
+    top.name=name;top.full_name=full_name;
+    //ip.push_back(0);
+  }
+  void pop(){
+    //if(ip.size()&&ip.back()){ip.pop_back();return;}
+    top=std::move(arr.back());
+    arr.pop_back();
+    //ip.pop_back();
+  }
 };
 template<class TYPE>
 static string vector_make_code(const vector<TYPE>&arr){
@@ -38,7 +49,7 @@ static string vector_make_code(const vector<TYPE>&arr){
 
 extern void UberInfoBox(const string&caption,const string&text);
 
-class t_templ_sys_v04{
+struct t_templ_sys_v04/*:t_meta_lexer*/{
 public:
   class t_scope{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_scope)
@@ -290,7 +301,6 @@ public:
       t_at_end ae={full_owner,name,qist};
       at_end.push_back(ae);
     }
-    out+=move_block(body,owner.empty()?"":"  ");
     if(pti){
       auto c=pti->make_code(ic_dev);
       if(!c.out.cppcode.empty()){
@@ -299,10 +309,11 @@ public:
       if(c.out.cppcode.empty()){
         out+="};";
       }else{
-        out+=c.out.cppcode;
-        out+="};";
+        body+=c.out.cppcode;
+        body+="};";
       }
-    }else out+="};";
+    }else body+="};";
+    out+=move_block(body,owner.empty()?"":"  ");
     return drop_empty_lines(out);
   }
   string get_at_end()const{
@@ -412,18 +423,17 @@ public:
       }
       body+=join(oarr,"\n")+"\n";
     }
-    string ds=owner.empty()?"":"  ";
-    out+=move_block(body,ds);
     if(!c.out.cppcode.empty()){
       //QapDebugMsg("[2014.02.12 14:14]:\nuse 't_static_visitor' instead of 'usercode inside lexem'.");
     }
     if(c.out.cppcode.empty())
     {
-      out+=ds+"};";
+      body+="};";
     }else{
-      out+=c.out.cppcode;
-      out+=ds+"};";
+      body+=c.out.cppcode;
+      body+="};";
     }
+    out+=move_block(body,owner.empty()?"":"  ");
     return drop_empty_lines(out);
   }
   string get_targets_code_orig(const vector<const i_target_item*>&arr,t_ic_dev&ic_dev)

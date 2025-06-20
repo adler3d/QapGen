@@ -1,3 +1,452 @@
+t_i_expr_impl{
+
+t_lev03{
+  string oper;
+  TAutoPtr<i_expr> expr;
+  {
+    O+=go_any_str_from_vec(oper,split("+,-,!,~",","));
+    M+=go_auto(expr);
+  }
+}
+t_lev05{
+  t_oper{
+    string value;
+    {
+      go_any_str_from_vec(value,split("*,/,%",","));
+    }
+  }
+  t_item{
+    t_oper oper;
+    t_lev03 expr;
+    {
+      go_auto(oper);
+      go_auto(expr);
+    }
+  }
+  t_lev03 expr;
+  vector<t_item> arr;
+  {
+    M+=go_auto(expr);
+    O+=go_auto(arr);
+  }
+}
+t_lev06{
+  t_oper{
+    string value;
+    {
+      go_any_str_from_vec(value,split("+,-",","));
+    }
+  }
+  t_item{
+    t_oper oper;
+    t_lev05 expr;
+    {
+      go_auto(oper);
+      go_auto(expr);
+    }
+  }
+  t_lev05 expr;
+  vector<t_item> arr;
+  {
+    M+=go_auto(expr);
+    O+=go_auto(arr);
+  }
+}
+t_lev07{
+  t_oper{
+    string value;
+    {
+      go_any_str_from_vec(value,split("<<,>>",","));
+    }
+  }
+  t_item{
+    t_oper oper;
+    t_lev06 expr;
+    {
+      go_auto(oper);
+      go_auto(expr);
+    }
+  }
+  t_lev06 expr;
+  vector<t_item> arr;
+  {
+    M+=go_auto(expr);
+    O+=go_auto(arr);
+  }
+}
+t_lev08{
+  t_oper{
+    string value;
+    {
+      go_any_str_from_vec(value,split("<,<=,>,>=",","));
+    }
+  }
+  t_item{
+    t_oper oper;
+    t_lev07 expr;
+    {
+      go_auto(oper);
+      go_auto(expr);
+    }
+  }
+  t_lev07 expr;
+  vector<t_item> arr;
+  {
+    M+=go_auto(expr);
+    O+=go_auto(arr);
+  }
+}
+t_lev09{
+  t_oper{
+    string value;
+    {
+      go_any_str_from_vec(value,split("==,!=",","));
+    }
+  }
+  t_item{
+    t_oper oper;
+    t_lev08 expr;
+    {
+      go_auto(oper);
+      go_auto(expr);
+    }
+  }
+  t_lev08 expr;
+  vector<t_item> arr;
+  {
+    M+=go_auto(expr);
+    O+=go_auto(arr);
+  }
+}
+t_lev10{
+  t_oper{
+    string value;
+    {
+      go_any_str_from_vec(value,split("&",","));
+    }
+  }
+  t_item{
+    t_oper oper;
+    t_lev09 expr;
+    {
+      go_auto(oper);
+      go_auto(expr);
+    }
+  }
+  t_lev09 expr;
+  vector<t_item> arr;
+  {
+    M+=go_auto(expr);
+    O+=go_auto(arr);
+  }
+}
+t_lev11{
+  t_oper{
+    string value;
+    {
+      go_any_str_from_vec(value,split("^",","));
+    }
+  }
+  t_item{
+    t_oper oper;
+    t_lev10 expr;
+    {
+      go_auto(oper);
+      go_auto(expr);
+    }
+  }
+  t_lev10 expr;
+  vector<t_item> arr;
+  {
+    M+=go_auto(expr);
+    O+=go_auto(arr);
+  }
+}
+t_lev12{
+  t_oper{
+    string value;
+    {
+      go_any_str_from_vec(value,split("|",","));
+    }
+  }
+  t_item{
+    t_oper oper;
+    t_lev11 expr;
+    {
+      go_auto(oper);
+      go_auto(expr);
+    }
+  }
+  t_lev11 expr;
+  vector<t_item> arr;
+  {
+    M+=go_auto(expr);
+    O+=go_auto(arr);
+  }
+}
+t_lev13{
+  t_oper{
+    string value;
+    {
+      go_any_str_from_vec(value,split("&&",","));
+    }
+  }
+  t_item{
+    t_oper oper;
+    t_lev12 expr;
+    {
+      go_auto(oper);
+      go_auto(expr);
+    }
+  }
+  t_lev12 expr;
+  vector<t_item> arr;
+  {
+    M+=go_auto(expr);
+    O+=go_auto(arr);
+  }
+}
+t_lev14{
+  t_oper{
+    string value;
+    {
+      go_any_str_from_vec(value,split("||",","));
+    }
+  }
+  t_item{
+    t_oper oper;
+    t_lev13 expr;
+    {
+      go_auto(oper);
+      go_auto(expr);
+    }
+  }
+  t_lev13 expr;
+  vector<t_item> arr;
+  {
+    M+=go_auto(expr);
+    O+=go_auto(arr);
+  }
+}
+t_string{
+  string value;
+  {
+    M+=go_const("\"");
+    O+=go_str<vector<TAutoPtr<i_str_item>>>(value);
+    M+=go_const("\"");
+  }
+}
+t_int_expr=>i_expr{
+  t_zero=>i_val{
+    {
+      go_const("0");
+    }
+  }
+  t_num=>i_val{
+    char first;
+    string num;
+    {
+      M+=go_any_char(first,gen_dips("19"));
+      O+=go_any(num,gen_dips("09"));
+    }
+  }
+  string value;
+  {
+    go_str<TAutoPtr<i_val>>(value);
+  }
+}
+t_type_expr{
+  t_params{
+    string type;
+    t_int_expr count;
+    {
+      go_const("{");
+      go_str<t_type_expr>(type);
+      go_const(",");
+      go_auto(count);
+      go_const("}");
+    }
+  }
+  t_elem{
+    t_name name;
+    TAutoPtr<t_params> params;
+    {
+      M+=go_auto(name);
+      O+=go_auto(params);
+    }
+  }
+  t_item{
+    t_sep sep0;
+    t_sep sep1;
+    t_elem body;
+    {
+      O+=go_auto(sep0);
+      M+=go_const("::");
+      O+=go_auto(sep1);
+      M+=go_auto(body);
+    }
+  }
+  t_elem first;
+  vector<t_item> arr;
+  {
+    M+=go_auto(first);
+    O+=go_auto(arr);
+  }
+}
+t_char_expr=>i_expr{
+  t_char_item body;
+  {
+    go_auto(body);
+  }
+}
+t_bool_expr=>i_expr{
+  string value;
+  {
+    go_any_str_from_vec(value,split("true,false",","));
+  }
+}
+t_string_expr=>i_expr{
+  t_string body;
+  {
+    go_auto(body);
+  }
+}
+t_real_expr=>i_expr{
+  t_frac{
+    string arr;
+    {
+      go_const(".");
+      go_any(arr,gen_dips("09"));
+    }
+  }
+  t_sign{
+    char sign;
+    {
+      go_any_char(sign,"-+");
+    }
+  }
+  t_exp{
+    char e;
+    TAutoPtr<t_sign> sign;
+    string arr;
+    {
+      M+=go_any_char(e,"eE");
+      O+=go_auto(sign);
+      M+=go_any(arr,gen_dips("09"));
+    }
+  }
+  t_num=>i_val{
+    char first;
+    string num;
+    {
+      M+=go_any_char(first,gen_dips("19"));
+      O+=go_any(num,gen_dips("09"));
+    }
+  }
+  t_zero=>i_val{
+    {
+      go_const("0");
+    }
+  }
+  t_impl{
+    TAutoPtr<i_val> val;
+    TAutoPtr<t_frac> frac;
+    TAutoPtr<t_exp> exp;
+    {
+      M+=go_auto(val);
+      M+=go_auto(frac);
+      O+=go_auto(exp);
+    }
+  }
+  string value;
+  {
+    M+=go_str<t_impl>(value);
+  }
+}
+t_var_expr=>i_expr{
+  t_elem{
+    t_sep sep0;
+    t_lev14 expr;
+    t_sep sep1;
+    {
+      M+=go_const("[");
+      O+=go_auto(sep0);
+      M+=go_auto(expr);
+      O+=go_auto(sep1);
+      M+=go_const("]");
+    }
+  }
+  t_item{
+    t_name name;
+    vector<t_elem> arr;
+    {
+      M+=go_auto(name);
+      O+=go_auto(arr);
+    }
+  }
+  t_impl{
+    vector<t_item> arr;
+    {
+      go_vec(arr,".");
+    }
+  }
+  t_impl body;
+  {
+    go_auto(body);
+  }
+}
+t_block_expr=>i_expr{
+  t_lev14 body;
+  {
+    go_const("(");
+    go_auto(body);
+    go_const(")");
+  }
+}
+t_call_param{
+  t_sep sep0;
+  t_lev14 body;
+  t_sep sep1;
+  {
+    O+=go_auto(sep0);
+    M+=go_auto(body);
+    O+=go_auto(sep1);
+  }
+}
+t_call_params{
+  t_sep sep;
+  vector<t_call_param> arr;
+  {
+    M+=go_const("(");
+    O+=go_auto(sep);
+    O+=go_vec(arr,",");
+    M+=go_const(")");
+  }
+}
+t_call_expr=>i_expr{
+  t_dot=>i_call{
+    t_var_expr::t_impl body;
+    {
+      go_auto(body);
+    }
+  }
+  t_colon=>i_call{
+    vector<t_name> arr;
+    {
+      go_bin_oper(arr,"::");
+    }
+  }
+  TAutoPtr<i_call> call;
+  t_sep sep;
+  t_call_params params;
+  {
+    M+=go_auto(call);
+    O+=go_auto(sep);
+    M+=go_auto(params);
+  }
+}
+}
+
 t_test20250618_atrr{
   t_foo{{}[::]}
   t_foo foo; [skip]
@@ -8,25 +457,25 @@ t_test20250618_atrr{
   }
 }
 
-t_test20250620_dev{
-  t_foo{{}}
-  t_bar{
-    "more tests"
-    "test"
-    t_sep sep;
-    "another test" /* yes ` ";" */ ;
-    t_foo foo?;
-    "nope";
-  }
-  string dev=any(";?'->=<`()/\\+")?;
-  t_foo $dev0;
-  t_bar $dev1;
-  /*{
-    go_any(dev,";?'->=<`()/\\+");
-    go_auto($dev0);
-    go_auto($dev1);
-  }*/
-}
+//t_test20250620_dev{
+//  t_foo{{}}
+//  t_bar{
+//    "more tests"
+//    "test"
+//    t_sep sep;
+//    "another test" /* yes ` ";" */ ;
+//    t_foo foo?;
+//    "nope";
+//  }
+//  string dev=any(";?'->=<`()/\\+")?;
+//  t_foo $dev0;
+//  t_bar $dev1;
+//  /*{
+//    go_any(dev,";?'->=<`()/\\+");
+//    go_auto($dev0);
+//    go_auto($dev1);
+//  }*/
+//}
 
 i_code {
   virtual string make_code()const{QapDebugMsg("no way.");return "";};
@@ -490,7 +939,7 @@ t_scope_type_item{
   }
 }
 
-t_type_expr{
+t_type_expr2{
   TAutoPtr<t_type_scope> scope;
   t_type_item_type body;
   {
@@ -641,10 +1090,10 @@ t_struct_field=>i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}
   TAutoPtr<i_struct_cmd_xxxx> mode;
   t_sep sepcm;
-  t_type_expr type;
+  TAutoPtr<t_i_expr_impl::t_type_expr> type;
   t_sep sep0;
   t_name name;
-  TAutoPtr<t_value> value;
+  TAutoPtr<t_i_expr_impl::i_expr> value;
   t_sep sep1;
   TAutoPtr<t_qst> qst;
   t_sep sep2;
@@ -668,7 +1117,9 @@ t_struct_field=>i_struct_field{
     vector<string> out;
     string mode="DEF";//value?"SET":"DEF";
     //out.push_back(IToS(id));
-    auto t=type.make_code();
+    string type_mem;
+    QapAssert(type&&save_obj(*type.get(),type_mem));
+    auto t=type_mem;
     if(bool vec_algo=true){
       auto a=split(t,"<");
       if(a.size()==2&&a[0]=="vector"){
@@ -683,7 +1134,9 @@ t_struct_field=>i_struct_field{
     out.push_back(t);
     out.push_back(name.get());
     out.push_back(mode);
-    out.push_back(!value?"$":value->make_code());
+    string value_mem;
+    if(value)QapAssert(save_obj(*value.get(),value_mem));
+    out.push_back(!value?"$":value_mem);
     string s;
     //if(attr){
     //  bool ok=save_obj(*attr.get(),s);
@@ -695,7 +1148,8 @@ t_struct_field=>i_struct_field{
     char m=qst?(qst->s.find('?')==string::npos?'M':'O'):'D';
     QapAssert(qst||mode?bool(qst)!=bool(mode):true);
     string out=CToS(!qst?(mode?mode->get_mode():'D'):m)+"=";
-    string go=value?value->body:"auto";
+    string s;if(value)QapAssert(save_obj(*value.get(),s));
+    string go=value?s:"auto";
     return out+="go_"+go;
   }
 }
