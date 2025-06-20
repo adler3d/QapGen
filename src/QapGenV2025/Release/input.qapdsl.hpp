@@ -10,12 +10,22 @@ t_test20250618_atrr{
 
 t_test20250620_dev{
   t_foo{{}}
+  t_bar{
+    "more tests"
+    "test"
+    t_sep sep;
+    "another test" /* yes ` ";" */ ;
+    t_foo foo?;
+    "nope";
+  }
   string dev=any(";?'->=<`()/\\+")?;
   t_foo $dev0;
-  {
-    go_auto(dev);
+  t_bar $dev1;
+  /*{
+    go_any(dev,";?'->=<`()/\\+");
     go_auto($dev0);
-  }
+    go_auto($dev1);
+  }*/
 }
 
 i_code {
@@ -611,8 +621,23 @@ t_attr{
     M+=go_const("]");
   }
 }
-
-t_struct_field{
+i_struct_field{
+  virtual string make_code(int id,t_ic_dev&icdev)const{QapNoWay();return {};}
+  virtual string make_cmd(t_ic_dev&icdev)const{QapNoWay();return {};}
+}
+t_const_field=>i_struct_field{
+  string value;
+  t_sep sep;
+  TAutoPtr<t_semicolon> sc;
+  {
+    M+=go_str<t_str_item>(value);
+    O+=go_auto(sep);
+    O+=go_auto(sc);
+  }
+  string make_code(int id,t_ic_dev&icdev)const{return {};}
+  string make_cmd(t_ic_dev&icdev)const{return "M+=go_const("+value+");";}
+}
+t_struct_field=>i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}
   TAutoPtr<i_struct_cmd_xxxx> mode;
   t_sep sepcm;
@@ -641,7 +666,7 @@ t_struct_field{
   }
   string make_code(int id,t_ic_dev&icdev)const{
     vector<string> out;
-    string mode=value?"SET":"DEF";
+    string mode="DEF";//value?"SET":"DEF";
     //out.push_back(IToS(id));
     auto t=type.make_code();
     if(bool vec_algo=true){
@@ -654,6 +679,7 @@ t_struct_field{
       }
     }
     if(icdev.need_tautoptr(t))t="TAutoPtr<"+t+">";
+    if(bool need_vec=qst&&qst->s.find('*')!=string::npos)t="vector<"+t+">";
     out.push_back(t);
     out.push_back(name.get());
     out.push_back(mode);
@@ -665,23 +691,24 @@ t_struct_field{
     //}
     return "ADDVAR("+join(out,",")+","+(s.empty()?"$":s)+")\\\n";
   }
-  string make_cmd(t_ic_dev&icdev){
+  string make_cmd(t_ic_dev&icdev)const{
     char m=qst?(qst->s.find('?')==string::npos?'M':'O'):'D';
     QapAssert(qst||mode?bool(qst)!=bool(mode):true);
-    string out=CToS(!qst?mode->get_mode():m)+"=";
-    return out+="go_";
+    string out=CToS(!qst?(mode?mode->get_mode():'D'):m)+"=";
+    string go=value?value->body:"auto";
+    return out+="go_"+go;
   }
 }
 
 t_sep_struct_field{
   t_sep sep;
-  t_struct_field body;
+  i_struct_field body;
   {
     O+=go_auto(sep);
     M+=go_auto(body);
   }
   string make_code(int id,t_ic_dev&icdev)const{
-    return body.make_code(id,icdev);
+    return body->make_code(id,icdev);
   }
 }
 

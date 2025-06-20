@@ -118,7 +118,7 @@ public:
     for(int i=0;i<arr.size();i++){
       auto*p=dynamic_cast<const t_target_item*>(arr[i]);
       if(!p)continue;
-      auto ex=p->make_code(ic_dev);
+      auto ex=p->def->make_code();
       if(ex.parent==parent){
         out.push_back(ex.name);
       }
@@ -335,12 +335,17 @@ public:
     }
     //if(!c.out.procmds.empty())
     {
+      auto&arr=ex.body.arr;
+      bool value_found=false;
+      for(auto&it:arr)if(auto*p=t_struct_field::UberCast(it.body.get())){
+        if(p->value){value_found=true;break;}
+      }
       auto f=[&](string&s,const char*pother){
         bool fail=true;
         for(int i=0;fail;i++){
           fail=false;
-          for(auto&it:ex.body.arr){
-            if(it.body.name.value==s){s=pother+IToS(i);fail=true;break;}
+          for(auto&it:arr){
+            if(auto*p=t_struct_field::UberCast(it.body.get()))if(p->name.value==s){s=pother+IToS(i);fail=true;break;}
           }
         }
       };
@@ -348,7 +353,20 @@ public:
       f(s,"$");
       string dev="dev";
       f(dev,"$dev");
-      vector<string> pcs=split(c.out.procmds,"\n");
+      auto*pcmds=&c.out.procmds;
+      if(value_found){
+        QapAssert(c.out.procmds.empty());
+        static string buf;pcmds=&buf;buf={};
+        vector<string> cmds;
+        for(auto&it:arr)if(auto*p=t_struct_field::UberCast(it.body.get())){
+          auto cmd=p->make_cmd(ic_dev);
+          t_struct_cmd sc;
+          QapAssert(load_obj(sc,cmd));
+          cmds.push_back(sc.make_code(0));
+        }
+        buf=join(cmds,"\n");
+      }
+      vector<string> pcs=split(*pcmds,"\n");
       if(dev!="dev"){
         for(auto&ex:pcs){
           if(ex.find("dev")==string::npos)continue;
@@ -379,8 +397,9 @@ public:
     if(bool need_attrs=true){
       vector<string> oarr;
       for(auto&f:ex.body.arr){
-        if(!f.body.attr)continue;
-        auto&attrs=f.body.attr.get()->arr;
+        auto*p=t_struct_field::UberCast(f.body.get());
+        if(!p||!p->attr)continue;
+        auto&attrs=p->attr.get()->arr;
         vector<string> ats;
         for(auto&a:attrs){
           string mem;
@@ -389,20 +408,21 @@ public:
           ats.push_back(escape_cpp_string(mem));
         }
         string scvs="static const vector<string>";
-        oarr.push_back("  "+scvs+"&"+f.body.name.value+"_attributes(){"+scvs+" a={"+join(ats,",")+"};return a;}");
+        oarr.push_back("  "+scvs+"&"+p->name.value+"_attributes(){"+scvs+" a={"+join(ats,",")+"};return a;}");
       }
       body+=join(oarr,"\n")+"\n";
     }
-    out+=move_block(body,owner.empty()?"":"  ");
+    string ds=owner.empty()?"":"  ";
+    out+=move_block(body,ds);
     if(!c.out.cppcode.empty()){
       //QapDebugMsg("[2014.02.12 14:14]:\nuse 't_static_visitor' instead of 'usercode inside lexem'.");
     }
     if(c.out.cppcode.empty())
     {
-      out+="};";
+      out+=ds+"};";
     }else{
       out+=c.out.cppcode;
-      out+="};";
+      out+=ds+"};";
     }
     return drop_empty_lines(out);
   }
@@ -455,7 +475,7 @@ public:
   {
     auto name=ti.def->make_code().name;
     auto full_name=(full_owner.empty()?"":full_owner+"::")+name;
-    //ic_dev.push(name,full_name);
+    ic_dev.push(name,full_name);
     auto c=ti.make_code(ic_dev);
     vector<string> out;
     auto&topiarr=ic_dev.top.iarr;
@@ -478,7 +498,7 @@ public:
       string tmp=class_to_code(*ex,name,full_name,ic_dev);
       out.push_back(tmp);
     }
-    //ic_dev.pop();
+    ic_dev.pop();
     return join(out,"\n");
   }
   static vector<string> get_list_of_types(const vector<const i_target_item*>&arr)

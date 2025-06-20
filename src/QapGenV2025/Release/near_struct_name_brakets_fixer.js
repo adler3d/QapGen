@@ -8,11 +8,12 @@ function fixSpacesBeforeParen(input) {
 }
 
 // Пример использования: читаем файл или строку
-const input = fs.readFileSync('t_line_lexer.qapdsl.hpp', 'utf8'); // или вставь строку напрямую
+const fn="t_asmcpplike_lexers.qapdsl_v2.hpp";
+const input = fs.readFileSync(fn, 'utf8'); // или вставь строку напрямую
 
 const output = fixSpacesBeforeParen(input);
 
-fs.writeFileSync('t_line_lexer.qapdsl.hpp', output, 'utf8');
+fs.writeFileSync(fn, output, 'utf8');
 
 // Для теста можно просто вывести результат
 // console.log(output);
