@@ -933,7 +933,6 @@ static bool go_for_item(
     void*
   >::type=nullptr
 ){
-  TYPE tmp;
   t_fallback scope(dev,__FUNCTION__);
   bool&ok=scope.ok;
   if(dev.isSave()){
@@ -945,6 +944,7 @@ static bool go_for_item(
     ok=p->go(dev);
     return ok;
   }
+  TYPE tmp;
   ok=tmp.go(dev);
   if(!ok)return ok;
   ref=std::make_unique<TYPE>(std::move(tmp));
@@ -967,6 +967,45 @@ static bool go_for_item(
 ){
   return go_for_poly(dev,ref);
 }
+
+// Проверка, что TYPE наследует от Base (интерфейса)
+template <typename TYPE, typename Base>
+struct is_derived_from {
+  static constexpr bool value = std::is_base_of<Base, TYPE>::value && !std::is_same<Base, TYPE>::value;
+};
+
+/*
+я проверил можно ли убрать хоть какие-то из эти проверок и оказалось что ни одну нельзя.
+как "perplexity.ai" догадался что они все нужны не очень понятно. мне вот нифига не очевидно.
+можешь рассказать свои мысли по этому поводу.
+*/
+template<class TYPE>
+static typename std::enable_if<
+  std::is_polymorphic<TYPE>::value&&
+  detail_has_poly_impl<TYPE>::value&&(
+    is_derived_from<TYPE,typename TYPE::ParentClass>::value
+  ),
+  bool
+>::type
+go_for_item(i_dev&dev,TAutoPtr<TYPE>&ref){
+  t_fallback scope(dev,__FUNCTION__);
+  bool&ok=scope.ok;
+  if(dev.isSave()){
+    if(!ref){
+      ok=false;
+      return ok;
+    }
+    auto*p=ref.get();
+    ok=p->go(dev);// все полиморфные ноды имеют метод go(и ещё в добавок поддерживаю go_for_poly базовым классом) иначе зачем они нужны?
+    return ok;
+  }
+  TYPE tmp;// создаём на стэке, т.к при загрузке основной сценарий - это скорее всего фэйл(таки надо это проверить). нам не нужно дополнительные выделения памяти.
+  ok=tmp.go(dev);
+  if(!ok)return ok;
+  ref=std::make_unique<TYPE>(std::move(tmp)); // редкий сценарий, можно и память выделить.
+  return ok;
+}
+
 
 namespace detail{
   template<class TYPE>struct isTAutoPtr{static const bool value=false;};

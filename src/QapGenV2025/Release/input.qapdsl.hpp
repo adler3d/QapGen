@@ -1087,16 +1087,21 @@ t_const_field=>i_struct_field{
   string make_cmd(t_ic_dev&icdev)const{return "M+=go_const("+value+");";}
 }
 t_struct_field_value{
-  t_sep sep0?;
-  "="
-  t_sep sep1?;
-  TAutoPtr<t_i_expr_impl::i_expr> expr;
+  t_sep sep0;
+  t_sep sep1;
+  TAutoPtr<t_i_expr_impl::t_call_expr> expr;
+  {
+    O+=go_auto(sep0);
+    M+=go_const("=");
+    O+=go_auto(sep1);
+    M+=go_auto(expr);
+  }
 }
 t_struct_field=>i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}
   TAutoPtr<i_struct_cmd_xxxx> mode;
   t_sep sepcm;
-  TAutoPtr<t_struct_field_value> type;
+  TAutoPtr<t_i_expr_impl::i_expr> type;
   t_sep sep0;
   t_name name;
   TAutoPtr<t_struct_field_value> value;
@@ -1156,7 +1161,7 @@ t_struct_field=>i_struct_field{
     string out=CToS(!qst?(mode?mode->get_mode():'D'):m)+"+=";
     string call,params;
     if(value){
-      auto*pce=t_i_expr_impl::t_call_expr::UberCast(value->expr.get());
+      auto*pce=value->expr.get();//t_i_expr_impl::t_call_expr::UberCast(value->expr.get());
       QapAssert(pce);
       QapAssert(save_obj(pce->call,call));
       QapAssert(save_obj(pce->params.arr,params));
@@ -1410,11 +1415,28 @@ t_cpp_code_main => i_cpp_code{
 
 t_cpp_code{
   t_bayan{{go_const("[::]");}}
-  TAutoPtr<t_bayan> bayan;
-  vector<TAutoPtr<i_cpp_code>> arr;
+  t_fields=>i_major{t_sep_struct_field f;{go_auto(f);}}
+  t_cmds=>i_major{t_sep_struct_cmds c;{go_auto(c);}}
+  t_eater{vector<TAutoPtr<i_cpp_code>> arr;{go_auto(arr);}}
+  t_with_bayan=>i_bayan{
+    t_bayan bayan;
+    t_eater eater;
+    {
+      go_auto(bayan);
+      go_auto(eater);
+    }
+  }
+  t_without_bayan=>i_bayan{
+    t_eater eater;
+    t_with_bayan wb; 
+    {
+      M+=go_diff<TAutoPtr<i_major>>(eater);
+      O+=go_auto(wb);
+    }
+  }
+  TAutoPtr<i_bayan> bayan;
   {
     O+=go_auto(bayan);
-    O+=go_auto(arr);
   }
   static string align(const string&source){
     auto arr=split(source,"\n");
@@ -1441,34 +1463,74 @@ t_cpp_code{
     }
     return join(out,"\n");
   }
+  //struct t_visitor:/*i_cpp_code::i_visitor,i_major::i_visitor,*/i_bayan::i_visitor{
+  //  const t_cpp_code&c;
+  //  t_visitor(const t_cpp_code&c):c(c){}
+  //  void Do(t_cpp_code*p){}
+  //  void Do(t_fields*p){}
+  //  void Do(t_cmds*p){}
+  //  void Do(t_eater*p){}
+  //  void Do(t_with_bayan*p){}
+  //  void Do(t_without_bayan*p){p->wb.bayan}
+  //};
   string make_code()const{
     string out;
-    for(int i=0;i<arr.size();i++){
-      auto&ex=arr[i];
-      QapAssert(ex);
-      auto*p=ex.get();
-      out+=p->make_code();
-    }
+    //t_visitor v{*this};
+    //bayan->Use(v);
+    //for(int i=0;i<arr.size();i++){
+    //  auto&ex=arr[i];
+    //  QapAssert(ex);
+    //  auto*p=ex.get();
+    //  out+=p->make_code();
+    //}
+    if(bayan)save_obj(*bayan.get(),out);
     return out;
   }
 }
 // test
 
+t_fields_cmds_cppcode{
+  t_cmds=>i_case{
+    TAutoPtr<t_sep_struct_cmds> cmds;
+    TAutoPtr<t_cpp_code::t_eater> cppcode;
+    {
+      M+=go_auto(cmds);
+      O+=go_auto(cppcode);
+    }
+  }
+  t_cmds_fields_and=>i_case{
+    vector<t_sep_struct_field> arr;
+    TAutoPtr<t_sep_struct_cmds> cmds;
+    TAutoPtr<t_cpp_code::t_eater> cppcode;
+    {
+      M+=go_auto(arr);
+      O+=go_auto(cmds);
+      O+=go_auto(cppcode);
+    }
+  }
+  t_cppcode=>i_case{
+    TAutoPtr<t_cpp_code> cppcode;
+    {
+      go_auto(cppcode);
+    }
+  }
+  TAutoPtr<i_case> c;
+  {
+    O+=go_auto(c);
+  }
+}
+
 t_struct_body{
   vector<t_target_item> nested;
   t_sep sep0;
-  vector<t_sep_struct_field> arr;
-  TAutoPtr<t_sep_struct_cmds> cmds;
+  t_fields_cmds_cppcode fcc;
   t_sep sep1;
-  TAutoPtr<t_cpp_code> cppcode;
   {
     M+=go_const("{");
     O+=go_auto(nested);
     O+=go_auto(sep0);
-    O+=go_auto(arr);
-    O+=go_auto(cmds);
+    M+=go_auto(fcc);
     O+=go_auto(sep1);
-    O+=go_auto(cppcode);
     M+=go_const("}");
   }
   struct t_target_item_out;

@@ -345,8 +345,12 @@ public:
       body+=get_templ("USE_IMPL").eval(inp);
     }
     //if(!c.out.procmds.empty())
+    if(ex.body.fcc.c)for(int iter=1;iter;iter--)
     {
-      auto&arr=ex.body.arr;
+      t_struct_body::t_cmd_fs_getter v;
+      ex.body.fcc.c->Use(v);
+      if(!v.pfs)break;
+      auto&arr=*v.pfs;
       bool value_or_qst_found=false;
       for(auto&it:arr)if(auto*p=t_struct_field::UberCast(it.body.get())){
         if(p->value||p->qst){value_or_qst_found=true;break;}
@@ -405,9 +409,13 @@ public:
       inp.add("DO_LIST",join(dolist,"\n"));
       body+=get_templ("NESTED_VISITOR").eval(inp);
     }
-    if(bool need_attrs=true){
+    if(bool need_attrs=true)for(int iter=1;iter;iter--){
       vector<string> oarr;
-      for(auto&f:ex.body.arr){
+      t_struct_body::t_cmd_fs_getter v;
+      ex.body.fcc.c->Use(v);
+      if(!v.pfs)break;
+      auto&arr=*v.pfs;
+      for(auto&f:arr){
         auto*p=t_struct_field::UberCast(f.body.get());
         if(!p||!p->attr)continue;
         auto&attrs=p->attr.get()->arr;
