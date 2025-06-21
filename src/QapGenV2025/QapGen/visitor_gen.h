@@ -347,9 +347,9 @@ public:
     //if(!c.out.procmds.empty())
     {
       auto&arr=ex.body.arr;
-      bool value_found=false;
+      bool value_or_qst_found=false;
       for(auto&it:arr)if(auto*p=t_struct_field::UberCast(it.body.get())){
-        if(p->value){value_found=true;break;}
+        if(p->value||p->qst){value_or_qst_found=true;break;}
       }
       auto f=[&](string&s,const char*pother){
         bool fail=true;
@@ -365,7 +365,7 @@ public:
       string dev="dev";
       f(dev,"$dev");
       auto*pcmds=&c.out.procmds;
-      if(value_found){
+      if(value_or_qst_found){
         QapAssert(c.out.procmds.empty());
         static string buf;pcmds=&buf;buf={};
         vector<string> cmds;

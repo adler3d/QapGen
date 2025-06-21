@@ -457,25 +457,25 @@ t_test20250618_atrr{
   }
 }
 
-t_test20250620_dev{
-  t_foo{{}}
-  t_bar{
-    "more tests"
-    "test"
-    t_sep sep;
-    "another test" /* yes ` ";" */ ;
-    t_foo foo?;
-    "nope";
-  }
-  string dev=any(";?'->=<`()/\\+")?;
-  t_foo $dev0;
-  t_bar $dev1;
-  /*{
-    go_any(dev,";?'->=<`()/\\+");
-    go_auto($dev0);
-    go_auto($dev1);
-  }*/
-}
+//t_test20250620_dev{
+//  t_foo{{}}
+//  t_bar{
+//    "more tests"
+//    "test"
+//    t_sep sep;
+//    "another test" /* yes ` ";" */ ;
+//    t_foo foo?;
+//    "nope";
+//  }
+//  string dev=any(";?'->=<`()/\\+")?;
+//  t_foo $dev0;
+//  t_bar $dev1;
+//  /*{
+//    go_any(dev,";?'->=<`()/\\+");
+//    go_auto($dev0);
+//    go_auto($dev1);
+//  }*/
+//}
 
 i_code {
   virtual string make_code()const{QapDebugMsg("no way.");return "";};
@@ -1087,15 +1087,16 @@ t_const_field=>i_struct_field{
   string make_cmd(t_ic_dev&icdev)const{return "M+=go_const("+value+");";}
 }
 t_struct_field_value{
+  t_sep sep0?;
   "="
-  t_sep sep?;
-  t_i_expr_impl::i_expr expr;
+  t_sep sep1?;
+  TAutoPtr<t_i_expr_impl::i_expr> expr;
 }
 t_struct_field=>i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}
   TAutoPtr<i_struct_cmd_xxxx> mode;
   t_sep sepcm;
-  TAutoPtr<t_i_expr_impl::t_type_expr> type;
+  TAutoPtr<t_struct_field_value> type;
   t_sep sep0;
   t_name name;
   TAutoPtr<t_struct_field_value> value;
@@ -1137,7 +1138,7 @@ t_struct_field=>i_struct_field{
     if(icdev.need_tautoptr(t))t="TAutoPtr<"+t+">";
     if(bool need_vec=qst&&qst->s.find('*')!=string::npos)t="vector<"+t+">";
     out.push_back(t);
-    out.push_back(name.get());
+    out.push_back(name.value);
     out.push_back(mode);
     string value_mem;
     if(value)QapAssert(save_obj(*value.get(),value_mem));
@@ -1152,9 +1153,15 @@ t_struct_field=>i_struct_field{
   string make_cmd(t_ic_dev&icdev)const{
     char m=qst?(qst->s.find('?')==string::npos?'M':'O'):'D';
     QapAssert(qst||mode?bool(qst)!=bool(mode):true);
-    string out=CToS(!qst?(mode?mode->get_mode():'D'):m)+"=";
-    string s;if(value)QapAssert(save_obj(*value.get(),s));
-    string go=value?s:"auto";
+    string out=CToS(!qst?(mode?mode->get_mode():'D'):m)+"+=";
+    string call,params;
+    if(value){
+      auto*pce=t_i_expr_impl::t_call_expr::UberCast(value->expr.get());
+      QapAssert(pce);
+      QapAssert(save_obj(pce->call,call));
+      QapAssert(save_obj(pce->params.arr,params));
+    }
+    string go=value?call+"("+name.value+string(params.size()?","+params:"")+");":"auto("+name.value+");";
     return out+="go_"+go;
   }
 }
