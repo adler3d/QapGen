@@ -1,4 +1,4 @@
-t_i_expr_impl{
+t_cppcore{
 
 t_lev03{
   string oper;
@@ -364,7 +364,7 @@ t_real_expr=>i_expr{
   }
 }
 t_var_expr=>i_expr{
-  t_elem{
+  t_sb_expr{
     t_sep sep0;
     t_lev14 expr;
     t_sep sep1;
@@ -376,23 +376,42 @@ t_var_expr=>i_expr{
       M+=go_const("]");
     }
   }
-  t_item{
-    t_name name;
-    vector<t_elem> arr;
+  t_template_part{
+    t_sep sep0;
+    TAutoPtr<i_expr> expr;
+    t_sep sep1;
     {
+      M+=go_const("<");
+      O+=go_auto(sep0);
+      M+=go_auto(expr);
+      O+=go_auto(sep1);
+      M+=go_const(">");
+    }
+  }
+  t_item{
+    t_sep sep0;
+    t_name name;
+    t_sep sep1;
+    vector<t_sb_expr> arr;
+    {
+      M+=go_const(".");
+      O+=go_auto(sep0);
       M+=go_auto(name);
+      O+=go_auto(sep1);
       O+=go_auto(arr);
     }
   }
-  t_impl{
-    vector<t_item> arr;
-    {
-      go_vec(arr,".");
-    }
-  }
-  t_impl body;
+  t_name name;
+  t_sep sep0;
+  TAutoPtr<t_template_part> tp;
+  t_sep sep1;
+  vector<t_item> arr;
   {
-    go_auto(body);
+    M+=go_auto(name);
+    O+=go_auto(sep0);
+    O+=go_auto(tp);
+    O+=go_auto(sep1);
+    O+=go_auto(arr);
   }
 }
 t_block_expr=>i_expr{
@@ -425,7 +444,7 @@ t_call_params{
 }
 t_call_expr=>i_expr{
   t_dot=>i_call{
-    t_var_expr::t_impl body;
+    t_var_expr body;
     {
       go_auto(body);
     }
@@ -1089,7 +1108,7 @@ t_const_field=>i_struct_field{
 t_struct_field_value{
   t_sep sep0;
   t_sep sep1;
-  TAutoPtr<t_i_expr_impl::t_call_expr> expr;
+  TAutoPtr<t_cppcore::t_call_expr> expr;
   {
     O+=go_auto(sep0);
     M+=go_const("=");
@@ -1101,7 +1120,7 @@ t_struct_field=>i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}
   TAutoPtr<i_struct_cmd_xxxx> mode;
   t_sep sepcm;
-  TAutoPtr<t_i_expr_impl::i_expr> type;
+  TAutoPtr<t_cppcore::i_expr> type;
   t_sep sep0;
   t_name name;
   TAutoPtr<t_struct_field_value> value;
@@ -1161,7 +1180,7 @@ t_struct_field=>i_struct_field{
     string out=CToS(!qst?(mode?mode->get_mode():'D'):m)+"+=";
     string call,params;
     if(value){
-      auto*pce=value->expr.get();//t_i_expr_impl::t_call_expr::UberCast(value->expr.get());
+      auto*pce=value->expr.get();//t_cppcore::t_call_expr::UberCast(value->expr.get());
       QapAssert(pce);
       QapAssert(save_obj(pce->call,call));
       QapAssert(save_obj(pce->params.arr,params));
