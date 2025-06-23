@@ -1428,7 +1428,7 @@ t_cpp_code{
   }
   t_without_bayan=>i_bayan{
     t_eater eater;
-    t_with_bayan wb; 
+    TAutoPtr<t_with_bayan> wb; 
     {
       M+=go_diff<TAutoPtr<i_major>>(eater);
       O+=go_auto(wb);
@@ -1490,15 +1490,7 @@ t_cpp_code{
 // test
 
 t_fields_cmds_cppcode{
-  t_cmds=>i_case{
-    TAutoPtr<t_sep_struct_cmds> cmds;
-    TAutoPtr<t_cpp_code::t_eater> cppcode;
-    {
-      M+=go_auto(cmds);
-      O+=go_auto(cppcode);
-    }
-  }
-  t_cmds_fields_and=>i_case{
+  t_true_fcc{
     vector<t_sep_struct_field> arr;
     TAutoPtr<t_sep_struct_cmds> cmds;
     TAutoPtr<t_cpp_code::t_eater> cppcode;
@@ -1508,14 +1500,26 @@ t_fields_cmds_cppcode{
       O+=go_auto(cppcode);
     }
   }
-  t_cppcode=>i_case{
+  t_cmds{
+    TAutoPtr<t_sep_struct_cmds> cmds;
+    TAutoPtr<t_cpp_code::t_eater> cppcode;
+    {
+      M+=go_auto(cmds);
+      O+=go_auto(cppcode);
+    }
+  }
+  t_cppcode{
     TAutoPtr<t_cpp_code> cppcode;
     {
       go_auto(cppcode);
     }
   }
-  TAutoPtr<i_case> c;
+  TAutoPtr<t_true_fcc> tfcc;
+  TAutoPtr<t_cmds> cmds;
+  TAutoPtr<t_cppcode> c;
   {
+    O+=go_auto(tfcc);
+    O+=go_auto(cmds);
     O+=go_auto(c);
   }
 }
@@ -1523,7 +1527,7 @@ t_fields_cmds_cppcode{
 t_struct_body{
   vector<t_target_item> nested;
   t_sep sep0;
-  t_fields_cmds_cppcode fcc;
+  TAutoPtr<t_fields_cmds_cppcode> fcc;
   t_sep sep1;
   {
     M+=go_const("{");
@@ -1548,6 +1552,23 @@ t_struct_body{
   };
   //template<int>
   //static t_target_item_out weak_make_code(const t_target_item&ref,t_ic_dev&icdev);
+  struct t_visitor:t_fields_cmds_cppcode{
+    t_sep_struct_cmds*pcmds{};
+    vector<t_sep_struct_field>*pfs{};
+    string c;
+    virtual void Do(t_cmds*p){pcmds=p->cmds.get();if(p->cppcode)save_obj(p->cppcode,c);}
+    virtual void Do(t_true_fcc*p){pfs=&p->arr;pcmds=p->cmds?p->cmds.get():nullptr;if(p->cppcode)save_obj(p->cppcode,c);}
+    virtual void Do(t_cppcode*p){if(p->cppcode)save_obj(p->cppcode,c);}
+    void Do(const t_fields_cmds_cppcode& fcc) {
+      if(fcc.tfcc)Do(fcc.tfcc.get());
+      if(fcc.cmds)Do(fcc.cmds.get());
+      if(fcc.c)Do(fcc.c.get());
+    }
+  };
+  struct t_cmd_fs_getter:t_visitor{
+    using t_visitor::Do;
+    void Do(t_cppcode*p)override{}
+  };
   t_out make_code(t_ic_dev&icdev)const{
     t_out out;
     {
@@ -1559,17 +1580,20 @@ t_struct_body{
         to=&ex;
       }
     }
-    {
+    if(!fcc)return out;
+    t_visitor v;
+    v.Do(*fcc.get());
+    if(v.pfs){
+      auto&arr=*v.pfs;
       vector<string> tmp;
       for(int i=0;i<arr.size();i++){
         tmp.push_back(arr[i].make_code(i,icdev));
       }
       out.provars=join(tmp,"");
     }
-    if(cmds)
+    if(v.pcmds)
     {
-      auto*pCmds=cmds.get();
-      auto&arr=pCmds->body.arr;
+      auto&arr=v.pcmds->body.arr;
       vector<string> tmp;
       for(int i=0;i<arr.size();i++){
         tmp.push_back(arr[i].make_code(i));
@@ -1577,7 +1601,7 @@ t_struct_body{
       out.procmds=join(tmp,"");
     }
     string sep=sep0.value.empty()?sep1.value:sep0.value;
-    out.cppcode=cppcode?sep+cppcode->make_code()+"\n":"";
+    out.cppcode=v.c.size()?sep+v.c+"\n":"";
     return out;
   }
 }

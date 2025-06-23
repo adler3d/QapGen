@@ -479,6 +479,8 @@ public:
     if(ptr->ok)return;
     mem.resize(ptr->pos);
   }
+  //void setPos(int pos){this->pos=pos;}
+  void getPos(int&pos){pos=mem.size();}
 public:
   //IEnvRTTI&getEnv(){return Env;}
 public:

@@ -1,4 +1,4 @@
-// 2298.617300 ms
+// 2377.837600 ms
 //===>>===i_code_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -5153,7 +5153,7 @@ struct t_cpp_code{
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
   ADDVAR(t_bayan,bayan,DEF,$,$)\
-  ADDVAR(t_eater,eater,DEF,$,$)\
+  ADDVAR(TAutoPtr<t_eater>,eater,DEF,$,$)\
   ADDEND()
   //=====+>>>>>t_with_bayan
   #include "QapGenStructNoTemplate.inl"
@@ -5283,128 +5283,18 @@ public:
 };
 // test
 struct t_fields_cmds_cppcode{
-  //===>>===i_case_visitor
-  #define DEF_PRO_BLANK()
-  #define LIST(ADDBEG,ADD,ADDEND)\
-  ADDBEG()\
-    ADD(t_cmds)\
-    ADD(t_cmds_fields_and)\
-    ADD(t_cppcode)\
-  ADDEND()
-  class i_case;
-  #define ADD(TYPE)class TYPE;
-  LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
-  #undef ADD
-  class i_case_visitor{
-  public:
-    typedef t_fields_cmds_cppcode::i_case i_case;
-  public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
-    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
-    #undef ADD
-  public:
-    #define ADD(U)typedef t_fields_cmds_cppcode::U U;//typedef t_fields_cmds_cppcode::U U;
-    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
-    #undef ADD
-  public:
-    #ifdef QAP_FAST_UBERCAST
-    template<class TYPE,class Visitor>
-    struct Is:public Visitor{
-      TYPE*ptr{};
-    public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
-      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
-      #undef ADD
-    };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
-    template<class TYPE>
-    static TYPE*UberCast(i_case*p){
-      if(!p)return nullptr;Is<TYPE,i_case_visitor> IS;p->Use(IS);return IS.ptr;
-    }
-    #else
-    template<class TYPE>
-    static TYPE*UberCast(i_case*p){return dynamic_cast<TYPE*>(p);}
-    #endif
-  };
-  #undef LIST
-  #undef DEF_PRO_BLANK
-  //===<<===i_case_visitor
-  struct i_case{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_case)OWNER(t_fields_cmds_cppcode)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDEND()
-  //=====+>>>>>i_case
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====i_case
-  public:
-    typedef i_case_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
-  public:
-    virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
-    struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
-    {
-      #include "QapLexPolyBeg.inl"
-      bool load();/*
-      {
-        F(t_cmds);
-        F(t_cmds_fields_and);
-        F(t_cppcode);
-        (void)count;(void)first_id;(void)out_arr;(void)this;
-        main();
-        return scope.ok;
-      }*/
-      #include "QapLexPolyEndNoTemplate.inl"
-    };
-  };
-  struct t_cmds:public i_case{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_cmds)PARENT(i_case)OWNER(t_fields_cmds_cppcode)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDVAR(TAutoPtr<t_sep_struct_cmds>,cmds,DEF,$,$)\
-  ADDVAR(TAutoPtr<t_cpp_code::t_eater>,cppcode,DEF,$,$)\
-  ADDEND()
-  //=====+>>>>>t_cmds
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_cmds
-  public:
-    void Use(i_visitor&A){A.Do(this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
-  public:
-    bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
-      auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_auto(cmds);
-      if(!ok)return ok;
-      O+=dev.go_auto(cppcode);
-      if(!ok)return ok;
-      return ok;
-    }
-  };
-  struct t_cmds_fields_and:public i_case{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_cmds_fields_and)PARENT(i_case)OWNER(t_fields_cmds_cppcode)
+public:
+  struct t_true_fcc{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_true_fcc)OWNER(t_fields_cmds_cppcode)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
   ADDVAR(vector<t_sep_struct_field>,arr,DEF,$,$)\
   ADDVAR(TAutoPtr<t_sep_struct_cmds>,cmds,DEF,$,$)\
   ADDVAR(TAutoPtr<t_cpp_code::t_eater>,cppcode,DEF,$,$)\
   ADDEND()
-  //=====+>>>>>t_cmds_fields_and
+  //=====+>>>>>t_true_fcc
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_cmds_fields_and
-  public:
-    void Use(i_visitor&A){A.Do(this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  //<<<<<+=====t_true_fcc
   public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
@@ -5421,8 +5311,32 @@ struct t_fields_cmds_cppcode{
       return ok;
     }
   };
-  struct t_cppcode:public i_case{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_cppcode)PARENT(i_case)OWNER(t_fields_cmds_cppcode)
+  struct t_cmds{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_cmds)OWNER(t_fields_cmds_cppcode)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(TAutoPtr<t_sep_struct_cmds>,cmds,DEF,$,$)\
+  ADDVAR(TAutoPtr<t_cpp_code::t_eater>,cppcode,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_cmds
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_cmds
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      auto&D=$.mandatory;
+      auto&M=$.mandatory;
+      auto&O=$.optional;
+      M+=dev.go_auto(cmds);
+      if(!ok)return ok;
+      O+=dev.go_auto(cppcode);
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_cppcode{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_cppcode)OWNER(t_fields_cmds_cppcode)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
   ADDVAR(TAutoPtr<t_cpp_code>,cppcode,DEF,$,$)\
@@ -5430,9 +5344,6 @@ struct t_fields_cmds_cppcode{
   //=====+>>>>>t_cppcode
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_cppcode
-  public:
-    void Use(i_visitor&A){A.Do(this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
@@ -5448,14 +5359,16 @@ struct t_fields_cmds_cppcode{
 public:
 #define DEF_PRO_NESTED(F)\
   /*<DEF_PRO_NESTED>*/\
-  F(t_cmds           )\
-  F(t_cmds_fields_and)\
-  F(t_cppcode        )\
+  F(t_true_fcc)\
+  F(t_cmds    )\
+  F(t_cppcode )\
   /*</DEF_PRO_NESTED>*/
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_fields_cmds_cppcode)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
 ADDBEG()\
-ADDVAR(TAutoPtr<i_case>,c,DEF,$,$)\
+ADDVAR(TAutoPtr<t_true_fcc>,tfcc,DEF,$,$)\
+ADDVAR(TAutoPtr<t_cmds>,cmds,DEF,$,$)\
+ADDVAR(TAutoPtr<t_cppcode>,c,DEF,$,$)\
 ADDEND()
 //=====+>>>>>t_fields_cmds_cppcode
 #include "QapGenStructNoTemplate.inl"
@@ -5467,6 +5380,10 @@ public:
     auto&D=$.mandatory;
     auto&M=$.mandatory;
     auto&O=$.optional;
+    O+=dev.go_auto(tfcc);
+    if(!ok)return ok;
+    O+=dev.go_auto(cmds);
+    if(!ok)return ok;
     O+=dev.go_auto(c);
     if(!ok)return ok;
     return ok;
@@ -5479,7 +5396,7 @@ struct t_struct_body{
 ADDBEG()\
 ADDVAR(vector<t_target_item>,nested,DEF,$,$)\
 ADDVAR(t_sep,sep0,DEF,$,$)\
-ADDVAR(t_fields_cmds_cppcode,fcc,DEF,$,$)\
+ADDVAR(TAutoPtr<t_fields_cmds_cppcode>,fcc,DEF,$,$)\
 ADDVAR(t_sep,sep1,DEF,$,$)\
 ADDEND()
 //=====+>>>>>t_struct_body
@@ -5521,20 +5438,22 @@ public:
   };
   //template<int>
   //static t_target_item_out weak_make_code(const t_target_item&ref,t_ic_dev&icdev);
-  struct t_visitor:t_fields_cmds_cppcode::i_case::i_visitor{
+  struct t_visitor:t_fields_cmds_cppcode{
     t_sep_struct_cmds*pcmds{};
     vector<t_sep_struct_field>*pfs{};
     string c;
-    void Do(t_cmds*p){pcmds=p->cmds.get();if(p->cppcode)save_obj(p->cppcode,c);}
-    void Do(t_cmds_fields_and*p){pfs=&p->arr;pcmds=p->cmds?p->cmds.get():nullptr;if(p->cppcode)save_obj(p->cppcode,c);}
-    void Do(t_cppcode*p){if(p->cppcode)save_obj(p->cppcode,c);}
+    virtual void Do(t_cmds*p){pcmds=p->cmds.get();if(p->cppcode)save_obj(p->cppcode,c);}
+    virtual void Do(t_true_fcc*p){pfs=&p->arr;pcmds=p->cmds?p->cmds.get():nullptr;if(p->cppcode)save_obj(p->cppcode,c);}
+    virtual void Do(t_cppcode*p){if(p->cppcode)save_obj(p->cppcode,c);}
+    void Do(const t_fields_cmds_cppcode&fcc) {
+      if(fcc.tfcc)Do(fcc.tfcc.get());
+      if(fcc.cmds)Do(fcc.cmds.get());
+      if(fcc.c)Do(fcc.c.get());
+    }
   };
-  struct t_cmd_fs_getter:t_fields_cmds_cppcode::i_case::i_visitor{
-    t_sep_struct_cmds*pcmds{};
-    vector<t_sep_struct_field>*pfs{};
-    void Do(t_cmds*p){pcmds=p->cmds.get();}
-    void Do(t_cmds_fields_and*p){pfs=&p->arr;pcmds=p->cmds?p->cmds.get():nullptr;}
-    void Do(t_cppcode*p){}
+  struct t_cmd_fs_getter:t_visitor{
+    using t_visitor::Do;
+    void Do(t_cppcode*p)override{}
   };
   t_out make_code(t_ic_dev&icdev)const{
     t_out out;
@@ -5547,10 +5466,9 @@ public:
         to=&ex;
       }
     }
-    if(!fcc.c)return out;
-    auto*pc=fcc.c.get();
+    if(!fcc)return out;
     t_visitor v;
-    pc->Use(v);
+    v.Do(*fcc.get());
     if(v.pfs){
       auto&arr=*v.pfs;
       vector<string> tmp;
@@ -5941,17 +5859,6 @@ bool t_cpp_code::i_bayan::t_poly_impl::load()
   #define F(TYPE)go_for<struct TYPE>();
   F(t_with_bayan);
   F(t_without_bayan);
-  #undef F
-  main();
-  return scope.ok;
-}
-
-bool t_fields_cmds_cppcode::i_case::t_poly_impl::load()
-{
-  #define F(TYPE)go_for<struct TYPE>();
-  F(t_cmds);
-  F(t_cmds_fields_and);
-  F(t_cppcode);
   #undef F
   main();
   return scope.ok;
@@ -6628,98 +6535,126 @@ bi%2b%2b%29%7b%0a%20%20%20%20%20%20auto%20m%3dget%28arr%5bi%5d%29%3b%0a%20%20%20
 %20%20%20auto%20s%3dm%3c0%3farr%5bi%5d%3a%22%20%20%22%2barr%5bi%5d%2esubstr%28co
 unt%29%3b%0a%20%20%20%20%20%20if%28m%3d%3d%2d1%29s%2eclear%28%29%3b%0a%20%20%20%
 20%20%20out%2epush%5fback%28s%29%3b%0a%20%20%20%20%7d%0a%20%20%20%20return%20joi
-n%28out%2c%22%5cn%22%29%3b%0a%20%20%7d%0a%20%20string%20make%5fcode%28%29const%7
-b%0a%20%20%20%20string%20out%3b%0a%20%20%20%20for%28int%20i%3d0%3bi%3carr%2esize
-%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20auto%26ex%3darr%5bi%5d%3b%0a%20%20%20
-%20%20%20QapAssert%28ex%29%3b%0a%20%20%20%20%20%20auto%2ap%3dex%2eget%28%29%3b%0
-a%20%20%20%20%20%20out%2b%3dp%2d%3emake%5fcode%28%29%3b%0a%20%20%20%20%7d%0a%20%
-20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%2f%2f%20test%0a%0at%5ffields%5fcmds
-%5fcppcode%7b%0a%20%20t%5fcmds%3d%3ei%5fcase%7b%0a%20%20%20%20TAutoPtr%3ct%5fsep
-%5fstruct%5fcmds%3e%20cmds%3b%0a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3a%3at%5fe
-ater%3e%20cppcode%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28cm
-ds%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28cppcode%29%3b%0a%20%20%20%20%7d%
-0a%20%20%7d%0a%20%20t%5fcmds%5ffields%5fand%3d%3ei%5fcase%7b%0a%20%20%20%20vecto
-r%3ct%5fsep%5fstruct%5ffield%3e%20arr%3b%0a%20%20%20%20TAutoPtr%3ct%5fsep%5fstru
-ct%5fcmds%3e%20cmds%3b%0a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3a%3at%5feater%3e
-%20cppcode%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28arr%29%3b
-%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28cmds%29%3b%0a%20%20%20%20%20%20O%2b%3dgo
-%5fauto%28cppcode%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fcppcode%3d%3ei
-%5fcase%7b%0a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3e%20cppcode%3b%0a%20%20%20%2
-0%7b%0a%20%20%20%20%20%20go%5fauto%28cppcode%29%3b%0a%20%20%20%20%7d%0a%20%20%7d
-%0a%20%20TAutoPtr%3ci%5fcase%3e%20c%3b%0a%20%20%7b%0a%20%20%20%20O%2b%3dgo%5faut
-o%28c%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fstruct%5fbody%7b%0a%20%20vector%3ct%5ftar
-get%5fitem%3e%20nested%3b%0a%20%20t%5fsep%20sep0%3b%0a%20%20t%5ffields%5fcmds%5f
-cppcode%20fcc%3b%0a%20%20t%5fsep%20sep1%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5
-fconst%28%22%7b%22%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28nested%29%3b%0a%20%20%
-20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20M%2b%3dgo%5fauto%28fcc%29%3b%0a
-%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20M%2b%3dgo%5fconst%28%22%
-7d%22%29%3b%0a%20%20%7d%0a%20%20struct%20t%5ftarget%5fitem%5fout%3b%0a%20%20stru
-ct%20t%5fout%7b%0a%20%20%20%20vector%3cconst%20t%5ftarget%5fitem%2a%3e%20nested%
-3b%0a%20%20%20%20string%20provars%3b%0a%20%20%20%20string%20procmds%3b%0a%20%20%
-20%20string%20cppcode%3b%0a%20%20%7d%3b%0a%20%20struct%20t%5ftarget%5fitem%5fout
-%7b%0a%20%20%20%20string%20sep%3b%0a%20%20%20%20string%20name%3b%0a%20%20%20%20s
-tring%20parent%3b%0a%20%20%20%20t%5fout%20out%3b%0a%20%20%7d%3b%0a%20%20%2f%2fte
-mplate%3cint%3e%0a%20%20%2f%2fstatic%20t%5ftarget%5fitem%5fout%20weak%5fmake%5fc
-ode%28const%20t%5ftarget%5fitem%26ref%2ct%5fic%5fdev%26icdev%29%3b%0a%20%20t%5fo
-ut%20make%5fcode%28t%5fic%5fdev%26icdev%29const%7b%0a%20%20%20%20t%5fout%20out%3
-b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20auto%26arr%3dnested%3b%0a%20%20%20%20%20
-%20out%2enested%2eresize%28arr%2esize%28%29%29%3b%0a%20%20%20%20%20%20for%28int%
-20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20%20%20auto%26
-ex%3darr%5bi%5d%3b%0a%20%20%20%20%20%20%20%20auto%26to%3dout%2enested%5bi%5d%3b%
-0a%20%20%20%20%20%20%20%20to%3d%26ex%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7
-d%0a%20%20%20%20%7b%0a%20%20%20%20%20%20vector%3cstring%3e%20tmp%3b%0a%20%20%20%
-20%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%
-20%20%20%20tmp%2epush%5fback%28arr%5bi%5d%2emake%5fcode%28i%2cicdev%29%29%3b%0a%
-20%20%20%20%20%20%7d%0a%20%20%20%20%20%20out%2eprovars%3djoin%28tmp%2c%22%22%29%
-3b%0a%20%20%20%20%7d%0a%20%20%20%20if%28cmds%29%0a%20%20%20%20%7b%0a%20%20%20%20
-%20%20auto%2apCmds%3dcmds%2eget%28%29%3b%0a%20%20%20%20%20%20auto%26arr%3dpCmds%
-2d%3ebody%2earr%3b%0a%20%20%20%20%20%20vector%3cstring%3e%20tmp%3b%0a%20%20%20%2
-0%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%2
-0%20%20%20tmp%2epush%5fback%28arr%5bi%5d%2emake%5fcode%28i%29%29%3b%0a%20%20%20%
-20%20%20%7d%0a%20%20%20%20%20%20out%2eprocmds%3djoin%28tmp%2c%22%22%29%3b%0a%20%
-20%20%20%7d%0a%20%20%20%20string%20sep%3dsep0%2evalue%2eempty%28%29%3fsep1%2eval
-ue%3asep0%2evalue%3b%0a%20%20%20%20out%2ecppcode%3dcppcode%3fsep%2bcppcode%2d%3e
-make%5fcode%28%29%2b%22%5cn%22%3a%22%22%3b%0a%20%20%20%20return%20out%3b%0a%20%2
-0%7d%0a%7d%0ai%5fdef%7b%0a%20%20struct%20t%5fout%7b%0a%20%20%20%20string%20name%
-3b%0a%20%20%20%20string%20parent%3b%0a%20%20%7d%3b%0a%20%20virtual%20t%5fout%20m
-ake%5fcode%28%29%7bQapDebugMsg%28%22no%20way%2e%22%29%3breturn%20%2a%28t%5fout%2
-a%29nullptr%3b%7d%0a%7d%0a%0at%5fclass%5fdef%20%3d%3e%20i%5fdef%7b%0a%20%20t%5fn
-ame%20name%3b%0a%20%20t%5fsep%20sep0%3b%0a%20%20string%20arrow%5for%5fcolon%3b%0
-a%20%20t%5fsep%20sep1%3b%0a%20%20t%5fname%20parent%3b%0a%20%20%7b%0a%20%20%20%20
-M%2b%3dgo%5fauto%28name%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%
-20%20%20M%2b%3dgo%5fany%5fstr%5ffrom%5fvec%28arrow%5for%5fcolon%2csplit%28%22%3d
-%3e%2c%3a%22%2c%22%2c%22%29%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a
-%20%20%20%20M%2b%3dgo%5fauto%28parent%29%3b%0a%20%20%7d%0a%20%20t%5fout%20make%5
-fcode%28%29%7b%0a%20%20%20%20t%5fout%20out%3b%0a%20%20%20%20out%2ename%3dname%2e
-get%28%29%3b%0a%20%20%20%20out%2eparent%3dparent%2eget%28%29%3b%0a%20%20%20%20re
-turn%20out%3b%0a%20%20%7d%0a%7d%0a%0at%5fstruct%5fdef%20%3d%3e%20i%5fdef%7b%0a%2
-0%20t%5fname%20name%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fauto%28name%29%3b%0
-a%20%20%7d%0a%20%20t%5fout%20make%5fcode%28%29%7b%0a%20%20%20%20t%5fout%20out%3b
-%0a%20%20%20%20out%2ename%3dname%2eget%28%29%3b%0a%20%20%20%20return%20out%3b%0a
-%20%20%7d%0a%7d%0a%0at%5ftarget%5fitem%3d%3ei%5ftarget%5fitem%7b%0a%20%20t%5fsep
-%20sep0%3b%0a%20%20TAutoPtr%3ci%5fdef%3e%20def%3b%0a%20%20t%5fsep%20sep1%3b%0a%2
-0%20t%5fstruct%5fbody%20body%3b%0a%20%20%7b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep
-0%29%3b%0a%20%20%20%20M%2b%3dgo%5fauto%28def%29%3b%0a%20%20%20%20O%2b%3dgo%5faut
-o%28sep1%29%3b%0a%20%20%20%20M%2b%3dgo%5fauto%28body%29%3b%0a%20%20%7d%0a%20%20t
-ypedef%20t%5fstruct%5fbody%3a%3at%5ftarget%5fitem%5fout%20t%5fout%3b%0a%20%20t%5
-fout%20make%5fcode%28t%5fic%5fdev%26icdev%29const%7b%0a%20%20%20%20t%5fout%20out
-%3b%0a%20%20%20%20out%2esep%3dsep0%2evalue%3b%0a%20%20%20%20%7b%0a%20%20%20%20%2
-0%20auto%20tmp%3ddef%2d%3emake%5fcode%28%29%3b%0a%20%20%20%20%20%20out%2ename%3d
-tmp%2ename%3b%0a%20%20%20%20%20%20out%2eparent%3dtmp%2eparent%3b%0a%20%20%20%20%
-7d%0a%20%20%20%20auto%20tmp%3dbody%2emake%5fcode%28icdev%29%3b%0a%20%20%20%20out
-%2eout%3dstd%3a%3amove%28tmp%29%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%
-7d%0a%0at%5ftarget%5fdecl%3d%3ei%5ftarget%5fitem%7b%0a%20%20t%5fsep%20sep0%3b%0a
-%20%20string%20name%3b%0a%20%20t%5fsep%20sep1%3b%0a%20%20%7b%0a%20%20%20%20O%2b%
-3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20M%2b%3dgo%5fstr%3ct%5fname%3e%28name%29%3
-b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20M%2b%3dgo%5fconst%28
-%22%3b%22%29%3b%0a%20%20%7d%0a%7d%0a%0at%5ftarget%7b%0a%20%20vector%3cTAutoPtr%3
-ci%5ftarget%5fitem%3e%3e%20arr%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fauto%28a
-rr%29%3b%0a%20%20%7d%0a%20%20vector%3ct%5ftarget%5fitem%3a%3at%5fout%3e%20make%5
-fcode%28t%5fic%5fdev%26icdev%29%7b%0a%20%20%20%20vector%3ct%5ftarget%5fitem%3a%3
-at%5fout%3e%20out%3b%0a%20%20%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%
-2b%2b%29%7b%0a%20%20%20%20%20%20auto%26ex%3darr%5bi%5d%3b%0a%20%20%20%20%20%20if
-%28auto%2ap%3ddynamic%5fcast%3ct%5ftarget%5fitem%2a%3e%28ex%2eget%28%29%29%29%7b
-%0a%20%20%20%20%20%20%20%20out%2epush%5fback%28p%2d%3emake%5fcode%28icdev%29%29%
-3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20return%20out%3b%0a%20
-%20%7d%0a%7d
+n%28out%2c%22%5cn%22%29%3b%0a%20%20%7d%0a%20%20%2f%2fstruct%20t%5fvisitor%3a%2f%
+2ai%5fcpp%5fcode%3a%3ai%5fvisitor%2ci%5fmajor%3a%3ai%5fvisitor%2c%2a%2fi%5fbayan
+%3a%3ai%5fvisitor%7b%0a%20%20%2f%2f%20%20const%20t%5fcpp%5fcode%26c%3b%0a%20%20%
+2f%2f%20%20t%5fvisitor%28const%20t%5fcpp%5fcode%26c%29%3ac%28c%29%7b%7d%0a%20%20
+%2f%2f%20%20void%20Do%28t%5fcpp%5fcode%2ap%29%7b%7d%0a%20%20%2f%2f%20%20void%20D
+o%28t%5ffields%2ap%29%7b%7d%0a%20%20%2f%2f%20%20void%20Do%28t%5fcmds%2ap%29%7b%7
+d%0a%20%20%2f%2f%20%20void%20Do%28t%5feater%2ap%29%7b%7d%0a%20%20%2f%2f%20%20voi
+d%20Do%28t%5fwith%5fbayan%2ap%29%7b%7d%0a%20%20%2f%2f%20%20void%20Do%28t%5fwitho
+ut%5fbayan%2ap%29%7bp%2d%3ewb%2ebayan%7d%0a%20%20%2f%2f%7d%3b%0a%20%20string%20m
+ake%5fcode%28%29const%7b%0a%20%20%20%20string%20out%3b%0a%20%20%20%20%2f%2ft%5fv
+isitor%20v%7b%2athis%7d%3b%0a%20%20%20%20%2f%2fbayan%2d%3eUse%28v%29%3b%0a%20%20
+%20%20%2f%2ffor%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20
+%20%2f%2f%20%20auto%26ex%3darr%5bi%5d%3b%0a%20%20%20%20%2f%2f%20%20QapAssert%28e
+x%29%3b%0a%20%20%20%20%2f%2f%20%20auto%2ap%3dex%2eget%28%29%3b%0a%20%20%20%20%2f
+%2f%20%20out%2b%3dp%2d%3emake%5fcode%28%29%3b%0a%20%20%20%20%2f%2f%7d%0a%20%20%2
+0%20if%28bayan%29save%5fobj%28%2abayan%2eget%28%29%2cout%29%3b%0a%20%20%20%20ret
+urn%20out%3b%0a%20%20%7d%0a%7d%0a%2f%2f%20test%0a%0at%5ffields%5fcmds%5fcppcode%
+7b%0a%20%20t%5ftrue%5ffcc%7b%0a%20%20%20%20vector%3ct%5fsep%5fstruct%5ffield%3e%
+20arr%3b%0a%20%20%20%20TAutoPtr%3ct%5fsep%5fstruct%5fcmds%3e%20cmds%3b%0a%20%20%
+20%20TAutoPtr%3ct%5fcpp%5fcode%3a%3at%5feater%3e%20cppcode%3b%0a%20%20%20%20%7b%
+0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5
+fauto%28cmds%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28cppcode%29%3b%0a%20%20
+%20%20%7d%0a%20%20%7d%0a%20%20t%5fcmds%7b%0a%20%20%20%20TAutoPtr%3ct%5fsep%5fstr
+uct%5fcmds%3e%20cmds%3b%0a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3a%3at%5feater%3
+e%20cppcode%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28cmds%29%
+3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28cppcode%29%3b%0a%20%20%20%20%7d%0a%20%
+20%7d%0a%20%20t%5fcppcode%7b%0a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3e%20cppcod
+e%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20go%5fauto%28cppcode%29%3b%0a%20%20%20
+%20%7d%0a%20%20%7d%0a%20%20TAutoPtr%3ct%5ftrue%5ffcc%3e%20tfcc%3b%0a%20%20TAutoP
+tr%3ct%5fcmds%3e%20cmds%3b%0a%20%20TAutoPtr%3ct%5fcppcode%3e%20c%3b%0a%20%20%7b%
+0a%20%20%20%20O%2b%3dgo%5fauto%28tfcc%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28cmd
+s%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28c%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fstru
+ct%5fbody%7b%0a%20%20vector%3ct%5ftarget%5fitem%3e%20nested%3b%0a%20%20t%5fsep%2
+0sep0%3b%0a%20%20t%5ffields%5fcmds%5fcppcode%20fcc%3b%0a%20%20t%5fsep%20sep1%3b%
+0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fconst%28%22%7b%22%29%3b%0a%20%20%20%20O%2b
+%3dgo%5fauto%28nested%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20
+%20%20M%2b%3dgo%5fauto%28fcc%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0
+a%20%20%20%20M%2b%3dgo%5fconst%28%22%7d%22%29%3b%0a%20%20%7d%0a%20%20struct%20t%
+5ftarget%5fitem%5fout%3b%0a%20%20struct%20t%5fout%7b%0a%20%20%20%20vector%3ccons
+t%20t%5ftarget%5fitem%2a%3e%20nested%3b%0a%20%20%20%20string%20provars%3b%0a%20%
+20%20%20string%20procmds%3b%0a%20%20%20%20string%20cppcode%3b%0a%20%20%7d%3b%0a%
+20%20struct%20t%5ftarget%5fitem%5fout%7b%0a%20%20%20%20string%20sep%3b%0a%20%20%
+20%20string%20name%3b%0a%20%20%20%20string%20parent%3b%0a%20%20%20%20t%5fout%20o
+ut%3b%0a%20%20%7d%3b%0a%20%20%2f%2ftemplate%3cint%3e%0a%20%20%2f%2fstatic%20t%5f
+target%5fitem%5fout%20weak%5fmake%5fcode%28const%20t%5ftarget%5fitem%26ref%2ct%5
+fic%5fdev%26icdev%29%3b%0a%20%20struct%20t%5fvisitor%3at%5ffields%5fcmds%5fcppco
+de%7b%0a%20%20%20%20t%5fsep%5fstruct%5fcmds%2apcmds%7b%7d%3b%0a%20%20%20%20vecto
+r%3ct%5fsep%5fstruct%5ffield%3e%2apfs%7b%7d%3b%0a%20%20%20%20string%20c%3b%0a%20
+%20%20%20virtual%20void%20Do%28t%5fcmds%2ap%29%7bpcmds%3dp%2d%3ecmds%2eget%28%29
+%3bif%28p%2d%3ecppcode%29save%5fobj%28p%2d%3ecppcode%2cc%29%3b%7d%0a%20%20%20%20
+virtual%20void%20Do%28t%5ftrue%5ffcc%2ap%29%7bpfs%3d%26p%2d%3earr%3bpcmds%3dp%2d
+%3ecmds%3fp%2d%3ecmds%2eget%28%29%3anullptr%3bif%28p%2d%3ecppcode%29save%5fobj%2
+8p%2d%3ecppcode%2cc%29%3b%7d%0a%20%20%20%20virtual%20void%20Do%28t%5fcppcode%2ap
+%29%7bif%28p%2d%3ecppcode%29save%5fobj%28p%2d%3ecppcode%2cc%29%3b%7d%0a%20%20%20
+%20void%20Do%28const%20t%5ffields%5fcmds%5fcppcode%26%20fcc%29%20%7b%0a%20%20%20
+%20%20%20if%28fcc%2etfcc%29Do%28fcc%2etfcc%2eget%28%29%29%3b%0a%20%20%20%20%20%2
+0if%28fcc%2ecmds%29Do%28fcc%2ecmds%2eget%28%29%29%3b%0a%20%20%20%20%20%20if%28fc
+c%2ec%29Do%28fcc%2ec%2eget%28%29%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%3b%0a%20%20
+struct%20t%5fcmd%5ffs%5fgetter%3at%5ffields%5fcmds%5fcppcode%7b%0a%20%20%20%20vo
+id%20Do%28t%5fcppcode%2ap%29override%7b%7d%0a%20%20%7d%3b%0a%20%20t%5fout%20make
+%5fcode%28t%5fic%5fdev%26icdev%29const%7b%0a%20%20%20%20t%5fout%20out%3b%0a%20%2
+0%20%20%7b%0a%20%20%20%20%20%20auto%26arr%3dnested%3b%0a%20%20%20%20%20%20out%2e
+nested%2eresize%28arr%2esize%28%29%29%3b%0a%20%20%20%20%20%20for%28int%20i%3d0%3
+bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20%20%20auto%26ex%3darr%
+5bi%5d%3b%0a%20%20%20%20%20%20%20%20auto%26to%3dout%2enested%5bi%5d%3b%0a%20%20%
+20%20%20%20%20%20to%3d%26ex%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%2
+0%20%20if%28%21fcc%2ec%29return%20out%3b%0a%20%20%20%20t%5fvisitor%20v%3b%0a%20%
+20%20%20v%2eDo%28%2afcc%2eget%28%29%29%3b%0a%20%20%20%20if%28v%2epfs%29%7b%0a%20
+%20%20%20%20%20auto%26arr%3d%2av%2epfs%3b%0a%20%20%20%20%20%20vector%3cstring%3e
+%20tmp%3b%0a%20%20%20%20%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b
+%29%7b%0a%20%20%20%20%20%20%20%20tmp%2epush%5fback%28arr%5bi%5d%2emake%5fcode%28
+i%2cicdev%29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%20%20out%2eprovars%3dj
+oin%28tmp%2c%22%22%29%3b%0a%20%20%20%20%7d%0a%20%20%20%20if%28v%2epcmds%29%0a%20
+%20%20%20%7b%0a%20%20%20%20%20%20auto%26arr%3dv%2epcmds%2d%3ebody%2earr%3b%0a%20
+%20%20%20%20%20vector%3cstring%3e%20tmp%3b%0a%20%20%20%20%20%20for%28int%20i%3d0
+%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20%20%20tmp%2epush%5fb
+ack%28arr%5bi%5d%2emake%5fcode%28i%29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%
+20%20%20out%2eprocmds%3djoin%28tmp%2c%22%22%29%3b%0a%20%20%20%20%7d%0a%20%20%20%
+20string%20sep%3dsep0%2evalue%2eempty%28%29%3fsep1%2evalue%3asep0%2evalue%3b%0a%
+20%20%20%20out%2ecppcode%3dv%2ec%2esize%28%29%3fsep%2bv%2ec%2b%22%5cn%22%3a%22%2
+2%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0ai%5fdef%7b%0a%20%20struct
+%20t%5fout%7b%0a%20%20%20%20string%20name%3b%0a%20%20%20%20string%20parent%3b%0a
+%20%20%7d%3b%0a%20%20virtual%20t%5fout%20make%5fcode%28%29%7bQapDebugMsg%28%22no
+%20way%2e%22%29%3breturn%20%2a%28t%5fout%2a%29nullptr%3b%7d%0a%7d%0a%0at%5fclass
+%5fdef%20%3d%3e%20i%5fdef%7b%0a%20%20t%5fname%20name%3b%0a%20%20t%5fsep%20sep0%3
+b%0a%20%20string%20arrow%5for%5fcolon%3b%0a%20%20t%5fsep%20sep1%3b%0a%20%20t%5fn
+ame%20parent%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fauto%28name%29%3b%0a%20%20
+%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20M%2b%3dgo%5fany%5fstr%5ffrom%5
+fvec%28arrow%5for%5fcolon%2csplit%28%22%3d%3e%2c%3a%22%2c%22%2c%22%29%29%3b%0a%2
+0%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20M%2b%3dgo%5fauto%28parent%
+29%3b%0a%20%20%7d%0a%20%20t%5fout%20make%5fcode%28%29%7b%0a%20%20%20%20t%5fout%2
+0out%3b%0a%20%20%20%20out%2ename%3dname%2eget%28%29%3b%0a%20%20%20%20out%2eparen
+t%3dparent%2eget%28%29%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%0at
+%5fstruct%5fdef%20%3d%3e%20i%5fdef%7b%0a%20%20t%5fname%20name%3b%0a%20%20%7b%0a%
+20%20%20%20M%2b%3dgo%5fauto%28name%29%3b%0a%20%20%7d%0a%20%20t%5fout%20make%5fco
+de%28%29%7b%0a%20%20%20%20t%5fout%20out%3b%0a%20%20%20%20out%2ename%3dname%2eget
+%28%29%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%0at%5ftarget%5fitem
+%3d%3ei%5ftarget%5fitem%7b%0a%20%20t%5fsep%20sep0%3b%0a%20%20TAutoPtr%3ci%5fdef%
+3e%20def%3b%0a%20%20t%5fsep%20sep1%3b%0a%20%20t%5fstruct%5fbody%20body%3b%0a%20%
+20%7b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20M%2b%3dgo%5fauto
+%28def%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20M%2b%3dgo
+%5fauto%28body%29%3b%0a%20%20%7d%0a%20%20typedef%20t%5fstruct%5fbody%3a%3at%5fta
+rget%5fitem%5fout%20t%5fout%3b%0a%20%20t%5fout%20make%5fcode%28t%5fic%5fdev%26ic
+dev%29const%7b%0a%20%20%20%20t%5fout%20out%3b%0a%20%20%20%20out%2esep%3dsep0%2ev
+alue%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20auto%20tmp%3ddef%2d%3emake%5fcode%
+28%29%3b%0a%20%20%20%20%20%20out%2ename%3dtmp%2ename%3b%0a%20%20%20%20%20%20out%
+2eparent%3dtmp%2eparent%3b%0a%20%20%20%20%7d%0a%20%20%20%20auto%20tmp%3dbody%2em
+ake%5fcode%28icdev%29%3b%0a%20%20%20%20out%2eout%3dstd%3a%3amove%28tmp%29%3b%0a%
+20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%0at%5ftarget%5fdecl%3d%3ei%5ftar
+get%5fitem%7b%0a%20%20t%5fsep%20sep0%3b%0a%20%20string%20name%3b%0a%20%20t%5fsep
+%20sep1%3b%0a%20%20%7b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%2
+0M%2b%3dgo%5fstr%3ct%5fname%3e%28name%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep
+1%29%3b%0a%20%20%20%20M%2b%3dgo%5fconst%28%22%3b%22%29%3b%0a%20%20%7d%0a%7d%0a%0
+at%5ftarget%7b%0a%20%20vector%3cTAutoPtr%3ci%5ftarget%5fitem%3e%3e%20arr%3b%0a%2
+0%20%7b%0a%20%20%20%20M%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%7d%0a%20%20vector%3c
+t%5ftarget%5fitem%3a%3at%5fout%3e%20make%5fcode%28t%5fic%5fdev%26icdev%29%7b%0a%
+20%20%20%20vector%3ct%5ftarget%5fitem%3a%3at%5fout%3e%20out%3b%0a%20%20%20%20for
+%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20auto%2
+6ex%3darr%5bi%5d%3b%0a%20%20%20%20%20%20if%28auto%2ap%3ddynamic%5fcast%3ct%5ftar
+get%5fitem%2a%3e%28ex%2eget%28%29%29%29%7b%0a%20%20%20%20%20%20%20%20out%2epush%
+5fback%28p%2d%3emake%5fcode%28icdev%29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20
+%20%7d%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d
 */

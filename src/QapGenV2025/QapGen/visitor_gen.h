@@ -345,10 +345,10 @@ public:
       body+=get_templ("USE_IMPL").eval(inp);
     }
     //if(!c.out.procmds.empty())
-    if(ex.body.fcc.c)for(int iter=1;iter;iter--)
+    if(ex.body.fcc)for(int iter=1;iter;iter--)
     {
       t_struct_body::t_cmd_fs_getter v;
-      ex.body.fcc.c->Use(v);
+      v.Do(*ex.body.fcc.get());
       if(!v.pfs)break;
       auto&arr=*v.pfs;
       bool value_or_qst_found=false;
@@ -412,7 +412,7 @@ public:
     if(bool need_attrs=true)for(int iter=1;iter;iter--){
       vector<string> oarr;
       t_struct_body::t_cmd_fs_getter v;
-      ex.body.fcc.c->Use(v);
+      v.Do(*ex.body.fcc.get());
       if(!v.pfs)break;
       auto&arr=*v.pfs;
       for(auto&f:arr){
