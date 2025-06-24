@@ -1174,8 +1174,8 @@ t_struct_field=>i_struct_field{
     out.push_back(t);
     out.push_back(name.value);
     out.push_back(mode);
-    string value_mem;
-    if(value)QapAssert(save_obj(*value.get(),value_mem));
+    string value_mem="$";
+    //if(value)QapAssert(save_obj(*value.get(),value_mem));
     out.push_back(!value?"$":value_mem);
     string s;
     //if(attr){
@@ -1223,10 +1223,7 @@ t_templ_params{
 
 t_cmd_param;
 t_cmd_params{
-  vector<t_cmd_param> arr;
-  {
-    go_vec(arr,",");
-  }
+  vector<t_cmd_param> arr=vec(",");
 }
 
 t_cmd_param{
@@ -1240,7 +1237,7 @@ t_cmd_param{
     ")"
   }
   t_expr_str:i_cmd_param_expr{
-    string body=str<t_str_seq>(body);
+    string body=str<t_str_seq>();
   }
   t_expr_var:i_cmd_param_expr{
     t_this{"this->"}
@@ -1248,12 +1245,12 @@ t_cmd_param{
       TAutoPtr<t_this> self?;
       t_name name;
     }
-    string body=str<t_impl>(body);
+    string body=str<t_impl>();
   }
-  string body=str<t_impl>(body);
+  string body=str<t_impl>();
 }
 t_struct_cmd_anno=>i_struct_cmd_xxxx{
-  string mode=any_str_from_vec(mode,split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));;
+  string mode=any_str_from_vec(split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));
   t_sep sep;
   char get_mode()const{return mode.substr(0,2)=="@m"?'M':(mode[0]=='m'?'M':'D');}
 }
@@ -1263,54 +1260,35 @@ i_struct_cmd_so{
 }
 
 t_struct_cmd_suffix=>i_struct_cmd_so{
-  char value;
-  {
-    go_any_char(value,"?!");
-  }
+  char value=any_char("?!");
   char get_mode()const override{return value=='?'?'O':(value=='!'?'M':'D');}
 }
 
 t_struct_cmd_optional=>i_struct_cmd_so{
-  string value;
-  {
-    go_const("[");
-    go_any_str_from_vec(value,split("optional,mandatory",","));
-    go_const("]");
-  }
+  "["
+  string value=any_str_from_vec(split("optional,mandatory",","));
+  "]"
   char get_mode()const override{return value=="optional"?'O':("mandatory"==value?'M':'D');}
 }
 
 t_struct_cmd_opt_v2=>i_struct_cmd_so{
-  t_sep sep;
-  string value;
-  {
-    go_const(";"); mandatory;
-    go_auto(sep) [optional];
-    go_any_str_from_vec(value,split("optional,mandatory",","));
-  }
+  ";"
+  t_sep sep?;
+  string value=any_str_from_vec(split("optional,mandatory",","));
   char get_mode()const override{return value=="optional"?'O':("mandatory"==value?'M':'D');}
 }
 
 t_struct_cmd{
-  TAutoPtr<i_struct_cmd_xxxx> mode;
+  TAutoPtr<i_struct_cmd_xxxx> mode?;
   t_name func;
-  string templ_params;
+  string templ_params=str<TAutoPtr<t_templ_params>>()?;
+  "("
   t_cmd_params params;
-  t_sep sep0;
-  TAutoPtr<i_struct_cmd_so> cmdso;
-  t_sep sep1;
-  {
-    O+=go_auto(mode);
-    M+=go_auto(func);
-    O+=go_str<TAutoPtr<t_templ_params>>(templ_params);
-    M+=go_const("(");
-    M+=go_auto(params);
-    M+=go_const(")");
-    O+=go_auto(sep0);
-    O+=go_auto(cmdso);
-    O+=go_auto(sep1);
-    M+=go_const(";");
-  }
+  ")"
+  t_sep sep0?;
+  TAutoPtr<i_struct_cmd_so> cmdso?;
+  t_sep sep1?;
+  ";"
   static bool find(const string&func){
     static const vector<string> arr=split("go_any_str_from_vec|go_any_arr_char|go_any|go_any_char","|");
     for(int i=0;i<arr.size();i++)if(arr[i]==func)return true;
@@ -1356,35 +1334,23 @@ t_struct_cmd{
 }
 
 t_sep_struct_cmd{
-  t_sep sep;
+  t_sep sep?;
   t_struct_cmd body;
-  {
-    O+=go_auto(sep);
-    M+=go_auto(body);
-  }
   string make_code(int i){
     return body.make_code(i);
   }
 }
 
 t_struct_cmds{
-  vector<t_sep_struct_cmd> arr;
-  t_sep sep;
-  {
-    M+=go_const("{");
-    O+=go_auto(arr);
-    O+=go_auto(sep);
-    M+=go_const("}");
-  }
+  "{"
+  vector<t_sep_struct_cmd> arr?;
+  t_sep sep?;
+  "}"
 }
 
 t_sep_struct_cmds{
-  t_sep sep;
+  t_sep sep?;
   t_struct_cmds body;
-  {
-    O+=go_auto(sep);
-    M+=go_auto(body);
-  }
 }
 
 i_cpp_code{
@@ -1393,9 +1359,6 @@ i_cpp_code{
 
 t_cpp_code_sep => i_cpp_code{
   t_sep sep;
-  {
-    go_auto(sep);
-  }
   string make_code()const{
     return sep.make_code();
   }
@@ -1403,9 +1366,6 @@ t_cpp_code_sep => i_cpp_code{
 
 t_cpp_code_main => i_cpp_code{
   TAutoPtr<i_code_with_sep> body;
-  {
-    go_auto(body);
-  }
   string make_code()const{
     string out;
     auto*p=body.get();
@@ -1415,17 +1375,13 @@ t_cpp_code_main => i_cpp_code{
 }
 
 t_cpp_code{
-  t_bayan{{go_const("[::]");}}
-  t_fields=>i_major{t_sep_struct_field f;{go_auto(f);}}
-  t_cmds=>i_major{t_sep_struct_cmds c;{go_auto(c);}}
-  t_eater{vector<TAutoPtr<i_cpp_code>> arr;{go_auto(arr);}}
+  t_bayan{"[::]"}
+  t_fields=>i_major{t_sep_struct_field f;}
+  t_cmds=>i_major{t_sep_struct_cmds c;}
+  t_eater{vector<TAutoPtr<i_cpp_code>> arr;}
   t_with_bayan=>i_bayan{
     t_bayan bayan;
     t_eater eater;
-    {
-      go_auto(bayan);
-      go_auto(eater);
-    }
   }
   t_without_bayan=>i_bayan{
     t_eater eater;
@@ -1436,15 +1392,12 @@ t_cpp_code{
     }
   }
   t_a=>i_stong_bayan{
-    t_with_bayan wb;{go_auto(wb);}
+    t_with_bayan wb;
   }
   t_b=>i_stong_bayan{
-    t_eater e;{go_minor<t_with_bayan>(e);}
+    t_eater e=minor<t_with_bayan>();
   }
   TAutoPtr<i_bayan> bayan;
-  {
-    M+=go_auto(bayan);
-  }
   static string align(const string&source){
     auto arr=split(source,"\n");
     if(arr.empty())return source;
