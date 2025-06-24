@@ -2850,7 +2850,6 @@ public:
       auto&O=$.optional;
       return ok;
     }
-  [::]
   };
 public:
 #define DEF_PRO_NESTED(F)\
@@ -4379,7 +4378,7 @@ public:
   }
 };
 struct t_cmd_param{
-  //===>>===i_expr_visitor
+  //===>>===i_cmd_param_expr_visitor
   #define DEF_PRO_BLANK()
   #define LIST(ADDBEG,ADD,ADDEND)\
   ADDBEG()\
@@ -4387,13 +4386,13 @@ struct t_cmd_param{
     ADD(t_expr_str)\
     ADD(t_expr_var)\
   ADDEND()
-  class i_expr;
+  class i_cmd_param_expr;
   #define ADD(TYPE)class TYPE;
   LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
   #undef ADD
-  class i_expr_visitor{
+  class i_cmd_param_expr_visitor{
   public:
-    typedef t_cmd_param::i_expr i_expr;
+    typedef t_cmd_param::i_cmd_param_expr i_cmd_param_expr;
   public:
     #define ADD(TYPE)virtual void Do(TYPE*p)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
@@ -4421,27 +4420,27 @@ struct t_cmd_param{
     // DC 28.73 // 1.13 sec
     // empty 27.60 
     template<class TYPE>
-    static TYPE*UberCast(i_expr*p){
-      if(!p)return nullptr;Is<TYPE,i_expr_visitor> IS;p->Use(IS);return IS.ptr;
+    static TYPE*UberCast(i_cmd_param_expr*p){
+      if(!p)return nullptr;Is<TYPE,i_cmd_param_expr_visitor> IS;p->Use(IS);return IS.ptr;
     }
     #else
     template<class TYPE>
-    static TYPE*UberCast(i_expr*p){return dynamic_cast<TYPE*>(p);}
+    static TYPE*UberCast(i_cmd_param_expr*p){return dynamic_cast<TYPE*>(p);}
     #endif
   };
   #undef LIST
   #undef DEF_PRO_BLANK
-  //===<<===i_expr_visitor
-  struct i_expr{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_expr)OWNER(t_cmd_param)
+  //===<<===i_cmd_param_expr_visitor
+  struct i_cmd_param_expr{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_cmd_param_expr)OWNER(t_cmd_param)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
   ADDEND()
-  //=====+>>>>>i_expr
+  //=====+>>>>>i_cmd_param_expr
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====i_expr
+  //<<<<<+=====i_cmd_param_expr
   public:
-    typedef i_expr_visitor i_visitor;
+    typedef i_cmd_param_expr_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
@@ -4464,7 +4463,7 @@ struct t_cmd_param{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_impl)OWNER(t_cmd_param)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(vector<TAutoPtr<i_expr>>,arr,DEF,$,$)\
+  ADDVAR(vector<TAutoPtr<i_cmd_param_expr>>,arr,DEF,$,$)\
   ADDEND()
   //=====+>>>>>t_impl
   #include "QapGenStructNoTemplate.inl"
@@ -4481,8 +4480,8 @@ struct t_cmd_param{
       return ok;
     }
   };
-  struct t_expr_call:public i_expr{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_expr_call)PARENT(i_expr)OWNER(t_cmd_param)
+  struct t_expr_call:public i_cmd_param_expr{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_expr_call)PARENT(i_cmd_param_expr)OWNER(t_cmd_param)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
   ADDVAR(t_name,func,DEF,$,$)\
@@ -4512,8 +4511,8 @@ struct t_cmd_param{
       return ok;
     }
   };
-  struct t_expr_str:public i_expr{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_expr_str)PARENT(i_expr)OWNER(t_cmd_param)
+  struct t_expr_str:public i_cmd_param_expr{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_expr_str)PARENT(i_cmd_param_expr)OWNER(t_cmd_param)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
   ADDVAR(string,body,DEF,$,$)\
@@ -4536,7 +4535,7 @@ struct t_cmd_param{
       return ok;
     }
   };
-  struct t_expr_var:public i_expr{
+  struct t_expr_var:public i_cmd_param_expr{
   public:
     struct t_this{
     #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_this)OWNER(t_expr_var)
@@ -4588,7 +4587,7 @@ struct t_cmd_param{
     F(t_this)\
     F(t_impl)\
     /*</DEF_PRO_NESTED>*/
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_expr_var)PARENT(i_expr)OWNER(t_cmd_param)
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_expr_var)PARENT(i_cmd_param_expr)OWNER(t_cmd_param)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
   ADDVAR(string,body,DEF,$,$)\
@@ -6038,7 +6037,7 @@ bool t_cppcore::t_var_expr::i_part::t_poly_impl::load()
   return scope.ok;
 }
 
-bool t_cmd_param::i_expr::t_poly_impl::load()
+bool t_cmd_param::i_cmd_param_expr::t_poly_impl::load()
 {
   #define F(TYPE)go_for<struct TYPE>();
   F(t_expr_call);

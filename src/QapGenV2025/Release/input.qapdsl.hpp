@@ -1231,58 +1231,30 @@ t_cmd_params{
 
 t_cmd_param{
   t_impl{
-    vector<TAutoPtr<i_expr>> arr;
-    {
-      go_vec(arr,"+");
-    }
+    vector<TAutoPtr<i_cmd_param_expr>> arr=vec("+");
   }
-  t_expr_call:i_expr{
+  t_expr_call:i_cmd_param_expr{
     t_name func;
+    "("
     TAutoPtr<t_cmd_params> params;
-    {
-      go_auto(func);
-      go_const("(");
-      go_auto(params);
-      go_const(")");
-    }
+    ")"
   }
-  t_expr_str:i_expr{
-    string body;
-    {
-      go_str<t_str_seq>(body);
-    }
+  t_expr_str:i_cmd_param_expr{
+    string body=str<t_str_seq>(body);
   }
-  t_expr_var:i_expr{
-    t_this{
-      {
-        go_const("this->");
-      }
-    }
+  t_expr_var:i_cmd_param_expr{
+    t_this{"this->"}
     t_impl{
-      TAutoPtr<t_this> self;
+      TAutoPtr<t_this> self?;
       t_name name;
-      {
-        O+=go_auto(self);
-        M+=go_auto(name);
-      }
     }
-    string body;
-    {
-      go_str<t_impl>(body);
-    }
+    string body=str<t_impl>(body);
   }
-  string body;
-  {
-    go_str<t_impl>(body);
-  }
+  string body=str<t_impl>(body);
 }
 t_struct_cmd_anno=>i_struct_cmd_xxxx{
-  string mode;
+  string mode=any_str_from_vec(mode,split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));;
   t_sep sep;
-  {
-    go_any_str_from_vec(mode,split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));
-    go_auto(sep);
-  }
   char get_mode()const{return mode.substr(0,2)=="@m"?'M':(mode[0]=='m'?'M':'D');}
 }
 
