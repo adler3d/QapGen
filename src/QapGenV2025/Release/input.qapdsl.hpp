@@ -962,13 +962,9 @@ t_type_item_type=>i_type_item{
   }
 }
 
-t_scope_type_item{
+t_scope_type_item {
   t_type_scope scope;
   t_type_item_type body;
-  {
-    go_auto(scope);
-    go_auto(body);
-  }
   string make_code()const{
     string out;
     out+=scope.make_code();
@@ -981,13 +977,9 @@ t_scope_type_item{
   }
 }
 
-t_type_expr2{
-  TAutoPtr<t_type_scope> scope;
+t_type_expr2 {
+  TAutoPtr<t_type_scope> scope?;
   t_type_item_type body;
-  {
-    O+=go_auto(scope);
-    M+=go_auto(body);
-  }
   string make_code()const{
     string out;
     if(scope)out+=scope->make_code();
@@ -998,20 +990,14 @@ t_type_expr2{
 
 t_type_templ_param{
   TAutoPtr<i_type_item> body;
-  {
-    go_auto(body);
-  }
   string make_code()const{
     return body->make_code();
-  };
+  }
 }
 
-t_sep_type_templ_param{
+t_sep_type_templ_param {
+  ","
   t_type_templ_param body;
-  {
-    go_const(",");
-    go_auto(body);
-  }
   string make_code()const{
     string out;
     out+=",";
@@ -1020,13 +1006,9 @@ t_sep_type_templ_param{
   };
 }
 
-t_type_templ_params{
+t_type_templ_params {
   t_type_templ_param first;
-  vector<t_sep_type_templ_param> arr;
-  {
-    M+=go_auto(first);
-    O+=go_auto(arr);
-  }
+  vector<t_sep_type_templ_param> arr?;
   string make_code()const{
     string out;
     out+=first.make_code();
@@ -1038,13 +1020,11 @@ t_type_templ_params{
   };
 }
 
-t_type_templ_angle=>i_type_templ{
-  TAutoPtr<t_type_templ_params> params;
-  {
-    M+=go_const("<");
-    O+=go_auto(params);
-    M+=go_const(">");
-  }
+t_type_templ_angle => i_type_templ {
+  "<"
+  TAutoPtr<t_type_templ_params> params?;
+  ">"
+
   string make_code()const{
     string out;
     out+="<";
@@ -1057,13 +1037,10 @@ t_type_templ_angle=>i_type_templ{
   };
 }
 
-t_type_templ_soft=>i_type_templ{
-  TAutoPtr<t_type_templ_params> params;
-  {
-    M+=go_const("(");
-    O+=go_auto(params);
-    M+=go_const(")");
-  }
+t_type_templ_soft => i_type_templ {
+  "("
+  TAutoPtr<t_type_templ_params> params?;
+  ")"
   string make_code()const{
     string out;
     out+="(";
@@ -1075,69 +1052,49 @@ t_type_templ_soft=>i_type_templ{
     return out;
   };
 }
+
 i_struct_cmd_xxxx{
   virtual char get_mode()const{QapDebugMsg("no way.");return 'D';}
 }
-t_struct_cmd_mode=>i_struct_cmd_xxxx{
-  char body;
-  t_sep sep0;
-  t_sep sep1;
-  {
-    M+=go_any_char(body,"DMO");
-    O+=go_auto(sep0);
-    M+=go_const("+=");
-    O+=go_auto(sep1);
-  }
+
+t_struct_cmd_mode => i_struct_cmd_xxxx {
+  char body=any_char("DMO");
+  t_sep sep0?;
+  "+="
+  t_sep sep1?;
   char get_mode()const{return body;}
 }
 
 t_sep_value{
-  t_sep sep0;
+  t_sep sep0?;
   t_value_item value;
-  t_sep sep1;
-  {
-    O+=go_auto(sep0);
-    M+=go_auto(value);
-    O+=go_auto(sep1);
-  }
+  t_sep sep1?;
 }
 
 t_attr{
-  vector<t_sep_value> arr;
-  t_sep sep;
-  {
-    M+=go_const("[");
-    O+=go_vec(arr,",");
-    O+=go_auto(sep);
-    M+=go_const("]");
-  }
+  "["
+  vector<t_sep_value> arr=vec(",")?;
+  t_sep sep?;
+  "]"
 }
 i_struct_field{
   virtual string make_code(int id,t_ic_dev&icdev)const{QapNoWay();return {};}
   virtual string make_cmd(t_ic_dev&icdev)const{QapNoWay();return {};}
 }
+
 t_const_field=>i_struct_field{
-  string value;
-  t_sep sep;
-  TAutoPtr<t_semicolon> sc;
-  {
-    M+=go_str<t_str_item>(value);
-    O+=go_auto(sep);
-    O+=go_auto(sc);
-  }
+  string value=str<t_str_item>();
+  t_sep sep?;
+  TAutoPtr<t_semicolon> sc?;
   string make_code(int id,t_ic_dev&icdev)const{return {};}
   string make_cmd(t_ic_dev&icdev)const{return "M+=go_const("+value+");";}
 }
-t_struct_field_value{
-  t_sep sep0;
-  t_sep sep1;
+
+t_struct_field_value {
+  t_sep sep0?;
+  "=";
+  t_sep sep1?;
   TAutoPtr<t_cppcore::t_call_expr> expr;
-  {
-    O+=go_auto(sep0);
-    M+=go_const("=");
-    O+=go_auto(sep1);
-    M+=go_auto(expr);
-  }
 }
 t_struct_field=>i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}
@@ -1444,54 +1401,31 @@ t_cpp_code{
 }
 // test
 
-t_fields_cmds_cppcode{
+t_fields_cmds_cppcode {
   t_true_fcc{
     vector<t_sep_struct_field> arr;
-    TAutoPtr<t_sep_struct_cmds> cmds;
-    TAutoPtr<t_cpp_code::i_stong_bayan> cppcode;
-    {
-      M+=go_auto(arr);
-      O+=go_auto(cmds);
-      O+=go_auto(cppcode);
-    }
+    TAutoPtr<t_sep_struct_cmds> cmds?;
+    TAutoPtr<t_cpp_code::i_stong_bayan> cppcode?;
   }
   t_cmds{
     TAutoPtr<t_sep_struct_cmds> cmds;
-    TAutoPtr<t_cpp_code::i_stong_bayan> cppcode;
-    {
-      M+=go_auto(cmds);
-      O+=go_auto(cppcode);
-    }
+    TAutoPtr<t_cpp_code::i_stong_bayan> cppcode?;
   }
   t_cppcode{
     TAutoPtr<t_cpp_code> cppcode;
-    {
-      go_auto(cppcode);
-    }
   }
-  TAutoPtr<t_true_fcc> tfcc;
-  TAutoPtr<t_cmds> cmds;
-  TAutoPtr<t_cppcode> c;
-  {
-    O+=go_auto(tfcc);
-    O+=go_auto(cmds);
-    O+=go_auto(c);
-  }
+  TAutoPtr<t_true_fcc> tfcc?;
+  TAutoPtr<t_cmds> cmds?;
+  TAutoPtr<t_cppcode> c?;
 }
 
 t_struct_body{
-  vector<t_target_item> nested;
-  t_sep sep0;
+  "{"
+  vector<t_target_item> nested?;
+  t_sep sep0?;
   TAutoPtr<t_fields_cmds_cppcode> fcc;
-  t_sep sep1;
-  {
-    M+=go_const("{");
-    O+=go_auto(nested);
-    O+=go_auto(sep0);
-    M+=go_auto(fcc);
-    O+=go_auto(sep1);
-    M+=go_const("}");
-  }
+  t_sep sep1?;
+  "}"
   struct t_target_item_out;
   struct t_out{
     vector<const t_target_item*> nested;
