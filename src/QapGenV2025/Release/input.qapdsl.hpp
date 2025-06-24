@@ -1083,7 +1083,7 @@ t_struct_cmd_mode=>i_struct_cmd_xxxx{
   t_sep sep0;
   t_sep sep1;
   {
-    M+=go_any_char(body,"MO");
+    M+=go_any_char(body,"DMO");
     O+=go_auto(sep0);
     M+=go_const("+=");
     O+=go_auto(sep1);
@@ -1141,31 +1141,18 @@ t_struct_field_value{
 }
 t_struct_field=>i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}
-  TAutoPtr<i_struct_cmd_xxxx> mode;
-  t_sep sepcm;
+  TAutoPtr<i_struct_cmd_xxxx> mode?;
+  t_sep sepcm?;
   TAutoPtr<t_cppcore::i_expr> type;
   t_sep sep0;
   t_name name;
-  TAutoPtr<t_struct_field_value> value;
-  t_sep sep1;
-  TAutoPtr<t_qst> qst;
-  t_sep sep2;
-  t_sep sep3;
-  TAutoPtr<t_attr> attr;
-  {
-    O+=go_auto(mode);
-    O+=go_auto(sepcm);
-    M+=go_auto(type);
-    M+=go_auto(sep0);
-    M+=go_auto(name);
-    O+=go_auto(value);
-    O+=go_auto(sep1);
-    O+=go_auto(qst);
-    O+=go_auto(sep2);
-    M+=go_const(";");
-    O+=go_auto(sep3);
-    O+=go_auto(attr);
-  }
+  TAutoPtr<t_struct_field_value> value?;
+  t_sep sep1?;
+  TAutoPtr<t_qst> qst?;
+  t_sep sep2?;
+  ";"
+  t_sep sep3?;
+  TAutoPtr<t_attr> attr?;
   string make_code(int id,t_ic_dev&icdev)const{
     vector<string> out;
     string mode="DEF";//value?"SET":"DEF";
@@ -1470,15 +1457,21 @@ t_cpp_code{
   }
   t_without_bayan=>i_bayan{
     t_eater eater;
-    TAutoPtr<t_with_bayan> wb; 
+    //TAutoPtr<t_with_bayan> wb; 
     {
       M+=go_diff<TAutoPtr<i_major>>(eater);
-      O+=go_auto(wb);
+      //O+=go_auto(wb);
     }
+  }
+  t_a=>i_stong_bayan{
+    t_with_bayan wb;{go_auto(wb);}
+  }
+  t_b=>i_stong_bayan{
+    t_eater e;{go_minor<t_with_bayan>(e);}
   }
   TAutoPtr<i_bayan> bayan;
   {
-    O+=go_auto(bayan);
+    M+=go_auto(bayan);
   }
   static string align(const string&source){
     auto arr=split(source,"\n");
@@ -1535,7 +1528,7 @@ t_fields_cmds_cppcode{
   t_true_fcc{
     vector<t_sep_struct_field> arr;
     TAutoPtr<t_sep_struct_cmds> cmds;
-    TAutoPtr<t_cpp_code::t_eater> cppcode;
+    TAutoPtr<t_cpp_code::i_stong_bayan> cppcode;
     {
       M+=go_auto(arr);
       O+=go_auto(cmds);
@@ -1544,7 +1537,7 @@ t_fields_cmds_cppcode{
   }
   t_cmds{
     TAutoPtr<t_sep_struct_cmds> cmds;
-    TAutoPtr<t_cpp_code::t_eater> cppcode;
+    TAutoPtr<t_cpp_code::i_stong_bayan> cppcode;
     {
       M+=go_auto(cmds);
       O+=go_auto(cppcode);

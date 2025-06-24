@@ -349,13 +349,16 @@ public:
     {
       t_struct_body::t_cmd_fs_getter v;
       v.Do(*ex.body.fcc.get());
-      if(!v.pfs)break;
-      auto&arr=*v.pfs;
       bool value_or_qst_found=false;
-      for(auto&it:arr)if(auto*p=t_struct_field::UberCast(it.body.get())){
-        if(p->value||p->qst){value_or_qst_found=true;break;}
+      if(v.pfs){
+        auto&arr=*v.pfs;
+        for(auto&it:arr)if(auto*p=t_struct_field::UberCast(it.body.get())){
+          if(p->value||p->qst){value_or_qst_found=true;break;}
+        }
       }
       auto f=[&](string&s,const char*pother){
+        if(!v.pfs)return;
+        auto&arr=*v.pfs;
         bool fail=true;
         for(int i=0;fail;i++){
           fail=false;
@@ -369,10 +372,11 @@ public:
       string dev="dev";
       f(dev,"$dev");
       auto*pcmds=&c.out.procmds;
-      if(value_or_qst_found){
+      if(value_or_qst_found&&v.pfs){
         QapAssert(c.out.procmds.empty());
         static string buf;pcmds=&buf;buf={};
         vector<string> cmds;
+        auto&arr=*v.pfs;
         for(auto&it:arr)if(auto*p=t_struct_field::UberCast(it.body.get())){
           auto cmd=p->make_cmd(ic_dev);
           t_struct_cmd sc;
