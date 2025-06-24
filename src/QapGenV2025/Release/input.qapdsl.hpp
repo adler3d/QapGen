@@ -768,26 +768,17 @@ for(var i=0;i<arr.length;i++){
 }
 return out.join("\n");
 */
-
 t_code{
   vector<TAutoPtr<i_code>> arr;
-  {
-    go_auto(arr);
-  }
   string make_code()const{return vector_make_code(arr);};
 }
 
 t_soft_brackets_code=>i_code{
-  t_sep sep0;
-  TAutoPtr<t_code> body;
-  t_sep sep1;
-  {
-    M+=go_const("(");
-    O+=go_auto(sep0);
-    O+=go_auto(body);
-    O+=go_auto(sep1);
-    M+=go_const(")");
-  }
+  "("
+  t_sep sep0?;
+  TAutoPtr<t_code> body?;
+  t_sep sep1?;
+  ")"
   string make_code()const{
     string v[3]={
       sep0.make_code(),
@@ -799,16 +790,11 @@ t_soft_brackets_code=>i_code{
 }
 
 t_hard_brackets_code=>i_code{
-  t_sep sep0;
-  TAutoPtr<t_code> body;
-  t_sep sep1;
-  {
-    M+=go_const("[");
-    O+=go_auto(sep0);
-    O+=go_auto(body);
-    O+=go_auto(sep1);
-    M+=go_const("]");
-  }
+  "["
+  t_sep sep0?;
+  TAutoPtr<t_code> body?;
+  t_sep sep1?;
+  "]"
   string make_code()const{
     string v[3]={
       sep0.make_code(),
@@ -820,16 +806,11 @@ t_hard_brackets_code=>i_code{
 }
 
 t_curly_brackets_code=>i_code{
-  t_sep sep0;
-  TAutoPtr<t_code> body;
-  t_sep sep1;
-  {
-    M+=go_const("{");
-    O+=go_auto(sep0);
-    O+=go_auto(body);
-    O+=go_auto(sep1);
-    M+=go_const("}");
-  }
+  "{"
+  t_sep sep0?;
+  TAutoPtr<t_code> body?;
+  t_sep sep1?;
+  "}"
   string make_code()const{
     string v[3]={
       sep0.make_code(),
@@ -841,31 +822,21 @@ t_curly_brackets_code=>i_code{
 }
 
 t_semicolon{
-  {
-    go_const(";");
-  }
+  ";"
 }
 
 t_value_item{
-  TAutoPtr<i_code_with_sep> body;
-  {
-    go_minor<t_semicolon>(body);
-  }
+  TAutoPtr<i_code_with_sep> body=minor<t_semicolon>();
   string make_code()const{
     return body->make_code();
   }
 }
 
 t_value{
-  t_sep sep;
-  string body;
-  {
-    O+=go_auto(sep);
-    M+=go_const("=");
-    M+=go_str<vector<t_value_item>>(body);
-  }
-  string make_code()const
-  {
+  t_sep sep?;
+  "="
+  string body=str<vector<t_value_item>>();
+  string make_code()const{
     string out=body;
     //for(int i=0;i<arr.size();i++)out+=arr[i].make_code();
     return out;
@@ -877,9 +848,7 @@ i_type_templ{
 }
 
 t_type_scope{
-  {
-    go_const("::");
-  }
+  "::"
   string make_code()const{
     return "::";
   }
@@ -887,9 +856,6 @@ t_type_scope{
 
 t_type_templ{
   TAutoPtr<i_type_templ> body;
-  {
-    go_auto(body);
-  }
 }
 
 i_type_item{
@@ -898,9 +864,6 @@ i_type_item{
 
 t_type_item_string=>i_type_item{
   t_str_item body;
-  {
-    go_auto(body);
-  }
   string make_code()const{
     return body.get_code();
   };
@@ -908,9 +871,6 @@ t_type_item_string=>i_type_item{
 
 t_type_item_char=>i_type_item{
   t_char_item body;
-  {
-    go_auto(body);
-  }
   string make_code()const{
     return body.get_code();
   };
@@ -918,26 +878,19 @@ t_type_item_char=>i_type_item{
 
 t_type_item_number=>i_type_item{
   t_number body;
-  {
-    go_auto(body);
-  }
   string make_code()const{
     return body.body;
   };
 }
 
 t_scope_type_item;
-t_type_item_type=>i_type_item{
-  TAutoPtr<t_type_scope> scope;
+
+t_type_item_type => i_type_item {
+  TAutoPtr<t_type_scope> scope?;
   t_name type;
-  TAutoPtr<t_type_templ> param;
-  vector<t_scope_type_item> arr;
-  {
-    O+=go_auto(scope);
-    M+=go_auto(type);
-    O+=go_auto(param);
-    O+=go_auto(arr);
-  }
+  TAutoPtr<t_type_templ> param?;
+  vector<t_scope_type_item> arr?;
+
   template<class TYPE>
   static string weak_arr_make_code(const vector<TYPE>&arr){
     string out;
@@ -962,7 +915,7 @@ t_type_item_type=>i_type_item{
   }
 }
 
-t_scope_type_item {
+t_scope_type_item{
   t_type_scope scope;
   t_type_item_type body;
   string make_code()const{
@@ -977,7 +930,7 @@ t_scope_type_item {
   }
 }
 
-t_type_expr2 {
+t_type_expr2{
   TAutoPtr<t_type_scope> scope?;
   t_type_item_type body;
   string make_code()const{
@@ -995,7 +948,7 @@ t_type_templ_param{
   }
 }
 
-t_sep_type_templ_param {
+t_sep_type_templ_param{
   ","
   t_type_templ_param body;
   string make_code()const{
@@ -1003,10 +956,10 @@ t_sep_type_templ_param {
     out+=",";
     out+=body.make_code();
     return out;
-  };
+  }
 }
 
-t_type_templ_params {
+t_type_templ_params{
   t_type_templ_param first;
   vector<t_sep_type_templ_param> arr?;
   string make_code()const{
@@ -1020,7 +973,7 @@ t_type_templ_params {
   };
 }
 
-t_type_templ_angle => i_type_templ {
+t_type_templ_angle=>i_type_templ{
   "<"
   TAutoPtr<t_type_templ_params> params?;
   ">"
@@ -1037,7 +990,7 @@ t_type_templ_angle => i_type_templ {
   };
 }
 
-t_type_templ_soft => i_type_templ {
+t_type_templ_soft=>i_type_templ{
   "("
   TAutoPtr<t_type_templ_params> params?;
   ")"
@@ -1057,7 +1010,7 @@ i_struct_cmd_xxxx{
   virtual char get_mode()const{QapDebugMsg("no way.");return 'D';}
 }
 
-t_struct_cmd_mode => i_struct_cmd_xxxx {
+t_struct_cmd_mode => i_struct_cmd_xxxx{
   char body=any_char("DMO");
   t_sep sep0?;
   "+="
@@ -1081,7 +1034,6 @@ i_struct_field{
   virtual string make_code(int id,t_ic_dev&icdev)const{QapNoWay();return {};}
   virtual string make_cmd(t_ic_dev&icdev)const{QapNoWay();return {};}
 }
-
 t_const_field=>i_struct_field{
   string value=str<t_str_item>();
   t_sep sep?;
@@ -1401,7 +1353,7 @@ t_cpp_code{
 }
 // test
 
-t_fields_cmds_cppcode {
+t_fields_cmds_cppcode{
   t_true_fcc{
     vector<t_sep_struct_field> arr;
     TAutoPtr<t_sep_struct_cmds> cmds?;
