@@ -376,41 +376,64 @@ t_var_expr=>i_expr{
       M+=go_const("]");
     }
   }
-  t_template_part{
+  t_dd_part=>i_part{
+    t_elem{
+      t_sep sep0;
+      t_sep sep1;
+      t_name name;
+      {
+        O+=go_auto(sep0);
+        M+=go_const("::");
+        O+=go_auto(sep1);
+        M+=go_auto(name);
+      }
+    }
+    vector<t_elem> arr;
+    {
+      M+=go_auto(arr);
+    }
+  }
+  t_template_part=>i_part{
+    t_sep sepB;
     t_sep sep0;
     TAutoPtr<i_expr> expr;
     t_sep sep1;
+    TAutoPtr<t_dd_part> ddp;
     {
+      O+=go_auto(sepB);
       M+=go_const("<");
       O+=go_auto(sep0);
       M+=go_auto(expr);
       O+=go_auto(sep1);
       M+=go_const(">");
+      O+=go_auto(ddp);
     }
   }
   t_item{
+    t_arr{
+      t_sep sep;
+      vector<t_sb_expr> arr;
+      {
+        O+=go_auto(sep);
+        M+=go_auto(arr);
+      }
+    }
     t_sep sep0;
     t_name name;
-    t_sep sep1;
-    vector<t_sb_expr> arr;
+    t_arr arr;
     {
       M+=go_const(".");
       O+=go_auto(sep0);
       M+=go_auto(name);
-      O+=go_auto(sep1);
       O+=go_auto(arr);
     }
   }
   t_name name;
-  t_sep sep0;
-  TAutoPtr<t_template_part> tp;
-  t_sep sep1;
+  TAutoPtr<i_part> tp;
   vector<t_item> arr;
   {
     M+=go_auto(name);
-    O+=go_auto(sep0);
     O+=go_auto(tp);
-    O+=go_auto(sep1);
     O+=go_auto(arr);
   }
 }
@@ -442,7 +465,7 @@ t_call_params{
     M+=go_const(")");
   }
 }
-t_call_expr=>i_expr{
+t_call_expr=>i_expr{/*
   t_dot=>i_call{
     t_var_expr body;
     {
@@ -454,8 +477,8 @@ t_call_expr=>i_expr{
     {
       go_bin_oper(arr,"::");
     }
-  }
-  TAutoPtr<i_call> call;
+  }*/
+  t_var_expr call;
   t_sep sep;
   t_call_params params;
   {
@@ -1156,7 +1179,7 @@ t_struct_field=>i_struct_field{
         auto b=split(a[1],">");
         QapAssert(b.size()==2);
         QapAssert(b[1]=="");
-        if(icdev.need_tautoptr(b[0]))t="vector<TAutoPtr<"+b[0]+">>";
+        if(icdev.need_tautoptr(b[0]))t="vector<TAutoPtr<"+b[0]+">>"+b[1];
       }
     }
     if(icdev.need_tautoptr(t))t="TAutoPtr<"+t+">";
