@@ -1381,15 +1381,10 @@ t_cpp_code{
   t_eater{vector<TAutoPtr<i_cpp_code>> arr;}
   t_with_bayan=>i_bayan{
     t_bayan bayan;
-    t_eater eater;
+    t_eater eater?;
   }
   t_without_bayan=>i_bayan{
-    t_eater eater;
-    //TAutoPtr<t_with_bayan> wb; 
-    {
-      M+=go_diff<TAutoPtr<i_major>>(eater);
-      //O+=go_auto(wb);
-    }
+    t_eater eater=diff<TAutoPtr<i_major>>();
   }
   t_a=>i_stong_bayan{
     t_with_bayan wb;
