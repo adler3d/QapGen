@@ -1,4 +1,4 @@
-// 1242.670800 ms
+// 522.506400 ms
 //===>>===i_sep_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -217,7 +217,7 @@ public:
     auto&D=$.mandatory;
     auto&M=$.mandatory;
     auto&O=$.optional;
-    D+=dev.go_const("/*");
+    M+=dev.go_const("/*");
     if(!ok)return ok;
     D+=dev.go_end(body,"*/");
     if(!ok)return ok;
@@ -246,7 +246,7 @@ public:
     auto&D=$.mandatory;
     auto&M=$.mandatory;
     auto&O=$.optional;
-    D+=dev.go_const("//");
+    M+=dev.go_const("//");
     if(!ok)return ok;
     D+=dev.go_end(body,"\n");
     if(!ok)return ok;
@@ -278,14 +278,14 @@ public:
       if(!ok)return ok;
       return ok;
     }
-    string make_code()const{
-      string out="";
-      for(int i=0;i<arr.size();i++){
-        out+=arr[i]->make_code();
+      string make_code()const{
+        string out="";
+        for(int i=0;i<arr.size();i++){
+          out+=arr[i]->make_code();
+        }
+        return out;
       }
-      return out;
-    }
-};
+  };
 public:
 #define DEF_PRO_NESTED(F)\
   /*<DEF_PRO_NESTED>*/\
@@ -402,12 +402,12 @@ public:
       auto&D=$.mandatory;
       auto&M=$.mandatory;
       auto&O=$.optional;
-      static const auto g_static_var_0=QapStrFinder::fromArr(split("false,true,nullptr,this,struct,class,for,if,while,do,const,constexpr,else,operator,auto,continue,break,return,goto,virtual,override,public,private,protected,friend,template,typedef,using,namespace,decltype",","));
+      static const auto g_static_var_0=QapStrFinder::fromArr(valuesplit("false,true,nullptr,this,struct,class,for,if,while,do,const,constexpr,else,operator,auto,continue,break,return,goto,virtual,override,public,private,protected,friend,template,typedef,using,namespace,decltype",","));
       D+=dev.go_any_str_from_vec(value,g_static_var_0);
       if(!ok)return ok;
       return ok;
     }
-};
+  };
   struct t_impl{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_impl)OWNER(t_name)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
@@ -426,15 +426,15 @@ public:
       auto&M=$.mandatory;
       auto&O=$.optional;
       static const auto g_static_var_0=CharMask::fromStr(gen_dips("azAZ")+"_$@");
-      M+=dev.go_any_char(A,g_static_var_0);
+      D+=dev.go_any_char(A,g_static_var_0);
       if(!ok)return ok;
       static const auto g_static_var_1=CharMask::fromStr(gen_dips("azAZ09")+"_$@");
       O+=dev.go_any(B,g_static_var_1);
       if(!ok)return ok;
       return ok;
     }
-    string get()const{return CToS(A)+B;}
-};
+      string get()const{return CToS(A)+B;}
+  };
   struct t_impl_ex{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_impl_ex)OWNER(t_name)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
@@ -451,11 +451,11 @@ public:
       auto&D=$.mandatory;
       auto&M=$.mandatory;
       auto&O=$.optional;
-      D+=dev.go_minor<t_keyword>(impl);
+      D+=dev.go_diff<t_keyword>(impl);
       if(!ok)return ok;
       return ok;
     }
-};
+  };
 public:
 #define DEF_PRO_NESTED(F)\
   /*<DEF_PRO_NESTED>*/\
@@ -635,9 +635,9 @@ public:
     auto&D=$.mandatory;
     auto&M=$.mandatory;
     auto&O=$.optional;
-    M+=dev.go_auto(sep);
+    D+=dev.go_auto(sep);
     if(!ok)return ok;
-    M+=dev.go_auto(body);
+    D+=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -659,7 +659,7 @@ public:
     auto&D=$.mandatory;
     auto&M=$.mandatory;
     auto&O=$.optional;
-    M+=dev.go_auto(cmd);
+    D+=dev.go_auto(cmd);
     if(!ok)return ok;
     O+=dev.go_auto(params);
     if(!ok)return ok;
@@ -714,72 +714,53 @@ adler3d.github.io/test2013/
 //code:
 return decodeURIComponent(POST['data'].split("\n").join(""));
 //data:
-i%5fsep%20%7b%0a%20%20virtual%20string%20make%5fcode%28%29const%7bQapDebugMsg%28
-%22no%20way%2e%22%29%3breturn%20%22%22%3b%7d%0a%7d%0a%0at%5fsep%5fseq%20%3a%20i%
-5fsep%20%7b%0a%20%20string%20body%3b%0a%20%20%7b%0a%20%20%20%20go%5fany%28body%2
-c%22%20%5ct%5cr%5cn%22%29%3b%0a%20%20%7d%0a%20%20string%20make%5fcode%28%29const
-%7b%0a%20%20%20%20return%20body%3b%0a%20%20%7d%0a%7d%0a%0at%5fc%5fcomment%20%3a%
-20i%5fsep%20%7b%0a%20%20string%20body%3b%0a%20%20%7b%0a%20%20%20%20go%5fconst%28
-%22%2f%2a%22%29%3b%0a%20%20%20%20go%5fend%28body%2c%22%2a%2f%22%29%3b%0a%20%20%7
-d%0a%20%20string%20make%5fcode%28%29const%7b%0a%20%20%20%20return%20%22%2f%2a%22
-%2bbody%2b%22%2a%2f%22%3b%0a%20%20%7d%0a%7d%0a%0at%5fcpp%5fcomment%20%3a%20i%5fs
-ep%20%7b%0a%20%20string%20body%3b%0a%20%20%7b%0a%20%20%20%20go%5fconst%28%22%2f%
-2f%22%29%3b%0a%20%20%20%20go%5fend%28body%2c%22%5cn%22%29%3b%0a%20%20%7d%0a%20%2
-0string%20make%5fcode%28%29const%7b%0a%20%20%20%20return%20%22%2f%2f%22%2bbody%2
-b%22%5cn%22%3b%0a%20%20%7d%0a%7d%0a%0at%5fsep%20%7b%0a%20%20t%5fimpl%20%7b%0a%20
-%20%20%20vector%3cTAutoPtr%3ci%5fsep%3e%3e%20arr%3b%0a%20%20%20%20%7b%0a%20%20%2
-0%20%20%20go%5fauto%28arr%29%3b%0a%20%20%20%20%7d%0a%20%20%20%20string%20make%5f
-code%28%29const%7b%0a%20%20%20%20%20%20string%20out%3d%22%22%3b%0a%20%20%20%20%2
-0%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%2
-0%20%20out%2b%3darr%5bi%5d%2d%3emake%5fcode%28%29%3b%0a%20%20%20%20%20%20%7d%0a%
-20%20%20%20%20%20return%20out%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20string%20
-value%3b%0a%20%20%7b%0a%20%20%20%20go%5fstr%3ct%5fimpl%3e%28value%29%3b%0a%20%20
-%7d%0a%20%20string%20make%5fcode%28%29const%7breturn%20value%3b%7d%0a%7d%0a%0at%
-5fstr%20%3a%20i%5fexpr%20%7b%0a%20%20t%5fstr%5fitem%20body%3b%0a%20%20%7b%0a%20%
-20%20%20go%5fauto%28body%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fchar%20%3a%20i%5fexpr%
-20%7b%0a%20%20t%5fchar%5fitem%20body%3b%0a%20%20%7b%0a%20%20%20%20go%5fauto%28bo
-dy%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fnum%20%3a%20i%5fexpr%20%7b%0a%20%20t%5fnumbe
-r%20body%3b%0a%20%20%7b%0a%20%20%20%20go%5fauto%28body%29%3b%0a%20%20%7d%0a%7d%0
-a%0at%5fname%20%7b%0a%20%20t%5fkeyword%20%7b%0a%20%20%20%20string%20value%3b%0a%
-20%20%20%20%7b%0a%20%20%20%20%20%20go%5fany%5fstr%5ffrom%5fvec%28value%2csplit%2
-8%22false%2ctrue%2cnullptr%2cthis%2cstruct%2cclass%2cfor%2cif%2cwhile%2cdo%2ccon
-st%2cconstexpr%2celse%2coperator%2cauto%2ccontinue%2cbreak%2creturn%2cgoto%2cvir
-tual%2coverride%2cpublic%2cprivate%2cprotected%2cfriend%2ctemplate%2ctypedef%2cu
-sing%2cnamespace%2cdecltype%22%2c%22%2c%22%29%29%3b%0a%20%20%20%20%7d%0a%20%20%7
-d%0a%20%20t%5fimpl%20%7b%0a%20%20%20%20char%20A%3b%0a%20%20%20%20string%20B%3b%0
-a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fany%5fchar%28A%2cgen%5fdips%28%
-22azAZ%22%29%2b%22%5f%24%40%22%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fany%28B%2cg
-en%5fdips%28%22azAZ09%22%29%2b%22%5f%24%40%22%29%3b%0a%20%20%20%20%7d%0a%20%20%2
-0%20string%20get%28%29const%7breturn%20CToS%28A%29%2bB%3b%7d%0a%20%20%7d%0a%20%2
-0t%5fimpl%5fex%20%7b%0a%20%20%20%20t%5fimpl%20impl%3b%0a%20%20%20%20%7b%0a%20%20
-%20%20%20%20go%5fminor%3ct%5fkeyword%3e%28impl%29%3b%0a%20%20%20%20%7d%0a%20%20%7
-d%0a%20%20string%20value%3b%0a%20%20%7b%0a%20%20%20%20go%5fstr%3ct%5fimpl%5fex%3
-e%28value%29%3b%0a%20%20%7d%0a%20%20string%20get%28%29const%7breturn%20value%3b%
-7d%0a%7d%0a%0at%5fid%20%3a%20i%5fexpr%20%7b%0a%20%20t%5fname%20body%3b%0a%20%20%
-7b%0a%20%20%20%20go%5fauto%28body%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fsign%20%3a%20
-i%5fexpr%20%7b%0a%20%20char%20body%3b%0a%20%20%7b%0a%20%20%20%20go%5fany%5fchar%
-28body%2c%22%7e%7c%26%3d%3c%3e%21%3a%3f%3b%2c%2e%2b%2d%2a%2f%25%5e%22%29%3b%0a%2
-0%20%7d%0a%7d%0a%0at%5fsoft%5fbrackets%20%3a%20i%5fexpr%20%7b%0a%20%20vector%3cT
-AutoPtr%3ci%5fexpr%3e%3e%20arr%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fconst%28
-%22%28%22%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20M%2b%3d
-go%5fconst%28%22%29%22%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fhard%5fbrackets%20%3a%20
-i%5fexpr%20%7b%0a%20%20vector%3cTAutoPtr%3ci%5fexpr%3e%3e%20arr%3b%0a%20%20%7b%0
-a%20%20%20%20M%2b%3dgo%5fconst%28%22%5b%22%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%
-28arr%29%3b%0a%20%20%20%20M%2b%3dgo%5fconst%28%22%5d%22%29%3b%0a%20%20%7d%0a%7d%
-0a%0at%5fcurly%5fbrackets%20%3a%20i%5fexpr%20%7b%0a%20%20vector%3cTAutoPtr%3ci%5
-fexpr%3e%3e%20arr%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fconst%28%22%7b%22%29%
-3b%0a%20%20%20%20O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20M%2b%3dgo%5fconst%28
-%22%7d%22%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fparam%20%7b%0a%20%20t%5fsep%20sep%3b%
-0a%20%20vector%3cTAutoPtr%3ci%5fexpr%3e%3e%20body%3b%0a%20%20%7b%0a%20%20%20%20M
-%2b%3dgo%5fauto%28sep%29%3b%0a%20%20%20%20M%2b%3dgo%5fauto%28body%29%3b%0a%20%20
-%7d%0a%7d%0a%0at%5fline%20%7b%0a%20%20t%5fname%20cmd%3b%0a%20%20vector%3ct%5fpar
-am%3e%20params%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fauto%28cmd%29%3b%0a%20%2
-0%20%20O%2b%3dgo%5fauto%28params%29%3b%0a%20%20%7d%0a%20%20vector%3cstring%3e%20
-get%5fraw%5fparams%28%2f%2aIEnvRTTI%26Env%2a%2f%29%7b%0a%20%20%20%20vector%3cstr
-ing%3e%20out%3b%0a%20%20%20%20for%28int%20i%3d0%3bi%3cparams%2esize%28%29%3bi%2b
-%2b%29%7b%0a%20%20%20%20%20%20auto%26ex%3dparams%5bi%5d%3b%0a%20%20%20%20%20%20s
-tring%20mem%3b%0a%20%20%20%20%20%20bool%20ok%3dsave%5fobj%28%2f%2aEnv%2c%2a%2fex
-%2ebody%2cmem%29%3b%0a%20%20%20%20%20%20QapAssert%28ok%29%3b%0a%20%20%20%20%20%2
-0out%2epush%5fback%28mem%29%3b%0a%20%20%20%20%7d%0a%20%20%20%20return%20std%3a%3
-amove%28out%29%3b%0a%20%20%7d%0a%7d
+i%5fsep%7b%0a%20%20virtual%20string%20make%5fcode%28%29const%7bQapDebugMsg%28%22
+no%20way%2e%22%29%3breturn%20%22%22%3b%7d%0a%7d%0a%0at%5fsep%5fseq%20%3d%3e%20i%
+5fsep%20%7b%0a%20%20string%20body%3dany%28%22%20%5ct%5cr%5cn%22%29%3b%0a%20%20st
+ring%20make%5fcode%28%29const%7b%0a%20%20%20%20return%20body%3b%0a%20%20%7d%0a%7
+d%0a%0at%5fc%5fcomment%20%3d%3e%20i%5fsep%20%7b%0a%20%20%22%2f%2a%22%0a%20%20str
+ing%20body%3dend%28%22%2a%2f%22%29%3b%0a%20%20string%20make%5fcode%28%29const%7b
+%0a%20%20%20%20return%20%22%2f%2a%22%2bbody%2b%22%2a%2f%22%3b%0a%20%20%7d%0a%7d%
+0a%0at%5fcpp%5fcomment%3d%3ei%5fsep%7b%0a%20%20%22%2f%2f%22%0a%20%20string%20bod
+y%3dend%28%22%5cn%22%29%3b%0a%20%20string%20make%5fcode%28%29const%7b%0a%20%20%2
+0%20return%20%22%2f%2f%22%2bbody%2b%22%5cn%22%3b%0a%20%20%7d%0a%7d%0a%0at%5fsep%
+7b%0a%20%20t%5fimpl%7b%0a%20%20%20%20vector%3cTAutoPtr%3ci%5fsep%3e%3e%20arr%3b%
+0a%20%20%20%20string%20make%5fcode%28%29const%7b%0a%20%20%20%20%20%20string%20ou
+t%3d%22%22%3b%0a%20%20%20%20%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2
+b%2b%29%7b%0a%20%20%20%20%20%20%20%20out%2b%3darr%5bi%5d%2d%3emake%5fcode%28%29%
+3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%20%20return%20out%3b%0a%20%20%20%20%7d
+%0a%20%20%7d%0a%20%20string%20value%3dstr%3ct%5fimpl%3e%28%29%3b%0a%20%20string%
+20make%5fcode%28%29const%7breturn%20value%3b%7d%0a%7d%0a%0at%5fstr%20%3d%3e%20i%
+5fexpr%20%7b%0a%20%20t%5fstr%5fitem%20body%3b%0a%7d%0a%0at%5fchar%20%3d%3e%20i%5
+fexpr%20%7b%0a%20%20t%5fchar%5fitem%20body%3b%0a%7d%0a%0at%5fnum%20%3d%3e%20i%5f
+expr%20%7b%0a%20%20t%5fnumber%20body%3b%0a%7d%0a%0at%5fname%20%7b%0a%20%20t%5fke
+yword%20%7b%0a%20%20%20%20string%20value%3dany%5fstr%5ffrom%5fvec%28value%2cspli
+t%28%22false%2ctrue%2cnullptr%2cthis%2cstruct%2cclass%2cfor%2cif%2cwhile%2cdo%2c
+const%2cconstexpr%2celse%2coperator%2cauto%2ccontinue%2cbreak%2creturn%2cgoto%2c
+virtual%2coverride%2cpublic%2cprivate%2cprotected%2cfriend%2ctemplate%2ctypedef%
+2cusing%2cnamespace%2cdecltype%22%2c%22%2c%22%29%29%3b%0a%20%20%7d%0a%20%20t%5fi
+mpl%20%7b%0a%20%20%20%20char%20A%3dany%5fchar%28gen%5fdips%28%22azAZ%22%29%2b%22
+%5f%24%40%22%29%3b%0a%20%20%20%20string%20B%3dany%28gen%5fdips%28%22azAZ09%22%29
+%2b%22%5f%24%40%22%29%3f%3b%0a%20%20%20%20string%20get%28%29const%7breturn%20CTo
+S%28A%29%2bB%3b%7d%0a%20%20%7d%0a%20%20t%5fimpl%5fex%20%7b%0a%20%20%20%20t%5fimp
+l%20impl%3ddiff%3ct%5fkeyword%3e%28impl%29%3b%0a%20%20%7d%0a%20%20string%20value
+%3b%0a%20%20string%20get%28%29const%7breturn%20value%3b%7d%0a%7d%0a%0at%5fid%20%
+3d%3e%20i%5fexpr%20%7b%0a%20%20t%5fname%20body%3b%0a%7d%0a%0at%5fsign%20%3d%3e%2
+0i%5fexpr%20%7b%0a%20%20char%20body%3dany%5fchar%28%22%7e%7c%26%3d%3c%3e%21%3a%3
+f%3b%2c%2e%2b%2d%2a%2f%25%5e%22%29%3b%0a%7d%0a%0at%5fsoft%5fbrackets%20%3d%3e%20
+i%5fexpr%20%7b%0a%20%20%22%28%22%0a%20%20vector%3cTAutoPtr%3ci%5fexpr%3e%3e%20ar
+r%3f%3b%0a%20%20%22%29%22%0a%7d%0a%0at%5fhard%5fbrackets%20%3d%3e%20i%5fexpr%20%
+7b%0a%20%20%22%5b%22%0a%20%20vector%3cTAutoPtr%3ci%5fexpr%3e%3e%20arr%3f%3b%0a%2
+0%20%22%5d%22%0a%7d%0a%0at%5fcurly%5fbrackets%20%3d%3e%20i%5fexpr%20%7b%0a%20%20
+%22%7b%22%0a%20%20vector%3cTAutoPtr%3ci%5fexpr%3e%3e%20arr%3f%3b%0a%20%20%22%7d%
+22%0a%7d%0a%0at%5fparam%20%7b%0a%20%20t%5fsep%20sep%3b%0a%20%20vector%3cTAutoPtr
+%3ci%5fexpr%3e%3e%20body%3b%0a%7d%0a%0at%5fline%20%7b%0a%20%20t%5fname%20cmd%3b%
+0a%20%20vector%3ct%5fparam%3e%20params%3f%3b%0a%20%20vector%3cstring%3e%20get%5f
+raw%5fparams%28%2f%2aIEnvRTTI%26Env%2a%2f%29%7b%0a%20%20%20%20vector%3cstring%3e
+%20out%3b%0a%20%20%20%20for%28int%20i%3d0%3bi%3cparams%2esize%28%29%3bi%2b%2b%29
+%7b%0a%20%20%20%20%20%20auto%26ex%3dparams%5bi%5d%3b%0a%20%20%20%20%20%20string%
+20mem%3b%0a%20%20%20%20%20%20bool%20ok%3dsave%5fobj%28%2f%2aEnv%2c%2a%2fex%2ebod
+y%2cmem%29%3b%0a%20%20%20%20%20%20QapAssert%28ok%29%3b%0a%20%20%20%20%20%20out%2
+epush%5fback%28mem%29%3b%0a%20%20%20%20%7d%0a%20%20%20%20return%20std%3a%3amove%
+28out%29%3b%0a%20%20%7d%0a%7d
 */
