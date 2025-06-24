@@ -1,4 +1,4 @@
-// 2370.973300 ms
+// 9055.916600 ms
 //===>>===i_code_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -2773,18 +2773,18 @@ struct t_cppcore{
       return ok;
     }
   /*
-  t_dot=>i_call{
-    t_var_expr body;
-    {
-      go_auto(body);
+    t_dot=>i_call{
+      t_var_expr body;
+      {
+        go_auto(body);
+      }
     }
-  }
-  t_colon=>i_call{
-    vector<t_name> arr;
-    {
-      go_bin_oper(arr,"::");
-    }
-  }*/
+    t_colon=>i_call{
+      vector<t_name> arr;
+      {
+        go_bin_oper(arr,"::");
+      }
+    }*/
   };
 public:
 #define DEF_PRO_NESTED(F)\
@@ -2850,6 +2850,7 @@ public:
       auto&O=$.optional;
       return ok;
     }
+  [::]
   };
 public:
 #define DEF_PRO_NESTED(F)\
@@ -4235,11 +4236,11 @@ public:
     if(!ok)return ok;
     O+=dev.go_auto(sepcm);
     if(!ok)return ok;
-    M+=dev.go_auto(type);
+    D+=dev.go_auto(type);
     if(!ok)return ok;
-    M+=dev.go_auto(sep0);
+    D+=dev.go_auto(sep0);
     if(!ok)return ok;
-    M+=dev.go_auto(name);
+    D+=dev.go_auto(name);
     if(!ok)return ok;
     O+=dev.go_auto(value);
     if(!ok)return ok;

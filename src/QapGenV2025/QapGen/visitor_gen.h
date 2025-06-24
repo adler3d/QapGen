@@ -377,8 +377,10 @@ public:
         static string buf;pcmds=&buf;buf={};
         vector<string> cmds;
         auto&arr=*v.pfs;
-        for(auto&it:arr)if(auto*p=t_struct_field::UberCast(it.body.get())){
-          auto cmd=p->make_cmd(ic_dev);
+        for(auto&it:arr){
+          auto*p=t_struct_field::UberCast(it.body.get());
+          auto*pc=t_const_field::UberCast(it.body.get());
+          auto cmd=p?p->make_cmd(ic_dev):"M+=go_const("+pc->value+");";
           t_struct_cmd sc;
           QapAssert(load_obj(sc,cmd));
           cmds.push_back(sc.make_code(0));
