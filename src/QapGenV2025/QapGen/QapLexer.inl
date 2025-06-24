@@ -100,13 +100,10 @@ public:
   bool go_without(string&ref){return go_str_without<TYPE>(ref);}
 public:
   template<class TYPE_TEMP,class TYPE>
-  bool go_diff(TYPE&ref);
+  bool old_go_diff(TYPE&ref);
 public:
   template<class TYPE_TEMP,class TYPE>
-  bool go_minor(TYPE&ref){
-    //Adler: I think the old name completely wrong. [about go_sep]
-    return old_go_sep<TYPE_TEMP>(ref);
-  }
+  bool go_minor(TYPE&ref);
   template<class TYPE_TEMP,class TYPE>
   bool go_if_not_then(TYPE&ref){return old_go_sep<TYPE_TEMP>(ref);}
 public:
@@ -481,6 +478,7 @@ public:
   }
   //void setPos(int pos){this->pos=pos;}
   void getPos(int&pos){pos=mem.size();}
+  void setPos(int pos){QapAssert(mem.size()>=pos);mem.resize(pos);}
 public:
   //IEnvRTTI&getEnv(){return Env;}
 public:
@@ -644,7 +642,7 @@ bool i_dev::go_str_without(string&ref)
 }
 
 template<class TYPE_TEMP,class TYPE>
-bool i_dev::go_diff(TYPE&ref)
+bool i_dev::old_go_diff(TYPE&ref)
 {
   //Adler: lex_a=read<TYPE_TEMP>(); lex_b=read<lex_b>(); return lex_a.size()!=lex_b.size();
   TYPE_TEMP temp;
@@ -725,23 +723,74 @@ bool i_dev::old_go_sep(TYPE&ref)
   if(isSave())
   {
     //auto&Env=getEnv();
+    bool g_ok=false;
     string tmp_mem;
     {
       t_save_dev dev(/*Env,*/tmp_mem);
-      bool ok=go_for_item(dev,ref);
-      QapAssert(ok);
+      g_ok=go_for_item(dev,ref);
+      //QapAssert(ok);
     }
     {
       t_load_dev dev(/*Env,*/tmp_mem);
-      bool ok=dev.go_auto(temp);
-      QapAssert(!ok);
+      bool tmp_ok=false;
+      {
+        t_fallback tmp(*this,__FUNCTION__,"::save::load_temp");
+        tmp_ok=tmp.ok=dev.go_auto(temp);
+        if(tmp_ok||g_ok)QapAssert(tmp_ok!=g_ok);
+      }
       TYPE obj;
       ok=dev.go_auto(obj);
-      QapAssert(ok);
+      QapAssert(ok==g_ok);
+      if(ok||tmp_ok)QapAssert(ok!=tmp_ok);
     }
   }
   ok=go_for_item(*this,ref);
   return ok;
+}
+double t0{},t0f{},t1{},t1f{};
+double St0{},St0f{},St1{},St1f{};
+
+struct t_off_detector{~t_off_detector(){
+  int gg=1;
+}} off_detector;
+
+template<class TYPE_TEMP,class TYPE>
+bool i_dev::go_minor(TYPE&ref){
+  // Сохраняем текущее состояние парсера
+  int pos_before; getPos(pos_before);
+  
+  // Запускаем go_diff
+  QapClock clock;
+  bool result_diff = old_go_diff<TYPE_TEMP>(ref);
+  int pos_after_diff; getPos(pos_after_diff);
+  auto ms=clock.MS();
+  // Восстанавливаем состояние парсера
+  setPos(pos_before);
+  if(isLoad())ref={};
+  // Запускаем old_go_sep
+  
+  clock.Start();
+  bool result_minor = old_go_sep<TYPE_TEMP>(ref);
+  int pos_after_minor; getPos(pos_after_minor);
+  auto ms2=clock.MS();
+  //static double t0=0;static double t1=0;static double t0f=0;static double t1f=0;
+  if(isLoad()){if(result_diff){t0+=ms;t1+=ms2;}else{
+    t0f+=ms;t1f+=ms2;
+  }}else if(result_diff){St0+=ms;St1+=ms2;}else{
+    St0f+=ms;St1f+=ms2;
+  }
+  // Сравниваем результаты
+  if (result_diff != result_minor || pos_after_diff != pos_after_minor) {
+    // Логируем расхождения для анализа
+    string log="Discrepancy detected between go_diff and old_go_sep\n";
+    log+="Result go_diff: "+BToS(result_diff)+", pos: "+IToS(pos_after_diff)+"\n";
+    log+="Result go_minor: "+BToS(result_minor)+ ", pos: "+IToS(pos_after_minor)+"\n";
+    QapDebugMsg(log);
+  }
+  //QapDebugMsg("ok="+BToS(result_diff)+" +ms(go_diff)="+FToS2(ms)+" ms(go_sep)="+FToS2(ms2));
+  
+  // Возвращаем результат (можно выбрать любой или комбинировать)
+  return result_diff && result_minor;
 }
 
 template<class TYPE>
@@ -1048,6 +1097,7 @@ static bool internal_go_for_vec_lt(i_dev&dev,vector<TYPE>&arr){
 
 template<class TYPE>
 static bool internal_go_for_vec_st(i_dev&dev,vector<TYPE>&arr){
+  if(arr.empty())return false;
   t_fallback scope(dev,__FUNCTION__);
   bool&ok=scope.ok;
   for(int i=0;i<arr.size();i++){
@@ -1237,7 +1287,7 @@ bool save_obj(/*IEnvRTTI&Env,*/TYPE&inp,string&data)
   string mem;
   t_save_dev dev(/*Env,*/mem);
   bool ok=dev.go_auto(inp);
-  QapAssert(ok);
+  //QapAssert(ok);
   if(ok)
   {
     #if(0)

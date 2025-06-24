@@ -1102,7 +1102,7 @@ t_struct_field=>i_struct_field{
       auto*pce=value->expr.get();//t_cppcore::t_call_expr::UberCast(value->expr.get());
       QapAssert(pce);
       QapAssert(save_obj(pce->call,call));
-      QapAssert(save_obj(pce->params.arr,params));
+      QapAssert(pce->params.arr.empty()||save_obj(pce->params.arr,params));
     }
     string go=value?call+"("+name.value+string(params.size()?","+params:"")+");":"auto("+name.value+");";
     return out+="go_"+go;
@@ -1293,12 +1293,12 @@ t_cpp_code{
     t_eater eater?;
   }
   t_without_bayan=>i_bayan{
-    t_eater eater=diff<TAutoPtr<i_major>>();
+    t_eater eater=minor<TAutoPtr<i_major>>();
   }
-  t_a=>i_stong_bayan{
+  t_a=>i_strong_bayan{
     t_with_bayan wb;
   }
-  t_b=>i_stong_bayan{
+  t_b=>i_strong_bayan{
     t_eater e=minor<t_with_bayan>();
   }
   TAutoPtr<i_bayan> bayan;
@@ -1357,11 +1357,11 @@ t_fields_cmds_cppcode{
   t_true_fcc{
     vector<t_sep_struct_field> arr;
     TAutoPtr<t_sep_struct_cmds> cmds?;
-    TAutoPtr<t_cpp_code::i_stong_bayan> cppcode?;
+    TAutoPtr<t_cpp_code::i_strong_bayan> cppcode?;
   }
   t_cmds{
     TAutoPtr<t_sep_struct_cmds> cmds;
-    TAutoPtr<t_cpp_code::i_stong_bayan> cppcode?;
+    TAutoPtr<t_cpp_code::i_strong_bayan> cppcode?;
   }
   t_cppcode{
     TAutoPtr<t_cpp_code> cppcode;
@@ -1393,7 +1393,7 @@ t_struct_body{
   };
   //template<int>
   //static t_target_item_out weak_make_code(const t_target_item&ref,t_ic_dev&icdev);
-  struct t_visitor:t_fields_cmds_cppcode,t_cpp_code::i_stong_bayan::i_visitor,t_cpp_code::i_bayan::i_visitor{
+  struct t_visitor:t_fields_cmds_cppcode,t_cpp_code::i_strong_bayan::i_visitor,t_cpp_code::i_bayan::i_visitor{
     t_sep_struct_cmds*pcmds{};
     vector<t_sep_struct_field>*pfs{};
     string c;
@@ -1401,7 +1401,7 @@ t_struct_body{
     void Do(t_cpp_code::t_b*p){save_obj(p->e,c);}
     void Do(t_cpp_code::t_with_bayan*p){save_obj(p->eater,c);}
     void Do(t_cpp_code::t_without_bayan*p){save_obj(p->eater,c);}
-    void Do(t_cpp_code::i_stong_bayan*p){p->Use(*this);}
+    void Do(t_cpp_code::i_strong_bayan*p){p->Use(*this);}
     void Do(t_cpp_code::i_bayan*p){p->Use(*this);}
     virtual void Do(t_cmds*p){pcmds=p->cmds.get();if(p->cppcode)Do(p->cppcode.get());}
     virtual void Do(t_true_fcc*p){pfs=&p->arr;pcmds=p->cmds?p->cmds.get():nullptr;if(p->cppcode)Do(p->cppcode.get());}

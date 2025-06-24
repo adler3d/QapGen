@@ -451,7 +451,7 @@ public:
       auto&D=$.mandatory;
       auto&M=$.mandatory;
       auto&O=$.optional;
-      D+=dev.go_diff<t_keyword>(impl);
+      D+=dev.go_minor<t_keyword>(impl);
       if(!ok)return ok;
       return ok;
     }
@@ -752,7 +752,7 @@ a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fany%5fchar%28A%2cgen%5fdips%28%
 en%5fdips%28%22azAZ09%22%29%2b%22%5f%24%40%22%29%3b%0a%20%20%20%20%7d%0a%20%20%2
 0%20string%20get%28%29const%7breturn%20CToS%28A%29%2bB%3b%7d%0a%20%20%7d%0a%20%2
 0t%5fimpl%5fex%20%7b%0a%20%20%20%20t%5fimpl%20impl%3b%0a%20%20%20%20%7b%0a%20%20
-%20%20%20%20go%5fdiff%3ct%5fkeyword%3e%28impl%29%3b%0a%20%20%20%20%7d%0a%20%20%7
+%20%20%20%20go%5fminor%3ct%5fkeyword%3e%28impl%29%3b%0a%20%20%20%20%7d%0a%20%20%7
 d%0a%20%20string%20value%3b%0a%20%20%7b%0a%20%20%20%20go%5fstr%3ct%5fimpl%5fex%3
 e%28value%29%3b%0a%20%20%7d%0a%20%20string%20get%28%29const%7breturn%20value%3b%
 7d%0a%7d%0a%0at%5fid%20%3a%20i%5fexpr%20%7b%0a%20%20t%5fname%20body%3b%0a%20%20%
