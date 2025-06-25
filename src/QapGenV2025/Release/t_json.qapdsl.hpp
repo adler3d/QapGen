@@ -18,7 +18,7 @@ t_number=>i_value{
   t_minus{"-"}
   t_frac{
     "."
-    string arrany(gen_dips("09"));
+    string arr=any(gen_dips("09"));
   }
   t_sign{
     char sign=any_char("-+");
