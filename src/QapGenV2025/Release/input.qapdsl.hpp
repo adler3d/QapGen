@@ -443,7 +443,7 @@ t_sep_str_seq{
 
 t_str_code=>i_code{
   t_str_seq first;
-  vector<t_sep_str_seq> arr;
+  vector<t_sep_str_seq> arr?;
   string make_code()const{
     string out=first.get_code();
     if(!arr.empty())
