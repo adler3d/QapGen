@@ -229,264 +229,146 @@ t_lev14{
   }
 }
 t_string{
-  string value;
-  {
-    M+=go_const("\"");
-    O+=go_str<vector<TAutoPtr<i_str_item>>>(value);
-    M+=go_const("\"");
-  }
+  "\""
+  string value=str<vector<TAutoPtr<i_str_item>>>()?;
+  "\""
 }
+
 t_int_expr=>i_expr{
-  t_zero=>i_val{
-    {
-      go_const("0");
-    }
-  }
+  t_zero=>i_val{"0"}
   t_num=>i_val{
-    char first;
-    string num;
-    {
-      M+=go_any_char(first,gen_dips("19"));
-      O+=go_any(num,gen_dips("09"));
-    }
+    char first=any_char(gen_dips("19"));
+    string num=any(gen_dips("09"))?;
   }
-  string value;
-  {
-    go_str<TAutoPtr<i_val>>(value);
-  }
+  string value=str<TAutoPtr<i_val>>();
 }
+
 t_type_expr{
   t_params{
-    string type;
+    "{"
+    string type=str<t_type_expr>();
+    ","
     t_int_expr count;
-    {
-      go_const("{");
-      go_str<t_type_expr>(type);
-      go_const(",");
-      go_auto(count);
-      go_const("}");
-    }
+    "}"
   }
   t_elem{
     t_name name;
-    TAutoPtr<t_params> params;
-    {
-      M+=go_auto(name);
-      O+=go_auto(params);
-    }
+    TAutoPtr<t_params> params?;
   }
   t_item{
-    t_sep sep0;
-    t_sep sep1;
+    t_sep sep0?;
+    "::"
+    t_sep sep1?;
     t_elem body;
-    {
-      O+=go_auto(sep0);
-      M+=go_const("::");
-      O+=go_auto(sep1);
-      M+=go_auto(body);
-    }
   }
   t_elem first;
-  vector<t_item> arr;
-  {
-    M+=go_auto(first);
-    O+=go_auto(arr);
-  }
+  vector<t_item> arr?;
 }
+
 t_char_expr=>i_expr{
   t_char_item body;
-  {
-    go_auto(body);
-  }
 }
+
 t_bool_expr=>i_expr{
-  string value;
-  {
-    go_any_str_from_vec(value,split("true,false",","));
-  }
+  string value=any_str_from_vec(split("true,false",","));
 }
+
 t_string_expr=>i_expr{
   t_string body;
-  {
-    go_auto(body);
-  }
 }
+
 t_real_expr=>i_expr{
   t_frac{
-    string arr;
-    {
-      go_const(".");
-      go_any(arr,gen_dips("09"));
-    }
+    "."
+    string arr=any(gen_dips("09"));
   }
   t_sign{
-    char sign;
-    {
-      go_any_char(sign,"-+");
-    }
+    char sign=any_char("-+");
   }
   t_exp{
-    char e;
-    TAutoPtr<t_sign> sign;
-    string arr;
-    {
-      M+=go_any_char(e,"eE");
-      O+=go_auto(sign);
-      M+=go_any(arr,gen_dips("09"));
-    }
+    char e=any_char("eE");
+    TAutoPtr<t_sign> sign?;
+    string arr=any(gen_dips("09"));
   }
   t_num=>i_val{
-    char first;
-    string num;
-    {
-      M+=go_any_char(first,gen_dips("19"));
-      O+=go_any(num,gen_dips("09"));
-    }
+    char first=any_char(gen_dips("19"));
+    string num=any(gen_dips("09"))?;
   }
-  t_zero=>i_val{
-    {
-      go_const("0");
-    }
-  }
+  t_zero=>i_val{"0"}
   t_impl{
     TAutoPtr<i_val> val;
     TAutoPtr<t_frac> frac;
-    TAutoPtr<t_exp> exp;
-    {
-      M+=go_auto(val);
-      M+=go_auto(frac);
-      O+=go_auto(exp);
-    }
+    TAutoPtr<t_exp> exp?;
   }
-  string value;
-  {
-    M+=go_str<t_impl>(value);
-  }
+  string value=str<t_impl>();
 }
+
 t_var_expr=>i_expr{
   t_sb_expr{
-    t_sep sep0;
+    "["
+    t_sep sep0?;
     t_lev14 expr;
-    t_sep sep1;
-    {
-      M+=go_const("[");
-      O+=go_auto(sep0);
-      M+=go_auto(expr);
-      O+=go_auto(sep1);
-      M+=go_const("]");
-    }
+    t_sep sep1?;
+    "]"
   }
   t_dd_part=>i_part{
     t_elem{
-      t_sep sep0;
-      t_sep sep1;
+      t_sep sep0?;
+      "::"
+      t_sep sep1?;
       t_name name;
-      {
-        O+=go_auto(sep0);
-        M+=go_const("::");
-        O+=go_auto(sep1);
-        M+=go_auto(name);
-      }
     }
     vector<t_elem> arr;
-    {
-      M+=go_auto(arr);
-    }
   }
   t_template_part=>i_part{
-    t_sep sepB;
-    t_sep sep0;
+    t_sep sepB?;
+    "<"
+    t_sep sep0?;
     TAutoPtr<i_expr> expr;
-    t_sep sep1;
+    t_sep sep1?;
+    ">"
     TAutoPtr<t_dd_part> ddp;
-    {
-      O+=go_auto(sepB);
-      M+=go_const("<");
-      O+=go_auto(sep0);
-      M+=go_auto(expr);
-      O+=go_auto(sep1);
-      M+=go_const(">");
-      O+=go_auto(ddp);
-    }
   }
   t_item{
     t_arr{
-      t_sep sep;
+      t_sep sep?;
       vector<t_sb_expr> arr;
-      {
-        O+=go_auto(sep);
-        M+=go_auto(arr);
-      }
     }
-    t_sep sep0;
+    "."
+    t_sep sep0?;
     t_name name;
-    t_arr arr;
-    {
-      M+=go_const(".");
-      O+=go_auto(sep0);
-      M+=go_auto(name);
-      O+=go_auto(arr);
-    }
+    t_arr arr?;
   }
   t_name name;
-  TAutoPtr<i_part> tp;
-  vector<t_item> arr;
-  {
-    M+=go_auto(name);
-    O+=go_auto(tp);
-    O+=go_auto(arr);
-  }
+  TAutoPtr<i_part> tp?;
+  vector<t_item> arr?;
 }
+
 t_block_expr=>i_expr{
+  "("
   t_lev14 body;
-  {
-    go_const("(");
-    go_auto(body);
-    go_const(")");
-  }
+  ")"
 }
+
 t_call_param{
-  t_sep sep0;
+  t_sep sep0?;
   t_lev14 body;
-  t_sep sep1;
-  {
-    O+=go_auto(sep0);
-    M+=go_auto(body);
-    O+=go_auto(sep1);
-  }
+  t_sep sep1?;
 }
+
 t_call_params{
-  t_sep sep;
-  vector<t_call_param> arr;
-  {
-    M+=go_const("(");
-    O+=go_auto(sep);
-    O+=go_vec(arr,",");
-    M+=go_const(")");
-  }
+  "("
+  t_sep sep?;
+  vector<t_call_param> arr=vec(",")?;
+  ")"
 }
-t_call_expr=>i_expr{/*
-  t_dot=>i_call{
-    t_var_expr body;
-    {
-      go_auto(body);
-    }
-  }
-  t_colon=>i_call{
-    vector<t_name> arr;
-    {
-      go_bin_oper(arr,"::");
-    }
-  }*/
+
+t_call_expr=>i_expr{
   t_var_expr call;
-  t_sep sep;
+  t_sep sep?;
   t_call_params params;
-  {
-    M+=go_auto(call);
-    O+=go_auto(sep);
-    M+=go_auto(params);
-  }
 }
+
 }
 
 t_test20250618_atrr{
@@ -523,29 +405,20 @@ i_code {
   virtual string make_code()const{QapDebugMsg("no way.");return "";};
 }
 
-t_name_code => i_code {
-  string value;
-  {
-    M += go_str<t_name::t_impl>(value);
-  }
-  string make_code()const{return value;};
+t_name_code=>i_code{
+  string value=str<t_name::t_impl>();
+  string make_code()const{return value;}
 }
 
 t_num_code=>i_code{
   t_number body;
-  {
-    M+=go_auto(body);
-  }
-  string make_code()const{return body.body;};
+  string make_code()const{return body.body;}
 }
 
 t_str_seq{
-  vector<TAutoPtr<i_str_item>> arr;
-  {
-    M+=go_const("\"");
-    O+=go_auto(arr);
-    M+=go_const("\"");
-  }
+  "\""
+  vector<TAutoPtr<i_str_item>> arr?;
+  "\""
   string get_code()const{
     string out;
     for(int i=0;i<arr.size();i++){
@@ -566,19 +439,11 @@ t_str_seq{
 t_sep_str_seq{
   t_sep sep;
   t_str_seq body;
-  {
-    go_auto(sep);
-    go_auto(body);
-  }
 }
 
 t_str_code=>i_code{
   t_str_seq first;
   vector<t_sep_str_seq> arr;
-  {
-    M+=go_auto(first);
-    O+=go_auto(arr);
-  }
   string make_code()const{
     string out=first.get_code();
     if(!arr.empty())
@@ -591,26 +456,16 @@ t_str_code=>i_code{
 }
 
 t_char_code=>i_code{
+  "'"
   TAutoPtr<i_char_item> body;
-  {
-    go_const("'");
-    go_auto(body);
-    go_const("'");
-  }
-  string get_code()const{
-    return body->get_code();
-  }
-  string get_value()const{
-    return body->get_value();
-  }
+  "'"
+  string get_code()const{return body->get_code();}
+  string get_value()const{return body->get_value();}
   string make_code()const{return "'"+get_code()+"'";}
 }
 
 t_sign_code=>i_code{
   t_sign body;
-  {
-    go_auto(body);
-  }
   string make_code()const{return CToS(body.body);}
 }
 
