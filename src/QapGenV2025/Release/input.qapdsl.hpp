@@ -327,7 +327,7 @@ t_var_expr=>i_expr{
     TAutoPtr<i_expr> expr;
     t_sep sep1?;
     ">"
-    TAutoPtr<t_dd_part> ddp;
+    TAutoPtr<t_dd_part> ddp?;
   }
   t_item{
     t_arr{

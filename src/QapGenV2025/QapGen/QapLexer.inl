@@ -3,10 +3,9 @@
 struct t_fallback;
 
 struct t_scope_tool{
-  bool ok=true;
-  void operator+=(bool value){
-    ok=value;
-  }
+  t_fallback*scope;
+  bool ok;
+  void operator+=(bool value);
 };
 
 struct i_dev_base{
@@ -17,18 +16,26 @@ struct i_dev_base{
 static int&get_qap_fallback_counter(){static int counter=0;return counter;}
 
 struct t_fallback{
+  struct t_rec{bool E;bool ok;bool D;};
   i_dev_base&dev;
   bool&ok;
   size_t pos;
+  const char*const ptr;
+  int err_count;
   t_scope_tool mandatory;
   t_scope_tool optional;
-  t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev),ok(mandatory.ok),pos(-1){
-    dev.push(this);
+  t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev),ok(mandatory.ok),ptr(ptr),pos(-1),err_count(0){
+    if(ptr)dev.push(this);
   }
  ~t_fallback(){
-    dev.pop(this);
+    if(ptr)dev.pop(this);
     get_qap_fallback_counter()++;
   }
+  void add_status(const t_rec&rec){
+    if(rec.E)err_count++;
+  }
+  void log_clear(){err_count=0;}
+  int getErr()const{return err_count;}
 };
 
 struct t_load_dev;
@@ -136,21 +143,45 @@ class t_load_dev:public i_dev{
 public:
   //IEnvRTTI&Env;
   const string&mem;
+  vector<t_fallback*> stack;
   size_t pos;
   size_t maxpos;
+  t_fallback main;
   size_t maxpos_pop;
 public:
-  t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos),maxpos_pop(pos){}
+  t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos),maxpos_pop(pos),main(*(i_dev*)nullptr,nullptr){stack.push_back(&main);}
 public:
   void push(t_fallback*ptr){
-    ptr->pos=pos;
+    QapAssert(ptr);
+    //for(int i=0;i<stack.size();i++)QapAssert(stack[i]!=ptr);
+    stack.push_back(ptr);
+    ptr->pos=this->pos;
+    ptr->mandatory.ok=true;
+    ptr->mandatory.scope=ptr;
+    ptr->optional.ok=false;
+    ptr->optional.scope=ptr;
     maxpos=std::max(maxpos,pos);
   }
   void pop(t_fallback*ptr){
     maxpos_pop=std::max(maxpos_pop,pos);
+    QapAssert(ptr);
+    QapAssert(!stack.empty());
+    QapAssert(stack.back()==ptr);
+    stack.pop_back();
+    t_fallback::t_rec status;
+    bool skip=this->pos==ptr->pos;
+    bool ok=ptr->ok;
+    bool dep_err=ptr->getErr();
+    bool error=(!skip&&!ok)||dep_err;
+    status.E=error;
+    status.ok=ok;
+    status.D=dep_err;
+    stack.back()->add_status(status);
     if(ptr->ok)return;
-    if(pos==ptr->pos)return;
-    pos=ptr->pos;
+    if(this->pos==ptr->pos)return;
+    /*QapAssert(!stack.empty());*/
+    //stack.back()->log.err(SToS(ptr->ptr)+" ["+IToS(this->pos)+"=>"+IToS(ptr->pos)+"]");
+    this->pos=ptr->pos;
   }
   void setPos(int pos){this->pos=pos;}
   void getPos(int&pos){pos=this->pos;}
@@ -232,6 +263,9 @@ public:
     body=mem[pos];
     pos++;
     return true;
+  }
+  bool go_any(char&body,const CharMask&any){
+    return go_any_char(body,any);
   }
   bool go_any_char(char&body,const CharMask&any){
     if(mem.empty())return false;
@@ -341,6 +375,8 @@ public:
   public:
     const vector<string>&arr;
   };
+  
+public:
   bool go_any_str_from_vec(string&ref,const vector<string>&arr)
   {
     return go_any_str_from_vec_old_and_slow(ref,arr);
@@ -466,19 +502,31 @@ class t_save_dev:public i_dev{
 public:
   //IEnvRTTI&Env;
   string&mem;
+  vector<t_fallback*> stack;
 public:
   t_save_dev(/*IEnvRTTI&Env,*/string&mem):/*Env(Env),*/mem(mem){}
 public:
   void push(t_fallback*ptr){
-    ptr->pos=mem.size();
+    QapAssert(ptr);
+    for(int i=0;i<stack.size();i++)QapAssert(stack[i]!=ptr);
+    stack.push_back(ptr);
+    ptr->pos=this->mem.size();
+    ptr->mandatory.ok=true;
+    ptr->mandatory.scope=ptr;
+    ptr->optional.ok=false;
+    ptr->optional.scope=ptr;
   }
   void pop(t_fallback*ptr){
+    QapAssert(ptr);
+    QapAssert(!stack.empty());
+    QapAssert(stack.back()==ptr);
+    stack.pop_back();
     if(ptr->ok)return;
-    mem.resize(ptr->pos);
+    this->mem.resize(ptr->pos);
   }
-  //void setPos(int pos){this->pos=pos;}
   void getPos(int&pos){pos=mem.size();}
   void setPos(int pos){QapAssert(mem.size()>=pos);mem.resize(pos);}
+
 public:
   //IEnvRTTI&getEnv(){return Env;}
 public:
@@ -527,7 +575,7 @@ public:
     return ok;
   }
   bool go_any_char(char&body,const CharMask&any){
-    auto ok=any[body];
+    auto ok=any[(unsigned char&)body];
     QapAssert(ok)
     mem.push_back(body);
     return ok;
@@ -618,7 +666,7 @@ bool i_dev::go_str_without(string&ref)
     //auto&Env=getEnv();
     QapAssert(!ref.empty());
     {
-      t_fallback tmp(*this,__FUNCTION__, "::save");
+      t_fallback tmp(*this,__FUNCTION__,"::save");
       string tmp_mem=ref;
       t_load_dev dev(/*Env,*/tmp_mem);
       for(int i=0;i<ref.size();i++)
@@ -664,6 +712,7 @@ bool i_dev::old_go_diff(TYPE&ref)
         tmp.pos=def_pos;
       }
     }
+    //scope.log_clear();
     ok=go_for_item(*this,ref);
     if(!tmp_ok||!ok)return ok;
     int ref_pos=0;
@@ -803,91 +852,91 @@ bool i_dev::go_str(string&ref)
     {
       TYPE value;
       t_load_dev dev(/*Env,*/ref);
-      ok=dev.go_auto(value);
-      //QapAssert(ok);
-      int pos=0;dev.getPos(pos);
-      bool err=ref.size()!=pos;
-      ok=!err;
-      if(err)
-      {
-        string msg="problem detected:\n";
-        msg+="  ref.size : "+IToS(ref.size())+"\n";
-        msg+="  pos      : "+IToS(pos)+"\n";
-        msg+=t_error_tool::get_codefrag(ref,pos);
-        QapDebugMsg(msg);
+        ok=dev.go_auto(value);
+        //QapAssert(ok);
+        int pos=0;dev.getPos(pos);
+        bool err=ref.size()!=pos;
+        ok=!err;
+        if(err)
+        {
+          string msg="problem detected:\n";
+          msg+="  ref.size : "+IToS(ref.size())+"\n";
+          msg+="  pos      : "+IToS(pos)+"\n";
+          msg+=t_error_tool::get_codefrag(ref,pos);
+          QapDebugMsg(msg);
+        }
       }
+      if(ok)
+      {
+        return go_blob(ref,ref.size());
+      }
+      return ok;
     }
-    if(ok)
+    if(isLoad())
     {
-      return go_blob(ref,ref.size());
+      TYPE value;
+      int pos=0;getPos(pos);
+      bool ok=go_auto(value);
+      if(!ok)return ok;
+      int curpos=0;getPos(curpos);
+      QapAssert(curpos>pos);
+      setPos(pos);
+      auto count=curpos-pos;
+      ok=go_blob(ref,count);
+      QapAssert(ok);
+      return ok;
     }
-    return ok;
+    QapDebugMsg("no way");
+    return false;
   }
-  if(isLoad())
-  {
-    TYPE value;
-    int pos=0;getPos(pos);
-    bool ok=go_auto(value);
-    if(!ok)return ok;
-    int curpos=0;getPos(curpos);
-    QapAssert(curpos>pos);
-    setPos(pos);
-    auto count=curpos-pos;
-    ok=go_blob(ref,count);
-    QapAssert(ok);
-    return ok;
-  }
-  QapDebugMsg("no way");
-  return false;
-}
 
-template<class TYPE>
-bool i_dev::go_vec(vector<TYPE>&arr,const string&sep)
-{
-  t_fallback scope(*this,__FUNCTION__);
-  bool&ok=scope.ok;
-  if(isLoad())
+  template<class TYPE>
+  bool i_dev::go_vec(vector<TYPE>&arr,const string&sep)
   {
-    for(int i=0;;i++)
+    t_fallback scope(*this,__FUNCTION__);
+    bool&ok=scope.ok;
+    if(isLoad())
     {
-      if(i)
+      for(int i=0;;i++)
       {
+        if(i)
+        {
+          t_fallback subscope(*this,__FUNCTION__);
+          subscope.ok=go_const(sep);
+          if(!subscope.ok)break;
+        }
         t_fallback subscope(*this,__FUNCTION__);
-        subscope.ok=go_const(sep);
-        if(!subscope.ok)break;
+        bool&ok=subscope.ok;
+        TYPE tmp;
+        ok=go_auto(tmp);
+        if(!ok)break;
+        QapAssert(CheckTAutoPtrIsNotEmpty(tmp));
+        arr.push_back(std::move(tmp));
       }
-      t_fallback subscope(*this,__FUNCTION__);
-      bool&ok=subscope.ok;
-      TYPE tmp;
-      ok=go_auto(tmp);
-      if(!ok)break;
-      QapAssert(CheckTAutoPtrIsNotEmpty(tmp));
-      arr.push_back(std::move(tmp));
+      ok=!arr.empty();
+      return ok;
     }
-    ok=!arr.empty();
+    if(isSave())
+    {
+      for(int i=0;i<arr.size();i++)
+      {
+        if(i)
+        {
+          t_fallback subscope(*this,__FUNCTION__);
+          subscope.ok=go_const(sep);
+          if(!subscope.ok)break;
+        }
+        t_fallback subscope(*this,__FUNCTION__);
+        bool&ok=subscope.ok;
+        auto&ex=arr[i];
+        QapAssert(CheckTAutoPtrIsNotEmpty(ex));
+        ok=go_auto(ex);
+        if(!ok)break;
+      }
+      return ok;
+    }
     return ok;
   }
-  if(isSave())
-  {
-    for(int i=0;i<arr.size();i++)
-    {
-      if(i)
-      {
-        t_fallback subscope(*this,__FUNCTION__);
-        subscope.ok=go_const(sep);
-        if(!subscope.ok)break;
-      }
-      t_fallback subscope(*this,__FUNCTION__);
-      bool&ok=subscope.ok;
-      auto&ex=arr[i];
-      QapAssert(CheckTAutoPtrIsNotEmpty(ex));
-      ok=go_auto(ex);
-      if(!ok)break;
-    }
-    return ok;
-  }
-  return ok;
-}
 /*
 template<class TYPE,class BASE>
 static bool go_for_class(i_dev&dev,TAutoPtr<BASE>&out){
@@ -923,7 +972,8 @@ static bool go_for_poly(i_dev&dev,TAutoPtr<TYPE>&ref){
 
 template<class TYPE>
 static bool go_for_item(i_dev&dev,const TYPE&ref,...){
-  static_assert(false,"go_for_item<TYPE> is not implemented!");
+  static_assert(false,__FILE__":"__FUNCTION__" => so bad :(");
+  //QapDebugMsg(Sys$$<TYPE>::GetRTTI(dev.getEnv())->GetFullName()+" => no way!");
   return false;
 }
 
@@ -999,6 +1049,8 @@ static bool go_for_item(
   ok=tmp.go(dev);
   if(!ok)return ok;
   ref=std::make_unique<TYPE>(std::move(tmp));
+  //auto*p=ref.build<TYPE>(dev.getEnv());
+  //*p=std::move(tmp);
   return ok;
 }
 
@@ -1221,7 +1273,7 @@ static string two_text_diff(const string&out,const string&data)
 };
 
 template<class TYPE>
-bool load_obj(TYPE&out,const string&data,int*pmaxpos=nullptr)
+bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
 {
   out={};
   t_load_dev dev(data);auto&ldev=dev;
@@ -1314,4 +1366,9 @@ bool save_obj(/*IEnvRTTI&Env,*/TYPE&inp,string&data)
   }
   data=std::move(mem);
   return ok;
+}
+
+void t_scope_tool::operator+=(bool value){
+  if(!ok)return;
+  scope->ok=value;
 }
