@@ -15,7 +15,7 @@ t_string=>i_value{
 }
 
 t_number=>i_value{
-  t_minus{" - "}
+  t_minus{"-"}
   t_frac{
     "."
     string arrany(gen_dips("09"));
