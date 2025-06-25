@@ -383,7 +383,9 @@ public:
         static string buf;pcmds=&buf;buf={};
         vector<string> cmds;
         auto&arr=*v.pfs;
+        int i=-1;
         for(auto&it:arr){
+          i++;
           auto*p=t_struct_field::UberCast(it.body.get());
           auto*pc=t_const_field::UberCast(it.body.get());
           auto cmd=p?p->make_cmd(ic_dev):"M+=go_const("+pc->value+");";
@@ -392,7 +394,7 @@ public:
           if(!res.ok){
             QapDebugMsg("t_struct_field::make_cmd return wrong code:\n"+res.msg);
           }
-          cmds.push_back(sc.make_code(0));
+          cmds.push_back(sc.make_code(i));
         }
         buf=join(cmds,"\n");
       }

@@ -8,7 +8,7 @@ function fixSpacesBeforeParen(input) {
 }
 
 // ѕример использовани€: читаем файл или строку
-const fn="t_asmcpplike_lexers.qapdsl_v2.hpp";
+const fn="t_line_lexer.qapdsl.hpp";
 const input = fs.readFileSync(fn, 'utf8'); // или вставь строку напр€мую
 
 const output = fixSpacesBeforeParen(input);

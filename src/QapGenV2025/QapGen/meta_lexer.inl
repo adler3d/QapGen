@@ -1,4 +1,4 @@
-// 7017.137000 ms
+// 6474.821100 ms
 //===>>===i_code_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -4714,8 +4714,8 @@ public:
     auto&O=$.optional;
     M+=dev.go_const("[");
     if(!ok)return ok;
-    static const auto g_static_var_0=QapStrFinder::fromArr(split("optional,mandatory",","));
-    D+=dev.go_any_str_from_vec(value,g_static_var_0);
+    static const auto g_static_var_1=QapStrFinder::fromArr(split("optional,mandatory",","));
+    D+=dev.go_any_str_from_vec(value,g_static_var_1);
     if(!ok)return ok;
     M+=dev.go_const("]");
     if(!ok)return ok;
@@ -4747,8 +4747,8 @@ public:
     if(!ok)return ok;
     O+=dev.go_auto(sep);
     if(!ok)return ok;
-    static const auto g_static_var_0=QapStrFinder::fromArr(split("optional,mandatory",","));
-    D+=dev.go_any_str_from_vec(value,g_static_var_0);
+    static const auto g_static_var_2=QapStrFinder::fromArr(split("optional,mandatory",","));
+    D+=dev.go_any_str_from_vec(value,g_static_var_2);
     if(!ok)return ok;
     return ok;
   }
