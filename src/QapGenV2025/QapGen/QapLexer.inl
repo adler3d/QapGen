@@ -74,6 +74,15 @@ public:
     }
     return ok;
   }
+  template<size_t SIZE>
+  bool go_any_arr_char(array<char,SIZE>&body,const CharMask&any){
+    bool ok=false;
+    for(size_t i=0;i<body.size();i++){
+      ok=go_any_char(body[i],any);
+      if(!ok)break;
+    }
+    return ok;
+  }
 public:
   template<class TYPE,size_t SIZE>
   bool go_auto(std::array<TYPE,SIZE>&arr){

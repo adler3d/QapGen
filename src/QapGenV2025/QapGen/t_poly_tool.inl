@@ -78,7 +78,7 @@ public:
 public:
   template<class TYPE>
   struct t_out_rec{
-    string info;
+    const char*info;
     TAutoPtr<TYPE> object;
     int pos;
     int mass;
@@ -272,7 +272,7 @@ public:
       scope.ok=tmp.go(dev);
       t_out_rec<TYPE> rec;
       static const string strtype=T::ProxySys$$::GetFullName();
-      rec.info=strtype;
+      rec.info=strtype.c_str();
       if(scope.ok)
       {
         rec.object=std::make_unique<T>(std::move(tmp));
@@ -371,9 +371,9 @@ public:
         auto&b=out[pb];
         if(a.pos>b.pos)continue;
         string msg="wrong mass for:\n";
-        msg+="a.info = "+a.info+"\n";
+        msg+="a.info = "+string(a.info)+"\n";
         msg+="a.pos = "+IToS(a.pos)+"\n";
-        msg+="b.info = "+b.info+"\n";
+        msg+="b.info = "+string(b.info)+"\n";
         msg+="b.pos = "+IToS(b.pos)+"\n";
         QapDebugMsg(msg);
       }
