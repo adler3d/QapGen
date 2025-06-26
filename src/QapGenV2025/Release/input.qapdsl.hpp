@@ -681,16 +681,16 @@ t_semicolon{
 }
 
 t_value_item{
-  TAutoPtr<i_code_with_sep> body=minor<t_semicolon>();
+  string body=str<TAutoPtr<t_cppcore::i_expr>>();
   string make_code()const{
-    return body->make_code();
+    return body;
   }
 }
 
 t_value{
   t_sep sep?;
   "="
-  string body=str<vector<t_value_item>>();
+  string body=str<TAutoPtr<t_cppcore::i_expr>>();
   string make_code()const{
     string out=body;
     //for(int i=0;i<arr.size();i++)out+=arr[i].make_code();
@@ -743,14 +743,14 @@ t_type_item_type;
 t_scope_type_item{
   t_type_scope scope;
   TAutoPtr<t_type_item_type> body;
+  template<class TYPE>
+  static string weak_body_make_code(const TAutoPtr<TYPE>&ref){
+    return ref->make_code();
+  }
   string make_code()const{
     string out;
     out+=scope.make_code();
-    out+=body->make_code();
-    /*if(body){
-      auto*p=body.get();
-      out+=p->make_code();
-    }*/
+    out+=weak_body_make_code(body);
     return out;
   }
 }
@@ -1142,6 +1142,7 @@ t_cpp_code{
   t_bayan{"[::]"}
   t_fields=>i_major{t_sep_struct_field f;}
   t_cmds=>i_major{t_sep_struct_cmds c;}
+  t_atr=>i_major{TAutoPtr<t_attr> attr;}
   t_eater{vector<TAutoPtr<i_cpp_code>> arr;}
   t_with_bayan=>i_bayan{
     t_bayan bayan;
