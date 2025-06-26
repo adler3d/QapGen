@@ -51,6 +51,9 @@ public:
   static TYPE*UberCast(^^^I_BASE^^^*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public ^^^I_BASE^^^_visitor{
+^^^COMMENT_DO_LIST^^^
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===^^^I_BASE^^^_visitor
@@ -110,4 +113,4 @@ public:
 ----------------------------------------------------------------
 #####-END_OF_FILE-#####
 ----------------------------------------------------------------
-2025.06.13 10:39:52.990
+2025.06.25 20:35:44.078

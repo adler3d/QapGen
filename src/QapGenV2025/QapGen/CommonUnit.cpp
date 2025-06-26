@@ -1,4 +1,5 @@
 #define DEF_PRO_FULL
+#include <bitset>
 #include "FromQapEng.h"
 //#include "QapMicro2/QapTools.h"
 typedef unsigned char uchar;

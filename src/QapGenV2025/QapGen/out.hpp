@@ -1,4 +1,4 @@
-// 6897.869600 ms
+// 6139.317100 ms
 //===>>===i_code_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -53,6 +53,16 @@ public:
   static TYPE*UberCast(i_code*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_code_visitor{
+//  void Do(t_name_code*p){}
+//  void Do(t_num_code*p){}
+//  void Do(t_str_code*p){}
+//  void Do(t_char_code*p){}
+//  void Do(t_sign_code*p){}
+//  void Do(t_soft_brackets_code*p){}
+//  void Do(t_hard_brackets_code*p){}
+//  void Do(t_curly_brackets_code*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_code_visitor
@@ -144,6 +154,16 @@ public:
   static TYPE*UberCast(i_code_with_sep*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_code_with_sep_visitor{
+//  void Do(t_name_code_with_sep*p){}
+//  void Do(t_num_code_with_sep*p){}
+//  void Do(t_str_code_with_sep*p){}
+//  void Do(t_char_code_with_sep*p){}
+//  void Do(t_sign_code_with_sep*p){}
+//  void Do(t_soft_brackets_code_with_sep*p){}
+//  void Do(t_hard_brackets_code_with_sep*p){}
+//  void Do(t_curly_brackets_code_with_sep*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_code_with_sep_visitor
@@ -231,6 +251,12 @@ public:
   static TYPE*UberCast(i_type_item*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_type_item_visitor{
+//  void Do(t_type_item_string*p){}
+//  void Do(t_type_item_char*p){}
+//  void Do(t_type_item_number*p){}
+//  void Do(t_type_item_type*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_type_item_visitor
@@ -312,6 +338,10 @@ public:
   static TYPE*UberCast(i_type_templ*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_type_templ_visitor{
+//  void Do(t_type_templ_angle*p){}
+//  void Do(t_type_templ_soft*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_type_templ_visitor
@@ -391,6 +421,10 @@ public:
   static TYPE*UberCast(i_struct_cmd_xxxx*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_struct_cmd_xxxx_visitor{
+//  void Do(t_struct_cmd_mode*p){}
+//  void Do(t_struct_cmd_anno*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_struct_cmd_xxxx_visitor
@@ -470,6 +504,10 @@ public:
   static TYPE*UberCast(i_struct_field*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_struct_field_visitor{
+//  void Do(t_const_field*p){}
+//  void Do(t_struct_field*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_struct_field_visitor
@@ -551,6 +589,11 @@ public:
   static TYPE*UberCast(i_struct_cmd_so*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_struct_cmd_so_visitor{
+//  void Do(t_struct_cmd_suffix*p){}
+//  void Do(t_struct_cmd_optional*p){}
+//  void Do(t_struct_cmd_opt_v2*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_struct_cmd_so_visitor
@@ -631,6 +674,10 @@ public:
   static TYPE*UberCast(i_cpp_code*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_cpp_code_visitor{
+//  void Do(t_cpp_code_sep*p){}
+//  void Do(t_cpp_code_main*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_cpp_code_visitor
@@ -710,6 +757,10 @@ public:
   static TYPE*UberCast(i_def*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_def_visitor{
+//  void Do(t_class_def*p){}
+//  void Do(t_struct_def*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_def_visitor
@@ -793,6 +844,10 @@ public:
   static TYPE*UberCast(i_target_item*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_target_item_visitor{
+//  void Do(t_target_item*p){}
+//  void Do(t_target_decl*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_target_item_visitor
@@ -879,6 +934,16 @@ struct t_cppcore{
     static TYPE*UberCast(i_expr*p){return dynamic_cast<TYPE*>(p);}
     #endif
   };
+  //struct t_visitor:public i_expr_visitor{
+  //  void Do(t_int_expr*p){}
+  //  void Do(t_char_expr*p){}
+  //  void Do(t_bool_expr*p){}
+  //  void Do(t_string_expr*p){}
+  //  void Do(t_real_expr*p){}
+  //  void Do(t_var_expr*p){}
+  //  void Do(t_block_expr*p){}
+  //  void Do(t_call_expr*p){}
+  //};
   #undef LIST
   #undef DEF_PRO_BLANK
   //===<<===i_expr_visitor
@@ -1785,6 +1850,10 @@ struct t_cppcore{
       static TYPE*UberCast(i_val*p){return dynamic_cast<TYPE*>(p);}
       #endif
     };
+    //struct t_visitor:public i_val_visitor{
+    //  void Do(t_zero*p){}
+    //  void Do(t_num*p){}
+    //};
     #undef LIST
     #undef DEF_PRO_BLANK
     //===<<===i_val_visitor
@@ -2135,6 +2204,10 @@ struct t_cppcore{
       static TYPE*UberCast(i_val*p){return dynamic_cast<TYPE*>(p);}
       #endif
     };
+    //struct t_visitor:public i_val_visitor{
+    //  void Do(t_num*p){}
+    //  void Do(t_zero*p){}
+    //};
     #undef LIST
     #undef DEF_PRO_BLANK
     //===<<===i_val_visitor
@@ -2403,6 +2476,10 @@ struct t_cppcore{
       static TYPE*UberCast(i_part*p){return dynamic_cast<TYPE*>(p);}
       #endif
     };
+    //struct t_visitor:public i_part_visitor{
+    //  void Do(t_dd_part*p){}
+    //  void Do(t_template_part*p){}
+    //};
     #undef LIST
     #undef DEF_PRO_BLANK
     //===<<===i_part_visitor
@@ -4410,6 +4487,11 @@ struct t_cmd_param{
     static TYPE*UberCast(i_cmd_param_expr*p){return dynamic_cast<TYPE*>(p);}
     #endif
   };
+  //struct t_visitor:public i_cmd_param_expr_visitor{
+  //  void Do(t_expr_call*p){}
+  //  void Do(t_expr_str*p){}
+  //  void Do(t_expr_var*p){}
+  //};
   #undef LIST
   #undef DEF_PRO_BLANK
   //===<<===i_cmd_param_expr_visitor
@@ -5010,6 +5092,10 @@ struct t_cpp_code{
     static TYPE*UberCast(i_major*p){return dynamic_cast<TYPE*>(p);}
     #endif
   };
+  //struct t_visitor:public i_major_visitor{
+  //  void Do(t_fields*p){}
+  //  void Do(t_cmds*p){}
+  //};
   #undef LIST
   #undef DEF_PRO_BLANK
   //===<<===i_major_visitor
@@ -5089,6 +5175,10 @@ struct t_cpp_code{
     static TYPE*UberCast(i_bayan*p){return dynamic_cast<TYPE*>(p);}
     #endif
   };
+  //struct t_visitor:public i_bayan_visitor{
+  //  void Do(t_with_bayan*p){}
+  //  void Do(t_without_bayan*p){}
+  //};
   #undef LIST
   #undef DEF_PRO_BLANK
   //===<<===i_bayan_visitor
@@ -5168,6 +5258,10 @@ struct t_cpp_code{
     static TYPE*UberCast(i_strong_bayan*p){return dynamic_cast<TYPE*>(p);}
     #endif
   };
+  //struct t_visitor:public i_strong_bayan_visitor{
+  //  void Do(t_a*p){}
+  //  void Do(t_b*p){}
+  //};
   #undef LIST
   #undef DEF_PRO_BLANK
   //===<<===i_strong_bayan_visitor

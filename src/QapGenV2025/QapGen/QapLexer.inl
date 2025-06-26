@@ -230,6 +230,10 @@ public:
     pos+=body.size();
     return !body.empty();
   }
+  bitset<256> get_expected_bitset_go_const_raw(const char*const ptr,size_t size){
+    bitset<256> b;b[*(unsigned char*)ptr[0]]=true;
+    return b;
+  }
   bool go_const_raw(const char*const ptr,size_t size){
     auto end=pos+size;
     if(end>mem.size())return false;
@@ -814,6 +818,7 @@ struct t_off_detector{~t_off_detector(){
 
 template<class TYPE_TEMP,class TYPE>
 bool i_dev::go_minor(TYPE&ref){
+  return old_go_sep<TYPE_TEMP>(ref);
   // Сохраняем текущее состояние парсера
   int pos_before; getPos(pos_before);
   

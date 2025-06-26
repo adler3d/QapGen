@@ -223,7 +223,7 @@ public:
   }
   static vector<string> viz_with_cdo(const vector<string>&arr){
     vector<string> out;
-    for(int i=0;i<arr.size();i++)out.push_back("  //  void Do("+arr[i]+"*p){}");
+    for(int i=0;i<arr.size();i++)out.push_back("//  void Do("+arr[i]+"*p){}");
     return out;
   }
 public:

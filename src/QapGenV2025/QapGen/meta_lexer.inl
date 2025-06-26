@@ -3308,6 +3308,10 @@ public:
     return "["+v[0]+v[1]+"]"+v[2];
   }
 };
+static int fail_counter=0;static int win_counter=0;
+struct t_off_detector2{~t_off_detector2(){
+  int gg=1;
+}} off_detector2;
 struct t_curly_brackets_code_with_sep:public i_code_with_sep{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_curly_brackets_code_with_sep)PARENT(i_code_with_sep)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
@@ -3333,7 +3337,8 @@ public:
     if(!ok)return ok;
     O+=dev.go_auto(sep0);
     if(!ok)return ok;
-    O+=dev.go_auto(body);
+    bool bok=dev.go_auto(body);
+    if(bok)win_counter++;else fail_counter++;
     if(!ok)return ok;
     M+=dev.go_const("}");
     if(!ok)return ok;
