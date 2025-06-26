@@ -14,7 +14,7 @@ struct t_ic_dev{
   bool need_tautoptr(const string&name){
     if(qap_includes(top.iarr,name))return true;
     if(qap_includes(top.carr,name))return false;
-    for(auto&it=arr.rbegin();it!=arr.rend();it++){
+    for(auto it=arr.rbegin();it!=arr.rend();it++){
       if(qap_includes(it->iarr,name))return true;
       if(qap_includes(it->carr,name))return false;
     }

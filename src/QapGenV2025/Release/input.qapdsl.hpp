@@ -738,7 +738,22 @@ t_type_item_number=>i_type_item{
   };
 }
 
-t_scope_type_item;
+t_type_item_type;
+
+t_scope_type_item{
+  t_type_scope scope;
+  TAutoPtr<t_type_item_type> body;
+  string make_code()const{
+    string out;
+    out+=scope.make_code();
+    out+=body->make_code();
+    /*if(body){
+      auto*p=body.get();
+      out+=p->make_code();
+    }*/
+    return out;
+  }
+}
 
 t_type_item_type => i_type_item {
   TAutoPtr<t_type_scope> scope?;
@@ -766,21 +781,6 @@ t_type_item_type => i_type_item {
       out+=pParam->make_code();
     }
     out+=weak_arr_make_code(this->arr);
-    return out;
-  }
-}
-
-t_scope_type_item{
-  t_type_scope scope;
-  t_type_item_type body;
-  string make_code()const{
-    string out;
-    out+=scope.make_code();
-    out+=body.make_code();
-    /*if(body){
-      auto*p=body.get();
-      out+=p->make_code();
-    }*/
     return out;
   }
 }
