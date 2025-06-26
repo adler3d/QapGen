@@ -10,6 +10,8 @@ typedef unsigned char uchar;
 #include "QapLexer.inl"
 #include "t_config.inl"
 #include "t_poly_tool.inl"
+typedef array<char,2> ARRAY2char;
+typedef array<char,4> ARRAY4char;
 #include "raw_cpp_lexem.inl"
 #include "t_line_lexer.inl"
 #include "visitor_gen.h"

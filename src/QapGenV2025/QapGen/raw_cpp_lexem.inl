@@ -220,7 +220,7 @@ struct t_str_item_hex:public i_str_item{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_str_item_hex)PARENT(i_str_item)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
 ADDBEG()\
-ADDVAR(array(char,2),body,DEF,$,$)\
+ADDVAR(ARRAY2char,body,DEF,$,$)\
 ADDEND()
 //=====+>>>>>t_str_item_hex
 #include "QapGenStructNoTemplate.inl"
@@ -255,7 +255,7 @@ struct t_str_item_num:public i_str_item{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_str_item_num)PARENT(i_str_item)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
 ADDBEG()\
-ADDVAR(array(char,2),body,DEF,$,$)\
+ADDVAR(ARRAY2char,body,DEF,$,$)\
 ADDEND()
 //=====+>>>>>t_str_item_num
 #include "QapGenStructNoTemplate.inl"
@@ -414,7 +414,7 @@ struct t_char_item_hex:public i_char_item{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_char_item_hex)PARENT(i_char_item)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
 ADDBEG()\
-ADDVAR(array(char,2),body,DEF,$,$)\
+ADDVAR(ARRAY2char,body,DEF,$,$)\
 ADDEND()
 //=====+>>>>>t_char_item_hex
 #include "QapGenStructNoTemplate.inl"
@@ -449,7 +449,7 @@ struct t_char_item_num:public i_char_item{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_char_item_num)PARENT(i_char_item)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
 ADDBEG()\
-ADDVAR(array(char,4),body,DEF,$,$)\
+ADDVAR(ARRAY4char,body,DEF,$,$)\
 ADDEND()
 //=====+>>>>>t_char_item_num
 #include "QapGenStructNoTemplate.inl"
