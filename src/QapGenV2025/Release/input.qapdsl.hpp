@@ -329,11 +329,11 @@ t_var_expr=>i_expr{
     ">"
     TAutoPtr<t_dd_part> ddp?;
   }
+  t_arr{
+    t_sep sep?;
+    vector<t_sb_expr> arr;
+  }
   t_item{
-    t_arr{
-      t_sep sep?;
-      vector<t_sb_expr> arr;
-    }
     "."
     t_sep sep0?;
     t_name name;
@@ -341,7 +341,8 @@ t_var_expr=>i_expr{
   }
   t_name name;
   TAutoPtr<i_part> tp?;
-  vector<t_item> arr?;
+  TAutoPtr<t_arr> arr?;
+  vector<t_item> items?;
 }
 
 t_block_expr=>i_expr{
@@ -374,7 +375,7 @@ t_call_expr=>i_expr{
 t_test20250618_atrr{
   t_foo{{}[::]}
   t_foo foo; [skip]
-  t_sep sep; [optimize,"sep",("sep"),[sep],{ sep , sep }]
+  t_sep sep; [optimize,"sep",("sep"),sep[x]]
   {
     go_auto(foo);
     go_auto(sep);
