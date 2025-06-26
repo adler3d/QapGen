@@ -83,9 +83,6 @@ public:
   bool go(i_dev&^^^DEV^^^){
     t_fallback ^^^SCOPE^^^(^^^DEV^^^,__FUNCTION__);
     auto&ok=^^^SCOPE^^^.ok;
-    auto&D=^^^SCOPE^^^.mandatory;
-    auto&M=^^^SCOPE^^^.mandatory;
-    auto&O=^^^SCOPE^^^.optional;
 ^^^PROCMDS^^^    return ok;
   }
 ----------------------------------------------------------------

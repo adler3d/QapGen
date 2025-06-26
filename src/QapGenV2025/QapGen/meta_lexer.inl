@@ -1,4 +1,4 @@
-// 5162.268600 ms
+// 5307.106500 ms
 //===>>===i_code_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -994,13 +994,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
       static const auto g_static_var_0=QapStrFinder::fromArr(split("+,-,!,~",","));
-      O+=dev.go_any_str_from_vec(oper,g_static_var_0);
-      if(!ok)return ok;
-      M+=dev.go_auto(expr);
+      dev.go_any_str_from_vec(oper,g_static_var_0);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
       return ok;
     }
@@ -1020,11 +1016,8 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("*,/,%",","));
-        D+=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
         if(!ok)return ok;
         return ok;
       }
@@ -1043,12 +1036,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(oper);
+        ok=dev.go_auto(oper);
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
         return ok;
       }
@@ -1072,13 +1062,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_auto(expr);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(arr);
       return ok;
     }
   };
@@ -1097,11 +1083,8 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("+,-",","));
-        D+=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
         if(!ok)return ok;
         return ok;
       }
@@ -1120,12 +1103,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(oper);
+        ok=dev.go_auto(oper);
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
         return ok;
       }
@@ -1149,13 +1129,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_auto(expr);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(arr);
       return ok;
     }
   };
@@ -1174,11 +1150,8 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("<<,>>",","));
-        D+=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
         if(!ok)return ok;
         return ok;
       }
@@ -1197,12 +1170,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(oper);
+        ok=dev.go_auto(oper);
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
         return ok;
       }
@@ -1226,13 +1196,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_auto(expr);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(arr);
       return ok;
     }
   };
@@ -1251,11 +1217,8 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("<,<=,>,>=",","));
-        D+=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
         if(!ok)return ok;
         return ok;
       }
@@ -1274,12 +1237,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(oper);
+        ok=dev.go_auto(oper);
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
         return ok;
       }
@@ -1303,13 +1263,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_auto(expr);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(arr);
       return ok;
     }
   };
@@ -1328,11 +1284,8 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("==,!=",","));
-        D+=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
         if(!ok)return ok;
         return ok;
       }
@@ -1351,12 +1304,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(oper);
+        ok=dev.go_auto(oper);
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
         return ok;
       }
@@ -1380,13 +1330,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_auto(expr);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(arr);
       return ok;
     }
   };
@@ -1405,11 +1351,8 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("&",","));
-        D+=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
         if(!ok)return ok;
         return ok;
       }
@@ -1428,12 +1371,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(oper);
+        ok=dev.go_auto(oper);
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
         return ok;
       }
@@ -1457,13 +1397,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_auto(expr);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(arr);
       return ok;
     }
   };
@@ -1482,11 +1418,8 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("^",","));
-        D+=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
         if(!ok)return ok;
         return ok;
       }
@@ -1505,12 +1438,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(oper);
+        ok=dev.go_auto(oper);
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
         return ok;
       }
@@ -1534,13 +1464,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_auto(expr);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(arr);
       return ok;
     }
   };
@@ -1559,11 +1485,8 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("|",","));
-        D+=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
         if(!ok)return ok;
         return ok;
       }
@@ -1582,12 +1505,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(oper);
+        ok=dev.go_auto(oper);
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
         return ok;
       }
@@ -1611,13 +1531,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_auto(expr);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(arr);
       return ok;
     }
   };
@@ -1636,11 +1552,8 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("&&",","));
-        D+=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
         if(!ok)return ok;
         return ok;
       }
@@ -1659,12 +1572,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(oper);
+        ok=dev.go_auto(oper);
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
         return ok;
       }
@@ -1688,13 +1598,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_auto(expr);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(arr);
       return ok;
     }
   };
@@ -1713,11 +1619,8 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("||",","));
-        D+=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
         if(!ok)return ok;
         return ok;
       }
@@ -1736,12 +1639,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(oper);
+        ok=dev.go_auto(oper);
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
         return ok;
       }
@@ -1765,13 +1665,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_auto(expr);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(arr);
       return ok;
     }
   };
@@ -1788,14 +1684,10 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_const("\"");
+      ok=dev.go_const("\"");
       if(!ok)return ok;
-      O+=dev.go_str<vector<TAutoPtr<i_str_item>>>(value);
-      if(!ok)return ok;
-      M+=dev.go_const("\"");
+      dev.go_str<vector<TAutoPtr<i_str_item>>>(value);
+      ok=dev.go_const("\"");
       if(!ok)return ok;
       return ok;
     }
@@ -1899,10 +1791,7 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        M+=dev.go_const("0");
+        ok=dev.go_const("0");
         if(!ok)return ok;
         return ok;
       }
@@ -1924,15 +1813,11 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=CharMask::fromStr(gen_dips("19"));
-        D+=dev.go_any_char(first,g_static_var_0);
+        ok=dev.go_any_char(first,g_static_var_0);
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-        O+=dev.go_any(num,g_static_var_1);
-        if(!ok)return ok;
+        dev.go_any(num,g_static_var_1);
         return ok;
       }
     };
@@ -1957,10 +1842,7 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_str<TAutoPtr<i_val>>(value);
+      ok=dev.go_str<TAutoPtr<i_val>>(value);
       if(!ok)return ok;
       return ok;
     }
@@ -1981,18 +1863,15 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        M+=dev.go_const("{");
+        ok=dev.go_const("{");
         if(!ok)return ok;
-        D+=dev.go_str<t_type_expr>(type);
+        ok=dev.go_str<t_type_expr>(type);
         if(!ok)return ok;
-        M+=dev.go_const(",");
+        ok=dev.go_const(",");
         if(!ok)return ok;
-        D+=dev.go_auto(count);
+        ok=dev.go_auto(count);
         if(!ok)return ok;
-        M+=dev.go_const("}");
+        ok=dev.go_const("}");
         if(!ok)return ok;
         return ok;
       }
@@ -2011,13 +1890,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(name);
+        ok=dev.go_auto(name);
         if(!ok)return ok;
-        O+=dev.go_auto(params);
-        if(!ok)return ok;
+        dev.go_auto(params);
         return ok;
       }
     };
@@ -2036,16 +1911,11 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        O+=dev.go_auto(sep0);
+        dev.go_auto(sep0);
+        ok=dev.go_const("::");
         if(!ok)return ok;
-        M+=dev.go_const("::");
-        if(!ok)return ok;
-        O+=dev.go_auto(sep1);
-        if(!ok)return ok;
-        D+=dev.go_auto(body);
+        dev.go_auto(sep1);
+        ok=dev.go_auto(body);
         if(!ok)return ok;
         return ok;
       }
@@ -2070,13 +1940,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(first);
+      ok=dev.go_auto(first);
       if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(arr);
       return ok;
     }
   public:
@@ -2097,10 +1963,7 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(body);
+      ok=dev.go_auto(body);
       if(!ok)return ok;
       return ok;
     }
@@ -2121,11 +1984,8 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
       static const auto g_static_var_0=QapStrFinder::fromArr(split("true,false",","));
-      D+=dev.go_any_str_from_vec(value,g_static_var_0);
+      ok=dev.go_any_str_from_vec(value,g_static_var_0);
       if(!ok)return ok;
       return ok;
     }
@@ -2146,10 +2006,7 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(body);
+      ok=dev.go_auto(body);
       if(!ok)return ok;
       return ok;
     }
@@ -2251,13 +2108,10 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        M+=dev.go_const(".");
+        ok=dev.go_const(".");
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-        D+=dev.go_any(arr,g_static_var_1);
+        ok=dev.go_any(arr,g_static_var_1);
         if(!ok)return ok;
         return ok;
       }
@@ -2275,11 +2129,8 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=CharMask::fromStr("-+");
-        D+=dev.go_any_char(sign,g_static_var_0);
+        ok=dev.go_any_char(sign,g_static_var_0);
         if(!ok)return ok;
         return ok;
       }
@@ -2299,16 +2150,12 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=CharMask::fromStr("eE");
-        D+=dev.go_any_char(e,g_static_var_0);
+        ok=dev.go_any_char(e,g_static_var_0);
         if(!ok)return ok;
-        O+=dev.go_auto(sign);
-        if(!ok)return ok;
+        dev.go_auto(sign);
         static const auto g_static_var_2=CharMask::fromStr(gen_dips("09"));
-        D+=dev.go_any(arr,g_static_var_2);
+        ok=dev.go_any(arr,g_static_var_2);
         if(!ok)return ok;
         return ok;
       }
@@ -2330,15 +2177,11 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
         static const auto g_static_var_0=CharMask::fromStr(gen_dips("19"));
-        D+=dev.go_any_char(first,g_static_var_0);
+        ok=dev.go_any_char(first,g_static_var_0);
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-        O+=dev.go_any(num,g_static_var_1);
-        if(!ok)return ok;
+        dev.go_any(num,g_static_var_1);
         return ok;
       }
     };
@@ -2357,10 +2200,7 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        M+=dev.go_const("0");
+        ok=dev.go_const("0");
         if(!ok)return ok;
         return ok;
       }
@@ -2380,15 +2220,11 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(val);
+        ok=dev.go_auto(val);
         if(!ok)return ok;
-        D+=dev.go_auto(frac);
+        ok=dev.go_auto(frac);
         if(!ok)return ok;
-        O+=dev.go_auto(exp);
-        if(!ok)return ok;
+        dev.go_auto(exp);
         return ok;
       }
     };
@@ -2417,10 +2253,7 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_str<t_impl>(value);
+      ok=dev.go_str<t_impl>(value);
       if(!ok)return ok;
       return ok;
     }
@@ -2525,18 +2358,13 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        M+=dev.go_const("[");
+        ok=dev.go_const("[");
         if(!ok)return ok;
-        O+=dev.go_auto(sep0);
+        dev.go_auto(sep0);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
-        if(!ok)return ok;
-        O+=dev.go_auto(sep1);
-        if(!ok)return ok;
-        M+=dev.go_const("]");
+        dev.go_auto(sep1);
+        ok=dev.go_const("]");
         if(!ok)return ok;
         return ok;
       }
@@ -2558,16 +2386,11 @@ struct t_cppcore{
         bool go(i_dev&dev){
           t_fallback $(dev,__FUNCTION__);
           auto&ok=$.ok;
-          auto&D=$.mandatory;
-          auto&M=$.mandatory;
-          auto&O=$.optional;
-          O+=dev.go_auto(sep0);
+          dev.go_auto(sep0);
+          ok=dev.go_const("::");
           if(!ok)return ok;
-          M+=dev.go_const("::");
-          if(!ok)return ok;
-          O+=dev.go_auto(sep1);
-          if(!ok)return ok;
-          D+=dev.go_auto(name);
+          dev.go_auto(sep1);
+          ok=dev.go_auto(name);
           if(!ok)return ok;
           return ok;
         }
@@ -2592,10 +2415,7 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        D+=dev.go_auto(arr);
+        ok=dev.go_auto(arr);
         if(!ok)return ok;
         return ok;
       }
@@ -2620,23 +2440,16 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        O+=dev.go_auto(sepB);
+        dev.go_auto(sepB);
+        ok=dev.go_const("<");
         if(!ok)return ok;
-        M+=dev.go_const("<");
+        dev.go_auto(sep0);
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
-        O+=dev.go_auto(sep0);
+        dev.go_auto(sep1);
+        ok=dev.go_const(">");
         if(!ok)return ok;
-        D+=dev.go_auto(expr);
-        if(!ok)return ok;
-        O+=dev.go_auto(sep1);
-        if(!ok)return ok;
-        M+=dev.go_const(">");
-        if(!ok)return ok;
-        O+=dev.go_auto(ddp);
-        if(!ok)return ok;
+        dev.go_auto(ddp);
         return ok;
       }
     };
@@ -2656,12 +2469,8 @@ struct t_cppcore{
         bool go(i_dev&dev){
           t_fallback $(dev,__FUNCTION__);
           auto&ok=$.ok;
-          auto&D=$.mandatory;
-          auto&M=$.mandatory;
-          auto&O=$.optional;
-          O+=dev.go_auto(sep);
-          if(!ok)return ok;
-          D+=dev.go_auto(arr);
+          dev.go_auto(sep);
+          ok=dev.go_auto(arr);
           if(!ok)return ok;
           return ok;
         }
@@ -2685,17 +2494,12 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        M+=dev.go_const(".");
+        ok=dev.go_const(".");
         if(!ok)return ok;
-        O+=dev.go_auto(sep0);
+        dev.go_auto(sep0);
+        ok=dev.go_auto(name);
         if(!ok)return ok;
-        D+=dev.go_auto(name);
-        if(!ok)return ok;
-        O+=dev.go_auto(arr);
-        if(!ok)return ok;
+        dev.go_auto(arr);
         return ok;
       }
     };
@@ -2724,15 +2528,10 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(name);
+      ok=dev.go_auto(name);
       if(!ok)return ok;
-      O+=dev.go_auto(tp);
-      if(!ok)return ok;
-      O+=dev.go_auto(arr);
-      if(!ok)return ok;
+      dev.go_auto(tp);
+      dev.go_auto(arr);
       return ok;
     }
   public:
@@ -2753,14 +2552,11 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_const("(");
+      ok=dev.go_const("(");
       if(!ok)return ok;
-      D+=dev.go_auto(body);
+      ok=dev.go_auto(body);
       if(!ok)return ok;
-      M+=dev.go_const(")");
+      ok=dev.go_const(")");
       if(!ok)return ok;
       return ok;
     }
@@ -2780,15 +2576,10 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      O+=dev.go_auto(sep0);
+      dev.go_auto(sep0);
+      ok=dev.go_auto(body);
       if(!ok)return ok;
-      D+=dev.go_auto(body);
-      if(!ok)return ok;
-      O+=dev.go_auto(sep1);
-      if(!ok)return ok;
+      dev.go_auto(sep1);
       return ok;
     }
   };
@@ -2806,16 +2597,11 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_const("(");
+      ok=dev.go_const("(");
       if(!ok)return ok;
-      O+=dev.go_auto(sep);
-      if(!ok)return ok;
-      O+=dev.go_vec(arr,",");
-      if(!ok)return ok;
-      M+=dev.go_const(")");
+      dev.go_auto(sep);
+      dev.go_vec(arr,",");
+      ok=dev.go_const(")");
       if(!ok)return ok;
       return ok;
     }
@@ -2838,14 +2624,10 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(call);
+      ok=dev.go_auto(call);
       if(!ok)return ok;
-      O+=dev.go_auto(sep);
-      if(!ok)return ok;
-      D+=dev.go_auto(params);
+      dev.go_auto(sep);
+      ok=dev.go_auto(params);
       if(!ok)return ok;
       return ok;
     }
@@ -2888,9 +2670,6 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
     return ok;
   }
 public:
@@ -2909,9 +2688,6 @@ public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
       return ok;
     }
   };
@@ -2933,17 +2709,13 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(foo);
+    ok=dev.go_auto(foo);
     if(!ok)return ok;
-    D+=dev.go_auto(sep);
+    ok=dev.go_auto(sep);
     if(!ok)return ok;
     return ok;
   }
   static const vector<string>&foo_attributes(){static const vector<string> a={"skip"};return a;}
-  static const vector<string>&sep_attributes(){static const vector<string> a={"optimize","inline","\"sep\"","(\"sep\")","[sep]","{ sep , sep }"};return a;}
 };
 struct t_name_code:public i_code{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_name_code)PARENT(i_code)
@@ -2961,10 +2733,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_str<t_name::t_impl>(value);
+    ok=dev.go_str<t_name::t_impl>(value);
     if(!ok)return ok;
     return ok;
   }
@@ -2986,10 +2755,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3008,14 +2774,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("\"");
+    ok=dev.go_const("\"");
     if(!ok)return ok;
-    O+=dev.go_auto(arr);
-    if(!ok)return ok;
-    M+=dev.go_const("\"");
+    dev.go_auto(arr);
+    ok=dev.go_const("\"");
     if(!ok)return ok;
     return ok;
   }
@@ -3049,12 +2811,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(sep);
+    ok=dev.go_auto(sep);
     if(!ok)return ok;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3076,13 +2835,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(first);
+    ok=dev.go_auto(first);
     if(!ok)return ok;
-    O+=dev.go_auto(arr);
-    if(!ok)return ok;
+    dev.go_auto(arr);
     return ok;
   }
   string make_code()const{
@@ -3111,14 +2866,11 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("'");
+    ok=dev.go_const("'");
     if(!ok)return ok;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
-    M+=dev.go_const("'");
+    ok=dev.go_const("'");
     if(!ok)return ok;
     return ok;
   }
@@ -3142,10 +2894,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3168,13 +2917,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
+    dev.go_auto(sep);
     return ok;
   }
   string make_code()const{
@@ -3198,13 +2943,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
+    dev.go_auto(sep);
     return ok;
   }
   string make_code()const{
@@ -3228,13 +2969,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
+    dev.go_auto(sep);
     return ok;
   }
   string make_code()const{
@@ -3258,13 +2995,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
+    dev.go_auto(sep);
     return ok;
   }
   string make_code()const{
@@ -3288,13 +3021,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
+    dev.go_auto(sep);
     return ok;
   }
   string make_code()const{
@@ -3319,19 +3048,13 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("(");
+    ok=dev.go_const("(");
     if(!ok)return ok;
-    O+=dev.go_auto(sep0);
+    dev.go_auto(sep0);
+    dev.go_auto(body);
+    ok=dev.go_const(")");
     if(!ok)return ok;
-    O+=dev.go_auto(body);
-    if(!ok)return ok;
-    M+=dev.go_const(")");
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
+    dev.go_auto(sep1);
     return ok;
   }
   string make_code()const{
@@ -3361,19 +3084,13 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("[");
+    ok=dev.go_const("[");
     if(!ok)return ok;
-    O+=dev.go_auto(sep0);
+    dev.go_auto(sep0);
+    dev.go_auto(body);
+    ok=dev.go_const("]");
     if(!ok)return ok;
-    O+=dev.go_auto(body);
-    if(!ok)return ok;
-    M+=dev.go_const("]");
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
+    dev.go_auto(sep1);
     return ok;
   }
   string make_code()const{
@@ -3403,19 +3120,13 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("{");
+    ok=dev.go_const("{");
     if(!ok)return ok;
-    O+=dev.go_auto(sep0);
+    dev.go_auto(sep0);
+    dev.go_auto(body);
+    ok=dev.go_const("}");
     if(!ok)return ok;
-    O+=dev.go_auto(body);
-    if(!ok)return ok;
-    M+=dev.go_const("}");
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
+    dev.go_auto(sep1);
     return ok;
   }
   string make_code()const{
@@ -3466,10 +3177,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(arr);
+    ok=dev.go_auto(arr);
     if(!ok)return ok;
     return ok;
   }
@@ -3493,18 +3201,12 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("(");
+    ok=dev.go_const("(");
     if(!ok)return ok;
-    O+=dev.go_auto(sep0);
-    if(!ok)return ok;
-    O+=dev.go_auto(body);
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
-    M+=dev.go_const(")");
+    dev.go_auto(sep0);
+    dev.go_auto(body);
+    dev.go_auto(sep1);
+    ok=dev.go_const(")");
     if(!ok)return ok;
     return ok;
   }
@@ -3535,18 +3237,12 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("[");
+    ok=dev.go_const("[");
     if(!ok)return ok;
-    O+=dev.go_auto(sep0);
-    if(!ok)return ok;
-    O+=dev.go_auto(body);
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
-    M+=dev.go_const("]");
+    dev.go_auto(sep0);
+    dev.go_auto(body);
+    dev.go_auto(sep1);
+    ok=dev.go_const("]");
     if(!ok)return ok;
     return ok;
   }
@@ -3577,18 +3273,12 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("{");
+    ok=dev.go_const("{");
     if(!ok)return ok;
-    O+=dev.go_auto(sep0);
-    if(!ok)return ok;
-    O+=dev.go_auto(body);
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
-    M+=dev.go_const("}");
+    dev.go_auto(sep0);
+    dev.go_auto(body);
+    dev.go_auto(sep1);
+    ok=dev.go_const("}");
     if(!ok)return ok;
     return ok;
   }
@@ -3613,10 +3303,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const(";");
+    ok=dev.go_const(";");
     if(!ok)return ok;
     return ok;
   }
@@ -3634,10 +3321,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);
+    ok=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3659,14 +3343,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(sep);
+    dev.go_auto(sep);
+    ok=dev.go_const("=");
     if(!ok)return ok;
-    M+=dev.go_const("=");
-    if(!ok)return ok;
-    D+=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);
+    ok=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3688,10 +3368,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("::");
+    ok=dev.go_const("::");
     if(!ok)return ok;
     return ok;
   }
@@ -3712,10 +3389,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3736,10 +3410,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3763,10 +3434,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3790,10 +3458,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3816,12 +3481,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(scope);
+    ok=dev.go_auto(scope);
     if(!ok)return ok;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3855,17 +3517,11 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(scope);
+    dev.go_auto(scope);
+    ok=dev.go_auto(type);
     if(!ok)return ok;
-    D+=dev.go_auto(type);
-    if(!ok)return ok;
-    O+=dev.go_auto(param);
-    if(!ok)return ok;
-    O+=dev.go_auto(arr);
-    if(!ok)return ok;
+    dev.go_auto(param);
+    dev.go_auto(arr);
     return ok;
   }
   template<class TYPE>
@@ -3905,12 +3561,8 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(scope);
-    if(!ok)return ok;
-    D+=dev.go_auto(body);
+    dev.go_auto(scope);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3934,10 +3586,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3958,12 +3607,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const(",");
+    ok=dev.go_const(",");
     if(!ok)return ok;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -3988,13 +3634,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(first);
+    ok=dev.go_auto(first);
     if(!ok)return ok;
-    O+=dev.go_auto(arr);
-    if(!ok)return ok;
+    dev.go_auto(arr);
     return ok;
   }
   string make_code()const{
@@ -4023,14 +3665,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("<");
+    ok=dev.go_const("<");
     if(!ok)return ok;
-    O+=dev.go_auto(params);
-    if(!ok)return ok;
-    M+=dev.go_const(">");
+    dev.go_auto(params);
+    ok=dev.go_const(">");
     if(!ok)return ok;
     return ok;
   }
@@ -4061,14 +3699,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("(");
+    ok=dev.go_const("(");
     if(!ok)return ok;
-    O+=dev.go_auto(params);
-    if(!ok)return ok;
-    M+=dev.go_const(")");
+    dev.go_auto(params);
+    ok=dev.go_const(")");
     if(!ok)return ok;
     return ok;
   }
@@ -4101,18 +3735,13 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
     static const auto g_static_var_0=CharMask::fromStr("DMO");
-    D+=dev.go_any_char(body,g_static_var_0);
+    ok=dev.go_any_char(body,g_static_var_0);
     if(!ok)return ok;
-    O+=dev.go_auto(sep0);
+    dev.go_auto(sep0);
+    ok=dev.go_const("+=");
     if(!ok)return ok;
-    M+=dev.go_const("+=");
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
+    dev.go_auto(sep1);
     return ok;
   }
   char get_mode()const{return body;}
@@ -4132,15 +3761,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(sep0);
+    dev.go_auto(sep0);
+    ok=dev.go_auto(value);
     if(!ok)return ok;
-    D+=dev.go_auto(value);
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
+    dev.go_auto(sep1);
     return ok;
   }
 };
@@ -4158,16 +3782,11 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("[");
+    ok=dev.go_const("[");
     if(!ok)return ok;
-    O+=dev.go_vec(arr,",");
-    if(!ok)return ok;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
-    M+=dev.go_const("]");
+    dev.go_vec(arr,",");
+    dev.go_auto(sep);
+    ok=dev.go_const("]");
     if(!ok)return ok;
     return ok;
   }
@@ -4190,15 +3809,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_str<t_str_item>(value);
+    ok=dev.go_str<t_str_item>(value);
     if(!ok)return ok;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
-    O+=dev.go_auto(sc);
-    if(!ok)return ok;
+    dev.go_auto(sep);
+    dev.go_auto(sc);
     return ok;
   }
   string make_code(int id,t_ic_dev&icdev)const{return {};}
@@ -4219,16 +3833,11 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(sep0);
+    dev.go_auto(sep0);
+    ok=dev.go_const("=");
     if(!ok)return ok;
-    M+=dev.go_const("=");
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
-    D+=dev.go_auto(expr);
+    dev.go_auto(sep1);
+    ok=dev.go_auto(expr);
     if(!ok)return ok;
     return ok;
   }
@@ -4248,11 +3857,8 @@ public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
       static const auto g_static_var_0=CharMask::fromStr("*?");
-      D+=dev.go_any(s,g_static_var_0);
+      ok=dev.go_any(s,g_static_var_0);
       if(!ok)return ok;
       return ok;
     }
@@ -4287,33 +3893,22 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(mode);
+    dev.go_auto(mode);
+    dev.go_auto(sepcm);
+    ok=dev.go_auto(type);
     if(!ok)return ok;
-    O+=dev.go_auto(sepcm);
+    ok=dev.go_auto(sep0);
     if(!ok)return ok;
-    D+=dev.go_auto(type);
+    ok=dev.go_auto(name);
     if(!ok)return ok;
-    D+=dev.go_auto(sep0);
+    dev.go_auto(value);
+    dev.go_auto(sep1);
+    dev.go_auto(qst);
+    dev.go_auto(sep2);
+    ok=dev.go_const(";");
     if(!ok)return ok;
-    D+=dev.go_auto(name);
-    if(!ok)return ok;
-    O+=dev.go_auto(value);
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
-    O+=dev.go_auto(qst);
-    if(!ok)return ok;
-    O+=dev.go_auto(sep2);
-    if(!ok)return ok;
-    M+=dev.go_const(";");
-    if(!ok)return ok;
-    O+=dev.go_auto(sep3);
-    if(!ok)return ok;
-    O+=dev.go_auto(attr);
-    if(!ok)return ok;
+    dev.go_auto(sep3);
+    dev.go_auto(attr);
     return ok;
   }
   string make_code(int id,t_ic_dev&icdev)const{
@@ -4376,12 +3971,8 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
-    M+=dev.go_auto(body);
+    dev.go_auto(sep);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -4402,14 +3993,11 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_const("<");
+    ok=dev.go_const("<");
     if(!ok)return ok;
-    D+=dev.go_str<TAutoPtr<t_type_templ_params>>(body);
+    ok=dev.go_str<TAutoPtr<t_type_templ_params>>(body);
     if(!ok)return ok;
-    D+=dev.go_const(">");
+    ok=dev.go_const(">");
     if(!ok)return ok;
     return ok;
   }
@@ -4428,10 +4016,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_vec(arr,",");
+    ok=dev.go_vec(arr,",");
     if(!ok)return ok;
     return ok;
   }
@@ -4536,10 +4121,7 @@ struct t_cmd_param{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_vec(arr,"+");
+      ok=dev.go_vec(arr,"+");
       if(!ok)return ok;
       return ok;
     }
@@ -4561,16 +4143,13 @@ struct t_cmd_param{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(func);
+      ok=dev.go_auto(func);
       if(!ok)return ok;
-      M+=dev.go_const("(");
+      ok=dev.go_const("(");
       if(!ok)return ok;
-      D+=dev.go_auto(params);
+      ok=dev.go_auto(params);
       if(!ok)return ok;
-      M+=dev.go_const(")");
+      ok=dev.go_const(")");
       if(!ok)return ok;
       return ok;
     }
@@ -4591,10 +4170,7 @@ struct t_cmd_param{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_str<t_str_seq>(body);
+      ok=dev.go_str<t_str_seq>(body);
       if(!ok)return ok;
       return ok;
     }
@@ -4613,10 +4189,7 @@ struct t_cmd_param{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        M+=dev.go_const("this->");
+        ok=dev.go_const("this->");
         if(!ok)return ok;
         return ok;
       }
@@ -4635,12 +4208,8 @@ struct t_cmd_param{
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        auto&D=$.mandatory;
-        auto&M=$.mandatory;
-        auto&O=$.optional;
-        O+=dev.go_auto(self);
-        if(!ok)return ok;
-        D+=dev.go_auto(name);
+        dev.go_auto(self);
+        ok=dev.go_auto(name);
         if(!ok)return ok;
         return ok;
       }
@@ -4666,10 +4235,7 @@ struct t_cmd_param{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_str<t_impl>(body);
+      ok=dev.go_str<t_impl>(body);
       if(!ok)return ok;
       return ok;
     }
@@ -4694,10 +4260,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_str<t_impl>(body);
+    ok=dev.go_str<t_impl>(body);
     if(!ok)return ok;
     return ok;
   }
@@ -4720,13 +4283,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
     static const auto g_static_var_0=QapStrFinder::fromArr(split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));
-    D+=dev.go_any_str_from_vec(mode,g_static_var_0);
+    ok=dev.go_any_str_from_vec(mode,g_static_var_0);
     if(!ok)return ok;
-    D+=dev.go_auto(sep);
+    ok=dev.go_auto(sep);
     if(!ok)return ok;
     return ok;
   }
@@ -4748,11 +4308,8 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
     static const auto g_static_var_0=CharMask::fromStr("?!");
-    D+=dev.go_any_char(value,g_static_var_0);
+    ok=dev.go_any_char(value,g_static_var_0);
     if(!ok)return ok;
     return ok;
   }
@@ -4774,15 +4331,12 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("[");
+    ok=dev.go_const("[");
     if(!ok)return ok;
     static const auto g_static_var_1=QapStrFinder::fromArr(split("optional,mandatory",","));
-    D+=dev.go_any_str_from_vec(value,g_static_var_1);
+    ok=dev.go_any_str_from_vec(value,g_static_var_1);
     if(!ok)return ok;
-    M+=dev.go_const("]");
+    ok=dev.go_const("]");
     if(!ok)return ok;
     return ok;
   }
@@ -4805,15 +4359,11 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const(";");
+    ok=dev.go_const(";");
     if(!ok)return ok;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
+    dev.go_auto(sep);
     static const auto g_static_var_2=QapStrFinder::fromArr(split("optional,mandatory",","));
-    D+=dev.go_any_str_from_vec(value,g_static_var_2);
+    ok=dev.go_any_str_from_vec(value,g_static_var_2);
     if(!ok)return ok;
     return ok;
   }
@@ -4838,28 +4388,20 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(mode);
+    dev.go_auto(mode);
+    ok=dev.go_auto(func);
     if(!ok)return ok;
-    D+=dev.go_auto(func);
+    dev.go_str<TAutoPtr<t_templ_params>>(templ_params);
+    ok=dev.go_const("(");
     if(!ok)return ok;
-    O+=dev.go_str<TAutoPtr<t_templ_params>>(templ_params);
+    ok=dev.go_auto(params);
     if(!ok)return ok;
-    M+=dev.go_const("(");
+    ok=dev.go_const(")");
     if(!ok)return ok;
-    D+=dev.go_auto(params);
-    if(!ok)return ok;
-    M+=dev.go_const(")");
-    if(!ok)return ok;
-    O+=dev.go_auto(sep0);
-    if(!ok)return ok;
-    O+=dev.go_auto(cmdso);
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
-    M+=dev.go_const(";");
+    dev.go_auto(sep0);
+    dev.go_auto(cmdso);
+    dev.go_auto(sep1);
+    ok=dev.go_const(";");
     if(!ok)return ok;
     return ok;
   }
@@ -4877,6 +4419,8 @@ public:
     string out=CToS(mode?mode->get_mode():m);
     vector<string> params_code;
     {auto&arr=params.arr;for(int i=0;i<arr.size();i++)params_code.push_back(arr[i].body);}
+    auto check=out!="O"?"    if(!ok)return ok;\n":"";
+    out=out!="O"?"ok=":"";
     string func_name=func.get();
     bool smart_func=find(func_name);
     if(smart_func)
@@ -4890,10 +4434,10 @@ public:
       };
       string varname="g_static_var_"+IToS(i);
       string vardecl="    static const auto "+varname+"="+get_param1()+";\n";
-      out=vardecl+"    "+out+"+=dev."+func.get()+"("+param0+","+varname+");\n    if(!ok)return ok;\n";
+      out=vardecl+"    "+out+"dev."+func.get()+"("+param0+","+varname+");\n"+check;
       return out;
     }
-    out="    "+out+"+=dev."+func.get()+templ_params+"("+join(params_code,",")+");\n    if(!ok)return ok;\n";
+    out="    "+out+"dev."+func.get()+templ_params+"("+join(params_code,",")+");\n"+check;
     return out;
   }
   string make_code_gp(){
@@ -4920,12 +4464,8 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
-    D+=dev.go_auto(body);
+    dev.go_auto(sep);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -4947,16 +4487,11 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("{");
+    ok=dev.go_const("{");
     if(!ok)return ok;
-    O+=dev.go_auto(arr);
-    if(!ok)return ok;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
-    M+=dev.go_const("}");
+    dev.go_auto(arr);
+    dev.go_auto(sep);
+    ok=dev.go_const("}");
     if(!ok)return ok;
     return ok;
   }
@@ -4975,12 +4510,8 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(sep);
-    if(!ok)return ok;
-    D+=dev.go_auto(body);
+    dev.go_auto(sep);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -5001,10 +4532,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(sep);
+    ok=dev.go_auto(sep);
     if(!ok)return ok;
     return ok;
   }
@@ -5028,10 +4556,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -5307,10 +4832,7 @@ struct t_cpp_code{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      M+=dev.go_const("[::]");
+      ok=dev.go_const("[::]");
       if(!ok)return ok;
       return ok;
     }
@@ -5331,10 +4853,7 @@ struct t_cpp_code{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(f);
+      ok=dev.go_auto(f);
       if(!ok)return ok;
       return ok;
     }
@@ -5355,10 +4874,7 @@ struct t_cpp_code{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(c);
+      ok=dev.go_auto(c);
       if(!ok)return ok;
       return ok;
     }
@@ -5379,10 +4895,7 @@ struct t_cpp_code{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(attr);
+      ok=dev.go_auto(attr);
       if(!ok)return ok;
       return ok;
     }
@@ -5400,10 +4913,7 @@ struct t_cpp_code{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(arr);
+      ok=dev.go_auto(arr);
       if(!ok)return ok;
       return ok;
     }
@@ -5425,13 +4935,9 @@ struct t_cpp_code{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(bayan);
+      ok=dev.go_auto(bayan);
       if(!ok)return ok;
-      O+=dev.go_auto(eater);
-      if(!ok)return ok;
+      dev.go_auto(eater);
       return ok;
     }
   };
@@ -5451,10 +4957,7 @@ struct t_cpp_code{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_minor<TAutoPtr<i_major>>(eater);
+      ok=dev.go_minor<TAutoPtr<i_major>>(eater);
       if(!ok)return ok;
       return ok;
     }
@@ -5475,10 +4978,7 @@ struct t_cpp_code{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(wb);
+      ok=dev.go_auto(wb);
       if(!ok)return ok;
       return ok;
     }
@@ -5499,10 +4999,7 @@ struct t_cpp_code{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_minor<t_with_bayan>(e);
+      ok=dev.go_minor<t_with_bayan>(e);
       if(!ok)return ok;
       return ok;
     }
@@ -5532,10 +5029,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(bayan);
+    ok=dev.go_auto(bayan);
     if(!ok)return ok;
     return ok;
   }
@@ -5607,15 +5101,10 @@ public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(arr);
+      ok=dev.go_auto(arr);
       if(!ok)return ok;
-      O+=dev.go_auto(cmds);
-      if(!ok)return ok;
-      O+=dev.go_auto(cppcode);
-      if(!ok)return ok;
+      dev.go_auto(cmds);
+      dev.go_auto(cppcode);
       return ok;
     }
   };
@@ -5633,13 +5122,9 @@ public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(cmds);
+      ok=dev.go_auto(cmds);
       if(!ok)return ok;
-      O+=dev.go_auto(cppcode);
-      if(!ok)return ok;
+      dev.go_auto(cppcode);
       return ok;
     }
   };
@@ -5656,10 +5141,7 @@ public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(cppcode);
+      ok=dev.go_auto(cppcode);
       if(!ok)return ok;
       return ok;
     }
@@ -5685,15 +5167,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(tfcc);
-    if(!ok)return ok;
-    O+=dev.go_auto(cmds);
-    if(!ok)return ok;
-    O+=dev.go_auto(c);
-    if(!ok)return ok;
+    dev.go_auto(tfcc);
+    dev.go_auto(cmds);
+    dev.go_auto(c);
     return ok;
   }
 public:
@@ -5714,20 +5190,14 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("{");
+    ok=dev.go_const("{");
     if(!ok)return ok;
-    O+=dev.go_auto(nested);
+    dev.go_auto(nested);
+    dev.go_auto(sep0);
+    ok=dev.go_auto(fcc);
     if(!ok)return ok;
-    O+=dev.go_auto(sep0);
-    if(!ok)return ok;
-    D+=dev.go_auto(fcc);
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
-    M+=dev.go_const("}");
+    dev.go_auto(sep1);
+    ok=dev.go_const("}");
     if(!ok)return ok;
     return ok;
   }
@@ -5825,19 +5295,14 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_auto(name);
+    ok=dev.go_auto(name);
     if(!ok)return ok;
-    O+=dev.go_auto(sep0);
-    if(!ok)return ok;
+    dev.go_auto(sep0);
     static const auto g_static_var_2=QapStrFinder::fromArr(split("=>,:",","));
-    M+=dev.go_any_str_from_vec(arrow_or_colon,g_static_var_2);
+    ok=dev.go_any_str_from_vec(arrow_or_colon,g_static_var_2);
     if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
-    M+=dev.go_auto(parent);
+    dev.go_auto(sep1);
+    ok=dev.go_auto(parent);
     if(!ok)return ok;
     return ok;
   }
@@ -5864,10 +5329,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_auto(name);
+    ok=dev.go_auto(name);
     if(!ok)return ok;
     return ok;
   }
@@ -5896,16 +5358,11 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(sep0);
+    dev.go_auto(sep0);
+    ok=dev.go_auto(def);
     if(!ok)return ok;
-    M+=dev.go_auto(def);
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
-    M+=dev.go_auto(body);
+    dev.go_auto(sep1);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -5941,16 +5398,11 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    O+=dev.go_auto(sep0);
+    dev.go_auto(sep0);
+    ok=dev.go_str<t_name>(name);
     if(!ok)return ok;
-    M+=dev.go_str<t_name>(name);
-    if(!ok)return ok;
-    O+=dev.go_auto(sep1);
-    if(!ok)return ok;
-    M+=dev.go_const(";");
+    dev.go_auto(sep1);
+    ok=dev.go_const(";");
     if(!ok)return ok;
     return ok;
   }
@@ -5968,10 +5420,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_auto(arr);
+    ok=dev.go_auto(arr);
     if(!ok)return ok;
     return ok;
   }
@@ -6680,196 +6129,197 @@ turn%20false%3b%0a%20%20%7d%0a%20%20string%20make%5fcode%28int%20i%29%7b%0a%20%2
 %20string%20out%3dCToS%28mode%3fmode%2d%3eget%5fmode%28%29%3am%29%3b%0a%20%20%20
 %20vector%3cstring%3e%20params%5fcode%3b%0a%20%20%20%20%7bauto%26arr%3dparams%2e
 arr%3bfor%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29params%5fcode%2epush%
-5fback%28arr%5bi%5d%2ebody%29%3b%7d%0a%20%20%20%20string%20func%5fname%3dfunc%2e
-get%28%29%3b%0a%20%20%20%20bool%20smart%5ffunc%3dfind%28func%5fname%29%3b%0a%20%
-20%20%20if%28smart%5ffunc%29%0a%20%20%20%20%7b%0a%20%20%20%20%20%20QapAssert%28p
-arams%2earr%2esize%28%29%3d%3d2%29%3b%0a%20%20%20%20%20%20const%20auto%26param0%
-3dparams%2earr%5b0%5d%2ebody%3b%0a%20%20%20%20%20%20%20const%20auto%26param1%3dp
-arams%2earr%5b1%5d%2ebody%3b%0a%20%20%20%20%20%20auto%20get%5fparam1%3d%5b%26fun
-c%5fname%2c%26param1%5d%28%29%2d%3estring%7b%0a%20%20%20%20%20%20%20%20if%28func
-%5fname%3d%3d%22go%5fany%5fstr%5ffrom%5fvec%22%29return%20%22QapStrFinder%3a%3af
-romArr%28%22%2bparam1%2b%22%29%22%3b%0a%20%20%20%20%20%20%20%20return%20%22CharM
-ask%3a%3afromStr%28%22%2bparam1%2b%22%29%22%3b%0a%20%20%20%20%20%20%7d%3b%0a%20%
-20%20%20%20%20string%20varname%3d%22g%5fstatic%5fvar%5f%22%2bIToS%28i%29%3b%0a%2
-0%20%20%20%20%20string%20vardecl%3d%22%20%20%20%20static%20const%20auto%20%22%2b
-varname%2b%22%3d%22%2bget%5fparam1%28%29%2b%22%3b%5cn%22%3b%0a%20%20%20%20%20%20
-out%3dvardecl%2b%22%20%20%20%20%22%2bout%2b%22%2b%3ddev%2e%22%2bfunc%2eget%28%29
-%2b%22%28%22%2bparam0%2b%22%2c%22%2bvarname%2b%22%29%3b%5cn%20%20%20%20if%28%21o
-k%29return%20ok%3b%5cn%22%3b%0a%20%20%20%20%20%20return%20out%3b%0a%20%20%20%20%
-7d%0a%20%20%20%20out%3d%22%20%20%20%20%22%2bout%2b%22%2b%3ddev%2e%22%2bfunc%2ege
-t%28%29%2btempl%5fparams%2b%22%28%22%2bjoin%28params%5fcode%2c%22%2c%22%29%2b%22
-%29%3b%5cn%20%20%20%20if%28%21ok%29return%20ok%3b%5cn%22%3b%0a%20%20%20%20return
-%20out%3b%0a%20%20%7d%0a%20%20string%20make%5fcode%5fgp%28%29%7b%0a%20%20%20%20c
-har%20m%3dcmdso%3fcmdso%2d%3eget%5fmode%28%29%3a%27D%27%3b%0a%20%20%20%20QapAsse
-rt%28cmdso%7c%7cmode%3fbool%28cmdso%29%21%3dbool%28mode%29%3atrue%29%3b%0a%20%20
-%20%20string%20out%3dCToS%28mode%3fmode%2d%3eget%5fmode%28%29%3am%29%3b%0a%20%20
-%20%20vector%3cstring%3e%20params%5fcode%3b%0a%20%20%20%20%7bauto%26arr%3dparams
-%2earr%3bfor%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29params%5fcode%2epu
-sh%5fback%28arr%5bi%5d%2ebody%29%3b%7d%0a%20%20%20%20out%3d%22%20%20%20%20%22%2b
-out%2b%22%2b%3ddev%2e%22%2bfunc%2eget%28%29%2btempl%5fparams%2b%22%28%22%2bjoin%
-28params%5fcode%2c%22%2c%22%29%2b%22%29%3b%5cn%20%20%20%20if%28%21ok%29return%20
-ok%3b%5cn%22%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%0at%5fsep%5fs
-truct%5fcmd%7b%0a%20%20t%5fsep%20sep%3f%3b%0a%20%20t%5fstruct%5fcmd%20body%3b%0a
-%20%20string%20make%5fcode%28int%20i%29%7b%0a%20%20%20%20return%20body%2emake%5f
-code%28i%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fstruct%5fcmds%7b%0a%20%20%22%7b%22%0a%
-20%20vector%3ct%5fsep%5fstruct%5fcmd%3e%20arr%3f%3b%0a%20%20t%5fsep%20sep%3f%3b%
-0a%20%20%22%7d%22%0a%7d%0a%0at%5fsep%5fstruct%5fcmds%7b%0a%20%20t%5fsep%20sep%3f
-%3b%0a%20%20t%5fstruct%5fcmds%20body%3b%0a%7d%0a%0ai%5fcpp%5fcode%7b%0a%20%20vir
-tual%20string%20make%5fcode%28%29const%7bQapDebugMsg%28%22no%20way%2e%22%29%3bre
-turn%20%22%22%3b%7d%0a%7d%0a%0at%5fcpp%5fcode%5fsep%20%3d%3e%20i%5fcpp%5fcode%7b
-%0a%20%20t%5fsep%20sep%3b%0a%20%20string%20make%5fcode%28%29const%7b%0a%20%20%20
-%20return%20sep%2emake%5fcode%28%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fcpp%5fcode%5fm
-ain%20%3d%3e%20i%5fcpp%5fcode%7b%0a%20%20TAutoPtr%3ci%5fcode%5fwith%5fsep%3e%20b
-ody%3b%0a%20%20string%20make%5fcode%28%29const%7b%0a%20%20%20%20string%20out%3b%
-0a%20%20%20%20auto%2ap%3dbody%2eget%28%29%3b%0a%20%20%20%20out%3dp%2d%3emake%5fc
-ode%28%29%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%0at%5fcpp%5fcode
-%7b%0a%20%20t%5fbayan%7b%22%5b%3a%3a%5d%22%7d%0a%20%20t%5ffields%3d%3ei%5fmajor%
-7bt%5fsep%5fstruct%5ffield%20f%3b%7d%0a%20%20t%5fcmds%3d%3ei%5fmajor%7bt%5fsep%5
-fstruct%5fcmds%20c%3b%7d%0a%20%20t%5fatr%3d%3ei%5fmajor%7bTAutoPtr%3ct%5fattr%3e
-%20attr%3b%7d%0a%20%20t%5feater%7bvector%3cTAutoPtr%3ci%5fcpp%5fcode%3e%3e%20arr
-%3b%7d%0a%20%20t%5fwith%5fbayan%3d%3ei%5fbayan%7b%0a%20%20%20%20t%5fbayan%20baya
-n%3b%0a%20%20%20%20t%5feater%20eater%3f%3b%0a%20%20%7d%0a%20%20t%5fwithout%5fbay
-an%3d%3ei%5fbayan%7b%0a%20%20%20%20t%5feater%20eater%3dminor%3cTAutoPtr%3ci%5fma
-jor%3e%3e%28%29%3b%0a%20%20%7d%0a%20%20t%5fa%3d%3ei%5fstrong%5fbayan%7b%0a%20%20
-%20%20t%5fwith%5fbayan%20wb%3b%0a%20%20%7d%0a%20%20t%5fb%3d%3ei%5fstrong%5fbayan
-%7b%0a%20%20%20%20t%5feater%20e%3dminor%3ct%5fwith%5fbayan%3e%28%29%3b%0a%20%20%
-7d%0a%20%20TAutoPtr%3ci%5fbayan%3e%20bayan%3b%0a%20%20static%20string%20align%28
-const%20string%26source%29%7b%0a%20%20%20%20auto%20arr%3dsplit%28source%2c%22%5c
-n%22%29%3b%0a%20%20%20%20if%28arr%2eempty%28%29%29return%20source%3b%0a%20%20%20
-%20auto%20get%3d%5b%5d%28const%20string%26line%29%2d%3eint%7b%0a%20%20%20%20%20%
-20if%28line%3d%3d%22public%3a%22%29return%20%2d2%3b%0a%20%20%20%20%20%20for%28in
-t%20i%3d0%3bi%3cline%2esize%28%29%3bi%2b%2b%29if%28line%5bi%5d%21%3d%27%20%27%29
-return%20i%3b%0a%20%20%20%20%20%20return%20%2d1%3b%0a%20%20%20%20%7d%3b%0a%20%20
-%20%20int%20count%3d%2d1%3b%0a%20%20%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%
-29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20auto%20m%3dget%28arr%5bi%5d%29%3b%0a%20%2
-0%20%20%20%20if%28m%3c0%29continue%3b%0a%20%20%20%20%20%20if%28count%3c0%29%7bco
-unt%3dm%3bcontinue%3b%7d%0a%20%20%20%20%20%20count%3dstd%3a%3amin%3cint%3e%28m%2
-ccount%29%3b%0a%20%20%20%20%7d%0a%20%20%20%20if%28count%3c0%29return%20source%3b
-%0a%20%20%20%20vector%3cstring%3e%20out%3b%0a%20%20%20%20for%28int%20i%3d0%3bi%3
-carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20auto%20m%3dget%28arr%5bi%5
-d%29%3b%0a%20%20%20%20%20%20auto%20s%3dm%3c0%3farr%5bi%5d%3a%22%20%20%22%2barr%5
-bi%5d%2esubstr%28count%29%3b%0a%20%20%20%20%20%20if%28m%3d%3d%2d1%29s%2eclear%28
-%29%3b%0a%20%20%20%20%20%20out%2epush%5fback%28s%29%3b%0a%20%20%20%20%7d%0a%20%2
-0%20%20return%20join%28out%2c%22%5cn%22%29%3b%0a%20%20%7d%0a%20%20%2f%2fstruct%2
-0t%5fvisitor%3a%2f%2ai%5fcpp%5fcode%3a%3ai%5fvisitor%2ci%5fmajor%3a%3ai%5fvisito
-r%2c%2a%2fi%5fbayan%3a%3ai%5fvisitor%7b%0a%20%20%2f%2f%20%20const%20t%5fcpp%5fco
-de%26c%3b%0a%20%20%2f%2f%20%20t%5fvisitor%28const%20t%5fcpp%5fcode%26c%29%3ac%28
-c%29%7b%7d%0a%20%20%2f%2f%20%20void%20Do%28t%5fcpp%5fcode%2ap%29%7b%7d%0a%20%20%
-2f%2f%20%20void%20Do%28t%5ffields%2ap%29%7b%7d%0a%20%20%2f%2f%20%20void%20Do%28t
-%5fcmds%2ap%29%7b%7d%0a%20%20%2f%2f%20%20void%20Do%28t%5feater%2ap%29%7b%7d%0a%2
-0%20%2f%2f%20%20void%20Do%28t%5fwith%5fbayan%2ap%29%7b%7d%0a%20%20%2f%2f%20%20vo
-id%20Do%28t%5fwithout%5fbayan%2ap%29%7bp%2d%3ewb%2ebayan%7d%0a%20%20%2f%2f%7d%3b
-%0a%20%20string%20make%5fcode%28%29const%7b%0a%20%20%20%20string%20out%3b%0a%20%
-20%20%20%2f%2ft%5fvisitor%20v%7b%2athis%7d%3b%0a%20%20%20%20%2f%2fbayan%2d%3eUse
-%28v%29%3b%0a%20%20%20%20%2f%2ffor%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2
-b%29%7b%0a%20%20%20%20%2f%2f%20%20auto%26ex%3darr%5bi%5d%3b%0a%20%20%20%20%2f%2f
-%20%20QapAssert%28ex%29%3b%0a%20%20%20%20%2f%2f%20%20auto%2ap%3dex%2eget%28%29%3
-b%0a%20%20%20%20%2f%2f%20%20out%2b%3dp%2d%3emake%5fcode%28%29%3b%0a%20%20%20%20%
-2f%2f%7d%0a%20%20%20%20if%28bayan%29save%5fobj%28%2abayan%2eget%28%29%2cout%29%3
-b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%2f%2f%20test%0a%0at%5ffield
-s%5fcmds%5fcppcode%7b%0a%20%20t%5ftrue%5ffcc%7b%0a%20%20%20%20vector%3ct%5fsep%5
-fstruct%5ffield%3e%20arr%3b%0a%20%20%20%20TAutoPtr%3ct%5fsep%5fstruct%5fcmds%3e%
-20cmds%3f%3b%0a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3a%3ai%5fstrong%5fbayan%3e%
-20cppcode%3f%3b%0a%20%20%7d%0a%20%20t%5fcmds%7b%0a%20%20%20%20TAutoPtr%3ct%5fsep
-%5fstruct%5fcmds%3e%20cmds%3b%0a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3a%3ai%5fs
-trong%5fbayan%3e%20cppcode%3f%3b%0a%20%20%7d%0a%20%20t%5fcppcode%7b%0a%20%20%20%
-20TAutoPtr%3ct%5fcpp%5fcode%3e%20cppcode%3b%0a%20%20%7d%0a%20%20TAutoPtr%3ct%5ft
-rue%5ffcc%3e%20tfcc%3f%3b%0a%20%20TAutoPtr%3ct%5fcmds%3e%20cmds%3f%3b%0a%20%20TA
-utoPtr%3ct%5fcppcode%3e%20c%3f%3b%0a%7d%0a%0at%5fstruct%5fbody%7b%0a%20%20%22%7b
-%22%0a%20%20vector%3ct%5ftarget%5fitem%3e%20nested%3f%3b%0a%20%20t%5fsep%20sep0%
-3f%3b%0a%20%20TAutoPtr%3ct%5ffields%5fcmds%5fcppcode%3e%20fcc%3b%0a%20%20t%5fsep
-%20sep1%3f%3b%0a%20%20%22%7d%22%0a%20%20struct%20t%5ftarget%5fitem%5fout%3b%0a%2
-0%20struct%20t%5fout%7b%0a%20%20%20%20vector%3cconst%20t%5ftarget%5fitem%2a%3e%2
-0nested%3b%0a%20%20%20%20string%20provars%3b%0a%20%20%20%20string%20procmds%3b%0
-a%20%20%20%20string%20cppcode%3b%0a%20%20%7d%3b%0a%20%20struct%20t%5ftarget%5fit
-em%5fout%7b%0a%20%20%20%20string%20sep%3b%0a%20%20%20%20string%20name%3b%0a%20%2
-0%20%20string%20parent%3b%0a%20%20%20%20t%5fout%20out%3b%0a%20%20%7d%3b%0a%20%20
-%2f%2ftemplate%3cint%3e%0a%20%20%2f%2fstatic%20t%5ftarget%5fitem%5fout%20weak%5f
-make%5fcode%28const%20t%5ftarget%5fitem%26ref%2ct%5fic%5fdev%26icdev%29%3b%0a%20
-%20struct%20t%5fvisitor%3at%5ffields%5fcmds%5fcppcode%2ct%5fcpp%5fcode%3a%3ai%5f
-strong%5fbayan%3a%3ai%5fvisitor%2ct%5fcpp%5fcode%3a%3ai%5fbayan%3a%3ai%5fvisitor
-%7b%0a%20%20%20%20t%5fsep%5fstruct%5fcmds%2apcmds%7b%7d%3b%0a%20%20%20%20vector%
-3ct%5fsep%5fstruct%5ffield%3e%2apfs%7b%7d%3b%0a%20%20%20%20string%20c%3b%0a%20%2
-0%20%20void%20Do%28t%5fcpp%5fcode%3a%3at%5fa%2ap%29%7bsave%5fobj%28p%2d%3ewb%2ee
-ater%2cc%29%3b%7d%0a%20%20%20%20void%20Do%28t%5fcpp%5fcode%3a%3at%5fb%2ap%29%7bs
-ave%5fobj%28p%2d%3ee%2cc%29%3b%7d%0a%20%20%20%20void%20Do%28t%5fcpp%5fcode%3a%3a
-t%5fwith%5fbayan%2ap%29%7bsave%5fobj%28p%2d%3eeater%2cc%29%3b%7d%0a%20%20%20%20v
-oid%20Do%28t%5fcpp%5fcode%3a%3at%5fwithout%5fbayan%2ap%29%7bsave%5fobj%28p%2d%3e
-eater%2cc%29%3b%7d%0a%20%20%20%20void%20Do%28t%5fcpp%5fcode%3a%3ai%5fstrong%5fba
-yan%2ap%29%7bp%2d%3eUse%28%2athis%29%3b%7d%0a%20%20%20%20void%20Do%28t%5fcpp%5fc
-ode%3a%3ai%5fbayan%2ap%29%7bp%2d%3eUse%28%2athis%29%3b%7d%0a%20%20%20%20virtual%
-20void%20Do%28t%5fcmds%2ap%29%7bpcmds%3dp%2d%3ecmds%2eget%28%29%3bif%28p%2d%3ecp
-pcode%29Do%28p%2d%3ecppcode%2eget%28%29%29%3b%7d%0a%20%20%20%20virtual%20void%20
-Do%28t%5ftrue%5ffcc%2ap%29%7bpfs%3d%26p%2d%3earr%3bpcmds%3dp%2d%3ecmds%3fp%2d%3e
-cmds%2eget%28%29%3anullptr%3bif%28p%2d%3ecppcode%29Do%28p%2d%3ecppcode%2eget%28%
-29%29%3b%7d%0a%20%20%20%20virtual%20void%20Do%28t%5fcppcode%2ap%29%7bif%28p%2d%3
-ecppcode%29Do%28p%2d%3ecppcode%2d%3ebayan%2eget%28%29%29%3b%7d%0a%20%20%20%20voi
-d%20Do%28const%20t%5ffields%5fcmds%5fcppcode%26fcc%29%7b%0a%20%20%20%20%20%20if%
-28fcc%2etfcc%29Do%28fcc%2etfcc%2eget%28%29%29%3b%0a%20%20%20%20%20%20if%28fcc%2e
-cmds%29Do%28fcc%2ecmds%2eget%28%29%29%3b%0a%20%20%20%20%20%20if%28fcc%2ec%29Do%2
-8fcc%2ec%2eget%28%29%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%3b%0a%20%20struct%20t%5
-fcmd%5ffs%5fgetter%3at%5fvisitor%7b%0a%20%20%20%20using%20t%5fvisitor%3a%3aDo%3b
-%0a%20%20%20%20void%20Do%28t%5fcppcode%2ap%29override%7b%7d%0a%20%20%7d%3b%0a%20
-%20t%5fout%20make%5fcode%28t%5fic%5fdev%26icdev%29const%7b%0a%20%20%20%20t%5fout
-%20out%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20auto%26arr%3dnested%3b%0a%20%20%
-20%20%20%20out%2enested%2eresize%28arr%2esize%28%29%29%3b%0a%20%20%20%20%20%20fo
-r%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20%20%2
-0auto%26ex%3darr%5bi%5d%3b%0a%20%20%20%20%20%20%20%20auto%26to%3dout%2enested%5b
-i%5d%3b%0a%20%20%20%20%20%20%20%20to%3d%26ex%3b%0a%20%20%20%20%20%20%7d%0a%20%20
-%20%20%7d%0a%20%20%20%20if%28%21fcc%29return%20out%3b%0a%20%20%20%20t%5fvisitor%
-20v%3b%0a%20%20%20%20v%2eDo%28%2afcc%2eget%28%29%29%3b%0a%20%20%20%20if%28v%2epf
-s%29%7b%0a%20%20%20%20%20%20auto%26arr%3d%2av%2epfs%3b%0a%20%20%20%20%20%20vecto
-r%3cstring%3e%20tmp%3b%0a%20%20%20%20%20%20for%28int%20i%3d0%3bi%3carr%2esize%28
-%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20%20%20tmp%2epush%5fback%28arr%5bi%5d%2em
-ake%5fcode%28i%2cicdev%29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%20%20out%
-2eprovars%3djoin%28tmp%2c%22%22%29%3b%0a%20%20%20%20%7d%0a%20%20%20%20if%28v%2ep
-cmds%29%0a%20%20%20%20%7b%0a%20%20%20%20%20%20auto%26arr%3dv%2epcmds%2d%3ebody%2
-earr%3b%0a%20%20%20%20%20%20vector%3cstring%3e%20tmp%3b%0a%20%20%20%20%20%20for%
-28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20%20%20t
-mp%2epush%5fback%28arr%5bi%5d%2emake%5fcode%28i%29%29%3b%0a%20%20%20%20%20%20%7d
-%0a%20%20%20%20%20%20out%2eprocmds%3djoin%28tmp%2c%22%22%29%3b%0a%20%20%20%20%7d
-%0a%20%20%20%20string%20sep%3dsep0%2evalue%2eempty%28%29%3fsep1%2evalue%3asep0%2
-evalue%3b%0a%20%20%20%20out%2ecppcode%3dv%2ec%2esize%28%29%3fsep%2bv%2ec%2b%22%5
-cn%22%3a%22%22%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0ai%5fdef%7b%0
-a%20%20struct%20t%5fout%7b%0a%20%20%20%20string%20name%3b%0a%20%20%20%20string%2
-0parent%3b%0a%20%20%7d%3b%0a%20%20virtual%20t%5fout%20make%5fcode%28%29%7bQapDeb
-ugMsg%28%22no%20way%2e%22%29%3breturn%20%2a%28t%5fout%2a%29nullptr%3b%7d%0a%7d%0
-a%0at%5fclass%5fdef%20%3d%3e%20i%5fdef%7b%0a%20%20t%5fname%20name%3b%0a%20%20t%5
-fsep%20sep0%3b%0a%20%20string%20arrow%5for%5fcolon%3b%0a%20%20t%5fsep%20sep1%3b%
-0a%20%20t%5fname%20parent%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fauto%28name%2
-9%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20M%2b%3dgo%5fany%5
-fstr%5ffrom%5fvec%28arrow%5for%5fcolon%2csplit%28%22%3d%3e%2c%3a%22%2c%22%2c%22%
-29%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20M%2b%3dgo%5fa
-uto%28parent%29%3b%0a%20%20%7d%0a%20%20t%5fout%20make%5fcode%28%29%7b%0a%20%20%2
-0%20t%5fout%20out%3b%0a%20%20%20%20out%2ename%3dname%2eget%28%29%3b%0a%20%20%20%
-20out%2eparent%3dparent%2eget%28%29%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d
-%0a%7d%0a%0at%5fstruct%5fdef%20%3d%3e%20i%5fdef%7b%0a%20%20t%5fname%20name%3b%0a
-%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fauto%28name%29%3b%0a%20%20%7d%0a%20%20t%5fou
-t%20make%5fcode%28%29%7b%0a%20%20%20%20t%5fout%20out%3b%0a%20%20%20%20out%2ename
-%3dname%2eget%28%29%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%0at%5f
-target%5fitem%3d%3ei%5ftarget%5fitem%7b%0a%20%20t%5fsep%20sep0%3b%0a%20%20TAutoP
-tr%3ci%5fdef%3e%20def%3b%0a%20%20t%5fsep%20sep1%3b%0a%20%20t%5fstruct%5fbody%20b
-ody%3b%0a%20%20%7b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20M%2
-b%3dgo%5fauto%28def%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%2
-0%20M%2b%3dgo%5fauto%28body%29%3b%0a%20%20%7d%0a%20%20typedef%20t%5fstruct%5fbod
-y%3a%3at%5ftarget%5fitem%5fout%20t%5fout%3b%0a%20%20t%5fout%20make%5fcode%28t%5f
-ic%5fdev%26icdev%29const%7b%0a%20%20%20%20t%5fout%20out%3b%0a%20%20%20%20out%2es
-ep%3dsep0%2evalue%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20auto%20tmp%3ddef%2d%3
-emake%5fcode%28%29%3b%0a%20%20%20%20%20%20out%2ename%3dtmp%2ename%3b%0a%20%20%20
-%20%20%20out%2eparent%3dtmp%2eparent%3b%0a%20%20%20%20%7d%0a%20%20%20%20auto%20t
-mp%3dbody%2emake%5fcode%28icdev%29%3b%0a%20%20%20%20out%2eout%3dstd%3a%3amove%28
-tmp%29%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%0at%5ftarget%5fdecl
-%3d%3ei%5ftarget%5fitem%7b%0a%20%20t%5fsep%20sep0%3b%0a%20%20string%20name%3b%0a
-%20%20t%5fsep%20sep1%3b%0a%20%20%7b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%
-0a%20%20%20%20M%2b%3dgo%5fstr%3ct%5fname%3e%28name%29%3b%0a%20%20%20%20O%2b%3dgo
-%5fauto%28sep1%29%3b%0a%20%20%20%20M%2b%3dgo%5fconst%28%22%3b%22%29%3b%0a%20%20%
-7d%0a%7d%0a%0at%5ftarget%7b%0a%20%20vector%3cTAutoPtr%3ci%5ftarget%5fitem%3e%3e%
-20arr%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%7d%0a%2
-0%20vector%3ct%5ftarget%5fitem%3a%3at%5fout%3e%20make%5fcode%28t%5fic%5fdev%26ic
-dev%29%7b%0a%20%20%20%20vector%3ct%5ftarget%5fitem%3a%3at%5fout%3e%20out%3b%0a%2
-0%20%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%2
-0%20%20auto%26ex%3darr%5bi%5d%3b%0a%20%20%20%20%20%20if%28auto%2ap%3ddynamic%5fc
-ast%3ct%5ftarget%5fitem%2a%3e%28ex%2eget%28%29%29%29%7b%0a%20%20%20%20%20%20%20%
-20out%2epush%5fback%28p%2d%3emake%5fcode%28icdev%29%29%3b%0a%20%20%20%20%20%20%7
-d%0a%20%20%20%20%7d%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d
+5fback%28arr%5bi%5d%2ebody%29%3b%7d%0a%20%20%20%20auto%20check%3dout%21%3d%22O%2
+2%3f%22%20%20%20%20if%28%21ok%29return%20ok%3b%5cn%22%3a%22%22%3b%0a%20%20%20%20
+out%3dout%21%3d%22O%22%3f%22ok%3d%22%3a%22%22%3b%0a%20%20%20%20string%20func%5fn
+ame%3dfunc%2eget%28%29%3b%0a%20%20%20%20bool%20smart%5ffunc%3dfind%28func%5fname
+%29%3b%0a%20%20%20%20if%28smart%5ffunc%29%0a%20%20%20%20%7b%0a%20%20%20%20%20%20
+QapAssert%28params%2earr%2esize%28%29%3d%3d2%29%3b%0a%20%20%20%20%20%20const%20a
+uto%26param0%3dparams%2earr%5b0%5d%2ebody%3b%0a%20%20%20%20%20%20%20const%20auto
+%26param1%3dparams%2earr%5b1%5d%2ebody%3b%0a%20%20%20%20%20%20auto%20get%5fparam
+1%3d%5b%26func%5fname%2c%26param1%5d%28%29%2d%3estring%7b%0a%20%20%20%20%20%20%2
+0%20if%28func%5fname%3d%3d%22go%5fany%5fstr%5ffrom%5fvec%22%29return%20%22QapStr
+Finder%3a%3afromArr%28%22%2bparam1%2b%22%29%22%3b%0a%20%20%20%20%20%20%20%20retu
+rn%20%22CharMask%3a%3afromStr%28%22%2bparam1%2b%22%29%22%3b%0a%20%20%20%20%20%20
+%7d%3b%0a%20%20%20%20%20%20string%20varname%3d%22g%5fstatic%5fvar%5f%22%2bIToS%2
+8i%29%3b%0a%20%20%20%20%20%20string%20vardecl%3d%22%20%20%20%20static%20const%20
+auto%20%22%2bvarname%2b%22%3d%22%2bget%5fparam1%28%29%2b%22%3b%5cn%22%3b%0a%20%2
+0%20%20%20%20out%3dvardecl%2b%22%20%20%20%20%22%2bout%2b%22dev%2e%22%2bfunc%2ege
+t%28%29%2b%22%28%22%2bparam0%2b%22%2c%22%2bvarname%2b%22%29%3b%5cn%22%2bcheck%3b
+%0a%20%20%20%20%20%20return%20out%3b%0a%20%20%20%20%7d%0a%20%20%20%20out%3d%22%2
+0%20%20%20%22%2bout%2b%22dev%2e%22%2bfunc%2eget%28%29%2btempl%5fparams%2b%22%28%
+22%2bjoin%28params%5fcode%2c%22%2c%22%29%2b%22%29%3b%5cn%22%2bcheck%3b%0a%20%20%
+20%20return%20out%3b%0a%20%20%7d%0a%20%20string%20make%5fcode%5fgp%28%29%7b%0a%2
+0%20%20%20char%20m%3dcmdso%3fcmdso%2d%3eget%5fmode%28%29%3a%27D%27%3b%0a%20%20%2
+0%20QapAssert%28cmdso%7c%7cmode%3fbool%28cmdso%29%21%3dbool%28mode%29%3atrue%29%
+3b%0a%20%20%20%20string%20out%3dCToS%28mode%3fmode%2d%3eget%5fmode%28%29%3am%29%
+3b%0a%20%20%20%20vector%3cstring%3e%20params%5fcode%3b%0a%20%20%20%20%7bauto%26a
+rr%3dparams%2earr%3bfor%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29params%
+5fcode%2epush%5fback%28arr%5bi%5d%2ebody%29%3b%7d%0a%20%20%20%20out%3d%22%20%20%
+20%20%22%2bout%2b%22%2b%3ddev%2e%22%2bfunc%2eget%28%29%2btempl%5fparams%2b%22%28
+%22%2bjoin%28params%5fcode%2c%22%2c%22%29%2b%22%29%3b%5cn%20%20%20%20if%28%21ok%
+29return%20ok%3b%5cn%22%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%0a
+t%5fsep%5fstruct%5fcmd%7b%0a%20%20t%5fsep%20sep%3f%3b%0a%20%20t%5fstruct%5fcmd%2
+0body%3b%0a%20%20string%20make%5fcode%28int%20i%29%7b%0a%20%20%20%20return%20bod
+y%2emake%5fcode%28i%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fstruct%5fcmds%7b%0a%20%20%2
+2%7b%22%0a%20%20vector%3ct%5fsep%5fstruct%5fcmd%3e%20arr%3f%3b%0a%20%20t%5fsep%2
+0sep%3f%3b%0a%20%20%22%7d%22%0a%7d%0a%0at%5fsep%5fstruct%5fcmds%7b%0a%20%20t%5fs
+ep%20sep%3f%3b%0a%20%20t%5fstruct%5fcmds%20body%3b%0a%7d%0a%0ai%5fcpp%5fcode%7b%
+0a%20%20virtual%20string%20make%5fcode%28%29const%7bQapDebugMsg%28%22no%20way%2e
+%22%29%3breturn%20%22%22%3b%7d%0a%7d%0a%0at%5fcpp%5fcode%5fsep%20%3d%3e%20i%5fcp
+p%5fcode%7b%0a%20%20t%5fsep%20sep%3b%0a%20%20string%20make%5fcode%28%29const%7b%
+0a%20%20%20%20return%20sep%2emake%5fcode%28%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fcpp
+%5fcode%5fmain%20%3d%3e%20i%5fcpp%5fcode%7b%0a%20%20TAutoPtr%3ci%5fcode%5fwith%5
+fsep%3e%20body%3b%0a%20%20string%20make%5fcode%28%29const%7b%0a%20%20%20%20strin
+g%20out%3b%0a%20%20%20%20auto%2ap%3dbody%2eget%28%29%3b%0a%20%20%20%20out%3dp%2d
+%3emake%5fcode%28%29%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%0at%5
+fcpp%5fcode%7b%0a%20%20t%5fbayan%7b%22%5b%3a%3a%5d%22%7d%0a%20%20t%5ffields%3d%3
+ei%5fmajor%7bt%5fsep%5fstruct%5ffield%20f%3b%7d%0a%20%20t%5fcmds%3d%3ei%5fmajor%
+7bt%5fsep%5fstruct%5fcmds%20c%3b%7d%0a%20%20t%5fatr%3d%3ei%5fmajor%7bTAutoPtr%3c
+t%5fattr%3e%20attr%3b%7d%0a%20%20t%5feater%7bvector%3cTAutoPtr%3ci%5fcpp%5fcode%
+3e%3e%20arr%3b%7d%0a%20%20t%5fwith%5fbayan%3d%3ei%5fbayan%7b%0a%20%20%20%20t%5fb
+ayan%20bayan%3b%0a%20%20%20%20t%5feater%20eater%3f%3b%0a%20%20%7d%0a%20%20t%5fwi
+thout%5fbayan%3d%3ei%5fbayan%7b%0a%20%20%20%20t%5feater%20eater%3dminor%3cTAutoP
+tr%3ci%5fmajor%3e%3e%28%29%3b%0a%20%20%7d%0a%20%20t%5fa%3d%3ei%5fstrong%5fbayan%
+7b%0a%20%20%20%20t%5fwith%5fbayan%20wb%3b%0a%20%20%7d%0a%20%20t%5fb%3d%3ei%5fstr
+ong%5fbayan%7b%0a%20%20%20%20t%5feater%20e%3dminor%3ct%5fwith%5fbayan%3e%28%29%3
+b%0a%20%20%7d%0a%20%20TAutoPtr%3ci%5fbayan%3e%20bayan%3b%0a%20%20static%20string
+%20align%28const%20string%26source%29%7b%0a%20%20%20%20auto%20arr%3dsplit%28sour
+ce%2c%22%5cn%22%29%3b%0a%20%20%20%20if%28arr%2eempty%28%29%29return%20source%3b%
+0a%20%20%20%20auto%20get%3d%5b%5d%28const%20string%26line%29%2d%3eint%7b%0a%20%2
+0%20%20%20%20if%28line%3d%3d%22public%3a%22%29return%20%2d2%3b%0a%20%20%20%20%20
+%20for%28int%20i%3d0%3bi%3cline%2esize%28%29%3bi%2b%2b%29if%28line%5bi%5d%21%3d%
+27%20%27%29return%20i%3b%0a%20%20%20%20%20%20return%20%2d1%3b%0a%20%20%20%20%7d%
+3b%0a%20%20%20%20int%20count%3d%2d1%3b%0a%20%20%20%20for%28int%20i%3d0%3bi%3carr
+%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20auto%20m%3dget%28arr%5bi%5d%29
+%3b%0a%20%20%20%20%20%20if%28m%3c0%29continue%3b%0a%20%20%20%20%20%20if%28count%
+3c0%29%7bcount%3dm%3bcontinue%3b%7d%0a%20%20%20%20%20%20count%3dstd%3a%3amin%3ci
+nt%3e%28m%2ccount%29%3b%0a%20%20%20%20%7d%0a%20%20%20%20if%28count%3c0%29return%
+20source%3b%0a%20%20%20%20vector%3cstring%3e%20out%3b%0a%20%20%20%20for%28int%20
+i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20auto%20m%3dget%
+28arr%5bi%5d%29%3b%0a%20%20%20%20%20%20auto%20s%3dm%3c0%3farr%5bi%5d%3a%22%20%20
+%22%2barr%5bi%5d%2esubstr%28count%29%3b%0a%20%20%20%20%20%20if%28m%3d%3d%2d1%29s
+%2eclear%28%29%3b%0a%20%20%20%20%20%20out%2epush%5fback%28s%29%3b%0a%20%20%20%20
+%7d%0a%20%20%20%20return%20join%28out%2c%22%5cn%22%29%3b%0a%20%20%7d%0a%20%20%2f
+%2fstruct%20t%5fvisitor%3a%2f%2ai%5fcpp%5fcode%3a%3ai%5fvisitor%2ci%5fmajor%3a%3
+ai%5fvisitor%2c%2a%2fi%5fbayan%3a%3ai%5fvisitor%7b%0a%20%20%2f%2f%20%20const%20t
+%5fcpp%5fcode%26c%3b%0a%20%20%2f%2f%20%20t%5fvisitor%28const%20t%5fcpp%5fcode%26
+c%29%3ac%28c%29%7b%7d%0a%20%20%2f%2f%20%20void%20Do%28t%5fcpp%5fcode%2ap%29%7b%7
+d%0a%20%20%2f%2f%20%20void%20Do%28t%5ffields%2ap%29%7b%7d%0a%20%20%2f%2f%20%20vo
+id%20Do%28t%5fcmds%2ap%29%7b%7d%0a%20%20%2f%2f%20%20void%20Do%28t%5feater%2ap%29
+%7b%7d%0a%20%20%2f%2f%20%20void%20Do%28t%5fwith%5fbayan%2ap%29%7b%7d%0a%20%20%2f
+%2f%20%20void%20Do%28t%5fwithout%5fbayan%2ap%29%7bp%2d%3ewb%2ebayan%7d%0a%20%20%
+2f%2f%7d%3b%0a%20%20string%20make%5fcode%28%29const%7b%0a%20%20%20%20string%20ou
+t%3b%0a%20%20%20%20%2f%2ft%5fvisitor%20v%7b%2athis%7d%3b%0a%20%20%20%20%2f%2fbay
+an%2d%3eUse%28v%29%3b%0a%20%20%20%20%2f%2ffor%28int%20i%3d0%3bi%3carr%2esize%28%
+29%3bi%2b%2b%29%7b%0a%20%20%20%20%2f%2f%20%20auto%26ex%3darr%5bi%5d%3b%0a%20%20%
+20%20%2f%2f%20%20QapAssert%28ex%29%3b%0a%20%20%20%20%2f%2f%20%20auto%2ap%3dex%2e
+get%28%29%3b%0a%20%20%20%20%2f%2f%20%20out%2b%3dp%2d%3emake%5fcode%28%29%3b%0a%2
+0%20%20%20%2f%2f%7d%0a%20%20%20%20if%28bayan%29save%5fobj%28%2abayan%2eget%28%29
+%2cout%29%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%2f%2f%20test%0a%
+0at%5ffields%5fcmds%5fcppcode%7b%0a%20%20t%5ftrue%5ffcc%7b%0a%20%20%20%20vector%
+3ct%5fsep%5fstruct%5ffield%3e%20arr%3b%0a%20%20%20%20TAutoPtr%3ct%5fsep%5fstruct
+%5fcmds%3e%20cmds%3f%3b%0a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3a%3ai%5fstrong%
+5fbayan%3e%20cppcode%3f%3b%0a%20%20%7d%0a%20%20t%5fcmds%7b%0a%20%20%20%20TAutoPt
+r%3ct%5fsep%5fstruct%5fcmds%3e%20cmds%3b%0a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode
+%3a%3ai%5fstrong%5fbayan%3e%20cppcode%3f%3b%0a%20%20%7d%0a%20%20t%5fcppcode%7b%0
+a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3e%20cppcode%3b%0a%20%20%7d%0a%20%20TAuto
+Ptr%3ct%5ftrue%5ffcc%3e%20tfcc%3f%3b%0a%20%20TAutoPtr%3ct%5fcmds%3e%20cmds%3f%3b
+%0a%20%20TAutoPtr%3ct%5fcppcode%3e%20c%3f%3b%0a%7d%0a%0at%5fstruct%5fbody%7b%0a%
+20%20%22%7b%22%0a%20%20vector%3ct%5ftarget%5fitem%3e%20nested%3f%3b%0a%20%20t%5f
+sep%20sep0%3f%3b%0a%20%20TAutoPtr%3ct%5ffields%5fcmds%5fcppcode%3e%20fcc%3b%0a%2
+0%20t%5fsep%20sep1%3f%3b%0a%20%20%22%7d%22%0a%20%20struct%20t%5ftarget%5fitem%5f
+out%3b%0a%20%20struct%20t%5fout%7b%0a%20%20%20%20vector%3cconst%20t%5ftarget%5fi
+tem%2a%3e%20nested%3b%0a%20%20%20%20string%20provars%3b%0a%20%20%20%20string%20p
+rocmds%3b%0a%20%20%20%20string%20cppcode%3b%0a%20%20%7d%3b%0a%20%20struct%20t%5f
+target%5fitem%5fout%7b%0a%20%20%20%20string%20sep%3b%0a%20%20%20%20string%20name
+%3b%0a%20%20%20%20string%20parent%3b%0a%20%20%20%20t%5fout%20out%3b%0a%20%20%7d%
+3b%0a%20%20%2f%2ftemplate%3cint%3e%0a%20%20%2f%2fstatic%20t%5ftarget%5fitem%5fou
+t%20weak%5fmake%5fcode%28const%20t%5ftarget%5fitem%26ref%2ct%5fic%5fdev%26icdev%
+29%3b%0a%20%20struct%20t%5fvisitor%3at%5ffields%5fcmds%5fcppcode%2ct%5fcpp%5fcod
+e%3a%3ai%5fstrong%5fbayan%3a%3ai%5fvisitor%2ct%5fcpp%5fcode%3a%3ai%5fbayan%3a%3a
+i%5fvisitor%7b%0a%20%20%20%20t%5fsep%5fstruct%5fcmds%2apcmds%7b%7d%3b%0a%20%20%2
+0%20vector%3ct%5fsep%5fstruct%5ffield%3e%2apfs%7b%7d%3b%0a%20%20%20%20string%20c
+%3b%0a%20%20%20%20void%20Do%28t%5fcpp%5fcode%3a%3at%5fa%2ap%29%7bsave%5fobj%28p%
+2d%3ewb%2eeater%2cc%29%3b%7d%0a%20%20%20%20void%20Do%28t%5fcpp%5fcode%3a%3at%5fb
+%2ap%29%7bsave%5fobj%28p%2d%3ee%2cc%29%3b%7d%0a%20%20%20%20void%20Do%28t%5fcpp%5
+fcode%3a%3at%5fwith%5fbayan%2ap%29%7bsave%5fobj%28p%2d%3eeater%2cc%29%3b%7d%0a%2
+0%20%20%20void%20Do%28t%5fcpp%5fcode%3a%3at%5fwithout%5fbayan%2ap%29%7bsave%5fob
+j%28p%2d%3eeater%2cc%29%3b%7d%0a%20%20%20%20void%20Do%28t%5fcpp%5fcode%3a%3ai%5f
+strong%5fbayan%2ap%29%7bp%2d%3eUse%28%2athis%29%3b%7d%0a%20%20%20%20void%20Do%28
+t%5fcpp%5fcode%3a%3ai%5fbayan%2ap%29%7bp%2d%3eUse%28%2athis%29%3b%7d%0a%20%20%20
+%20virtual%20void%20Do%28t%5fcmds%2ap%29%7bpcmds%3dp%2d%3ecmds%2eget%28%29%3bif%
+28p%2d%3ecppcode%29Do%28p%2d%3ecppcode%2eget%28%29%29%3b%7d%0a%20%20%20%20virtua
+l%20void%20Do%28t%5ftrue%5ffcc%2ap%29%7bpfs%3d%26p%2d%3earr%3bpcmds%3dp%2d%3ecmd
+s%3fp%2d%3ecmds%2eget%28%29%3anullptr%3bif%28p%2d%3ecppcode%29Do%28p%2d%3ecppcod
+e%2eget%28%29%29%3b%7d%0a%20%20%20%20virtual%20void%20Do%28t%5fcppcode%2ap%29%7b
+if%28p%2d%3ecppcode%29Do%28p%2d%3ecppcode%2d%3ebayan%2eget%28%29%29%3b%7d%0a%20%
+20%20%20void%20Do%28const%20t%5ffields%5fcmds%5fcppcode%26fcc%29%7b%0a%20%20%20%
+20%20%20if%28fcc%2etfcc%29Do%28fcc%2etfcc%2eget%28%29%29%3b%0a%20%20%20%20%20%20
+if%28fcc%2ecmds%29Do%28fcc%2ecmds%2eget%28%29%29%3b%0a%20%20%20%20%20%20if%28fcc
+%2ec%29Do%28fcc%2ec%2eget%28%29%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%3b%0a%20%20s
+truct%20t%5fcmd%5ffs%5fgetter%3at%5fvisitor%7b%0a%20%20%20%20using%20t%5fvisitor
+%3a%3aDo%3b%0a%20%20%20%20void%20Do%28t%5fcppcode%2ap%29override%7b%7d%0a%20%20%
+7d%3b%0a%20%20t%5fout%20make%5fcode%28t%5fic%5fdev%26icdev%29const%7b%0a%20%20%2
+0%20t%5fout%20out%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20auto%26arr%3dnested%3
+b%0a%20%20%20%20%20%20out%2enested%2eresize%28arr%2esize%28%29%29%3b%0a%20%20%20
+%20%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20
+%20%20%20%20auto%26ex%3darr%5bi%5d%3b%0a%20%20%20%20%20%20%20%20auto%26to%3dout%
+2enested%5bi%5d%3b%0a%20%20%20%20%20%20%20%20to%3d%26ex%3b%0a%20%20%20%20%20%20%
+7d%0a%20%20%20%20%7d%0a%20%20%20%20if%28%21fcc%29return%20out%3b%0a%20%20%20%20t
+%5fvisitor%20v%3b%0a%20%20%20%20v%2eDo%28%2afcc%2eget%28%29%29%3b%0a%20%20%20%20
+if%28v%2epfs%29%7b%0a%20%20%20%20%20%20auto%26arr%3d%2av%2epfs%3b%0a%20%20%20%20
+%20%20vector%3cstring%3e%20tmp%3b%0a%20%20%20%20%20%20for%28int%20i%3d0%3bi%3car
+r%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20%20%20tmp%2epush%5fback%28arr
+%5bi%5d%2emake%5fcode%28i%2cicdev%29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%2
+0%20%20out%2eprovars%3djoin%28tmp%2c%22%22%29%3b%0a%20%20%20%20%7d%0a%20%20%20%2
+0if%28v%2epcmds%29%0a%20%20%20%20%7b%0a%20%20%20%20%20%20auto%26arr%3dv%2epcmds%
+2d%3ebody%2earr%3b%0a%20%20%20%20%20%20vector%3cstring%3e%20tmp%3b%0a%20%20%20%2
+0%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%2
+0%20%20%20tmp%2epush%5fback%28arr%5bi%5d%2emake%5fcode%28i%29%29%3b%0a%20%20%20%
+20%20%20%7d%0a%20%20%20%20%20%20out%2eprocmds%3djoin%28tmp%2c%22%22%29%3b%0a%20%
+20%20%20%7d%0a%20%20%20%20string%20sep%3dsep0%2evalue%2eempty%28%29%3fsep1%2eval
+ue%3asep0%2evalue%3b%0a%20%20%20%20out%2ecppcode%3dv%2ec%2esize%28%29%3fsep%2bv%
+2ec%2b%22%5cn%22%3a%22%22%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0ai
+%5fdef%7b%0a%20%20struct%20t%5fout%7b%0a%20%20%20%20string%20name%3b%0a%20%20%20
+%20string%20parent%3b%0a%20%20%7d%3b%0a%20%20virtual%20t%5fout%20make%5fcode%28%
+29%7bQapDebugMsg%28%22no%20way%2e%22%29%3breturn%20%2a%28t%5fout%2a%29nullptr%3b
+%7d%0a%7d%0a%0at%5fclass%5fdef%20%3d%3e%20i%5fdef%7b%0a%20%20t%5fname%20name%3b%
+0a%20%20t%5fsep%20sep0%3b%0a%20%20string%20arrow%5for%5fcolon%3b%0a%20%20t%5fsep
+%20sep1%3b%0a%20%20t%5fname%20parent%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fau
+to%28name%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20M%2b%3
+dgo%5fany%5fstr%5ffrom%5fvec%28arrow%5for%5fcolon%2csplit%28%22%3d%3e%2c%3a%22%2
+c%22%2c%22%29%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20M%
+2b%3dgo%5fauto%28parent%29%3b%0a%20%20%7d%0a%20%20t%5fout%20make%5fcode%28%29%7b
+%0a%20%20%20%20t%5fout%20out%3b%0a%20%20%20%20out%2ename%3dname%2eget%28%29%3b%0
+a%20%20%20%20out%2eparent%3dparent%2eget%28%29%3b%0a%20%20%20%20return%20out%3b%
+0a%20%20%7d%0a%7d%0a%0at%5fstruct%5fdef%20%3d%3e%20i%5fdef%7b%0a%20%20t%5fname%2
+0name%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fauto%28name%29%3b%0a%20%20%7d%0a%
+20%20t%5fout%20make%5fcode%28%29%7b%0a%20%20%20%20t%5fout%20out%3b%0a%20%20%20%2
+0out%2ename%3dname%2eget%28%29%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7
+d%0a%0at%5ftarget%5fitem%3d%3ei%5ftarget%5fitem%7b%0a%20%20t%5fsep%20sep0%3b%0a%
+20%20TAutoPtr%3ci%5fdef%3e%20def%3b%0a%20%20t%5fsep%20sep1%3b%0a%20%20t%5fstruct
+%5fbody%20body%3b%0a%20%20%7b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%
+20%20%20M%2b%3dgo%5fauto%28def%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b
+%0a%20%20%20%20M%2b%3dgo%5fauto%28body%29%3b%0a%20%20%7d%0a%20%20typedef%20t%5fs
+truct%5fbody%3a%3at%5ftarget%5fitem%5fout%20t%5fout%3b%0a%20%20t%5fout%20make%5f
+code%28t%5fic%5fdev%26icdev%29const%7b%0a%20%20%20%20t%5fout%20out%3b%0a%20%20%2
+0%20out%2esep%3dsep0%2evalue%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20auto%20tmp
+%3ddef%2d%3emake%5fcode%28%29%3b%0a%20%20%20%20%20%20out%2ename%3dtmp%2ename%3b%
+0a%20%20%20%20%20%20out%2eparent%3dtmp%2eparent%3b%0a%20%20%20%20%7d%0a%20%20%20
+%20auto%20tmp%3dbody%2emake%5fcode%28icdev%29%3b%0a%20%20%20%20out%2eout%3dstd%3
+a%3amove%28tmp%29%3b%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d%0a%0at%5fta
+rget%5fdecl%3d%3ei%5ftarget%5fitem%7b%0a%20%20t%5fsep%20sep0%3b%0a%20%20string%2
+0name%3b%0a%20%20t%5fsep%20sep1%3b%0a%20%20%7b%0a%20%20%20%20O%2b%3dgo%5fauto%28
+sep0%29%3b%0a%20%20%20%20M%2b%3dgo%5fstr%3ct%5fname%3e%28name%29%3b%0a%20%20%20%
+20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20M%2b%3dgo%5fconst%28%22%3b%22%29%3
+b%0a%20%20%7d%0a%7d%0a%0at%5ftarget%7b%0a%20%20vector%3cTAutoPtr%3ci%5ftarget%5f
+item%3e%3e%20arr%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fauto%28arr%29%3b%0a%20
+%20%7d%0a%20%20vector%3ct%5ftarget%5fitem%3a%3at%5fout%3e%20make%5fcode%28t%5fic
+%5fdev%26icdev%29%7b%0a%20%20%20%20vector%3ct%5ftarget%5fitem%3a%3at%5fout%3e%20
+out%3b%0a%20%20%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a
+%20%20%20%20%20%20auto%26ex%3darr%5bi%5d%3b%0a%20%20%20%20%20%20if%28auto%2ap%3d
+dynamic%5fcast%3ct%5ftarget%5fitem%2a%3e%28ex%2eget%28%29%29%29%7b%0a%20%20%20%2
+0%20%20%20%20out%2epush%5fback%28p%2d%3emake%5fcode%28icdev%29%29%3b%0a%20%20%20
+%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20return%20out%3b%0a%20%20%7d%0a%7d
 */

@@ -374,7 +374,7 @@ t_call_expr=>i_expr{
 t_test20250618_atrr{
   t_foo{{}[::]}
   t_foo foo; [skip]
-  t_sep sep; [optimize,inline,"sep",("sep"),[sep],{ sep , sep }]
+  t_sep sep; [optimize,"sep",("sep"),[sep],{ sep , sep }]
   {
     go_auto(foo);
     go_auto(sep);
@@ -1067,6 +1067,8 @@ t_struct_cmd{
     string out=CToS(mode?mode->get_mode():m);
     vector<string> params_code;
     {auto&arr=params.arr;for(int i=0;i<arr.size();i++)params_code.push_back(arr[i].body);}
+    auto check=out!="O"?"    if(!ok)return ok;\n":"";
+    out=out!="O"?"ok=":"";
     string func_name=func.get();
     bool smart_func=find(func_name);
     if(smart_func)
@@ -1080,10 +1082,10 @@ t_struct_cmd{
       };
       string varname="g_static_var_"+IToS(i);
       string vardecl="    static const auto "+varname+"="+get_param1()+";\n";
-      out=vardecl+"    "+out+"+=dev."+func.get()+"("+param0+","+varname+");\n    if(!ok)return ok;\n";
+      out=vardecl+"    "+out+"dev."+func.get()+"("+param0+","+varname+");\n"+check;
       return out;
     }
-    out="    "+out+"+=dev."+func.get()+templ_params+"("+join(params_code,",")+");\n    if(!ok)return ok;\n";
+    out="    "+out+"dev."+func.get()+templ_params+"("+join(params_code,",")+");\n"+check;
     return out;
   }
   string make_code_gp(){
