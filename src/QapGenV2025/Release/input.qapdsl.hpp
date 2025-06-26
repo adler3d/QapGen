@@ -1,376 +1,4 @@
-t_cppcore{
-
-t_lev03{
-  string oper;
-  TAutoPtr<i_expr> expr;
-  {
-    O+=go_any_str_from_vec(oper,split("+,-,!,~",","));
-    M+=go_auto(expr);
-  }
-}
-t_lev05{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("*,/,%",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev03 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
-  t_lev03 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
-}
-t_lev06{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("+,-",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev05 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
-  t_lev05 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
-}
-t_lev07{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("<<,>>",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev06 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
-  t_lev06 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
-}
-t_lev08{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("<,<=,>,>=",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev07 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
-  t_lev07 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
-}
-t_lev09{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("==,!=",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev08 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
-  t_lev08 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
-}
-t_lev10{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("&",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev09 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
-  t_lev09 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
-}
-t_lev11{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("^",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev10 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
-  t_lev10 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
-}
-t_lev12{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("|",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev11 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
-  t_lev11 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
-}
-t_lev13{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("&&",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev12 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
-  t_lev12 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
-}
-t_lev14{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("||",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev13 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
-  t_lev13 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
-}
-t_string{
-  "\""
-  string value=str<vector<TAutoPtr<i_str_item>>>()?;
-  "\""
-}
-
-t_int_expr=>i_expr{
-  t_zero=>i_val{"0"}
-  t_num=>i_val{
-    char first=any_char(gen_dips("19"));
-    string num=any(gen_dips("09"))?;
-  }
-  string value=str<TAutoPtr<i_val>>();
-}
-
-t_type_expr{
-  t_params{
-    "{"
-    string type=str<t_type_expr>();
-    ","
-    t_int_expr count;
-    "}"
-  }
-  t_elem{
-    t_name name;
-    TAutoPtr<t_params> params?;
-  }
-  t_item{
-    t_sep sep0?;
-    "::"
-    t_sep sep1?;
-    t_elem body;
-  }
-  t_elem first;
-  vector<t_item> arr?;
-}
-
-t_char_expr=>i_expr{
-  t_char_item body;
-}
-
-t_bool_expr=>i_expr{
-  string value=any_str_from_vec(split("true,false",","));
-}
-
-t_string_expr=>i_expr{
-  t_string body;
-}
-
-t_real_expr=>i_expr{
-  t_frac{
-    "."
-    string arr=any(gen_dips("09"));
-  }
-  t_sign{
-    char sign=any_char("-+");
-  }
-  t_exp{
-    char e=any_char("eE");
-    TAutoPtr<t_sign> sign?;
-    string arr=any(gen_dips("09"));
-  }
-  t_num=>i_val{
-    char first=any_char(gen_dips("19"));
-    string num=any(gen_dips("09"))?;
-  }
-  t_zero=>i_val{"0"}
-  t_impl{
-    TAutoPtr<i_val> val;
-    TAutoPtr<t_frac> frac;
-    TAutoPtr<t_exp> exp?;
-  }
-  string value=str<t_impl>();
-}
-
-t_var_expr=>i_expr{
-  t_sb_expr{
-    "["
-    t_sep sep0?;
-    t_lev14 expr;
-    t_sep sep1?;
-    "]"
-  }
-  t_dd_part=>i_part{
-    t_elem{
-      t_sep sep0?;
-      "::"
-      t_sep sep1?;
-      t_name name;
-    }
-    vector<t_elem> arr;
-  }
-  t_template_part=>i_part{
-    t_sep sepB?;
-    "<"
-    t_sep sep0?;
-    TAutoPtr<i_expr> expr;
-    t_sep sep1?;
-    ">"
-    TAutoPtr<t_dd_part> ddp?;
-  }
-  t_arr{
-    t_sep sep?;
-    vector<t_sb_expr> arr;
-  }
-  t_item{
-    "."
-    t_sep sep0?;
-    t_name name;
-    t_arr arr?;
-  }
-  t_name name;
-  TAutoPtr<i_part> tp?;
-  TAutoPtr<t_arr> arr?;
-  vector<t_item> items?;
-}
-
-t_block_expr=>i_expr{
-  "("
-  t_lev14 body;
-  ")"
-}
-
-t_call_param{
-  t_sep sep0?;
-  t_lev14 body;
-  t_sep sep1?;
-}
-
-t_call_params{
-  "("
-  t_sep sep?;
-  vector<t_call_param> arr=vec(",")?;
-  ")"
-}
-
-t_call_expr=>i_expr{
-  t_var_expr call;
-  t_sep sep?;
-  t_call_params params;
-}
-
-}
+using " " as t_sep;
 
 t_test20250618_atrr{
   t_foo{{}[::]}
@@ -438,7 +66,7 @@ t_str_seq{
 }
 
 t_sep_str_seq{
-  t_sep sep;
+  " "
   t_str_seq body;
 }
 
@@ -689,7 +317,7 @@ t_value_item{
 }
 
 t_value{
-  t_sep sep?;
+  " "?
   "="
   string body=str<TAutoPtr<t_cppcore::i_expr>>();
   string make_code()const{
@@ -833,7 +461,6 @@ t_type_templ_angle=>i_type_templ{
   "<"
   TAutoPtr<t_type_templ_params> params?;
   ">"
-
   string make_code()const{
     string out;
     out+="<";
@@ -868,22 +495,22 @@ i_struct_cmd_xxxx{
 
 t_struct_cmd_mode => i_struct_cmd_xxxx{
   char body=any_char("DMO");
-  t_sep sep0?;
+  " "?
   "+="
-  t_sep sep1?;
+  " "?
   char get_mode()const{return body;}
 }
 
 t_sep_value{
-  t_sep sep0?;
+  " "?
   t_value_item value;
-  t_sep sep1?;
+  " "?
 }
 
 t_attr{
   "["
   vector<t_sep_value> arr=vec(",")?;
-  t_sep sep?;
+  " "?
   "]"
 }
 i_struct_field{
@@ -895,33 +522,38 @@ t_const_field=>i_struct_field{
   t_c_item=>i_sc_item{t_char_item body;}
   t_s_item=>i_sc_item{t_str_item body;}
   string value=str<TAutoPtr<i_sc_item>>();
-  t_sep sep0?;
+  " "?
   TAutoPtr<t_qst> qst?;
-  t_sep sep1?;
+  " "?
   TAutoPtr<t_semicolon> sc?;
-  string make_code(int id,t_ic_dev&icdev)const{return {};}
+  string make_code(int id,t_ic_dev&icdev)const{
+    const string*plexer=nullptr;
+    for(auto&ex:icdev.sep_lexs)if(ex.sep==value)plexer=&ex.lexer;
+    if(!plexer)return {};
+    return "ADDVAR("+*plexer+",$sep"+IToS(id)+",DEF,$,$)\\\n";
+  }
   string make_cmd(t_ic_dev&icdev)const{return "M+=go_const("+value+");";}
 }
 
 t_struct_field_value {
-  t_sep sep0?;
+  " "?
   "=";
-  t_sep sep1?;
+  " "?
   TAutoPtr<t_cppcore::t_call_expr> expr;
 }
 t_struct_field=>i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}
   TAutoPtr<i_struct_cmd_xxxx> mode?;
-  t_sep sepcm?;
+  " "?
   TAutoPtr<t_cppcore::i_expr> type;
-  t_sep sep0;
+  " ";
   t_name name;
   TAutoPtr<t_struct_field_value> value?;
-  t_sep sep1?;
+  " "?
   TAutoPtr<t_qst> qst?;
-  t_sep sep2?;
+  " "?
   ";"
-  t_sep sep3?;
+  " "?
   TAutoPtr<t_attr> attr?;
   string make_code(int id,t_ic_dev&icdev)const{
     vector<string> out;
@@ -971,7 +603,7 @@ t_struct_field=>i_struct_field{
 }
 
 t_sep_struct_field{
-  t_sep sep?;
+  " "?
   i_struct_field body;
   string make_code(int id,t_ic_dev&icdev)const{
     return body->make_code(id,icdev);
@@ -1014,7 +646,7 @@ t_cmd_param{
 }
 t_struct_cmd_anno=>i_struct_cmd_xxxx{
   string mode=any_str_from_vec(split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));
-  t_sep sep;
+  " ";
   char get_mode()const{return mode.substr(0,2)=="@m"?'M':(mode[0]=='m'?'M':'D');}
 }
 
@@ -1036,7 +668,7 @@ t_struct_cmd_optional=>i_struct_cmd_so{
 
 t_struct_cmd_opt_v2=>i_struct_cmd_so{
   ";"
-  t_sep sep?;
+  " "?
   string value=any_str_from_vec(split("optional,mandatory",","));
   char get_mode()const override{return value=="optional"?'O':("mandatory"==value?'M':'D');}
 }
@@ -1044,13 +676,14 @@ t_struct_cmd_opt_v2=>i_struct_cmd_so{
 t_struct_cmd{
   TAutoPtr<i_struct_cmd_xxxx> mode?;
   t_name func;
+  " "
   string templ_params=str<TAutoPtr<t_templ_params>>()?;
   "("
   t_cmd_params params;
   ")"
-  t_sep sep0?;
+  " "?
   TAutoPtr<i_struct_cmd_so> cmdso?;
-  t_sep sep1?;
+  " "?
   ";"
   static bool find(const string&func){
     static const vector<string> arr=split("go_any_str_from_vec|go_any_arr_char|go_any|go_any_char","|");
@@ -1099,7 +732,7 @@ t_struct_cmd{
 }
 
 t_sep_struct_cmd{
-  t_sep sep?;
+  " "?
   t_struct_cmd body;
   string make_code(int i){
     return body.make_code(i);
@@ -1109,12 +742,12 @@ t_sep_struct_cmd{
 t_struct_cmds{
   "{"
   vector<t_sep_struct_cmd> arr?;
-  t_sep sep?;
+  " "?
   "}"
 }
 
 t_sep_struct_cmds{
-  t_sep sep?;
+  " "
   t_struct_cmds body;
 }
 
@@ -1231,9 +864,9 @@ t_fields_cmds_cppcode{
 t_struct_body{
   "{"
   vector<t_target_item> nested?;
-  t_sep sep0?;
+  t_sep sep0;
   TAutoPtr<t_fields_cmds_cppcode> fcc;
-  t_sep sep1?;
+  t_sep sep1;
   "}"
   struct t_target_item_out;
   struct t_out{
@@ -1361,9 +994,9 @@ t_target_item=>i_target_item{
 }
 
 t_target_decl=>i_target_item{
-  t_sep sep0?;
+  " "?
   string name=str<t_name>();
-  t_sep sep1?;
+  " "?
   ";"
 }
 
@@ -1378,15 +1011,15 @@ t_target_using=>i_target_item{
     string body=str<vector<TAutoPtr<i_str_item>>>();
     "\""
   }
-  t_sep sep0?;
+  " "?
   "using"
-  t_sep sep1;
+  " "
   string s=str<TAutoPtr<i_qa>>();
-  t_sep sep2;
+  " "
   "as"
-  t_sep sep3;
-  string name=str<t_name>();
-  t_sep sep4?;
+  " "
+  string lexer=str<t_name>();
+  " "?
   ";"
 }
 

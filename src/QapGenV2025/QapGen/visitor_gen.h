@@ -382,8 +382,8 @@ public:
       f(s,"$");
       string dev="dev";
       f(dev,"$dev");
-      string sep="sep";
-      f(sep,"$sep");
+      //string sep="sep";
+      //f(sep,"$sep");
       auto*pcmds=&c.out.procmds;
       if(vqcnb_mode&&v.pfs){
         QapAssert(c.out.procmds.empty());
@@ -396,8 +396,11 @@ public:
           auto*p=t_struct_field::UberCast(it.body.get());
           auto*pc=t_const_field::UberCast(it.body.get());
           const string*plexer=nullptr;
-          for(auto&ex:ic_dev.sep_lexs)if(ex.sep==pc->value)plexer=&ex.lexer;
-          auto cmd=p?p->make_cmd(ic_dev):plexer?string(pc->qst?"O":"M")+"+=go_auto("+*plexer+");":"M+=go_const("+pc->value+");";
+          if(pc)for(auto&ex:ic_dev.sep_lexs)if(ex.sep==pc->value)plexer=&ex.lexer;
+          if(plexer){
+            int gg=1;
+          }
+          auto cmd=p?p->make_cmd(ic_dev):plexer?string(pc->qst?"O":"M")+"+=go_auto($sep"+IToS(i)+");":"M+=go_const("+pc->value+");";
           t_struct_cmd sc;
           auto res=load_obj_full(sc,cmd);
           if(!res.ok){
@@ -496,9 +499,14 @@ public:
     for(int i=0;i<arr.size();i++){
       auto&ex=arr[i];
       auto*pt=dynamic_cast<const t_target_item*>(ex);
-      if(!pt){
-        auto*pd=dynamic_cast<const t_target_decl*>(ex);
+      auto*pd=dynamic_cast<const t_target_decl*>(ex);
+      auto*pu=dynamic_cast<const t_target_using*>(ex);
+      if(pd){
         out.push_back("struct "+pd->name+";");
+        continue;
+      }
+      if(pu){
+        ic_dev.sep_lexs.push_back({pu->s,pu->lexer});
         continue;
       }
       bool found=qap_includes(iarr,pt->def->make_code().name);
