@@ -8,8 +8,13 @@ struct t_ic_dev{
     vector<string> iarr;
     vector<string> carr;
   };
+  struct t_sep_lex{
+    string sep;
+    string lexer;
+  };
   vector<t_level> arr;
   t_level top;
+  vector<t_sep_lex> sep_lexs;
   //vector<int> ip;
   bool need_tautoptr(const string&name){
     if(qap_includes(top.iarr,name))return true;
@@ -377,6 +382,8 @@ public:
       f(s,"$");
       string dev="dev";
       f(dev,"$dev");
+      string sep="sep";
+      f(sep,"$sep");
       auto*pcmds=&c.out.procmds;
       if(vqcnb_mode&&v.pfs){
         QapAssert(c.out.procmds.empty());
@@ -388,7 +395,9 @@ public:
           i++;
           auto*p=t_struct_field::UberCast(it.body.get());
           auto*pc=t_const_field::UberCast(it.body.get());
-          auto cmd=p?p->make_cmd(ic_dev):"M+=go_const("+pc->value+");";
+          const string*plexer=nullptr;
+          for(auto&ex:ic_dev.sep_lexs)if(ex.sep==pc->value)plexer=&ex.lexer;
+          auto cmd=p?p->make_cmd(ic_dev):plexer?string(pc->qst?"O":"M")+"+=go_auto("+*plexer+");":"M+=go_const("+pc->value+");";
           t_struct_cmd sc;
           auto res=load_obj_full(sc,cmd);
           if(!res.ok){

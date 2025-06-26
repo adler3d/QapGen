@@ -891,8 +891,13 @@ i_struct_field{
   virtual string make_cmd(t_ic_dev&icdev)const{QapNoWay();return {};}
 }
 t_const_field=>i_struct_field{
-  string value=str<t_str_item>();
-  t_sep sep?;
+  t_qst{"?"}
+  t_c_item=>i_sc_item{t_char_item body;}
+  t_s_item=>i_sc_item{t_str_item body;}
+  string value=str<TAutoPtr<i_sc_item>>();
+  t_sep sep0?;
+  TAutoPtr<t_qst> qst?;
+  t_sep sep1?;
   TAutoPtr<t_semicolon> sc?;
   string make_code(int id,t_ic_dev&icdev)const{return {};}
   string make_cmd(t_ic_dev&icdev)const{return "M+=go_const("+value+");";}
@@ -966,24 +971,17 @@ t_struct_field=>i_struct_field{
 }
 
 t_sep_struct_field{
-  t_sep sep;
+  t_sep sep?;
   i_struct_field body;
-  {
-    O+=go_auto(sep);
-    M+=go_auto(body);
-  }
   string make_code(int id,t_ic_dev&icdev)const{
     return body->make_code(id,icdev);
   }
 }
 
 t_templ_params{
-  string body;
-  {
-    go_const("<");
-    go_str<TAutoPtr<t_type_templ_params>>(body);
-    go_const(">");
-  }
+  "<"
+  string body=str<TAutoPtr<t_type_templ_params>>();
+  ">"
 }
 
 t_cmd_param;
@@ -1321,17 +1319,10 @@ i_def{
 
 t_class_def => i_def{
   t_name name;
-  t_sep sep0;
-  string arrow_or_colon;
-  t_sep sep1;
+  t_sep sep0?;
+  string arrow_or_colon=any_str_from_vec(split("=>,:",","));
+  t_sep sep1?;
   t_name parent;
-  {
-    M+=go_auto(name);
-    O+=go_auto(sep0);
-    M+=go_any_str_from_vec(arrow_or_colon,split("=>,:",","));
-    O+=go_auto(sep1);
-    M+=go_auto(parent);
-  }
   t_out make_code(){
     t_out out;
     out.name=name.get();
@@ -1342,9 +1333,6 @@ t_class_def => i_def{
 
 t_struct_def => i_def{
   t_name name;
-  {
-    M+=go_auto(name);
-  }
   t_out make_code(){
     t_out out;
     out.name=name.get();
@@ -1353,16 +1341,10 @@ t_struct_def => i_def{
 }
 
 t_target_item=>i_target_item{
-  t_sep sep0;
+  t_sep sep0?;
   TAutoPtr<i_def> def;
-  t_sep sep1;
+  t_sep sep1?;
   t_struct_body body;
-  {
-    O+=go_auto(sep0);
-    M+=go_auto(def);
-    O+=go_auto(sep1);
-    M+=go_auto(body);
-  }
   typedef t_struct_body::t_target_item_out t_out;
   t_out make_code(t_ic_dev&icdev)const{
     t_out out;
@@ -1379,22 +1361,37 @@ t_target_item=>i_target_item{
 }
 
 t_target_decl=>i_target_item{
-  t_sep sep0;
-  string name;
-  t_sep sep1;
-  {
-    O+=go_auto(sep0);
-    M+=go_str<t_name>(name);
-    O+=go_auto(sep1);
-    M+=go_const(";");
+  t_sep sep0?;
+  string name=str<t_name>();
+  t_sep sep1?;
+  ";"
+}
+
+t_target_using=>i_target_item{
+  t_str_ap=>i_qa{
+    "'"
+    string body=str<TAutoPtr<i_char_item>>();
+    "'"
   }
+  t_str_qu=>i_qa{
+    "\""
+    string body=str<vector<TAutoPtr<i_str_item>>>();
+    "\""
+  }
+  t_sep sep0?;
+  "using"
+  t_sep sep1;
+  string s=str<TAutoPtr<i_qa>>();
+  t_sep sep2;
+  "as"
+  t_sep sep3;
+  string name=str<t_name>();
+  t_sep sep4?;
+  ";"
 }
 
 t_target{
   vector<TAutoPtr<i_target_item>> arr;
-  {
-    M+=go_auto(arr);
-  }
   vector<t_target_item::t_out> make_code(t_ic_dev&icdev){
     vector<t_target_item::t_out> out;
     for(int i=0;i<arr.size();i++){
