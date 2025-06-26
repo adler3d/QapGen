@@ -689,7 +689,6 @@ bool i_dev::go_str_without(string&ref)
         bool ok=dev.go_auto(tmp);
         QapAssert(!ok);
         if(ok){
-          (*(int*)nullptr)=0;
           return false;
         }
       }
@@ -986,7 +985,8 @@ static bool go_for_poly(i_dev&dev,TAutoPtr<TYPE>&ref){
 
 template<class TYPE>
 static bool go_for_item(i_dev&dev,const TYPE&ref,...){
-  static_assert(false,__FILE__":"__FUNCTION__" => so bad :(");
+  static_assert(false,"no way! 2025.06.26 12:07:07.855");
+  //static_assert(false,__FILE__":"__FUNCTION__" => so bad :(");
   //QapDebugMsg(Sys$$<TYPE>::GetRTTI(dev.getEnv())->GetFullName()+" => no way!");
   return false;
 }
