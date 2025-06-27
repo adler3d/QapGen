@@ -10,5 +10,6 @@
 *.pdb
 /src/QapGenV2025/Debug
 /src/QapGenV2025/Release/QapGen.exe
+/src/QapGenV2025/Release/QapGenStabe.exe
 /src/QapGenV2025/QapGen/ReleaseO2
 /src/QapGenV2025/ReleaseO2

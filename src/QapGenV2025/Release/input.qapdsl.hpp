@@ -404,6 +404,7 @@ t_test20250618_atrr{
 //  }*/
 //}
 t_meta_lexer{
+
 i_code {
   virtual string make_code()const{QapDebugMsg("no way.");return "";};
 }
