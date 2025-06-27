@@ -634,8 +634,10 @@ struct t_class_def_fixer:public t_templ_sys_v04,public i_target_item_visitor,pub
     p->sep1.value="";
     p->arrow_or_colon=":";
   }
+  template<class TYPE>
+  void Do(vector<TYPE>&arr){for(auto&ex:arr)Do(&ex);}
   void Do(t_struct_def*p){}
-  void Do(t_target_item*p){p->def->Use(*this);}
+  void Do(t_target_item*p){p->def->Use(*this);Do(p->body.nested);}
   void Do(t_target_decl*p){}
   void Do(t_target_using*p){}
   string main(const string&data){
@@ -960,7 +962,7 @@ static void test_2025_06_10(/*IEnvRTTI&Env*/string fn)
     inp=file_get_contents(fn);
   }
   if(inp.size()&&inp.back()=='\n')inp.pop_back();
-  if(bool nedd_class_def_fixer=true){
+  if(bool nedd_class_def_fixer=false){
     t_class_def_fixer cdf;
     string out=cdf.main(file_get_contents(fn));
     file_put_contents(fn,out);

@@ -234,9 +234,9 @@ t_string{
   "\""
 }
 
-t_int_expr=>i_expr{
-  t_zero=>i_val{"0"}
-  t_num=>i_val{
+t_int_expr:i_expr{
+  t_zero:i_val{"0"}
+  t_num:i_val{
     char first=any_char(gen_dips("19"));
     string num=any(gen_dips("09"))?;
   }
@@ -265,19 +265,19 @@ t_type_expr{
   vector<t_item> arr?;
 }
 
-t_char_expr=>i_expr{
+t_char_expr:i_expr{
   t_char_item body;
 }
 
-t_bool_expr=>i_expr{
+t_bool_expr:i_expr{
   string value=any_str_from_vec(split("true,false",","));
 }
 
-t_string_expr=>i_expr{
+t_string_expr:i_expr{
   t_string body;
 }
 
-t_real_expr=>i_expr{
+t_real_expr:i_expr{
   t_frac{
     "."
     string arr=any(gen_dips("09"));
@@ -290,11 +290,11 @@ t_real_expr=>i_expr{
     TAutoPtr<t_sign> sign?;
     string arr=any(gen_dips("09"));
   }
-  t_num=>i_val{
+  t_num:i_val{
     char first=any_char(gen_dips("19"));
     string num=any(gen_dips("09"))?;
   }
-  t_zero=>i_val{"0"}
+  t_zero:i_val{"0"}
   t_impl{
     TAutoPtr<i_val> val;
     TAutoPtr<t_frac> frac;
@@ -303,7 +303,7 @@ t_real_expr=>i_expr{
   string value=str<t_impl>();
 }
 
-t_var_expr=>i_expr{
+t_var_expr:i_expr{
   t_sb_expr{
     "["
     t_sep sep0?;
@@ -311,7 +311,7 @@ t_var_expr=>i_expr{
     t_sep sep1?;
     "]"
   }
-  t_dd_part=>i_part{
+  t_dd_part:i_part{
     t_elem{
       t_sep sep0?;
       "::"
@@ -320,7 +320,7 @@ t_var_expr=>i_expr{
     }
     vector<t_elem> arr;
   }
-  t_template_part=>i_part{
+  t_template_part:i_part{
     t_sep sepB?;
     "<"
     t_sep sep0?;
@@ -345,7 +345,7 @@ t_var_expr=>i_expr{
   vector<t_item> items?;
 }
 
-t_block_expr=>i_expr{
+t_block_expr:i_expr{
   "("
   t_lev14 body;
   ")"
@@ -364,7 +364,7 @@ t_call_params{
   ")"
 }
 
-t_call_expr=>i_expr{
+t_call_expr:i_expr{
   t_var_expr call;
   t_sep sep?;
   t_call_params params;
@@ -893,8 +893,8 @@ i_struct_field{
 }
 t_const_field:i_struct_field{
   t_qst{"?"}
-  t_c_item=>i_sc_item{t_char_item body;}
-  t_s_item=>i_sc_item{t_str_item body;}
+  t_c_item:i_sc_item{t_char_item body;}
+  t_s_item:i_sc_item{t_str_item body;}
   string value=str<TAutoPtr<i_sc_item>>();
   " "?
   TAutoPtr<t_qst> qst?;
@@ -1148,21 +1148,21 @@ t_cpp_code_main:i_cpp_code{
 
 t_cpp_code{
   t_bayan{"[::]"}
-  t_fields=>i_major{t_sep_struct_field f;}
-  t_cmds=>i_major{t_sep_struct_cmds c;}
-  t_atr=>i_major{TAutoPtr<t_attr> attr;}
+  t_fields:i_major{t_sep_struct_field f;}
+  t_cmds:i_major{t_sep_struct_cmds c;}
+  t_atr:i_major{TAutoPtr<t_attr> attr;}
   t_eater{vector<TAutoPtr<i_cpp_code>> arr;}
-  t_with_bayan=>i_bayan{
+  t_with_bayan:i_bayan{
     t_bayan bayan;
     t_eater eater?;
   }
-  t_without_bayan=>i_bayan{
+  t_without_bayan:i_bayan{
     t_eater eater=minor<TAutoPtr<i_major>>();
   }
-  t_a=>i_strong_bayan{
+  t_a:i_strong_bayan{
     t_with_bayan wb;
   }
-  t_b=>i_strong_bayan{
+  t_b:i_strong_bayan{
     t_eater e=minor<t_with_bayan>();
   }
   TAutoPtr<i_bayan> bayan;
@@ -1375,12 +1375,12 @@ t_target_decl:i_target_item{
 }
 
 t_target_using:i_target_item{
-  t_str_ap=>i_qa{
+  t_str_ap:i_qa{
     "'"
     string body=str<TAutoPtr<i_char_item>>();
     "'"
   }
-  t_str_qu=>i_qa{
+  t_str_qu:i_qa{
     "\""
     string body=str<vector<TAutoPtr<i_str_item>>>();
     "\""
