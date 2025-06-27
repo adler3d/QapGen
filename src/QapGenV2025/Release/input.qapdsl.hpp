@@ -1261,24 +1261,24 @@ t_struct_body{
     t_sep_struct_cmds*pcmds{};
     vector<t_sep_struct_field>*pfs{};
     string c;
-    void Do(t_cpp_code::t_a*p){save_obj(p->wb.eater,c);}
-    void Do(t_cpp_code::t_b*p){save_obj(p->e,c);}
-    void Do(t_cpp_code::t_with_bayan*p){save_obj(p->eater,c);}
-    void Do(t_cpp_code::t_without_bayan*p){save_obj(p->eater,c);}
-    void Do(t_cpp_code::i_strong_bayan*p){p->Use(*this);}
-    void Do(t_cpp_code::i_bayan*p){p->Use(*this);}
-    virtual void Do(t_cmds*p){pcmds=p->cmds.get();if(p->cppcode)Do(p->cppcode.get());}
-    virtual void Do(t_true_fcc*p){pfs=&p->arr;pcmds=p->cmds?p->cmds.get():nullptr;if(p->cppcode)Do(p->cppcode.get());}
-    virtual void Do(t_cppcode*p){if(p->cppcode)Do(p->cppcode->bayan.get());}
+    void Do(t_cpp_code::t_a&r){save_obj(r.wb.eater,c);}
+    void Do(t_cpp_code::t_b&r){save_obj(r.e,c);}
+    void Do(t_cpp_code::t_with_bayan&r){save_obj(r.eater,c);}
+    void Do(t_cpp_code::t_without_bayan&r){save_obj(r.eater,c);}
+    void Do(t_cpp_code::i_strong_bayan&r){r.Use(*this);}
+    void Do(t_cpp_code::i_bayan&r){r.Use(*this);}
+    virtual void Do(t_cmds&r){pcmds=r.cmds.get();if(r.cppcode)Do(*r.cppcode.get());}
+    virtual void Do(t_true_fcc&r){pfs=&r.arr;pcmds=r.cmds?r.cmds.get():nullptr;if(r.cppcode)Do(*r.cppcode.get());}
+    virtual void Do(t_cppcode&r){if(r.cppcode)Do(*r.cppcode->bayan.get());}
     void Do(const t_fields_cmds_cppcode&fcc){
-      if(fcc.tfcc)Do(fcc.tfcc.get());
-      if(fcc.cmds)Do(fcc.cmds.get());
-      if(fcc.c)Do(fcc.c.get());
+      if(fcc.tfcc)Do(*fcc.tfcc.get());
+      if(fcc.cmds)Do(*fcc.cmds.get());
+      if(fcc.c)Do(*fcc.c.get());
     }
   };
   struct t_cmd_fs_getter:t_visitor{
     using t_visitor::Do;
-    void Do(t_cppcode*p)override{}
+    void Do(t_cppcode&r)override{}
   };
   t_out make_code(t_ic_dev&icdev)const{
     t_out out;

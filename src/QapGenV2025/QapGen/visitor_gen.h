@@ -247,12 +247,12 @@ public:
   }
   static vector<string> viz_with_doo(const vector<string>&arr){
     vector<string> out;
-    for(int i=0;i<arr.size();i++)out.push_back("  virtual void Do("+arr[i]+"*p)=0;");
+    for(int i=0;i<arr.size();i++)out.push_back("  virtual void Do("+arr[i]+"&r)=0;");
     return out;
   }
   static vector<string> viz_with_cdo(const vector<string>&arr){
     vector<string> out;
-    for(int i=0;i<arr.size();i++)out.push_back("//  void Do("+arr[i]+"*p){}");
+    for(int i=0;i<arr.size();i++)out.push_back("//  void Do("+arr[i]+"&r){}");
     return out;
   }
 public:
@@ -683,7 +683,145 @@ public:
     int gg=1;
   }
 };
-
+/*
+struct t_templ_sys_v05:t_templ_sys_v04,
+  t_meta_lexer::i_target_item::i_visitor,
+  t_meta_lexer::i_code::i_visitor,
+  t_meta_lexer::i_code_with_sep::i_visitor,
+  t_meta_lexer::i_type_item::i_visitor,
+  t_meta_lexer::i_type_templ::i_visitor,
+  t_meta_lexer::i_struct_cmd_xxxx::i_visitor,
+  t_meta_lexer::i_struct_field::i_visitor,
+  t_meta_lexer::i_struct_cmd_so::i_visitor,
+  t_meta_lexer::i_cpp_code::i_visitor,
+  t_meta_lexer::i_def::i_visitor
+{
+  #pragma region typedefs
+  #define F(T)typedef t_meta_lexer::T T;
+  F(i_code                        )\
+  F(t_name_code                   )\
+  F(t_num_code                    )\
+  F(t_str_seq                     )\
+  F(t_sep_str_seq                 )\
+  F(t_str_code                    )\
+  F(t_char_code                   )\
+  F(t_sign_code                   )\
+  F(i_code_with_sep               )\
+  F(t_name_code_with_sep          )\
+  F(t_num_code_with_sep           )\
+  F(t_str_code_with_sep           )\
+  F(t_char_code_with_sep          )\
+  F(t_sign_code_with_sep          )\
+  F(t_soft_brackets_code_with_sep )\
+  F(t_hard_brackets_code_with_sep )\
+  F(t_curly_brackets_code_with_sep)\
+  F(t_code                        )\
+  F(t_soft_brackets_code          )\
+  F(t_hard_brackets_code          )\
+  F(t_curly_brackets_code         )\
+  F(t_semicolon                   )\
+  F(t_value_item                  )\
+  F(t_value                       )\
+  F(i_type_templ                  )\
+  F(t_type_scope                  )\
+  F(t_type_templ                  )\
+  F(i_type_item                   )\
+  F(t_type_item_string            )\
+  F(t_type_item_char              )\
+  F(t_type_item_number            )\
+  F(t_scope_type_item             )\
+  F(t_type_item_type              )\
+  F(t_type_expr2                  )\
+  F(t_type_templ_param            )\
+  F(t_sep_type_templ_param        )\
+  F(t_type_templ_params           )\
+  F(t_type_templ_angle            )\
+  F(t_type_templ_soft             )\
+  F(i_struct_cmd_xxxx             )\
+  F(t_struct_cmd_mode             )\
+  F(t_sep_value                   )\
+  F(t_attr                        )\
+  F(i_struct_field                )\
+  F(t_const_field                 )\
+  F(t_struct_field_value          )\
+  F(t_struct_field                )\
+  F(t_sep_struct_field            )\
+  F(t_templ_params                )\
+  F(t_cmd_params                  )\
+  F(t_cmd_param                   )\
+  F(t_struct_cmd_anno             )\
+  F(i_struct_cmd_so               )\
+  F(t_struct_cmd_suffix           )\
+  F(t_struct_cmd_optional         )\
+  F(t_struct_cmd_opt_v2           )\
+  F(t_struct_cmd                  )\
+  F(t_sep_struct_cmd              )\
+  F(t_struct_cmds                 )\
+  F(t_sep_struct_cmds             )\
+  F(i_cpp_code                    )\
+  F(t_cpp_code_sep                )\
+  F(t_cpp_code_main               )\
+  F(t_cpp_code                    )\
+  F(t_fields_cmds_cppcode         )\
+  F(t_struct_body                 )\
+  F(i_def                         )\
+  F(t_class_def                   )\
+  F(t_struct_def                  )\
+  F(t_target_sep                  )\
+  F(t_target_item                 )\
+  F(t_target_decl                 )\
+  F(t_target_using                )\
+  F(t_target                      )\
+  //
+  #undef F
+  #pragma endregion
+  void Do(t_name_code&r)override{}
+  void Do(t_num_code&r)override{}
+  void Do(t_str_code&r)override{}
+  void Do(t_char_code&r)override{}
+  void Do(t_sign_code&r)override{}
+  void Do(t_soft_brackets_code&r)override{}
+  void Do(t_hard_brackets_code&r)override{}
+  void Do(t_curly_brackets_code&r)override{}
+  void Do(t_name_code_with_sep&r)override{}
+  void Do(t_num_code_with_sep&r)override{}
+  void Do(t_str_code_with_sep&r)override{}
+  void Do(t_char_code_with_sep&r)override{}
+  void Do(t_sign_code_with_sep&r)override{}
+  void Do(t_soft_brackets_code_with_sep&r)override{}
+  void Do(t_hard_brackets_code_with_sep&r)override{}
+  void Do(t_curly_brackets_code_with_sep&r)override{}
+  void Do(t_type_item_string&r)override{}
+  void Do(t_type_item_char&r)override{}
+  void Do(t_type_item_number&r)override{}
+  void Do(t_type_item_type&r)override{}
+  void Do(t_type_templ_angle&r)override{}
+  void Do(t_type_templ_soft&r)override{}
+  void Do(t_struct_cmd_mode&r)override{}
+  void Do(t_struct_cmd_anno&r)override{}
+  void Do(t_const_field&r)override{}
+  void Do(t_struct_field&r)override{}
+  void Do(t_struct_cmd_suffix&r)override{}
+  void Do(t_struct_cmd_optional&r)override{}
+  void Do(t_struct_cmd_opt_v2&r)override{}
+  void Do(t_cpp_code_sep&r)override{}
+  void Do(t_cpp_code_main&r)override{}
+  void Do(t_class_def&r)override{}
+  void Do(t_struct_def&r)override{}
+  void Do(t_target_sep&r)override{}
+  void Do(t_target_item&r)override{}
+  void Do(t_target_decl&r)override{}
+  void Do(t_target_using&r)override{}
+  void Do(t_target&r){}
+  string main(const string&s){
+    t_target tar;
+    auto r=load_obj_full(tar,s);
+    if(!r.ok){QapDebugMsg(r.msg);return {};}
+    Do(tar);
+  }
+};
+*/
+#if(0)
 struct t_class_def_fixer:public t_templ_sys_v04,public t_meta_lexer::i_target_item_visitor,public t_meta_lexer::i_def_visitor{
   #define ADD(F)typedef t_meta_lexer::F F;
     ADD(t_target_sep)\
@@ -696,20 +834,22 @@ struct t_class_def_fixer:public t_templ_sys_v04,public t_meta_lexer::i_target_it
       //
   #undef ADD
   template<class TYPE>
+  void Do(TYPE*p){if(p)Do(*p);}
+  template<class TYPE>
   void Do(vector<TYPE>&arr){for(auto&ex:arr)Do(&ex);}
   template<class TYPE>
   void Do(vector<TAutoPtr<TYPE>>&arr){for(auto&ex:arr)if(ex)Do(ex.get());}
-  void Do(t_class_def*p){
-    p->sep0.value="";
-    p->sep1.value="";
-    p->arrow_or_colon=":";
+  void Do(t_class_def&r){
+    r.sep0.value="";
+    r.sep1.value="";
+    r.arrow_or_colon=":";
   }
-  void Do(t_struct_def*p){}
-  void Do(i_target_item*p){p->Use(*this);}
-  void Do(t_target_sep*p){}
-  void Do(t_target_item*p){p->def->Use(*this);Do(p->body.nested);}
-  void Do(t_target_decl*p){}
-  void Do(t_target_using*p){}
+  void Do(t_struct_def&r){}
+  void Do(i_target_item&r){r.Use(*this);}
+  void Do(t_target_sep&r){}
+  void Do(t_target_item&r){r.def->Use(*this);Do(r.body.nested);}
+  void Do(t_target_decl&r){}
+  void Do(t_target_using&r){}
   string main(const string&data){
     t_target tar;
     auto fs=load_obj_full(/*Env,*/tar,data);
@@ -724,7 +864,7 @@ struct t_class_def_fixer:public t_templ_sys_v04,public t_meta_lexer::i_target_it
     return out;
   }
 };
-
+#endif
 /*
 class TLexemGeneratorFuncs_v01{
 public:
@@ -1032,11 +1172,13 @@ static void test_2025_06_10(/*IEnvRTTI&Env*/string fn)
     inp=file_get_contents(fn);
   }
   if(inp.size()&&inp.back()=='\n')inp.pop_back();
-  if(bool nedd_class_def_fixer=false){
+  /*if(bool nedd_class_def_fixer=false){
     t_class_def_fixer cdf;
     string out=cdf.main(file_get_contents(fn));
     file_put_contents(fn,out);
-  }
+  }*/
+  //t_templ_sys_v04 v5;
+  //string str2=v5.main(inp);
   string str=v4.main(inp);
   string out="// "+FToS(clock.MS())+" ms\n"+str;
   std::cout<<out;

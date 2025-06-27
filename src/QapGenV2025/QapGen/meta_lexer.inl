@@ -1,4 +1,4 @@
-// 6175.363300 ms
+// 6330.366100 ms
 struct t_cppcore{
   //===>>===i_expr_visitor
   #define DEF_PRO_BLANK()
@@ -21,7 +21,7 @@ struct t_cppcore{
   public:
     typedef t_cppcore::i_expr i_expr;
   public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -34,7 +34,7 @@ struct t_cppcore{
     struct Is:public Visitor{
       TYPE*ptr{};
     public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
@@ -56,14 +56,14 @@ struct t_cppcore{
     #endif
   };
   //struct t_visitor:public i_expr_visitor{
-  //  void Do(t_int_expr*p){}
-  //  void Do(t_char_expr*p){}
-  //  void Do(t_bool_expr*p){}
-  //  void Do(t_string_expr*p){}
-  //  void Do(t_real_expr*p){}
-  //  void Do(t_var_expr*p){}
-  //  void Do(t_block_expr*p){}
-  //  void Do(t_call_expr*p){}
+  //  void Do(t_int_expr&r){}
+  //  void Do(t_char_expr&r){}
+  //  void Do(t_bool_expr&r){}
+  //  void Do(t_string_expr&r){}
+  //  void Do(t_real_expr&r){}
+  //  void Do(t_var_expr&r){}
+  //  void Do(t_block_expr&r){}
+  //  void Do(t_call_expr&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
@@ -78,7 +78,7 @@ struct t_cppcore{
   //<<<<<+=====i_expr
   public:
     typedef i_expr_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -839,7 +839,7 @@ struct t_cppcore{
     public:
       typedef t_int_expr::i_val i_val;
     public:
-      #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     public:
@@ -852,7 +852,7 @@ struct t_cppcore{
       struct Is:public Visitor{
         TYPE*ptr{};
       public:
-        #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
@@ -874,8 +874,8 @@ struct t_cppcore{
       #endif
     };
     //struct t_visitor:public i_val_visitor{
-    //  void Do(t_zero*p){}
-    //  void Do(t_num*p){}
+    //  void Do(t_zero&r){}
+    //  void Do(t_num&r){}
     //};
     #undef LIST
     #undef DEF_PRO_BLANK
@@ -890,7 +890,7 @@ struct t_cppcore{
     //<<<<<+=====i_val
     public:
       typedef i_val_visitor i_visitor;
-      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -916,7 +916,7 @@ struct t_cppcore{
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_zero
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -938,7 +938,7 @@ struct t_cppcore{
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_num
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -967,7 +967,7 @@ struct t_cppcore{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_int_expr
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -1089,7 +1089,7 @@ struct t_cppcore{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_char_expr
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -1110,7 +1110,7 @@ struct t_cppcore{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_bool_expr
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -1132,7 +1132,7 @@ struct t_cppcore{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_string_expr
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -1159,7 +1159,7 @@ struct t_cppcore{
     public:
       typedef t_real_expr::i_val i_val;
     public:
-      #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     public:
@@ -1172,7 +1172,7 @@ struct t_cppcore{
       struct Is:public Visitor{
         TYPE*ptr{};
       public:
-        #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
@@ -1194,8 +1194,8 @@ struct t_cppcore{
       #endif
     };
     //struct t_visitor:public i_val_visitor{
-    //  void Do(t_num*p){}
-    //  void Do(t_zero*p){}
+    //  void Do(t_num&r){}
+    //  void Do(t_zero&r){}
     //};
     #undef LIST
     #undef DEF_PRO_BLANK
@@ -1210,7 +1210,7 @@ struct t_cppcore{
     //<<<<<+=====i_val
     public:
       typedef i_val_visitor i_visitor;
-      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -1303,7 +1303,7 @@ struct t_cppcore{
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_num
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -1326,7 +1326,7 @@ struct t_cppcore{
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_zero
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -1379,7 +1379,7 @@ struct t_cppcore{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_real_expr
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -1407,7 +1407,7 @@ struct t_cppcore{
     public:
       typedef t_var_expr::i_part i_part;
     public:
-      #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     public:
@@ -1420,7 +1420,7 @@ struct t_cppcore{
       struct Is:public Visitor{
         TYPE*ptr{};
       public:
-        #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
@@ -1442,8 +1442,8 @@ struct t_cppcore{
       #endif
     };
     //struct t_visitor:public i_part_visitor{
-    //  void Do(t_dd_part*p){}
-    //  void Do(t_template_part*p){}
+    //  void Do(t_dd_part&r){}
+    //  void Do(t_template_part&r){}
     //};
     #undef LIST
     #undef DEF_PRO_BLANK
@@ -1458,7 +1458,7 @@ struct t_cppcore{
     //<<<<<+=====i_part
     public:
       typedef i_part_visitor i_visitor;
-      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -1541,7 +1541,7 @@ struct t_cppcore{
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_dd_part
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -1566,7 +1566,7 @@ struct t_cppcore{
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_template_part
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -1650,7 +1650,7 @@ struct t_cppcore{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_var_expr
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -1675,7 +1675,7 @@ struct t_cppcore{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_block_expr
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -1747,7 +1747,7 @@ struct t_cppcore{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_call_expr
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -1888,7 +1888,7 @@ struct t_meta_lexer{
   public:
     typedef t_meta_lexer::i_code i_code;
   public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -1901,7 +1901,7 @@ struct t_meta_lexer{
     struct Is:public Visitor{
       TYPE*ptr{};
     public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
@@ -1923,14 +1923,14 @@ struct t_meta_lexer{
     #endif
   };
   //struct t_visitor:public i_code_visitor{
-  //  void Do(t_name_code*p){}
-  //  void Do(t_num_code*p){}
-  //  void Do(t_str_code*p){}
-  //  void Do(t_char_code*p){}
-  //  void Do(t_sign_code*p){}
-  //  void Do(t_soft_brackets_code*p){}
-  //  void Do(t_hard_brackets_code*p){}
-  //  void Do(t_curly_brackets_code*p){}
+  //  void Do(t_name_code&r){}
+  //  void Do(t_num_code&r){}
+  //  void Do(t_str_code&r){}
+  //  void Do(t_char_code&r){}
+  //  void Do(t_sign_code&r){}
+  //  void Do(t_soft_brackets_code&r){}
+  //  void Do(t_hard_brackets_code&r){}
+  //  void Do(t_curly_brackets_code&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
@@ -1945,7 +1945,7 @@ struct t_meta_lexer{
   //<<<<<+=====i_code
   public:
     typedef i_code_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -1990,7 +1990,7 @@ struct t_meta_lexer{
   public:
     typedef t_meta_lexer::i_code_with_sep i_code_with_sep;
   public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -2003,7 +2003,7 @@ struct t_meta_lexer{
     struct Is:public Visitor{
       TYPE*ptr{};
     public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
@@ -2025,14 +2025,14 @@ struct t_meta_lexer{
     #endif
   };
   //struct t_visitor:public i_code_with_sep_visitor{
-  //  void Do(t_name_code_with_sep*p){}
-  //  void Do(t_num_code_with_sep*p){}
-  //  void Do(t_str_code_with_sep*p){}
-  //  void Do(t_char_code_with_sep*p){}
-  //  void Do(t_sign_code_with_sep*p){}
-  //  void Do(t_soft_brackets_code_with_sep*p){}
-  //  void Do(t_hard_brackets_code_with_sep*p){}
-  //  void Do(t_curly_brackets_code_with_sep*p){}
+  //  void Do(t_name_code_with_sep&r){}
+  //  void Do(t_num_code_with_sep&r){}
+  //  void Do(t_str_code_with_sep&r){}
+  //  void Do(t_char_code_with_sep&r){}
+  //  void Do(t_sign_code_with_sep&r){}
+  //  void Do(t_soft_brackets_code_with_sep&r){}
+  //  void Do(t_hard_brackets_code_with_sep&r){}
+  //  void Do(t_curly_brackets_code_with_sep&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
@@ -2047,7 +2047,7 @@ struct t_meta_lexer{
   //<<<<<+=====i_code_with_sep
   public:
     typedef i_code_with_sep_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -2088,7 +2088,7 @@ struct t_meta_lexer{
   public:
     typedef t_meta_lexer::i_type_item i_type_item;
   public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -2101,7 +2101,7 @@ struct t_meta_lexer{
     struct Is:public Visitor{
       TYPE*ptr{};
     public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
@@ -2123,10 +2123,10 @@ struct t_meta_lexer{
     #endif
   };
   //struct t_visitor:public i_type_item_visitor{
-  //  void Do(t_type_item_string*p){}
-  //  void Do(t_type_item_char*p){}
-  //  void Do(t_type_item_number*p){}
-  //  void Do(t_type_item_type*p){}
+  //  void Do(t_type_item_string&r){}
+  //  void Do(t_type_item_char&r){}
+  //  void Do(t_type_item_number&r){}
+  //  void Do(t_type_item_type&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
@@ -2141,7 +2141,7 @@ struct t_meta_lexer{
   //<<<<<+=====i_type_item
   public:
     typedef i_type_item_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -2176,7 +2176,7 @@ struct t_meta_lexer{
   public:
     typedef t_meta_lexer::i_type_templ i_type_templ;
   public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -2189,7 +2189,7 @@ struct t_meta_lexer{
     struct Is:public Visitor{
       TYPE*ptr{};
     public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
@@ -2211,8 +2211,8 @@ struct t_meta_lexer{
     #endif
   };
   //struct t_visitor:public i_type_templ_visitor{
-  //  void Do(t_type_templ_angle*p){}
-  //  void Do(t_type_templ_soft*p){}
+  //  void Do(t_type_templ_angle&r){}
+  //  void Do(t_type_templ_soft&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
@@ -2227,7 +2227,7 @@ struct t_meta_lexer{
   //<<<<<+=====i_type_templ
   public:
     typedef i_type_templ_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -2260,7 +2260,7 @@ struct t_meta_lexer{
   public:
     typedef t_meta_lexer::i_struct_cmd_xxxx i_struct_cmd_xxxx;
   public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -2273,7 +2273,7 @@ struct t_meta_lexer{
     struct Is:public Visitor{
       TYPE*ptr{};
     public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
@@ -2295,8 +2295,8 @@ struct t_meta_lexer{
     #endif
   };
   //struct t_visitor:public i_struct_cmd_xxxx_visitor{
-  //  void Do(t_struct_cmd_mode*p){}
-  //  void Do(t_struct_cmd_anno*p){}
+  //  void Do(t_struct_cmd_mode&r){}
+  //  void Do(t_struct_cmd_anno&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
@@ -2311,7 +2311,7 @@ struct t_meta_lexer{
   //<<<<<+=====i_struct_cmd_xxxx
   public:
     typedef i_struct_cmd_xxxx_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -2344,7 +2344,7 @@ struct t_meta_lexer{
   public:
     typedef t_meta_lexer::i_struct_field i_struct_field;
   public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -2357,7 +2357,7 @@ struct t_meta_lexer{
     struct Is:public Visitor{
       TYPE*ptr{};
     public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
@@ -2379,8 +2379,8 @@ struct t_meta_lexer{
     #endif
   };
   //struct t_visitor:public i_struct_field_visitor{
-  //  void Do(t_const_field*p){}
-  //  void Do(t_struct_field*p){}
+  //  void Do(t_const_field&r){}
+  //  void Do(t_struct_field&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
@@ -2395,7 +2395,7 @@ struct t_meta_lexer{
   //<<<<<+=====i_struct_field
   public:
     typedef i_struct_field_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -2430,7 +2430,7 @@ struct t_meta_lexer{
   public:
     typedef t_meta_lexer::i_struct_cmd_so i_struct_cmd_so;
   public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -2443,7 +2443,7 @@ struct t_meta_lexer{
     struct Is:public Visitor{
       TYPE*ptr{};
     public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
@@ -2465,9 +2465,9 @@ struct t_meta_lexer{
     #endif
   };
   //struct t_visitor:public i_struct_cmd_so_visitor{
-  //  void Do(t_struct_cmd_suffix*p){}
-  //  void Do(t_struct_cmd_optional*p){}
-  //  void Do(t_struct_cmd_opt_v2*p){}
+  //  void Do(t_struct_cmd_suffix&r){}
+  //  void Do(t_struct_cmd_optional&r){}
+  //  void Do(t_struct_cmd_opt_v2&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
@@ -2482,7 +2482,7 @@ struct t_meta_lexer{
   //<<<<<+=====i_struct_cmd_so
   public:
     typedef i_struct_cmd_so_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -2516,7 +2516,7 @@ struct t_meta_lexer{
   public:
     typedef t_meta_lexer::i_cpp_code i_cpp_code;
   public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -2529,7 +2529,7 @@ struct t_meta_lexer{
     struct Is:public Visitor{
       TYPE*ptr{};
     public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
@@ -2551,8 +2551,8 @@ struct t_meta_lexer{
     #endif
   };
   //struct t_visitor:public i_cpp_code_visitor{
-  //  void Do(t_cpp_code_sep*p){}
-  //  void Do(t_cpp_code_main*p){}
+  //  void Do(t_cpp_code_sep&r){}
+  //  void Do(t_cpp_code_main&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
@@ -2567,7 +2567,7 @@ struct t_meta_lexer{
   //<<<<<+=====i_cpp_code
   public:
     typedef i_cpp_code_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -2600,7 +2600,7 @@ struct t_meta_lexer{
   public:
     typedef t_meta_lexer::i_def i_def;
   public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -2613,7 +2613,7 @@ struct t_meta_lexer{
     struct Is:public Visitor{
       TYPE*ptr{};
     public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
@@ -2635,8 +2635,8 @@ struct t_meta_lexer{
     #endif
   };
   //struct t_visitor:public i_def_visitor{
-  //  void Do(t_class_def*p){}
-  //  void Do(t_struct_def*p){}
+  //  void Do(t_class_def&r){}
+  //  void Do(t_struct_def&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
@@ -2651,7 +2651,7 @@ struct t_meta_lexer{
   //<<<<<+=====i_def
   public:
     typedef i_def_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -2690,7 +2690,7 @@ struct t_meta_lexer{
   public:
     typedef t_meta_lexer::i_target_item i_target_item;
   public:
-    #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -2703,7 +2703,7 @@ struct t_meta_lexer{
     struct Is:public Visitor{
       TYPE*ptr{};
     public:
-      #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
@@ -2725,10 +2725,10 @@ struct t_meta_lexer{
     #endif
   };
   //struct t_visitor:public i_target_item_visitor{
-  //  void Do(t_target_sep*p){}
-  //  void Do(t_target_item*p){}
-  //  void Do(t_target_decl*p){}
-  //  void Do(t_target_using*p){}
+  //  void Do(t_target_sep&r){}
+  //  void Do(t_target_item&r){}
+  //  void Do(t_target_decl&r){}
+  //  void Do(t_target_using&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
@@ -2743,7 +2743,7 @@ struct t_meta_lexer{
   //<<<<<+=====i_target_item
   public:
     typedef i_target_item_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -2772,7 +2772,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_name_code
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -2794,7 +2794,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_num_code
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -2874,7 +2874,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_str_code
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -2905,7 +2905,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_char_code
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -2933,7 +2933,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_sign_code
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -2956,7 +2956,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_name_code_with_sep
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -2982,7 +2982,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_num_code_with_sep
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3008,7 +3008,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_str_code_with_sep
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3034,7 +3034,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_char_code_with_sep
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3060,7 +3060,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_sign_code_with_sep
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3087,7 +3087,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_soft_brackets_code_with_sep
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3123,7 +3123,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_hard_brackets_code_with_sep
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3159,7 +3159,7 @@ struct t_meta_lexer{
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_curly_brackets_code_with_sep
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3240,7 +3240,7 @@ return out.join("\n");
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_soft_brackets_code
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3276,7 +3276,7 @@ return out.join("\n");
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_hard_brackets_code
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3312,7 +3312,7 @@ return out.join("\n");
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_curly_brackets_code
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3449,7 +3449,7 @@ return out.join("\n");
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_type_item_string
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3473,7 +3473,7 @@ return out.join("\n");
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_type_item_char
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3497,7 +3497,7 @@ return out.join("\n");
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_type_item_number
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3556,7 +3556,7 @@ struct t_type_item_type;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_type_item_type
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3704,7 +3704,7 @@ struct t_type_item_type;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_type_templ_angle
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3738,7 +3738,7 @@ struct t_type_item_type;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_type_templ_soft
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3774,7 +3774,7 @@ struct t_type_item_type;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_struct_cmd_mode
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -3852,7 +3852,7 @@ struct t_type_item_type;
     public:
       typedef t_const_field::i_sc_item i_sc_item;
     public:
-      #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     public:
@@ -3865,7 +3865,7 @@ struct t_type_item_type;
       struct Is:public Visitor{
         TYPE*ptr{};
       public:
-        #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
@@ -3887,8 +3887,8 @@ struct t_type_item_type;
       #endif
     };
     //struct t_visitor:public i_sc_item_visitor{
-    //  void Do(t_c_item*p){}
-    //  void Do(t_s_item*p){}
+    //  void Do(t_c_item&r){}
+    //  void Do(t_s_item&r){}
     //};
     #undef LIST
     #undef DEF_PRO_BLANK
@@ -3903,7 +3903,7 @@ struct t_type_item_type;
     //<<<<<+=====i_sc_item
     public:
       typedef i_sc_item_visitor i_visitor;
-      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -3947,7 +3947,7 @@ struct t_type_item_type;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_c_item
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -3968,7 +3968,7 @@ struct t_type_item_type;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_s_item
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -3999,7 +3999,7 @@ struct t_type_item_type;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_const_field
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -4090,7 +4090,7 @@ struct t_type_item_type;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_struct_field
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -4241,7 +4241,7 @@ struct t_cmd_param;
     public:
       typedef t_cmd_param::i_cmd_param_expr i_cmd_param_expr;
     public:
-      #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     public:
@@ -4254,7 +4254,7 @@ struct t_cmd_param;
       struct Is:public Visitor{
         TYPE*ptr{};
       public:
-        #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
@@ -4276,9 +4276,9 @@ struct t_cmd_param;
       #endif
     };
     //struct t_visitor:public i_cmd_param_expr_visitor{
-    //  void Do(t_expr_call*p){}
-    //  void Do(t_expr_str*p){}
-    //  void Do(t_expr_var*p){}
+    //  void Do(t_expr_call&r){}
+    //  void Do(t_expr_str&r){}
+    //  void Do(t_expr_var&r){}
     //};
     #undef LIST
     #undef DEF_PRO_BLANK
@@ -4293,7 +4293,7 @@ struct t_cmd_param;
     //<<<<<+=====i_cmd_param_expr
     public:
       typedef i_cmd_param_expr_visitor i_visitor;
-      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -4340,7 +4340,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_expr_call
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -4367,7 +4367,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_expr_str
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -4432,7 +4432,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_expr_var
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -4481,7 +4481,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_struct_cmd_anno
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -4506,7 +4506,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_struct_cmd_suffix
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -4529,7 +4529,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_struct_cmd_optional
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -4557,7 +4557,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_struct_cmd_opt_v2
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -4732,7 +4732,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_cpp_code_sep
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -4756,7 +4756,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_cpp_code_main
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -4790,7 +4790,7 @@ struct t_cmd_param;
     public:
       typedef t_cpp_code::i_major i_major;
     public:
-      #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     public:
@@ -4803,7 +4803,7 @@ struct t_cmd_param;
       struct Is:public Visitor{
         TYPE*ptr{};
       public:
-        #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
@@ -4825,9 +4825,9 @@ struct t_cmd_param;
       #endif
     };
     //struct t_visitor:public i_major_visitor{
-    //  void Do(t_fields*p){}
-    //  void Do(t_cmds*p){}
-    //  void Do(t_atr*p){}
+    //  void Do(t_fields&r){}
+    //  void Do(t_cmds&r){}
+    //  void Do(t_atr&r){}
     //};
     #undef LIST
     #undef DEF_PRO_BLANK
@@ -4842,7 +4842,7 @@ struct t_cmd_param;
     //<<<<<+=====i_major
     public:
       typedef i_major_visitor i_visitor;
-      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -4875,7 +4875,7 @@ struct t_cmd_param;
     public:
       typedef t_cpp_code::i_bayan i_bayan;
     public:
-      #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     public:
@@ -4888,7 +4888,7 @@ struct t_cmd_param;
       struct Is:public Visitor{
         TYPE*ptr{};
       public:
-        #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
@@ -4910,8 +4910,8 @@ struct t_cmd_param;
       #endif
     };
     //struct t_visitor:public i_bayan_visitor{
-    //  void Do(t_with_bayan*p){}
-    //  void Do(t_without_bayan*p){}
+    //  void Do(t_with_bayan&r){}
+    //  void Do(t_without_bayan&r){}
     //};
     #undef LIST
     #undef DEF_PRO_BLANK
@@ -4926,7 +4926,7 @@ struct t_cmd_param;
     //<<<<<+=====i_bayan
     public:
       typedef i_bayan_visitor i_visitor;
-      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -4958,7 +4958,7 @@ struct t_cmd_param;
     public:
       typedef t_cpp_code::i_strong_bayan i_strong_bayan;
     public:
-      #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     public:
@@ -4971,7 +4971,7 @@ struct t_cmd_param;
       struct Is:public Visitor{
         TYPE*ptr{};
       public:
-        #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
@@ -4993,8 +4993,8 @@ struct t_cmd_param;
       #endif
     };
     //struct t_visitor:public i_strong_bayan_visitor{
-    //  void Do(t_a*p){}
-    //  void Do(t_b*p){}
+    //  void Do(t_a&r){}
+    //  void Do(t_b&r){}
     //};
     #undef LIST
     #undef DEF_PRO_BLANK
@@ -5009,7 +5009,7 @@ struct t_cmd_param;
     //<<<<<+=====i_strong_bayan
     public:
       typedef i_strong_bayan_visitor i_visitor;
-      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -5053,7 +5053,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_fields
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -5074,7 +5074,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_cmds
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -5095,7 +5095,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_atr
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -5135,7 +5135,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_with_bayan
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -5157,7 +5157,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_without_bayan
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -5178,7 +5178,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_a
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -5199,7 +5199,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_b
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -5426,24 +5426,24 @@ struct t_cmd_param;
         t_sep_struct_cmds*pcmds{};
         vector<t_sep_struct_field>*pfs{};
         string c;
-        void Do(t_cpp_code::t_a*p){save_obj(p->wb.eater,c);}
-        void Do(t_cpp_code::t_b*p){save_obj(p->e,c);}
-        void Do(t_cpp_code::t_with_bayan*p){save_obj(p->eater,c);}
-        void Do(t_cpp_code::t_without_bayan*p){save_obj(p->eater,c);}
-        void Do(t_cpp_code::i_strong_bayan*p){p->Use(*this);}
-        void Do(t_cpp_code::i_bayan*p){p->Use(*this);}
-        virtual void Do(t_cmds*p){pcmds=p->cmds.get();if(p->cppcode)Do(p->cppcode.get());}
-        virtual void Do(t_true_fcc*p){pfs=&p->arr;pcmds=p->cmds?p->cmds.get():nullptr;if(p->cppcode)Do(p->cppcode.get());}
-        virtual void Do(t_cppcode*p){if(p->cppcode)Do(p->cppcode->bayan.get());}
+        void Do(t_cpp_code::t_a&r){save_obj(r.wb.eater,c);}
+        void Do(t_cpp_code::t_b&r){save_obj(r.e,c);}
+        void Do(t_cpp_code::t_with_bayan&r){save_obj(r.eater,c);}
+        void Do(t_cpp_code::t_without_bayan&r){save_obj(r.eater,c);}
+        void Do(t_cpp_code::i_strong_bayan&r){r.Use(*this);}
+        void Do(t_cpp_code::i_bayan&r){r.Use(*this);}
+        virtual void Do(t_cmds&r){pcmds=r.cmds.get();if(r.cppcode)Do(*r.cppcode.get());}
+        virtual void Do(t_true_fcc&r){pfs=&r.arr;pcmds=r.cmds?r.cmds.get():nullptr;if(r.cppcode)Do(*r.cppcode.get());}
+        virtual void Do(t_cppcode&r){if(r.cppcode)Do(*r.cppcode->bayan.get());}
         void Do(const t_fields_cmds_cppcode&fcc){
-          if(fcc.tfcc)Do(fcc.tfcc.get());
-          if(fcc.cmds)Do(fcc.cmds.get());
-          if(fcc.c)Do(fcc.c.get());
+          if(fcc.tfcc)Do(*fcc.tfcc.get());
+          if(fcc.cmds)Do(*fcc.cmds.get());
+          if(fcc.c)Do(*fcc.c.get());
         }
       };
       struct t_cmd_fs_getter:t_visitor{
         using t_visitor::Do;
-        void Do(t_cppcode*p)override{}
+        void Do(t_cppcode&r)override{}
       };
       t_out make_code(t_ic_dev&icdev)const{
         t_out out;
@@ -5495,7 +5495,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_class_def
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -5529,7 +5529,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_struct_def
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -5555,7 +5555,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_target_sep
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -5579,7 +5579,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_target_item
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -5619,7 +5619,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_target_decl
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
@@ -5650,7 +5650,7 @@ struct t_cmd_param;
     public:
       typedef t_target_using::i_qa i_qa;
     public:
-      #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     public:
@@ -5663,7 +5663,7 @@ struct t_cmd_param;
       struct Is:public Visitor{
         TYPE*ptr{};
       public:
-        #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
@@ -5685,8 +5685,8 @@ struct t_cmd_param;
       #endif
     };
     //struct t_visitor:public i_qa_visitor{
-    //  void Do(t_str_ap*p){}
-    //  void Do(t_str_qu*p){}
+    //  void Do(t_str_ap&r){}
+    //  void Do(t_str_qu&r){}
     //};
     #undef LIST
     #undef DEF_PRO_BLANK
@@ -5701,7 +5701,7 @@ struct t_cmd_param;
     //<<<<<+=====i_qa
     public:
       typedef i_qa_visitor i_visitor;
-      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -5728,7 +5728,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_str_ap
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -5753,7 +5753,7 @@ struct t_cmd_param;
     #include "QapGenStructNoTemplate.inl"
     //<<<<<+=====t_str_qu
     public:
-      void Use(i_visitor&A){A.Do(this);}
+      void Use(i_visitor&A){A.Do(*this);}
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
@@ -5789,7 +5789,7 @@ struct t_cmd_param;
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_target_using
   public:
-    void Use(i_visitor&A){A.Do(this);}
+    void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){

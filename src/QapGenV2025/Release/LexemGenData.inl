@@ -17,7 +17,7 @@ class ^^^I_BASE^^^_visitor{
 public:
   ^^^OWNER_TYPEDEF_I_BASE^^^
 public:
-  #define ADD(TYPE)virtual void Do(TYPE*p)=0;
+  #define ADD(TYPE)virtual void Do(TYPE&r)=0;
   LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
   #undef ADD
 public:
@@ -30,7 +30,7 @@ public:
   struct Is:public Visitor{
     TYPE*ptr{};
   public:
-    #define ADD(U)void Do(U*p){ptr=std::is_same<U,TYPE>::value?(TYPE*)p:nullptr;}
+    #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   };
@@ -74,7 +74,7 @@ ADDBEG()\
 #####-USE_IMPL-#####
 ----------------------------------------------------------------
 public:
-  void Use(i_visitor&A){A.Do(this);}
+  void Use(i_visitor&A){A.Do(*this);}
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 ----------------------------------------------------------------
 #####-GO_IMPL-#####
@@ -90,7 +90,7 @@ public:
 ----------------------------------------------------------------
 public:
   typedef ^^^I_BASE^^^_visitor i_visitor;
-  virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(this);*/}
+  virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
 ----------------------------------------------------------------
 #####-GO_BASE-#####
 ----------------------------------------------------------------
@@ -110,4 +110,4 @@ public:
 ----------------------------------------------------------------
 #####-END_OF_FILE-#####
 ----------------------------------------------------------------
-2025.06.25 20:35:44.078
+2025.06.27 19:16:18.158
