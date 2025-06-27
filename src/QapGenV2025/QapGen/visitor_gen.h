@@ -627,6 +627,32 @@ public:
     int gg=1;
   }
 };
+
+struct t_class_def_fixer:public t_templ_sys_v04,public i_target_item_visitor,public i_def_visitor{
+  void Do(t_class_def*p){
+    p->sep0.value="";
+    p->sep1.value="";
+    p->arrow_or_colon=":";
+  }
+  void Do(t_struct_def*p){}
+  void Do(t_target_item*p){p->def->Use(*this);}
+  void Do(t_target_decl*p){}
+  void Do(t_target_using*p){}
+  string main(const string&data){
+    t_target tar;
+    auto fs=load_obj_full(/*Env,*/tar,data);
+    if(!fs.ok){cerr<<fs.msg<<endl;return "fail";}
+    if(tar.arr.empty()){return "!target\n\n"+fs.msg;}
+    for(auto&ex:tar.arr){
+      auto*p=ex.get();
+      p->Use(*this);
+    }
+    string out;
+    save_obj(tar,out);
+    return out;
+  }
+};
+
 /*
 class TLexemGeneratorFuncs_v01{
 public:
@@ -934,6 +960,11 @@ static void test_2025_06_10(/*IEnvRTTI&Env*/string fn)
     inp=file_get_contents(fn);
   }
   if(inp.size()&&inp.back()=='\n')inp.pop_back();
+  if(bool nedd_class_def_fixer=true){
+    t_class_def_fixer cdf;
+    string out=cdf.main(file_get_contents(fn));
+    file_put_contents(fn,out);
+  }
   string str=v4.main(inp);
   string out="// "+FToS(clock.MS())+" ms\n"+str;
   std::cout<<out;

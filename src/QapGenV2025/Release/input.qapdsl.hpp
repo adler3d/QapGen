@@ -408,12 +408,12 @@ i_code {
   virtual string make_code()const{QapDebugMsg("no way.");return "";};
 }
 
-t_name_code=>i_code{
+t_name_code:i_code{
   string value=str<t_name::t_impl>();
   string make_code()const{return value;}
 }
 
-t_num_code=>i_code{
+t_num_code:i_code{
   t_number body;
   string make_code()const{return body.body;}
 }
@@ -444,7 +444,7 @@ t_sep_str_seq{
   t_str_seq body;
 }
 
-t_str_code=>i_code{
+t_str_code:i_code{
   t_str_seq first;
   vector<t_sep_str_seq> arr?;
   string make_code()const{
@@ -458,7 +458,7 @@ t_str_code=>i_code{
   }
 }
 
-t_char_code=>i_code{
+t_char_code:i_code{
   "'"
   TAutoPtr<i_char_item> body;
   "'"
@@ -467,7 +467,7 @@ t_char_code=>i_code{
   string make_code()const{return "'"+get_code()+"'";}
 }
 
-t_sign_code=>i_code{
+t_sign_code:i_code{
   t_sign body;
   string make_code()const{return CToS(body.body);}
 }
@@ -476,7 +476,7 @@ i_code_with_sep{
   virtual string make_code()const{QapDebugMsg("no way.");return "";}
 }
 
-t_name_code_with_sep=>i_code_with_sep{
+t_name_code_with_sep:i_code_with_sep{
   t_name_code body;
   t_sep sep;
   {
@@ -488,7 +488,7 @@ t_name_code_with_sep=>i_code_with_sep{
   }
 }
 
-t_num_code_with_sep=>i_code_with_sep{
+t_num_code_with_sep:i_code_with_sep{
   t_num_code body;
   t_sep sep;
   {
@@ -500,7 +500,7 @@ t_num_code_with_sep=>i_code_with_sep{
   }
 }
 
-t_str_code_with_sep=>i_code_with_sep{
+t_str_code_with_sep:i_code_with_sep{
   t_str_code body;
   t_sep sep;
   {
@@ -512,7 +512,7 @@ t_str_code_with_sep=>i_code_with_sep{
   }
 }
 
-t_char_code_with_sep=>i_code_with_sep{
+t_char_code_with_sep:i_code_with_sep{
   t_char_code body;
   t_sep sep;
   {
@@ -524,7 +524,7 @@ t_char_code_with_sep=>i_code_with_sep{
   }
 }
 
-t_sign_code_with_sep=>i_code_with_sep{
+t_sign_code_with_sep:i_code_with_sep{
   t_sign_code body;
   t_sep sep;
   {
@@ -536,7 +536,7 @@ t_sign_code_with_sep=>i_code_with_sep{
   }
 }
 
-t_soft_brackets_code_with_sep=>i_code_with_sep{
+t_soft_brackets_code_with_sep:i_code_with_sep{
   t_sep sep0;
   vector<TAutoPtr<i_code_with_sep>> body;
   t_sep sep1;
@@ -557,7 +557,7 @@ t_soft_brackets_code_with_sep=>i_code_with_sep{
   }
 }
 
-t_hard_brackets_code_with_sep=>i_code_with_sep{
+t_hard_brackets_code_with_sep:i_code_with_sep{
   t_sep sep0;
   vector<TAutoPtr<i_code_with_sep>> body;
   t_sep sep1;
@@ -578,7 +578,7 @@ t_hard_brackets_code_with_sep=>i_code_with_sep{
   }
 }
 
-t_curly_brackets_code_with_sep=>i_code_with_sep{
+t_curly_brackets_code_with_sep:i_code_with_sep{
   t_sep sep0;
   vector<TAutoPtr<i_code_with_sep>> body;
   t_sep sep1;
@@ -631,7 +631,7 @@ t_code{
   string make_code()const{return vector_make_code(arr);};
 }
 
-t_soft_brackets_code=>i_code{
+t_soft_brackets_code:i_code{
   "("
   t_sep sep0?;
   TAutoPtr<t_code> body?;
@@ -647,7 +647,7 @@ t_soft_brackets_code=>i_code{
   };
 }
 
-t_hard_brackets_code=>i_code{
+t_hard_brackets_code:i_code{
   "["
   t_sep sep0?;
   TAutoPtr<t_code> body?;
@@ -663,7 +663,7 @@ t_hard_brackets_code=>i_code{
   };
 }
 
-t_curly_brackets_code=>i_code{
+t_curly_brackets_code:i_code{
   "{"
   t_sep sep0?;
   TAutoPtr<t_code> body?;
@@ -720,21 +720,21 @@ i_type_item{
   virtual string make_code()const{QapDebugMsg("no way.");return "";};
 }
 
-t_type_item_string=>i_type_item{
+t_type_item_string:i_type_item{
   t_str_item body;
   string make_code()const{
     return body.get_code();
   };
 }
 
-t_type_item_char=>i_type_item{
+t_type_item_char:i_type_item{
   t_char_item body;
   string make_code()const{
     return body.get_code();
   };
 }
 
-t_type_item_number=>i_type_item{
+t_type_item_number:i_type_item{
   t_number body;
   string make_code()const{
     return body.body;
@@ -758,7 +758,7 @@ t_scope_type_item{
   }
 }
 
-t_type_item_type => i_type_item {
+t_type_item_type:i_type_item {
   TAutoPtr<t_type_scope> scope?;
   t_name type;
   TAutoPtr<t_type_templ> param?;
@@ -831,7 +831,7 @@ t_type_templ_params{
   };
 }
 
-t_type_templ_angle=>i_type_templ{
+t_type_templ_angle:i_type_templ{
   "<"
   TAutoPtr<t_type_templ_params> params?;
   ">"
@@ -847,7 +847,7 @@ t_type_templ_angle=>i_type_templ{
   };
 }
 
-t_type_templ_soft=>i_type_templ{
+t_type_templ_soft:i_type_templ{
   "("
   TAutoPtr<t_type_templ_params> params?;
   ")"
@@ -867,7 +867,7 @@ i_struct_cmd_xxxx{
   virtual char get_mode()const{QapDebugMsg("no way.");return 'D';}
 }
 
-t_struct_cmd_mode => i_struct_cmd_xxxx{
+t_struct_cmd_mode:i_struct_cmd_xxxx{
   char body=any_char("DMO");
   " "?
   "+="
@@ -891,7 +891,7 @@ i_struct_field{
   virtual string make_code(int id,t_ic_dev&icdev)const{QapNoWay();return {};}
   virtual string make_cmd(t_ic_dev&icdev)const{QapNoWay();return {};}
 }
-t_const_field=>i_struct_field{
+t_const_field:i_struct_field{
   t_qst{"?"}
   t_c_item=>i_sc_item{t_char_item body;}
   t_s_item=>i_sc_item{t_str_item body;}
@@ -915,7 +915,7 @@ t_struct_field_value {
   " "?
   TAutoPtr<t_cppcore::t_call_expr> expr;
 }
-t_struct_field=>i_struct_field{
+t_struct_field:i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}
   TAutoPtr<i_struct_cmd_xxxx> mode?;
   " "?
@@ -1018,7 +1018,7 @@ t_cmd_param{
   }
   string body=str<t_impl>();
 }
-t_struct_cmd_anno=>i_struct_cmd_xxxx{
+t_struct_cmd_anno:i_struct_cmd_xxxx{
   string mode=any_str_from_vec(split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));
   " ";
   char get_mode()const{return mode.substr(0,2)=="@m"?'M':(mode[0]=='m'?'M':'D');}
@@ -1028,19 +1028,19 @@ i_struct_cmd_so{
   virtual char get_mode()const{QapDebugMsg("no way.");return 'D';}
 }
 
-t_struct_cmd_suffix=>i_struct_cmd_so{
+t_struct_cmd_suffix:i_struct_cmd_so{
   char value=any_char("?!");
   char get_mode()const override{return value=='?'?'O':(value=='!'?'M':'D');}
 }
 
-t_struct_cmd_optional=>i_struct_cmd_so{
+t_struct_cmd_optional:i_struct_cmd_so{
   "["
   string value=any_str_from_vec(split("optional,mandatory",","));
   "]"
   char get_mode()const override{return value=="optional"?'O':("mandatory"==value?'M':'D');}
 }
 
-t_struct_cmd_opt_v2=>i_struct_cmd_so{
+t_struct_cmd_opt_v2:i_struct_cmd_so{
   ";"
   " "?
   string value=any_str_from_vec(split("optional,mandatory",","));
@@ -1129,14 +1129,14 @@ i_cpp_code{
   virtual string make_code()const{QapDebugMsg("no way.");return "";}
 }
 
-t_cpp_code_sep => i_cpp_code{
+t_cpp_code_sep:i_cpp_code{
   t_sep sep;
   string make_code()const{
     return sep.make_code();
   }
 }
 
-t_cpp_code_main => i_cpp_code{
+t_cpp_code_main:i_cpp_code{
   TAutoPtr<i_code_with_sep> body;
   string make_code()const{
     string out;
@@ -1324,7 +1324,7 @@ i_def{
   virtual t_out make_code(){QapDebugMsg("no way.");return *(t_out*)nullptr;}
 }
 
-t_class_def => i_def{
+t_class_def:i_def{
   t_name name;
   t_sep sep0?;
   string arrow_or_colon=any_str_from_vec(split("=>,:",","));
@@ -1338,7 +1338,7 @@ t_class_def => i_def{
   }
 }
 
-t_struct_def => i_def{
+t_struct_def:i_def{
   t_name name;
   t_out make_code(){
     t_out out;
@@ -1347,7 +1347,7 @@ t_struct_def => i_def{
   }
 }
 
-t_target_item=>i_target_item{
+t_target_item:i_target_item{
   t_sep sep0?;
   TAutoPtr<i_def> def;
   t_sep sep1?;
@@ -1367,14 +1367,14 @@ t_target_item=>i_target_item{
   }
 }
 
-t_target_decl=>i_target_item{
+t_target_decl:i_target_item{
   " "?
   string name=str<t_name>();
   " "?
   ";"
 }
 
-t_target_using=>i_target_item{
+t_target_using:i_target_item{
   t_str_ap=>i_qa{
     "'"
     string body=str<TAutoPtr<i_char_item>>();
