@@ -1,4 +1,4 @@
-// 553.278400 ms
+// 565.364400 ms
 //===>>===i_sep_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -48,6 +48,11 @@ public:
   static TYPE*UberCast(i_sep*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_sep_visitor{
+//  void Do(t_sep_seq*p){}
+//  void Do(t_c_comment*p){}
+//  void Do(t_cpp_comment*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_sep_visitor
@@ -78,7 +83,7 @@ public:
     }*/
     #include "QapLexPolyEndNoTemplate.inl"
   };
-  virtual string make_code()const{QapDebugMsg("no way.");return "";}
+virtual string make_code()const{QapDebugMsg("no way.");return "";}
 };
 //===>>===i_expr_visitor
 #define DEF_PRO_BLANK()
@@ -134,6 +139,16 @@ public:
   static TYPE*UberCast(i_expr*p){return dynamic_cast<TYPE*>(p);}
   #endif
 };
+//struct t_visitor:public i_expr_visitor{
+//  void Do(t_str*p){}
+//  void Do(t_char*p){}
+//  void Do(t_num*p){}
+//  void Do(t_id*p){}
+//  void Do(t_sign*p){}
+//  void Do(t_soft_brackets*p){}
+//  void Do(t_hard_brackets*p){}
+//  void Do(t_curly_brackets*p){}
+//};
 #undef LIST
 #undef DEF_PRO_BLANK
 //===<<===i_expr_visitor
@@ -186,15 +201,12 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
     static const auto g_static_var_0=CharMask::fromStr(" \t\r\n");
-    D+=dev.go_any(body,g_static_var_0);
+    ok=dev.go_any(body,g_static_var_0);
     if(!ok)return ok;
     return ok;
   }
-  string make_code()const{
+string make_code()const{
     return body;
   }
 };
@@ -214,16 +226,13 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("/*");
+    ok=dev.go_const("/*");
     if(!ok)return ok;
-    D+=dev.go_end(body,"*/");
+    ok=dev.go_end(body,"*/");
     if(!ok)return ok;
     return ok;
   }
-  string make_code()const{
+string make_code()const{
     return "/*"+body+"*/";
   }
 };
@@ -243,16 +252,13 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("//");
+    ok=dev.go_const("//");
     if(!ok)return ok;
-    D+=dev.go_end(body,"\n");
-    if(!ok)return ok;
+    static const auto g_static_var_1=CharMask::fromStr(dip_inv("\n"));
+    dev.go_any(body,g_static_var_1);
     return ok;
   }
-  string make_code()const{
+string make_code()const{
     return "//"+body+"\n";
   }
 };
@@ -271,14 +277,11 @@ public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_auto(arr);
+      ok=dev.go_auto(arr);
       if(!ok)return ok;
       return ok;
     }
-      string make_code()const{
+  string make_code()const{
         string out="";
         for(int i=0;i<arr.size();i++){
           out+=arr[i]->make_code();
@@ -303,14 +306,11 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_str<t_impl>(value);
+    ok=dev.go_str<t_impl>(value);
     if(!ok)return ok;
     return ok;
   }
-  string make_code()const{return value;}
+string make_code()const{return value;}
 };
 struct t_str:public i_expr{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_str)PARENT(i_expr)
@@ -328,10 +328,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -352,10 +349,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -376,10 +370,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -399,11 +390,8 @@ public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
       static const auto g_static_var_0=QapStrFinder::fromArr(split("false,true,nullptr,this,struct,class,for,if,while,do,const,constexpr,else,operator,auto,continue,break,return,goto,virtual,override,public,private,protected,friend,template,typedef,using,namespace,decltype",","));
-      D+=dev.go_any_str_from_vec(value,g_static_var_0);
+      ok=dev.go_any_str_from_vec(value,g_static_var_0);
       if(!ok)return ok;
       return ok;
     }
@@ -422,18 +410,14 @@ public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
       static const auto g_static_var_0=CharMask::fromStr(gen_dips("azAZ")+"_$@");
-      D+=dev.go_any_char(A,g_static_var_0);
+      ok=dev.go_any_char(A,g_static_var_0);
       if(!ok)return ok;
       static const auto g_static_var_1=CharMask::fromStr(gen_dips("azAZ09")+"_$@");
-      O+=dev.go_any(B,g_static_var_1);
-      if(!ok)return ok;
+      dev.go_any(B,g_static_var_1);
       return ok;
     }
-      string get()const{return CToS(A)+B;}
+  string get()const{return CToS(A)+B;}
   };
   struct t_impl_ex{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_impl_ex)OWNER(t_name)
@@ -448,10 +432,7 @@ public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      auto&D=$.mandatory;
-      auto&M=$.mandatory;
-      auto&O=$.optional;
-      D+=dev.go_minor<t_keyword>(impl);
+      ok=dev.go_minor<t_keyword>(impl);
       if(!ok)return ok;
       return ok;
     }
@@ -475,15 +456,12 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_str<t_impl_ex>(value);
+    ok=dev.go_str<t_impl_ex>(value);
     if(!ok)return ok;
     return ok;
   }
 public:
-  string get()const{return value;}
+string get()const{return value;}
 };
 struct t_id:public i_expr{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_id)PARENT(i_expr)
@@ -501,10 +479,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -525,11 +500,8 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
     static const auto g_static_var_0=CharMask::fromStr("~|&=<>!:?;,.+-*/%^");
-    D+=dev.go_any_char(body,g_static_var_0);
+    ok=dev.go_any_char(body,g_static_var_0);
     if(!ok)return ok;
     return ok;
   }
@@ -550,14 +522,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("(");
+    ok=dev.go_const("(");
     if(!ok)return ok;
-    O+=dev.go_auto(arr);
-    if(!ok)return ok;
-    M+=dev.go_const(")");
+    dev.go_auto(arr);
+    ok=dev.go_const(")");
     if(!ok)return ok;
     return ok;
   }
@@ -578,14 +546,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("[");
+    ok=dev.go_const("[");
     if(!ok)return ok;
-    O+=dev.go_auto(arr);
-    if(!ok)return ok;
-    M+=dev.go_const("]");
+    dev.go_auto(arr);
+    ok=dev.go_const("]");
     if(!ok)return ok;
     return ok;
   }
@@ -606,14 +570,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    M+=dev.go_const("{");
+    ok=dev.go_const("{");
     if(!ok)return ok;
-    O+=dev.go_auto(arr);
-    if(!ok)return ok;
-    M+=dev.go_const("}");
+    dev.go_auto(arr);
+    ok=dev.go_const("}");
     if(!ok)return ok;
     return ok;
   }
@@ -632,12 +592,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(sep);
+    ok=dev.go_auto(sep);
     if(!ok)return ok;
-    D+=dev.go_auto(body);
+    ok=dev.go_auto(body);
     if(!ok)return ok;
     return ok;
   }
@@ -656,16 +613,12 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    auto&D=$.mandatory;
-    auto&M=$.mandatory;
-    auto&O=$.optional;
-    D+=dev.go_auto(cmd);
+    ok=dev.go_auto(cmd);
     if(!ok)return ok;
-    O+=dev.go_auto(params);
-    if(!ok)return ok;
+    dev.go_auto(params);
     return ok;
   }
-  vector<string> get_raw_params(/*IEnvRTTI&Env*/){
+vector<string> get_raw_params(/*IEnvRTTI&Env*/){
     vector<string> out;
     for(int i=0;i<params.size();i++){
       auto&ex=params[i];
@@ -721,44 +674,45 @@ no%20way%2e%22%29%3breturn%20%22%22%3b%7d%0a%7d%0a%0at%5fsep%5fseq%3ai%5fsep%7b%
 %5fcomment%3ai%5fsep%7b%0a%20%20%22%2f%2a%22%0a%20%20string%20body%3dend%28%22%2
 a%2f%22%29%3b%0a%20%20string%20make%5fcode%28%29const%7b%0a%20%20%20%20return%20
 %22%2f%2a%22%2bbody%2b%22%2a%2f%22%3b%0a%20%20%7d%0a%7d%0a%0at%5fcpp%5fcomment%3
-d%3ei%5fsep%7b%0a%20%20%22%2f%2f%22%0a%20%20string%20body%3dend%28%22%5cn%22%29%
-3b%0a%20%20string%20make%5fcode%28%29const%7b%0a%20%20%20%20return%20%22%2f%2f%2
-2%2bbody%2b%22%5cn%22%3b%0a%20%20%7d%0a%7d%0a%0at%5fsep%7b%0a%20%20t%5fimpl%7b%0
-a%20%20%20%20vector%3cTAutoPtr%3ci%5fsep%3e%3e%20arr%3b%0a%20%20%20%20string%20m
-ake%5fcode%28%29const%7b%0a%20%20%20%20%20%20string%20out%3d%22%22%3b%0a%20%20%2
-0%20%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%2
-0%20%20%20%20out%2b%3darr%5bi%5d%2d%3emake%5fcode%28%29%3b%0a%20%20%20%20%20%20%
-7d%0a%20%20%20%20%20%20return%20out%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20str
-ing%20value%3dstr%3ct%5fimpl%3e%28%29%3b%0a%20%20string%20make%5fcode%28%29const
-%7breturn%20value%3b%7d%0a%7d%0a%0at%5fstr%3ai%5fexpr%7b%0a%20%20t%5fstr%5fitem%
-20body%3b%0a%7d%0a%0at%5fchar%3ai%5fexpr%7b%0a%20%20t%5fchar%5fitem%20body%3b%0a
-%7d%0a%0at%5fnum%3ai%5fexpr%7b%0a%20%20t%5fnumber%20body%3b%0a%7d%0a%0at%5fname%
-7b%0a%20%20t%5fkeyword%7b%0a%20%20%20%20string%20value%3dany%5fstr%5ffrom%5fvec%
-28split%28%22false%2ctrue%2cnullptr%2cthis%2cstruct%2cclass%2cfor%2cif%2cwhile%2
-cdo%2cconst%2cconstexpr%2celse%2coperator%2cauto%2ccontinue%2cbreak%2creturn%2cg
-oto%2cvirtual%2coverride%2cpublic%2cprivate%2cprotected%2cfriend%2ctemplate%2cty
-pedef%2cusing%2cnamespace%2cdecltype%22%2c%22%2c%22%29%29%3b%0a%20%20%7d%0a%20%2
-0t%5fimpl%7b%0a%20%20%20%20char%20A%3dany%5fchar%28gen%5fdips%28%22azAZ%22%29%2b
-%22%5f%24%40%22%29%3b%0a%20%20%20%20string%20B%3dany%28gen%5fdips%28%22azAZ09%22
-%29%2b%22%5f%24%40%22%29%3f%3b%0a%20%20%20%20string%20get%28%29const%7breturn%20
-CToS%28A%29%2bB%3b%7d%0a%20%20%7d%0a%20%20t%5fimpl%5fex%7b%0a%20%20%20%20t%5fimp
-l%20impl%3dminor%3ct%5fkeyword%3e%28%29%3b%0a%20%20%7d%0a%20%20string%20value%3d
-str%3ct%5fimpl%5fex%3e%28%29%3b%0a%20%20string%20get%28%29const%7breturn%20value
-%3b%7d%0a%7d%0a%0at%5fid%3ai%5fexpr%7b%0a%20%20t%5fname%20body%3b%0a%7d%0a%0at%5
-fsign%3ai%5fexpr%7b%0a%20%20char%20body%3dany%5fchar%28%22%7e%7c%26%3d%3c%3e%21%
-3a%3f%3b%2c%2e%2b%2d%2a%2f%25%5e%22%29%3b%0a%7d%0a%0at%5fsoft%5fbrackets%3ai%5fe
-xpr%7b%0a%20%20%22%28%22%0a%20%20vector%3cTAutoPtr%3ci%5fexpr%3e%3e%20arr%3f%3b%
-0a%20%20%22%29%22%0a%7d%0a%0at%5fhard%5fbrackets%3ai%5fexpr%7b%0a%20%20%22%5b%22
-%0a%20%20vector%3cTAutoPtr%3ci%5fexpr%3e%3e%20arr%3f%3b%0a%20%20%22%5d%22%0a%7d%
-0a%0at%5fcurly%5fbrackets%3ai%5fexpr%7b%0a%20%20%22%7b%22%0a%20%20vector%3cTAuto
-Ptr%3ci%5fexpr%3e%3e%20arr%3f%3b%0a%20%20%22%7d%22%0a%7d%0a%0at%5fparam%7b%0a%20
-%20t%5fsep%20sep%3b%0a%20%20vector%3cTAutoPtr%3ci%5fexpr%3e%3e%20body%3b%0a%7d%0
-a%0at%5fline%7b%0a%20%20t%5fname%20cmd%3b%0a%20%20vector%3ct%5fparam%3e%20params
-%3f%3b%0a%20%20vector%3cstring%3e%20get%5fraw%5fparams%28%2f%2aIEnvRTTI%26Env%2a
-%2f%29%7b%0a%20%20%20%20vector%3cstring%3e%20out%3b%0a%20%20%20%20for%28int%20i%
-3d0%3bi%3cparams%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%20%20auto%26ex%3dpa
-rams%5bi%5d%3b%0a%20%20%20%20%20%20string%20mem%3b%0a%20%20%20%20%20%20bool%20ok
-%3dsave%5fobj%28%2f%2aEnv%2c%2a%2fex%2ebody%2cmem%29%3b%0a%20%20%20%20%20%20QapA
-ssert%28ok%29%3b%0a%20%20%20%20%20%20out%2epush%5fback%28mem%29%3b%0a%20%20%20%2
-0%7d%0a%20%20%20%20return%20std%3a%3amove%28out%29%3b%0a%20%20%7d%0a%7d
+d%3ei%5fsep%7b%0a%20%20%22%2f%2f%22%0a%20%20string%20body%3dany%28dip%5finv%28%2
+2%5cn%22%29%29%3f%3b%0a%20%20string%20make%5fcode%28%29const%7b%0a%20%20%20%20re
+turn%20%22%2f%2f%22%2bbody%2b%22%5cn%22%3b%0a%20%20%7d%0a%7d%0a%0at%5fsep%7b%0a%
+20%20t%5fimpl%7b%0a%20%20%20%20vector%3cTAutoPtr%3ci%5fsep%3e%3e%20arr%3b%0a%20%
+20%20%20string%20make%5fcode%28%29const%7b%0a%20%20%20%20%20%20string%20out%3d%2
+2%22%3b%0a%20%20%20%20%20%20for%28int%20i%3d0%3bi%3carr%2esize%28%29%3bi%2b%2b%2
+9%7b%0a%20%20%20%20%20%20%20%20out%2b%3darr%5bi%5d%2d%3emake%5fcode%28%29%3b%0a%
+20%20%20%20%20%20%7d%0a%20%20%20%20%20%20return%20out%3b%0a%20%20%20%20%7d%0a%20
+%20%7d%0a%20%20string%20value%3dstr%3ct%5fimpl%3e%28%29%3b%0a%20%20string%20make
+%5fcode%28%29const%7breturn%20value%3b%7d%0a%7d%0a%0at%5fstr%3ai%5fexpr%7b%0a%20
+%20t%5fstr%5fitem%20body%3b%0a%7d%0a%0at%5fchar%3ai%5fexpr%7b%0a%20%20t%5fchar%5
+fitem%20body%3b%0a%7d%0a%0at%5fnum%3ai%5fexpr%7b%0a%20%20t%5fnumber%20body%3b%0a
+%7d%0a%0at%5fname%7b%0a%20%20t%5fkeyword%7b%0a%20%20%20%20string%20value%3dany%5
+fstr%5ffrom%5fvec%28split%28%22false%2ctrue%2cnullptr%2cthis%2cstruct%2cclass%2c
+for%2cif%2cwhile%2cdo%2cconst%2cconstexpr%2celse%2coperator%2cauto%2ccontinue%2c
+break%2creturn%2cgoto%2cvirtual%2coverride%2cpublic%2cprivate%2cprotected%2cfrie
+nd%2ctemplate%2ctypedef%2cusing%2cnamespace%2cdecltype%22%2c%22%2c%22%29%29%3b%0
+a%20%20%7d%0a%20%20t%5fimpl%7b%0a%20%20%20%20char%20A%3dany%5fchar%28gen%5fdips%
+28%22azAZ%22%29%2b%22%5f%24%40%22%29%3b%0a%20%20%20%20string%20B%3dany%28gen%5fd
+ips%28%22azAZ09%22%29%2b%22%5f%24%40%22%29%3f%3b%0a%20%20%20%20string%20get%28%2
+9const%7breturn%20CToS%28A%29%2bB%3b%7d%0a%20%20%7d%0a%20%20t%5fimpl%5fex%7b%0a%
+20%20%20%20t%5fimpl%20impl%3dminor%3ct%5fkeyword%3e%28%29%3b%0a%20%20%7d%0a%20%2
+0string%20value%3dstr%3ct%5fimpl%5fex%3e%28%29%3b%0a%20%20string%20get%28%29cons
+t%7breturn%20value%3b%7d%0a%7d%0a%0at%5fid%3ai%5fexpr%7b%0a%20%20t%5fname%20body
+%3b%0a%7d%0a%0at%5fsign%3ai%5fexpr%7b%0a%20%20char%20body%3dany%5fchar%28%22%7e%
+7c%26%3d%3c%3e%21%3a%3f%3b%2c%2e%2b%2d%2a%2f%25%5e%22%29%3b%0a%7d%0a%0at%5fsoft%
+5fbrackets%3ai%5fexpr%7b%0a%20%20%22%28%22%0a%20%20vector%3cTAutoPtr%3ci%5fexpr%
+3e%3e%20arr%3f%3b%0a%20%20%22%29%22%0a%7d%0a%0at%5fhard%5fbrackets%3ai%5fexpr%7b
+%0a%20%20%22%5b%22%0a%20%20vector%3cTAutoPtr%3ci%5fexpr%3e%3e%20arr%3f%3b%0a%20%
+20%22%5d%22%0a%7d%0a%0at%5fcurly%5fbrackets%3ai%5fexpr%7b%0a%20%20%22%7b%22%0a%2
+0%20vector%3cTAutoPtr%3ci%5fexpr%3e%3e%20arr%3f%3b%0a%20%20%22%7d%22%0a%7d%0a%0a
+t%5fparam%7b%0a%20%20t%5fsep%20sep%3b%0a%20%20vector%3cTAutoPtr%3ci%5fexpr%3e%3e
+%20body%3b%0a%7d%0a%0at%5fline%7b%0a%20%20t%5fname%20cmd%3b%0a%20%20vector%3ct%5
+fparam%3e%20params%3f%3b%0a%20%20vector%3cstring%3e%20get%5fraw%5fparams%28%2f%2
+aIEnvRTTI%26Env%2a%2f%29%7b%0a%20%20%20%20vector%3cstring%3e%20out%3b%0a%20%20%2
+0%20for%28int%20i%3d0%3bi%3cparams%2esize%28%29%3bi%2b%2b%29%7b%0a%20%20%20%20%2
+0%20auto%26ex%3dparams%5bi%5d%3b%0a%20%20%20%20%20%20string%20mem%3b%0a%20%20%20
+%20%20%20bool%20ok%3dsave%5fobj%28%2f%2aEnv%2c%2a%2fex%2ebody%2cmem%29%3b%0a%20%
+20%20%20%20%20QapAssert%28ok%29%3b%0a%20%20%20%20%20%20out%2epush%5fback%28mem%2
+9%3b%0a%20%20%20%20%7d%0a%20%20%20%20return%20std%3a%3amove%28out%29%3b%0a%20%20
+%7d%0a%7d
 */

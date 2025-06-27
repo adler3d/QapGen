@@ -19,7 +19,7 @@ t_c_comment:i_sep{
 
 t_cpp_comment=>i_sep{
   "//"
-  string body=end("\n");
+  string body=any(dip_inv("\n"))?;
   string make_code()const{
     return "//"+body+"\n";
   }

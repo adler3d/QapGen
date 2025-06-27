@@ -901,8 +901,7 @@ t_const_field:i_struct_field{
   " "?
   TAutoPtr<t_semicolon> sc?;
   string make_code(int id,t_ic_dev&icdev)const{
-    const string*plexer=nullptr;
-    for(auto&ex:icdev.sep_lexs)if(ex.sep==value)plexer=&ex.lexer;
+    const string*plexer=icdev.get_sep_lex(value);
     if(!plexer)return {};
     return "ADDVAR("+*plexer+",$sep"+IToS(id)+",DEF,$,$)\\\n";
   }
@@ -1288,7 +1287,7 @@ t_struct_body{
       for(int i=0;i<arr.size();i++){
         auto&ex=arr[i];
         auto&to=out.nested[i];
-        to=&ex;
+        to=ex.get();
       }
     }
     if(!fcc)return out;
@@ -1410,3 +1409,5 @@ t_target{
     return out;
   }
 }
+//}
+//

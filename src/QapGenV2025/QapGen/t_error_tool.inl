@@ -53,6 +53,7 @@ struct t_error_tool{
       return "{\"line\":"+IToS(info.line_id)+",\"pos\":"+IToS(pos-info.curpos)+"}\n\""+sub.cpp+"\" "+sep+"\n-"+sub.low;
     };
     QapAssert(!code.empty());
+    if(code.size()==pos)pos--;
     QapAssert(pos<code.size());
     auto info=t_line_info::get(code,pos);
     if(!info.ok){

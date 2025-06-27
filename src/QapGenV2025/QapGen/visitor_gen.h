@@ -3,19 +3,29 @@
 #include "templ_lexer_v02.inl"
 
 struct t_ic_dev{
-  struct t_level{
-    string name,full_name;
-    vector<string> iarr;
-    vector<string> carr;
-  };
   struct t_sep_lex{
     string sep;
     string lexer;
   };
+  struct t_level{
+    string name,full_name;
+    vector<string> iarr;
+    vector<string> carr;
+    vector<t_sep_lex> sep_lexs;
+  };
   vector<t_level> arr;
   t_level top;
-  vector<t_sep_lex> sep_lexs;
   vector<int> ip;
+  string*get_sep_lex(const string&sep){
+    for(auto&ex:top.sep_lexs)if(ex.sep==sep)return &ex.lexer;
+    for(auto&L:arr)for(auto&ex:L.sep_lexs)if(ex.sep==sep)return &ex.lexer;
+    return nullptr;
+  }
+  bool add_sep_lex(const string&sep,const string&lexer){
+    if(get_sep_lex(sep)){QapDebugMsg("not_unique sep_lex: "+sep+" "+lexer);return false;}
+    top.sep_lexs.push_back({sep,lexer});
+    return true;
+  }
   bool need_tautoptr(const string&name){
     if(qap_includes(top.iarr,name))return true;
     if(qap_includes(top.carr,name))return false;
@@ -328,11 +338,13 @@ public:
       if(c.out.cppcode.empty()){
         out+="};";
       }else{
-        body+=c.out.cppcode;
-        body+="};";
+        body+=move_block(c.out.cppcode,owner.empty()?"":"  ");
+        //body+="};";
       }
-    }else body+="};";
+    }//else body+="};";
     out+=move_block(body,owner.empty()?"":"  ");
+    out=drop_empty_lines(out);
+    out+="\n"+string(owner.empty()?"":"  ")+"};";
     return drop_empty_lines(out);
   }
   string get_at_end()const{
@@ -410,7 +422,7 @@ public:
           auto*p=t_struct_field::UberCast(it.body.get());
           auto*pc=t_const_field::UberCast(it.body.get());
           const string*plexer=nullptr;
-          if(pc)for(auto&ex:ic_dev.sep_lexs)if(ex.sep==pc->value)plexer=&ex.lexer;
+          if(pc)plexer=ic_dev.get_sep_lex(pc->value);
           if(plexer){
             int gg=1;
           }
@@ -477,14 +489,12 @@ public:
     if(!c.out.cppcode.empty()){
       //QapDebugMsg("[2014.02.12 14:14]:\nuse 't_static_visitor' instead of 'usercode inside lexem'.");
     }
-    if(c.out.cppcode.empty())
-    {
-      body+="};";
-    }else{
-      body+=c.out.cppcode;
-      body+="};";
+    if(!c.out.cppcode.empty()){
+      body+=move_block(c.out.cppcode,owner.empty()?"":"  ");
     }
     out+=move_block(body,owner.empty()?"":"  ");
+    out=drop_empty_lines(out);
+    out+="\n"+string(owner.empty()?"":"  ")+"};";
     return drop_empty_lines(out);
   }
   string get_targets_code_orig(const vector<i_target_item*>&arr,t_ic_dev&ic_dev)
@@ -520,9 +530,10 @@ public:
         continue;
       }
       if(pu){
-        ic_dev.sep_lexs.push_back({pu->s,pu->lexer});
+        ic_dev.add_sep_lex(pu->s,pu->lexer);
         continue;
       }
+      if(!pt)continue;
       bool found=qap_includes(iarr,pt->def->make_code().name);
       if(found)continue;
       //auto ex_name=pt->def->make_code().name;bool skip=false;
@@ -551,15 +562,30 @@ public:
       auto&ex=iarr[i];
       //const t_target_item*pti=nullptr;
       //{if(name==ex)pti=p;}
+      //struct t_visitor:public i_target_item_visitor{
+      //  void Do(t_target_sep*p){}
+      //  void Do(t_target_item*p){}
+      //  void Do(t_target_decl*p){}
+      //  void Do(t_target_using*p){}
+      //};
+      t_target_item*pti=nullptr;
+      for(auto&it:c.out.nested)
+        if(auto*p=t_target_item::UberCast(it))
+          if(auto*pdef=t_struct_def::UberCast(p->def.get())){
+            if(pdef->name.value==ex)pti=p;
+          }
+      //QapAssert(pti);
       auto list=get_child_list(c.out.nested,ex,ic_dev);
-      string tmp=iclass_to_code(ex,list,name,full_name,nullptr,ic_dev);
+      string tmp=iclass_to_code(ex,list,name,full_name,pti,ic_dev);
       out.push_back(tmp);
     }
     for(int i=0;i<c.out.nested.size();i++){
       auto&ex=c.out.nested[i];
       auto*p=t_target_item::UberCast(ex);
       if(!p)continue;
-      ic_dev.top.carr.push_back(p->def->make_code().name);
+      auto name=p->def->make_code().name;
+      if(qap_includes(iarr,name))continue;
+      ic_dev.top.carr.push_back(name);
     }
     for(int i=0;i<c.out.nested.size();i++){
       auto&ex=c.out.nested[i];
@@ -571,10 +597,12 @@ public:
         continue;
       }
       if(pu){
-        ic_dev.sep_lexs.push_back({pu->s,pu->lexer});
+        ic_dev.add_sep_lex(pu->s,pu->lexer);
         continue;
       }
       if(!p)continue;
+      auto cname=p->def->make_code().name;
+      if(qap_includes(iarr,cname))continue;
       string tmp=class_to_code(*p,name,full_name,ic_dev);
       out.push_back(tmp);
     }
