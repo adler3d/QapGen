@@ -15,7 +15,7 @@ struct t_ic_dev{
   vector<t_level> arr;
   t_level top;
   vector<t_sep_lex> sep_lexs;
-  //vector<int> ip;
+  vector<int> ip;
   bool need_tautoptr(const string&name){
     if(qap_includes(top.iarr,name))return true;
     if(qap_includes(top.carr,name))return false;
@@ -26,16 +26,23 @@ struct t_ic_dev{
     return false;
   }
   void push(const string&name,const string&full_name){
-    //if(top.name==name&&full_name==top.name){ip.push_back(1);return;}
+    if(top.name==name&&full_name==top.full_name){
+      int fail=1;
+      {ip.push_back(1);return;}
+    }
+    if(name.empty()){
+      int fail=1;
+    }
+    //if(top.name==name&&full_name==top.name)
     arr.push_back(std::move(top));
     top.name=name;top.full_name=full_name;
-    //ip.push_back(0);
+    ip.push_back(0);
   }
   void pop(){
-    //if(ip.size()&&ip.back()){ip.pop_back();return;}
+    if(ip.size()&&ip.back()){ip.pop_back();return;}
     top=std::move(arr.back());
     arr.pop_back();
-    //ip.pop_back();
+    ip.pop_back();
   }
 };
 template<class TYPE>
@@ -98,7 +105,7 @@ public:
     if(drop_last_line_spaces)for(int i=0;out.size()&&out.back()==' ';i++)out.pop_back();
     return out;
   }
-  static vector<string> get_iarr(const vector<const t_target_item*>&arr)
+  static vector<string> get_iarr(const vector<t_target_item*>&arr)
   {
     vector<string> out;
     for(int i=0;i<arr.size();i++){
@@ -112,7 +119,7 @@ public:
     }
     return out;
   }
-  static vector<string> get_iarr(const vector<const i_target_item*>&arr)
+  static vector<string> get_iarr(const vector<i_target_item*>&arr)
   {
     vector<string> out;
     for(int i=0;i<arr.size();i++){
@@ -128,7 +135,7 @@ public:
     }
     return out;
   }
-  static vector<string> get_child_list(const vector<const i_target_item*>&arr,const string&parent,t_ic_dev&ic_dev)
+  static vector<string> get_child_list(const vector<i_target_item*>&arr,const string&parent,t_ic_dev&ic_dev)
   {
     vector<string> out;
     for(int i=0;i<arr.size();i++){
@@ -141,7 +148,7 @@ public:
     }
     return out;
   }
-  static vector<string> get_child_list(const vector<const t_target_item*>&arr,const string&parent,t_ic_dev&ic_dev)
+  static vector<string> get_child_list(const vector<t_target_item*>&arr,const string&parent,t_ic_dev&ic_dev)
   {
     vector<string> out;
     for(auto&p:arr){
@@ -152,11 +159,13 @@ public:
     }
     return out;
   }
-  static vector<string> get_nested_list(const vector<const t_target_item*>&arr){
+  static vector<string> get_nested_list(const vector<i_target_item*>&arr){
     vector<string> out;
     for(int i=0;i<arr.size();i++){
-      auto&ex=*arr[i];
-      out.push_back(ex.def->make_code().name);
+      //auto&ex=*arr[i];
+      auto*p=t_target_item::UberCast(arr[i]);
+      if(!p)continue;
+      out.push_back(p->def->make_code().name);
     }
     return out;
   }
@@ -195,7 +204,12 @@ public:
     string parent_info=!c.parent.empty()?"PARENT("+c.parent+")":"";
     string owner_info=!owner.empty()?"OWNER("+owner+")":"";
     bool hasVirtual=false;
-    for(int i=0;i<c.out.nested.size();i++)if(!c.out.nested[i]->make_code(ic_dev).parent.empty())hasVirtual=true;
+    for(int i=0;i<c.out.nested.size();i++){
+      auto&ex=c.out.nested[i];
+      auto*p=t_target_item::UberCast(ex);
+      if(!p)continue;
+      if(!p->make_code(ic_dev).parent.empty())hasVirtual=true;
+    }
     string class_code;
     class_code+="struct "+c.name+parent_part+"{\n";
     class_code+=target_code.empty()?"":((hasVirtual?"":"public:\n")+target_code+"\n");
@@ -473,7 +487,7 @@ public:
     out+=move_block(body,owner.empty()?"":"  ");
     return drop_empty_lines(out);
   }
-  string get_targets_code_orig(const vector<const i_target_item*>&arr,t_ic_dev&ic_dev)
+  string get_targets_code_orig(const vector<i_target_item*>&arr,t_ic_dev&ic_dev)
   {
     //auto c=ti.make_code(ic_dev);
     vector<string> out;
@@ -543,17 +557,31 @@ public:
     }
     for(int i=0;i<c.out.nested.size();i++){
       auto&ex=c.out.nested[i];
-      ic_dev.top.carr.push_back(ex->def->make_code().name);
+      auto*p=t_target_item::UberCast(ex);
+      if(!p)continue;
+      ic_dev.top.carr.push_back(p->def->make_code().name);
     }
     for(int i=0;i<c.out.nested.size();i++){
       auto&ex=c.out.nested[i];
-      string tmp=class_to_code(*ex,name,full_name,ic_dev);
+      auto*p=t_target_item::UberCast(ex);
+      auto*pd=t_target_decl::UberCast(ex);
+      auto*pu=t_target_using::UberCast(ex);
+      if(pd){
+        out.push_back("struct "+pd->name+";");
+        continue;
+      }
+      if(pu){
+        ic_dev.sep_lexs.push_back({pu->s,pu->lexer});
+        continue;
+      }
+      if(!p)continue;
+      string tmp=class_to_code(*p,name,full_name,ic_dev);
       out.push_back(tmp);
     }
     ic_dev.pop();
     return join(out,"\n");
   }
-  static vector<string> get_list_of_types(const vector<const i_target_item*>&arr)
+  static vector<string> get_list_of_types(const vector<i_target_item*>&arr)
   {
     vector<string> out;
     string line;
@@ -579,7 +607,7 @@ public:
     if(tar.arr.empty()){return "!target\n\n"+fs.msg;}
     //vector<t_target_item::t_out> arr=tar.make_code({});
     t_ic_dev ic_dev;
-    vector<const i_target_item*> tarr;
+    vector<i_target_item*> tarr;
     //for(auto&ex:tar.arr)tarr.push_back(&ex);
     for(auto&ex:tar.arr){
       //if(auto*p=dynamic_cast<t_target_item*>(ex.get())){
@@ -629,14 +657,18 @@ public:
 };
 
 struct t_class_def_fixer:public t_templ_sys_v04,public i_target_item_visitor,public i_def_visitor{
+  template<class TYPE>
+  void Do(vector<TYPE>&arr){for(auto&ex:arr)Do(&ex);}
+  template<class TYPE>
+  void Do(vector<TAutoPtr<TYPE>>&arr){for(auto&ex:arr)if(ex)Do(ex.get());}
   void Do(t_class_def*p){
     p->sep0.value="";
     p->sep1.value="";
     p->arrow_or_colon=":";
   }
-  template<class TYPE>
-  void Do(vector<TYPE>&arr){for(auto&ex:arr)Do(&ex);}
   void Do(t_struct_def*p){}
+  void Do(i_target_item*p){p->Use(*this);}
+  void Do(t_target_sep*p){}
   void Do(t_target_item*p){p->def->Use(*this);Do(p->body.nested);}
   void Do(t_target_decl*p){}
   void Do(t_target_using*p){}

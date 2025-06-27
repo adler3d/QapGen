@@ -403,7 +403,7 @@ t_test20250618_atrr{
 //    go_auto($dev1);
 //  }*/
 //}
-
+//t_meta_lexer{
 i_code {
   virtual string make_code()const{QapDebugMsg("no way.");return "";};
 }
@@ -1237,7 +1237,7 @@ t_fields_cmds_cppcode{
 
 t_struct_body{
   "{"
-  vector<t_target_item> nested?;
+  vector<TAutoPtr<i_target_item>> nested?;
   t_sep sep0?;
   TAutoPtr<t_fields_cmds_cppcode> fcc;
   t_sep sep1?;
@@ -1346,7 +1346,7 @@ t_struct_def:i_def{
     return out;
   }
 }
-
+t_target_sep:i_target_item{" "}
 t_target_item:i_target_item{
   t_sep sep0?;
   TAutoPtr<i_def> def;
