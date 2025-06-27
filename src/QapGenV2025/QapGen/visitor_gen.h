@@ -71,7 +71,7 @@ static string vector_make_code(const vector<TYPE>&arr){
 
 extern void UberInfoBox(const string&caption,const string&text);
 
-struct t_templ_sys_v04/*:t_meta_lexer*/{
+struct t_templ_sys_v04:t_meta_lexer{
 public:
   class t_scope{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_scope)
@@ -684,7 +684,17 @@ public:
   }
 };
 
-struct t_class_def_fixer:public t_templ_sys_v04,public i_target_item_visitor,public i_def_visitor{
+struct t_class_def_fixer:public t_templ_sys_v04,public t_meta_lexer::i_target_item_visitor,public t_meta_lexer::i_def_visitor{
+  #define ADD(F)typedef t_meta_lexer::F F;
+    ADD(t_target_sep)\
+    ADD(t_target_item)\
+    ADD(t_target_decl)\
+    ADD(t_target_using)\
+    ADD(t_class_def)\
+    ADD(t_struct_def)\
+    ADD(i_target_item)\
+      //
+  #undef ADD
   template<class TYPE>
   void Do(vector<TYPE>&arr){for(auto&ex:arr)Do(&ex);}
   template<class TYPE>

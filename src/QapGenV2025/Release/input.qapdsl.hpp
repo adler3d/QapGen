@@ -403,7 +403,7 @@ t_test20250618_atrr{
 //    go_auto($dev1);
 //  }*/
 //}
-//t_meta_lexer{
+t_meta_lexer{
 i_code {
   virtual string make_code()const{QapDebugMsg("no way.");return "";};
 }
@@ -1243,7 +1243,7 @@ t_struct_body{
   "}"
   struct t_target_item_out;
   struct t_out{
-    vector<const t_target_item*> nested;
+    vector<i_target_item*> nested;
     string provars;
     string procmds;
     string cppcode;
@@ -1409,5 +1409,5 @@ t_target{
     return out;
   }
 }
-//}
+}
 //
