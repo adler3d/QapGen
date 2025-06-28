@@ -243,7 +243,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
 {
   #pragma region typedefs
   #define F(T)typedef t_templ_sys_v04::T T;
-  F(i_code                        )\
   F(t_name_code                   )\
   F(t_num_code                    )\
   F(t_str_seq                     )\
@@ -251,7 +250,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   F(t_str_code                    )\
   F(t_char_code                   )\
   F(t_sign_code                   )\
-  F(i_code_with_sep               )\
   F(t_name_code_with_sep          )\
   F(t_num_code_with_sep           )\
   F(t_str_code_with_sep           )\
@@ -267,10 +265,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   F(t_semicolon                   )\
   F(t_value_item                  )\
   F(t_value                       )\
-  F(i_type_templ                  )\
   F(t_type_scope                  )\
   F(t_type_templ                  )\
-  F(i_type_item                   )\
   F(t_type_item_string            )\
   F(t_type_item_char              )\
   F(t_type_item_number            )\
@@ -282,11 +278,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   F(t_type_templ_params           )\
   F(t_type_templ_angle            )\
   F(t_type_templ_soft             )\
-  F(i_struct_cmd_xxxx             )\
   F(t_struct_cmd_mode             )\
   F(t_sep_value                   )\
   F(t_attr                        )\
-  F(i_struct_field                )\
   F(t_const_field                 )\
   F(t_struct_field_value          )\
   F(t_struct_field                )\
@@ -295,7 +289,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   F(t_cmd_params                  )\
   F(t_cmd_param                   )\
   F(t_struct_cmd_anno             )\
-  F(i_struct_cmd_so               )\
   F(t_struct_cmd_suffix           )\
   F(t_struct_cmd_optional         )\
   F(t_struct_cmd_opt_v2           )\
@@ -303,13 +296,11 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   F(t_sep_struct_cmd              )\
   F(t_struct_cmds                 )\
   F(t_sep_struct_cmds             )\
-  F(i_cpp_code                    )\
   F(t_cpp_code_sep                )\
   F(t_cpp_code_main               )\
   F(t_cpp_code                    )\
   F(t_fields_cmds_cppcode         )\
   F(t_struct_body                 )\
-  F(i_def                         )\
   F(t_class_def                   )\
   F(t_struct_def                  )\
   F(t_target_sep                  )\
