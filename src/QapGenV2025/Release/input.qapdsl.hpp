@@ -49,32 +49,32 @@ t_lev09{
   vector<t_item> arr?;
 }
 t_lev10{
-  t_oper{string value=any_str_from_vec(split("&",","));}
-  t_item{t_oper oper;t_lev09 expr;}
+  t_oper{"&" inline static const string value="&";}
+  t_item{t_oper oper; t_lev09 expr;}
   t_lev09 expr;
   vector<t_item> arr?;
 }
 t_lev11{
-  t_oper{string value=any_str_from_vec(split("^",","));}
-  t_item{t_oper oper;t_lev10 expr;}
+  t_oper{"^" inline static const string value="^";}
+  t_item{t_oper oper; t_lev10 expr;}
   t_lev10 expr;
   vector<t_item> arr?;
 }
 t_lev12{
-  t_oper{string value=any_str_from_vec(split("|",","));}
-  t_item{t_oper oper;t_lev11 expr;}
+  t_oper{"|" inline static const string value="|";}
+  t_item{t_oper oper; t_lev11 expr;}
   t_lev11 expr;
   vector<t_item> arr?;
 }
 t_lev13{
-  t_oper{string value=any_str_from_vec(split("&&",","));}
-  t_item{t_oper oper;t_lev12 expr;}
+  t_oper{"&&" inline static const string value="&&";}
+  t_item{t_oper oper; t_lev12 expr;}
   t_lev12 expr;
   vector<t_item> arr?;
 }
 t_lev14{
-  t_oper{string value=any_str_from_vec(split("||",","));}
-  t_item{t_oper oper;t_lev13 expr;}
+  t_oper{"||" inline static const string value="||";}
+  t_item{t_oper oper; t_lev13 expr;}
   t_lev13 expr;
   vector<t_item> arr?;
 }
@@ -98,6 +98,15 @@ return(
     return `t_lev03{
   string oper=any_str_from_vec(split(`+JSON.stringify(ops)+`,","))?;
   TAutoPtr<i_expr> expr;
+}`;
+  }
+  var oa=ops.split(",");
+  if(oa.length==1){
+    return n+`{
+  t_oper{"`+oa[0]+`" inline static const string value="`+oa[0]+`";}
+  t_item{t_oper oper; `+e+` expr;}
+  `+e+` expr;
+  vector<t_item> arr?;
 }`;
   }
   return n+`{
