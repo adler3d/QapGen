@@ -15,233 +15,99 @@ t_using_test_20250628{
 t_cppcore{
 
 t_lev03{
-  string oper;
+  string oper=any_str_from_vec(split("+,-,!,~",","))?;
   TAutoPtr<i_expr> expr;
-  {
-    O+=go_any_str_from_vec(oper,split("+,-,!,~",","));
-    M+=go_auto(expr);
-  }
 }
 t_lev05{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("*,/,%",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev03 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
+  t_oper{string value=any_str_from_vec(split("*,/,%",","));}
+  t_item{t_oper oper;t_lev03 expr;}
   t_lev03 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
+  vector<t_item> arr?;
 }
 t_lev06{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("+,-",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev05 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
+  t_oper{string value=any_str_from_vec(split("+,-",","));}
+  t_item{t_oper oper;t_lev05 expr;}
   t_lev05 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
+  vector<t_item> arr?;
 }
 t_lev07{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("<<,>>",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev06 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
+  t_oper{string value=any_str_from_vec(split("<<,>>",","));}
+  t_item{t_oper oper;t_lev06 expr;}
   t_lev06 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
+  vector<t_item> arr?;
 }
 t_lev08{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("<,<=,>,>=",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev07 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
+  t_oper{string value=any_str_from_vec(split("<,<=,>,>=",","));}
+  t_item{t_oper oper;t_lev07 expr;}
   t_lev07 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
+  vector<t_item> arr?;
 }
 t_lev09{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("==,!=",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev08 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
+  t_oper{string value=any_str_from_vec(split("==,!=",","));}
+  t_item{t_oper oper;t_lev08 expr;}
   t_lev08 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
+  vector<t_item> arr?;
 }
 t_lev10{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("&",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev09 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
+  t_oper{string value=any_str_from_vec(split("&",","));}
+  t_item{t_oper oper;t_lev09 expr;}
   t_lev09 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
+  vector<t_item> arr?;
 }
 t_lev11{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("^",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev10 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
+  t_oper{string value=any_str_from_vec(split("^",","));}
+  t_item{t_oper oper;t_lev10 expr;}
   t_lev10 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
+  vector<t_item> arr?;
 }
 t_lev12{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("|",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev11 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
+  t_oper{string value=any_str_from_vec(split("|",","));}
+  t_item{t_oper oper;t_lev11 expr;}
   t_lev11 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
+  vector<t_item> arr?;
 }
 t_lev13{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("&&",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev12 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
+  t_oper{string value=any_str_from_vec(split("&&",","));}
+  t_item{t_oper oper;t_lev12 expr;}
   t_lev12 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
+  vector<t_item> arr?;
 }
 t_lev14{
-  t_oper{
-    string value;
-    {
-      go_any_str_from_vec(value,split("||",","));
-    }
-  }
-  t_item{
-    t_oper oper;
-    t_lev13 expr;
-    {
-      go_auto(oper);
-      go_auto(expr);
-    }
-  }
+  t_oper{string value=any_str_from_vec(split("||",","));}
+  t_item{t_oper oper;t_lev13 expr;}
   t_lev13 expr;
-  vector<t_item> arr;
-  {
-    M+=go_auto(expr);
-    O+=go_auto(arr);
-  }
+  vector<t_item> arr?;
 }
+/*
+var pad2=num=>(num<10?"0"+num:""+num);
+return(
+`+,-,!,~
+*,/,%
++,-
+<<,>>
+<,<=,>,>=
+==,!=
+&
+^
+|
+&&
+||`.split("\r").join("").split("\n").map((ops,i)=>{
+  var e="t_lev"+pad2(i==1?3:i+3);
+  var n="t_lev"+pad2(i+4);
+  if(!i){
+    return `t_lev03{
+  string oper=any_str_from_vec(split(`+JSON.stringify(ops)+`,","))?;
+  TAutoPtr<i_expr> expr;
+}`;
+  }
+  return n+`{
+  t_oper{string value=any_str_from_vec(split("`+ops+`",","));}
+  t_item{t_oper oper;`+e+` expr;}
+  `+e+` expr;
+  vector<t_item> arr?;
+}`;
+}).join("\n"));
+*/
 t_string{
   "\""
   string value=str<vector<TAutoPtr<i_str_item>>>()?;
@@ -419,16 +285,13 @@ t_test20250618_atrr{
 //}
 t_meta_lexer{
 
-i_code {
-  }
-
 t_name_code:i_code{
   string value=str<t_name::t_impl>();
-  }
+}
 
 t_num_code:i_code{
   t_number body;
-  }
+}
 
 t_str_seq{
   "\""
@@ -444,103 +307,31 @@ t_sep_str_seq{
 t_str_code:i_code{
   t_str_seq first;
   vector<t_sep_str_seq> arr?;
-  }
+}
 
 t_char_code:i_code{
   "'"
   TAutoPtr<i_char_item> body;
   "'"
-  }
+}
 
 t_sign_code:i_code{
   t_sign body;
-  }
-
-i_code_with_sep{
-  }
-
-t_name_code_with_sep:i_code_with_sep{
-  t_name_code body;
-  t_sep sep;
-  {
-    M+=go_auto(body);
-    O+=go_auto(sep);
-  }
 }
 
-t_num_code_with_sep:i_code_with_sep{
-  t_num_code body;
-  t_sep sep;
-  {
-    M+=go_auto(body);
-    O+=go_auto(sep);
-  }
+t_name_code_with_sep=>i_code_with_sep{t_name_code body;t_sep sep?;}
+t_num_code_with_sep=>i_code_with_sep{t_num_code body;t_sep sep?;}
+t_str_code_with_sep=>i_code_with_sep{t_str_code body;t_sep sep?;}
+t_char_code_with_sep=>i_code_with_sep{t_char_code body;t_sep sep?;}
+t_sign_code_with_sep=>i_code_with_sep{t_sign_code body;t_sep sep?;}
+t_soft_brackets_code_with_sep=>i_code_with_sep{
+  "(" " "? vector<TAutoPtr<i_code_with_sep>> body?; ")" " "?
 }
-
-t_str_code_with_sep:i_code_with_sep{
-  t_str_code body;
-  t_sep sep;
-  {
-    M+=go_auto(body);
-    O+=go_auto(sep);
-  }
+t_hard_brackets_code_with_sep=>i_code_with_sep{
+  "[" " "? vector<TAutoPtr<i_code_with_sep>> body?; "]" " "?
 }
-
-t_char_code_with_sep:i_code_with_sep{
-  t_char_code body;
-  t_sep sep;
-  {
-    M+=go_auto(body);
-    O+=go_auto(sep);
-  }
-}
-
-t_sign_code_with_sep:i_code_with_sep{
-  t_sign_code body;
-  t_sep sep;
-  {
-    M+=go_auto(body);
-    O+=go_auto(sep);
-  }
-}
-
-t_soft_brackets_code_with_sep:i_code_with_sep{
-  t_sep sep0;
-  vector<TAutoPtr<i_code_with_sep>> body;
-  t_sep sep1;
-  {
-    M+=go_const("(");
-    O+=go_auto(sep0);
-    O+=go_auto(body);
-    M+=go_const(")");
-    O+=go_auto(sep1);
-  }
-}
-
-t_hard_brackets_code_with_sep:i_code_with_sep{
-  t_sep sep0;
-  vector<TAutoPtr<i_code_with_sep>> body;
-  t_sep sep1;
-  {
-    M+=go_const("[");
-    O+=go_auto(sep0);
-    O+=go_auto(body);
-    M+=go_const("]");
-    O+=go_auto(sep1);
-  }
-}
-
-t_curly_brackets_code_with_sep:i_code_with_sep{
-  t_sep sep0;
-  vector<TAutoPtr<i_code_with_sep>> body;
-  t_sep sep1;
-  {
-    M+=go_const("{");
-    O+=go_auto(sep0);
-    O+=go_auto(body);
-    M+=go_const("}");
-    O+=go_auto(sep1);
-  }
+t_curly_brackets_code_with_sep=>i_code_with_sep{
+  "{" " "? vector<TAutoPtr<i_code_with_sep>> body?; "}" " "?
 }
 
 //real_source_data:
@@ -553,15 +344,23 @@ t_sign_code
 t_soft_brackets_code
 t_hard_brackets_code
 t_curly_brackets_code
-@@@public:
-  string make_code()const{return body.make_code()+sep.make_code();}
+@@@
 */
 
 //real_source_code:
 /*
 var mk=POST['data'].split("@@@")[1];
 var gen=function(lex,mk){
-  return lex+"_with_sep=>i_code_with_sep{"+lex+" body;t_sep sep;{M+=go_auto(body);O+=go_auto(sep);}"+mk+"\n}";
+  if(lex.includes("brackets")){
+    var json=JSON.stringify;
+    var m={soft:["(",")"],hard:["[","]"],curly:["{","}"]}
+    for(var k in m)if(lex.includes(k))return [
+      lex+"_with_sep=>i_code_with_sep{",
+      "  "+json(m[k][0])+' " "? vector<TAutoPtr<i_code_with_sep>> body?; '+json(m[k][1])+' " "?',
+      "}"
+    ].join("\n");
+  }
+  return lex+"_with_sep=>i_code_with_sep{"+lex+" body;t_sep sep?;}";
 }
 var out=[];
 var arr=POST['data'].split("\n@@@")[0].split("\r").join("").split("\n");
@@ -570,6 +369,7 @@ for(var i=0;i<arr.length;i++){
 }
 return out.join("\n");
 */
+
 t_code{
   vector<TAutoPtr<i_code>> arr;
 }
@@ -612,9 +412,6 @@ t_value{
   string body=str<TAutoPtr<t_cppcore::i_expr>>();
 }
 
-i_type_templ{
-}
-
 t_type_scope{
   "::"
 }
@@ -623,16 +420,13 @@ t_type_templ{
   TAutoPtr<i_type_templ> body;
 }
 
-i_type_item{
-}
-
 t_type_item_string:i_type_item{
   t_str_item body;
 }
 
 t_type_item_char:i_type_item{
   t_char_item body;
- }
+}
 
 t_type_item_number:i_type_item{
   t_number body;
