@@ -764,7 +764,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       if(is_interface){
         body2+="\n"+v.c;
       }
-      out+=body2,owner.empty();
+      out+=body2;
       out=drop_empty_lines(out);
       //out+="\n"+string(owner.empty()?"":"  ")+"};";
       body+=drop_empty_lines(out);
