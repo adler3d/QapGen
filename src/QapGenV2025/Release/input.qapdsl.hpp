@@ -1,3 +1,17 @@
+t_using_test_20250628{
+  using " " as t_sep;
+  t_foo;
+  t_foo{
+    t_bar{t_baz{}}
+    t_bar b;
+    " "
+    t_bar c?;
+    t_bar d?;
+    " "?
+  }
+  t_foo foo;
+}
+
 t_cppcore{
 
 t_lev03{
