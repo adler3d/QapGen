@@ -1,4 +1,4 @@
-// 2743.442100 ms
+// 3272.230200 ms
 struct t_using_test_20250628{
   struct t_foo;  
   struct t_foo{

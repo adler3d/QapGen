@@ -650,7 +650,6 @@ t_type_item_type:i_type_item {
   t_name type;
   TAutoPtr<t_type_templ> param?;
   vector<t_scope_type_item> arr?;
-
 }
 
 t_type_expr2{
@@ -702,8 +701,6 @@ t_attr{
   vector<t_sep_value> arr=vec(",")?;
   " "?
   "]"
-}
-i_struct_field{
 }
 t_const_field:i_struct_field{
   t_qst{"?"}
@@ -780,9 +777,6 @@ t_cmd_param{
 t_struct_cmd_anno:i_struct_cmd_xxxx{
   string mode=any_str_from_vec(split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));
   " ";
-}
-
-i_struct_cmd_so{
 }
 
 t_struct_cmd_suffix:i_struct_cmd_so{
