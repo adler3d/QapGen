@@ -192,8 +192,6 @@ struct t_ic_dev_v2{
     bool need_grab=false;
     bool need_igrab=false;
     vector<string> list;
-    //vector<string> iarr;
-    //vector<string> carr;
     vector<t_meta_lexer::t_target_item*> arr;
     vector<t_meta_lexer::t_target_item*> piarr;
     vector<t_meta_lexer::t_target_item*> pcarr;
@@ -238,14 +236,9 @@ struct t_ic_dev_v2{
 
 struct t_templ_sys_v05:t_templ_sys_v04,
   t_meta_lexer::i_target_item::i_visitor,
-  //t_meta_lexer::i_code::i_visitor,
-  //t_meta_lexer::i_code_with_sep::i_visitor,
-  //t_meta_lexer::i_type_item::i_visitor,
-  //t_meta_lexer::i_type_templ::i_visitor,
   t_meta_lexer::i_struct_cmd_xxxx::i_visitor,
   t_meta_lexer::i_struct_field::i_visitor,
   t_meta_lexer::i_struct_cmd_so::i_visitor,
-  //t_meta_lexer::i_cpp_code::i_visitor,
   t_meta_lexer::i_def::i_visitor
 {
   #pragma region typedefs
@@ -337,48 +330,18 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   //
   #undef F
   #define F(T)void Do(T&r){r.Use(*this);}
-  //F(i_code           )
-  //F(i_code_with_sep  )
-  //F(i_type_item      )
-  //F(i_type_templ     )
   F(i_struct_cmd_xxxx)
   F(i_struct_field   )
   F(i_struct_cmd_so  )
-  //F(i_cpp_code       )
   F(i_def            )
   F(i_target_item    )
   #undef F
   #pragma endregion
-  /*void Do(t_name_code&r)override{}
-  void Do(t_num_code&r)override{}
-  void Do(t_str_code&r)override{}
-  void Do(t_char_code&r)override{}
-  void Do(t_sign_code&r)override{}
-  void Do(t_soft_brackets_code&r)override{}
-  void Do(t_hard_brackets_code&r)override{}
-  void Do(t_curly_brackets_code&r)override{}
-  void Do(t_name_code_with_sep&r)override{}
-  void Do(t_num_code_with_sep&r)override{}
-  void Do(t_str_code_with_sep&r)override{}
-  void Do(t_char_code_with_sep&r)override{}
-  void Do(t_sign_code_with_sep&r)override{}
-  void Do(t_soft_brackets_code_with_sep&r)override{}
-  void Do(t_hard_brackets_code_with_sep&r)override{}
-  void Do(t_curly_brackets_code_with_sep&r)override{}
-  void Do(t_type_item_string&r)override{}
-  void Do(t_type_item_char&r)override{}
-  void Do(t_type_item_number&r)override{}
-  void Do(t_type_item_type&r)override{}
-  void Do(t_type_templ_angle&r)override{}
-  void Do(t_type_templ_soft&r)override{}*/
   void Do(t_struct_cmd_mode&r)override{}
-  //bool cmd_anno=false;
   void Do(t_struct_cmd_anno&r)override{}
   void Do(t_struct_cmd_suffix&r)override{}
   void Do(t_struct_cmd_optional&r)override{}
-  void Do(t_struct_cmd_opt_v2&r)override{}/*
-  void Do(t_cpp_code_sep&r)override{}
-  void Do(t_cpp_code_main&r)override{}*/
+  void Do(t_struct_cmd_opt_v2&r)override{}
   t_ic_dev_v2::t_lexer def_info;
   void Do(t_class_def&r)override{
     def_info.name=r.name.value;def_info.parent=r.parent.value;def_info.sep.clear();
@@ -537,7 +500,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     string parent_info=!L.parent.empty()?"PARENT("+L.parent+")":"";
     string owner=dev.arr.size()?dev.arr.back().lexer.name:"";
     string owner_info=!owner.empty()?"OWNER("+owner+")":"";
-    //out+=target_code.empty()?"":((hasVirtual?"":"public:\n")+target_code+"\n");
     DoGrab(r);
     dev.top.out+=out+"\n";
     interface_autogen();
@@ -583,12 +545,10 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     };
     t_visitor v;
     if(r.body.fcc)v.Do(*r.body.fcc.get());
-    //string storage=std::move(output);
     provars.clear();
     cmd_id=-1;
     if(v.pfs)Do(*v.pfs);
     auto&body=dev.top.out;
-    //string body=std::move(output);
     {
       t_templ_sys_v02::t_inp inp;
       inp.add("NAME",L.name);
@@ -669,7 +629,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           Do(v.pcmds);
           out.procmds=procmds;
         }
-        //string sep=sep0.value.empty()?sep1.value:sep0.value;
         string sep;
         out.cppcode=v.c.size()?sep+v.c+"\n":"";
       }
@@ -814,20 +773,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       if(is_interface){
         body2+="\n"+v.c;
       }
-      /*
-      if(pti){
-        auto c=pti->make_code(ic_dev);
-        if(!c.out.cppcode.empty()){
-          //QapDebugMsg("[2025.06.18 13:19:44.748]:\nuse 't_static_visitor' instead of 'usercode inside lexem'.");
-        }
-        if(c.out.cppcode.empty()){
-          out+="};";
-        }else{
-          body+=move_block(c.out.cppcode,owner.empty()?"":"  ");
-          //body+="};";
-        }
-      }//else body+="};";
-      */
       out+=body2,owner.empty();
       out=drop_empty_lines(out);
       //out+="\n"+string(owner.empty()?"":"  ")+"};";
@@ -845,13 +790,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     body=drop_empty_lines(body);
     dev.arr.back().out+=move_block("\n"+body+"\n",owner.empty()?"":"  ");
     dev.pop();
-    //if(!v.pcmds){
-    //  field_as_cmd=true;
-    //  if(v.pfs)Do(*v.pfs);
-    //  field_as_cmd=false;
-    //}else{
-    //  if(v.pcmds)Do(*v.pcmds);
-    //}
   }
   vector<TAutoPtr<t_target_item>> ibuf;
   bool target_only=false;
