@@ -5,9 +5,9 @@ const path = require('path');
 
 const baseUrl = 'https://habr.com';
 
-// Параметры из командной строки
+// РџР°СЂР°РјРµС‚СЂС‹ РёР· РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРё
 // node script.js programming week
-const [,, startHub = 'programming', period = 'monthly'] = process.argv;
+const [,, startHub = 'programming', period = 'weekly'] = process.argv;
 
 const visitedHubs = new Set();
 const results = {};
@@ -45,7 +45,7 @@ async function parseHub(hubSlug) {
 
   const articles = $('article.tm-articles-list__item');
   if (articles.length === 0) {
-    console.log(`Статей не найдено в хабе ${hubSlug}`);
+    console.log(`РЎС‚Р°С‚РµР№ РЅРµ РЅР°Р№РґРµРЅРѕ РІ С…Р°Р±Рµ ${hubSlug}`);
     return;
   }
 
@@ -54,33 +54,38 @@ async function parseHub(hubSlug) {
   articles.each((_, el) => {
     const article = $(el);
 
-    // Заголовок и ссылка
-    const titleEl = article.find('a.tm-article-snippet__title-link');
+    // Р—Р°РіРѕР»РѕРІРѕРє Рё СЃСЃС‹Р»РєР°
+    const titleEl = article.find('a[data-test-id="article-snippet-title-link"]').first();
     const title = titleEl.text().trim();
     const urlPath = titleEl.attr('href');
     const url = urlPath ? baseUrl + urlPath : '';
 
-    // Просмотры
+    // РџСЂРѕСЃРјРѕС‚СЂС‹
     const viewsStr = article.find('span.tm-icon-counter__value').attr('title') || '';
     const views = parseNumber(viewsStr);
 
-    // Плюсы, минусы и финальная оценка (рейтинг)
-    const votesSpan = article.find('span.tm-votes-meter__value');
+    const votesContainer = article.find('div.tm-votes-meter.tm-data-icons__item');
+
     let pluses = 0, minuses = 0, rating = 0;
-    if (votesSpan.length) {
-      const votesTitle = votesSpan.attr('title') || '';
-      const plusMatch = votesTitle.match(/^(\d+)/);
-      if (plusMatch) pluses = parseInt(plusMatch[1], 10);
-      const minusMatch = votesTitle.match(/v(\d+)/);
-      if (minusMatch) minuses = parseInt(minusMatch[1], 10);
 
-      // Финальная оценка — чаще всего это текст внутри span, например "+222"
-      const ratingText = votesSpan.text().trim();
-      // Убираем знак "+" и пробелы, парсим число
-      rating = parseInt(ratingText.replace(/\+/g, '').trim(), 10) || 0;
+    if (votesContainer.length) {
+      const votesSpan = votesContainer.find('span[data-test-id="votes-meter-value"]').first();
+
+      if (votesSpan.length) {
+        const title = votesSpan.attr('title') || '';
+        const innerText = votesSpan.text().trim();
+
+        const plusMatch = title.match(/в†‘(\d+)/);
+        if (plusMatch) pluses = parseInt(plusMatch[1], 10);
+
+        const minusMatch = title.match(/в†“(\d+)/);
+        if (minusMatch) minuses = parseInt(minusMatch[1], 10);
+
+        rating = parseInt(innerText.replace(/\+/g, '').trim(), 10) || 0;
+      }
     }
-
-    // Хабы статьи
+    
+    // РҐР°Р±С‹ СЃС‚Р°С‚СЊРё
     const hubs = [];
     article.find('a.tm-publication-hub__link').each((_, hubEl) => {
       const href = $(hubEl).attr('href');
@@ -100,7 +105,7 @@ async function parseHub(hubSlug) {
       hubs
     });
 
-    // Рекурсивно добавляем новые хабы в очередь
+    // Р РµРєСѓСЂСЃРёРІРЅРѕ РґРѕР±Р°РІР»СЏРµРј РЅРѕРІС‹Рµ С…Р°Р±С‹ РІ РѕС‡РµСЂРµРґСЊ
     hubs.forEach(h => {
       if (!visitedHubs.has(h)) {
         hubsToProcess.add(h);
@@ -109,7 +114,7 @@ async function parseHub(hubSlug) {
   });
 }
 
-// Очередь хабов для обработки
+// РћС‡РµСЂРµРґСЊ С…Р°Р±РѕРІ РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё
 const hubsToProcess = new Set([startHub]);
 
 async function main() {
@@ -121,14 +126,14 @@ async function main() {
     break;
   }
 
-  // Сохраняем результаты
   const outPath = path.resolve(__dirname, `habr_hubs_stats_${startHub}_${period}.json`);
-  fs.writeFileSync(outPath, JSON.stringify(results, null, 2), 'utf-8');
   console.log('\nhubs:', Array.from(visitedHubs).join(', '));
   console.log(`\ndone. see ${outPath}`);
   console.log(`\nhubs_total: ${visitedHubs.size}`);
+  // РЎРѕС…СЂР°РЅСЏРµРј СЂРµР·СѓР»СЊС‚Р°С‚С‹
+  fs.writeFileSync(outPath, JSON.stringify(results, null, 2), 'utf-8');
 }
 
 main().catch(e => {
-  console.error('Ошибка в основном процессе:', e);
+  console.error('РћС€РёР±РєР° РІ РѕСЃРЅРѕРІРЅРѕРј РїСЂРѕС†РµСЃСЃРµ:', e);
 });
