@@ -1,4 +1,4 @@
-// 2889.116800 ms
+// 2784.313000 ms
 struct t_using_test_20250628{
   struct t_foo;  
   struct t_foo{
@@ -558,7 +558,7 @@ struct t_cppcore{
         if(!ok)return ok;
         return ok;
       }
-    inline static const string value="&";
+      inline static const string value="&";
     };
     struct t_item{
     #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev10)
@@ -623,7 +623,7 @@ struct t_cppcore{
         if(!ok)return ok;
         return ok;
       }
-    inline static const string value="^";
+      inline static const string value="^";
     };
     struct t_item{
     #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev11)
@@ -688,7 +688,7 @@ struct t_cppcore{
         if(!ok)return ok;
         return ok;
       }
-    inline static const string value="|";
+      inline static const string value="|";
     };
     struct t_item{
     #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev12)
@@ -753,7 +753,7 @@ struct t_cppcore{
         if(!ok)return ok;
         return ok;
       }
-    inline static const string value="&&";
+      inline static const string value="&&";
     };
     struct t_item{
     #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev13)
@@ -818,7 +818,7 @@ struct t_cppcore{
         if(!ok)return ok;
         return ok;
       }
-    inline static const string value="||";
+      inline static const string value="||";
     };
     struct t_item{
     #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev14)

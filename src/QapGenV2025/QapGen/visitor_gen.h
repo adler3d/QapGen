@@ -82,6 +82,18 @@ public:
     if(drop_last_line_spaces)for(int i=0;out.size()&&out.back()==' ';i++)out.pop_back();
     return out;
   }
+  static string move_block(const string&source,int ds){
+    if(!ds)return source;
+    auto arr=split(source,"\n");
+    if(arr.empty())return source;
+    for(auto&ex:arr){
+      auto p=ex.find_first_not_of(' ');
+      if(p==string::npos){ex.clear();continue;}
+      ex=ex.substr(std::min(p,2u));
+    }
+    auto out=join(arr,"\n");
+    return out;
+  }
 public:
   static string pad_end(const string&s,size_t ms){
     return s+string(ms-s.size(),' ');
@@ -620,8 +632,12 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           Do(v.pcmds);
           out.procmds=procmds;
         }
-        string sep;
-        out.cppcode=v.c.size()?sep+v.c+"\n":"";
+        string sep="\n  ";
+        string cc=move_block(v.c,-2);
+        out.cppcode=cc.size()?sep+cc+"\n":"";
+        if(out.cppcode.find("inline")!=string::npos){
+          int gg=1;
+        }
       }
       auto*pcmds=&c.procmds;
       if(vqcnb_mode&&v.pfs){
