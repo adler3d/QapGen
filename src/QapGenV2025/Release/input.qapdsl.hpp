@@ -196,7 +196,7 @@ t_var_expr:i_expr{
   t_sb_expr{
     "["
     t_sep sep0?;
-    TAutoPtr<i_expr> expr;
+    t_lev14 expr;
     t_sep sep1?;
     "]"
   }
@@ -213,7 +213,7 @@ t_var_expr:i_expr{
     t_sep sepB?;
     "<"
     t_sep sep0?;
-    TAutoPtr<i_expr> expr;
+    t_lev14 expr;
     t_sep sep1?;
     ">"
     TAutoPtr<t_dd_part> ddp?;
@@ -236,13 +236,13 @@ t_var_expr:i_expr{
 
 t_block_expr:i_expr{
   "("
-  TAutoPtr<i_expr> expr;
+  t_lev14 body;
   ")"
 }
 
 t_call_param{
   t_sep sep0?;
-  TAutoPtr<i_expr> expr;
+  t_lev14 body;
   t_sep sep1?;
 }
 
