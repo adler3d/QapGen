@@ -23,7 +23,6 @@ async function fetchPage(url) {
 }
 
 function parseNumber(str) {
-  // Преобразует "36K" в 36000, "1.2K" в 1200 и т.п.
   if (!str) return 0;
   str = str.toUpperCase();
   if (str.endsWith('K')) return parseFloat(str) * 1000;
@@ -39,71 +38,75 @@ async function parseHub(hubSlug) {
 
   const hubUrl = `${baseUrl}/ru/hubs/${hubSlug}/articles/top/${period}/`;
 
-  let page = 1;
-  let hasNextPage = true;
+  const html = await fetchPage(hubUrl);
+  if (!html) return;
+
+  const $ = cheerio.load(html);
+
+  const articles = $('article.tm-articles-list__item');
+  if (articles.length === 0) {
+    console.log(`Статей не найдено в хабе ${hubSlug}`);
+    return;
+  }
+
   results[hubSlug] = [];
 
-  while (hasNextPage) {
-    const url = page === 1 ? hubUrl : `${hubUrl}page${page}/`;
-    const html = await fetchPage(url);
-    if (!html) break;
+  articles.each((_, el) => {
+    const article = $(el);
 
-    const $ = cheerio.load(html);
+    // Заголовок и ссылка
+    const titleEl = article.find('a.tm-article-snippet__title-link');
+    const title = titleEl.text().trim();
+    const urlPath = titleEl.attr('href');
+    const url = urlPath ? baseUrl + urlPath : '';
 
-    const articles = $('article.tm-articles-list__item');
-    if (articles.length === 0) break;
+    // Просмотры
+    const viewsStr = article.find('span.tm-icon-counter__value').attr('title') || '';
+    const views = parseNumber(viewsStr);
 
-    articles.each((_, el) => {
-      const article = $(el);
+    // Плюсы, минусы и финальная оценка (рейтинг)
+    const votesSpan = article.find('span.tm-votes-meter__value');
+    let pluses = 0, minuses = 0, rating = 0;
+    if (votesSpan.length) {
+      const votesTitle = votesSpan.attr('title') || '';
+      const plusMatch = votesTitle.match(/^(\d+)/);
+      if (plusMatch) pluses = parseInt(plusMatch[1], 10);
+      const minusMatch = votesTitle.match(/v(\d+)/);
+      if (minusMatch) minuses = parseInt(minusMatch[1], 10);
 
-      // Собираем хабы статьи
-      const hubs = [];
-      article.find('a.tm-publication-hub__link').each((_, hubEl) => {
-        const href = $(hubEl).attr('href');
-        if (href && href.startsWith('/ru/hubs/')) {
-          const slug = href.split('/').filter(Boolean).pop();
-          hubs.push(slug);
-        }
-      });
+      // Финальная оценка — чаще всего это текст внутри span, например "+222"
+      const ratingText = votesSpan.text().trim();
+      // Убираем знак "+" и пробелы, парсим число
+      rating = parseInt(ratingText.replace(/\+/g, '').trim(), 10) || 0;
+    }
 
-      // Просмотры
-      const viewsStr = article.find('span.tm-icon-counter__value').attr('title') || '';
-      const views = parseNumber(viewsStr);
-
-      // Плюсы/минусы
-      const votesTitle = article.find('span.tm-votes-meter__value').attr('title') || '';
-      // Пример title: "Всего голосов 205: ^198 и v7"
-      let pluses = 0, minuses = 0;
-      const match = votesTitle.match(/^(\d+)/);
-      if (match) pluses = parseInt(match[1], 10);
-      const match2 = votesTitle.match(/v(\d+)/);
-      if (match2) minuses = parseInt(match2[1], 10);
-
-      results[hubSlug].push({
-        title: article.find('a.tm-article-snippet__title-link').text().trim(),
-        url: baseUrl + article.find('a.tm-article-snippet__title-link').attr('href'),
-        views,
-        pluses,
-        minuses,
-        hubs
-      });
-
-      // Рекурсивно обрабатываем новые хабы
-      hubs.forEach(h => {
-        if (!visitedHubs.has(h)) {
-          // Добавим в очередь, но не здесь, чтобы избежать "зависания"
-          hubsToProcess.add(h);
-        }
-      });
+    // Хабы статьи
+    const hubs = [];
+    article.find('a.tm-publication-hub__link').each((_, hubEl) => {
+      const href = $(hubEl).attr('href');
+      if (href && href.startsWith('/ru/hubs/')) {
+        const slug = href.split('/').filter(Boolean).pop();
+        hubs.push(slug);
+      }
     });
 
-    // Проверка на следующую страницу
-    const nextBtn = $('.tm-pagination__page-link').filter((_, el) => {
-      return $(el).text().trim() === String(page + 1);
+    results[hubSlug].push({
+      title,
+      url,
+      views,
+      pluses,
+      minuses,
+      rating,
+      hubs
     });
-    hasNextPage = false;//nextBtn.length > 0;
-    page++;
-  }
+
+    // Рекурсивно добавляем новые хабы в очередь
+    hubs.forEach(h => {
+      if (!visitedHubs.has(h)) {
+        hubsToProcess.add(h);
+      }
+    });
+  });
 }
 
 // Очередь хабов для обработки
@@ -111,11 +114,11 @@ const hubsToProcess = new Set([startHub]);
 
 async function main() {
   while (hubsToProcess.size > 0) {
-    // Берём один хаб из множества
     const [hub] = hubsToProcess;
     hubsToProcess.delete(hub);
 
     await parseHub(hub);
+    break;
   }
 
   // Сохраняем результаты
