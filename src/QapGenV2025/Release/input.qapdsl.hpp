@@ -192,7 +192,20 @@ t_real_expr:i_expr{
   string value=str<t_impl>();
 }
 
-t_var_expr:i_expr{
+t_call_param{
+  t_sep sep0?;
+  t_lev14 body;
+  t_sep sep1?;
+}
+
+t_call_params{
+  "("
+  t_sep sep?;
+  vector<t_call_param> arr=vec(",")?;
+  ")"
+}
+
+t_varcall_expr:i_expr{
   t_sb_expr{
     "["
     t_sep sep0?;
@@ -228,10 +241,15 @@ t_var_expr:i_expr{
     t_name name;
     t_arr arr?;
   }
-  t_name name;
-  TAutoPtr<i_part> tp?;
-  TAutoPtr<t_arr> arr?;
-  vector<t_item> items?;
+  t_var{
+    t_name name;
+    TAutoPtr<i_part> tp?;
+    TAutoPtr<t_arr> arr?;
+    vector<t_item> items?;
+  }
+  t_var var;
+  t_sep sep?;
+  t_call_params params?;
 }
 
 t_block_expr:i_expr{
@@ -240,24 +258,12 @@ t_block_expr:i_expr{
   ")"
 }
 
-t_call_param{
-  t_sep sep0?;
-  t_lev14 body;
-  t_sep sep1?;
-}
-
-t_call_params{
-  "("
-  t_sep sep?;
-  vector<t_call_param> arr=vec(",")?;
-  ")"
-}
-
+/*
 t_call_expr:i_expr{
   t_var_expr call;
   t_sep sep?;
   t_call_params params;
-}
+}*/
 
 }
 
@@ -520,7 +526,7 @@ t_struct_field_value {
   " "?
   "=";
   " "?
-  TAutoPtr<t_cppcore::t_call_expr> expr;
+  TAutoPtr<t_cppcore::t_varcall_expr> expr;
 }
 t_struct_field:i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}

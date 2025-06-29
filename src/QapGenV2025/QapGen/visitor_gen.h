@@ -438,7 +438,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       if(r.value){
         auto*pce=r.value->expr.get();//t_cppcore::t_call_expr::UberCast(value->expr.get());
         QapAssert(pce);
-        QapAssert(save_obj(pce->call,call));
+        QapAssert(save_obj(pce->var,call));
         QapAssert(pce->params.arr.empty()||save_obj(pce->params.arr,params));
       }
       string go=r.value?call+"("+r.name.value+string(params.size()?","+params:"")+");":"auto("+r.name.value+");";

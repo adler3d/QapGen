@@ -7,7 +7,7 @@ const baseUrl = 'https://habr.com';
 
 // Параметры из командной строки
 // node script.js programming week
-const [,, startHub = 'programming', period = 'weekly'] = process.argv;
+const [,, startHub = 'programming', period = 1?'daily':(1?'yearly':(1?'monthly':'weekly'))] = process.argv;
 
 const visitedHubs = new Set();
 const results = {};
@@ -123,7 +123,7 @@ async function main() {
     hubsToProcess.delete(hub);
 
     await parseHub(hub);
-    break;
+    //break;
   }
 
   const outPath = path.resolve(__dirname, `habr_hubs_stats_${startHub}_${period}.json`);
