@@ -2,6 +2,9 @@ t_number{
   string body=any(gen_dips("09"));
 }
 
+typedef array<char,2> ARRAY2char;
+typedef array<char,4> ARRAY4char;
+
 i_str_item{
   virtual string get_code()const{ QapDebugMsg("no way."); return ""; }
   virtual string get_value()const{ QapDebugMsg("no way."); return ""; }
@@ -15,7 +18,7 @@ t_str_item_raw=>i_str_item{
 
 t_str_item_hex=>i_str_item{
   "\\x"
-  array(char,2) body=any_arr_char(gen_dips("09afAF"));
+  ARRAY2char body=any_arr_char(gen_dips("09afAF"));
   string get_code()const{return "\\x"+CToS(body[0])+CToS(body[1]);}
   string get_value()const{
     string code;
@@ -28,7 +31,7 @@ t_str_item_hex=>i_str_item{
 
 t_str_item_num=>i_str_item{
   "\\u"
-  array(char,2) body=any_arr_char(gen_dips("09"));
+  ARRAY2char body=any_arr_char(gen_dips("09"));
   string get_code()const{return "\\u"+CToS(body[0])+CToS(body[1]);}
   string get_value()const{
     string code;
@@ -83,7 +86,7 @@ t_char_item_raw=>i_char_item{
 
 t_char_item_hex=>i_char_item{
   "\\x"
-  array(char,2) body=any_arr_char(gen_dips("09afAF"));
+  ARRAY2char body=any_arr_char(gen_dips("09afAF"));
   string get_code()const{return "\\x"+CToS(body[0])+CToS(body[1]);}
   string get_value()const{
     string code;
@@ -96,7 +99,7 @@ t_char_item_hex=>i_char_item{
 
 t_char_item_num=>i_char_item{
   "\\u"
-  array(char,4) body=any_arr_char(gen_dips("09"));
+  ARRAY4char body=any_arr_char(gen_dips("09"));
   string get_code()const{return "\\u"+CToS(body[0])+CToS(body[1]);}
   string get_value()const{
     string code;

@@ -1,9 +1,9 @@
 //#include "StdAfx.h"
 
-#include "templ_lexer_v02.inl"
 struct t_meta_lexer;
 
 #include "meta_lexer.inl"
+#include "templ_lexer_v02.inl"
 
 #include "templ_lexer_v03.inl"
 
@@ -319,6 +319,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   F(t_target_item                 )\
   F(t_target_decl                 )\
   F(t_target_using                )\
+  F(t_target_typedef              )\
   F(t_target                      )\
   F(i_code           )\
   F(i_code_with_sep  )\
@@ -808,6 +809,12 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     dev.top.out+="  struct "+r.name+";";
   }
   void Do(t_target_using&r)override{if(!target_only)dev.add_sep_lex(r.s,r.lexer);}
+  void Do(t_target_typedef&r)override{
+    if(target_only)return;
+    string t;
+    QapAssert(save_obj(r.type,t));
+    dev.top.out+="typedef "+t+" "+r.name.value+";\n";
+  }
   void Do(t_target&r){Do(r.arr);}
   template<class TYPE>
   void Do(TYPE*p){if(p)Do(*p);}
@@ -900,6 +907,7 @@ struct t_class_def_fixer:
     ADD(t_target_item)\
     ADD(t_target_decl)\
     ADD(t_target_using)\
+    ADD(t_target_typedef)\
     ADD(t_class_def)\
     ADD(t_struct_def)\
     ADD(i_target_item)\
@@ -939,6 +947,7 @@ struct t_class_def_fixer:
   void Do(t_target_item&r){r.def->Use(*this);Do(r.body.nested);Do(r.body.fcc);}
   void Do(t_target_decl&r){}
   void Do(t_target_using&r){}
+  void Do(t_target_typedef&r){}
   bool cppcode_killer=true;
   string main(const string&data){
     t_target tar;

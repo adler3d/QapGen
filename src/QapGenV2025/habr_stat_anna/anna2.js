@@ -3,7 +3,7 @@ const path = require('path');
 
 // Путь к входному JSON-файлу с данными
 //const inputFile = path.resolve(__dirname, 'habr_hubs_stats_programming_monthly.json');
-const inputFile = path.resolve(__dirname, 'habr_hubs_stats_programming_monthly.json');
+const inputFile = path.resolve(__dirname, 'habr_hubs_stats_programming_daily.json');
 
 // Путь к выходному JSON-файлу с результатами
 const outputFile = path.resolve(__dirname, 'top_hubs_by_rating.json');
@@ -19,7 +19,7 @@ for (var [hub, articles] of Object.entries(data)) {
   let totalRating = 0;
   let totalViews = 0;
   let count = 0;
-  articles.length=20;
+  articles.length=1;
   //articles=[articles[19],articles[18],articles[17],articles[16]];
   for (const article of articles) {
     if(!article)continue;
@@ -50,7 +50,7 @@ for (var [hub, articles] of Object.entries(data)) {
 }
 
 // Сортируем по среднему рейтингу по убыванию
-var sortedHubs = Object.values(hubStats).filter(e=>e.articles_count>=3).sort((a, b) => (b.avg_views - a.avg_views));
+var sortedHubs = Object.values(hubStats).filter(e=>e.articles_count>=0).sort((a, b) => (b.avg_views - a.avg_views));
 //sortedHubs.length=30;
 //sortedHubs=sortedHubs.sort((a, b) => (b.average_rating - a.average_rating));
 //sortedHubs=sortedHubs.sort((a, b) => -(b.views_per_rating - a.views_per_rating));
