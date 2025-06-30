@@ -249,7 +249,7 @@ t_varcall_expr:i_expr{
   }
   t_var var;
   t_sep sep?;
-  t_call_params params?;
+  TAutoPtr<t_call_params> params?;
 }
 
 t_block_expr:i_expr{
@@ -533,7 +533,7 @@ t_struct_field:i_struct_field{
   TAutoPtr<i_struct_cmd_xxxx> mode?;
   " "?
   TAutoPtr<t_cppcore::i_expr> type;
-  " "
+  " "?
   t_name name;
   TAutoPtr<t_struct_field_value> value?;
   " "?

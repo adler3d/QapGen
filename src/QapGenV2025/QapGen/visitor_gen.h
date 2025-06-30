@@ -439,7 +439,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         auto*pce=r.value->expr.get();//t_cppcore::t_call_expr::UberCast(value->expr.get());
         QapAssert(pce);
         QapAssert(save_obj(pce->var,call));
-        QapAssert(pce->params.arr.empty()||save_obj(pce->params.arr,params));
+        auto*p=pce->params.get();
+        if(!p)QapDebugMsg("call with name = '"+call+"' dont have params");
+        save_obj(p->arr,params);
       }
       string go=r.value?call+"("+r.name.value+string(params.size()?","+params:"")+");":"auto("+r.name.value+");";
       field.cmdout+=out+"go_"+go;
@@ -451,13 +453,14 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     string type_mem;
     QapAssert(r.type&&save_obj(*r.type.get(),type_mem));
     auto t=type_mem;
+    for(int i=0;t.size()&&t.back()==' ';i++)t.pop_back();
     if(bool vec_algo=true){
       auto a=split(t,"<");
       if(a.size()==2&&a[0]=="vector"){
         auto b=split(a[1],">");
         QapAssert(b.size()==2);
-        QapAssert(b[1]=="");
-        if(dev.need_tautoptr(b[0]))t="vector<TAutoPtr<"+b[0]+">>"+b[1];
+        //QapAssert(b[1]=="");
+        if(dev.need_tautoptr(b[0]))t="vector<TAutoPtr<"+b[0]+">>";//+b[1];
       }
     }
     if(dev.need_tautoptr(t))t="TAutoPtr<"+t+">";
