@@ -1,4 +1,4 @@
-// 3485.992800 ms
+// 3364.939500 ms
 //===>>===i_str_item_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -482,8 +482,8 @@ public:
     return ok;
   }
 };
-  typedef array<char,2> ARRAY2char;
-  typedef array<char,4> ARRAY4char;
+typedef array<char,2> ARRAY2char;
+typedef array<char,4> ARRAY4char;
 struct t_str_item_raw:public i_str_item{
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_str_item_raw)PARENT(i_str_item)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\

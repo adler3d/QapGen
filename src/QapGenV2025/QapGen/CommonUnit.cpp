@@ -15,6 +15,7 @@ typedef unsigned char uchar;
 //#include "raw_cpp_lexem.inl"
 //#include "t_line_lexer.inl"
 #include "visitor_gen.h"
+//#include "t_json.hpp"
 
 #include <iostream>
 #ifdef _WIN32
@@ -319,10 +320,16 @@ void ssd_test(){
     auto ms=c.MS();
     QapDebugMsg(FToS2(ms)+" "+FToS(n/ms));
   }
+}*//*
+void test20250630_json_test(){
+  TAutoPtr<t_json::i_value> v;
+  QapClock clock;
+  load_obj_full(v,file_get_contents("test.json"));
+  cerr<<clock.MS()<<endl;
 }*/
-
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
+  //test20250630_json_test();  return 0; // 655.864 ms for 2 251 060 באיע vs nodejs(10.42mb/sec)
   //for(;;);
   //main2();
   //file_put_contents("test.bin",s);

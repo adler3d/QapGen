@@ -406,11 +406,13 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     cmd_id++;
     const string*plexer=dev.get_sep_lex(r.value);
     if(field.as_cmd){
+      QapNoWay();
       if(!plexer){field.cmdout={};return;}else{QapNoWay();return;}
       field.cmdout="M+=go_const("+r.value+");";
       return;
     }
     if(!plexer)return;
+    fields_counter++;
     provars+="ADDVAR("+*plexer+",$sep"+IToS(cmd_id)+",DEF,$,$)\\\n";
     //string make_cmd(t_ic_dev&icdev)const{return "M+=go_const("+value+");";}
   }
@@ -448,6 +450,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       field.cmdout+=out+"go_"+go;
       return;
     }
+    fields_counter++;
     cmd_id++;
     vector<string> out;
     string mode="DEF";
@@ -474,6 +477,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     string s;
     provars+="ADDVAR("+join(out,",")+","+(s.empty()?"$":s)+")\\\n";
   }
+  int fields_counter=0;
   string provars,procmds;
   void Do(t_sep_struct_field&r){Do(r.body);}
   void Do(t_target_item&r)override{
@@ -497,6 +501,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       dtn.pcarr.push_back(&r);
       return;
     }
+    target_item_counter++;
     L.sep=r.sep0.value;
     if(is_interface!=interfaces_only)return;
     dev.push();
@@ -804,6 +809,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   }
   vector<TAutoPtr<t_target_item>> ibuf;
   bool target_only=false;
+  int target_item_counter=0;
   void Do(t_target_decl&r)override{
     if(target_only)return;
     dev.top.out+="  struct "+r.name+";";
@@ -824,10 +830,12 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   //void Do(vector<TAutoPtr<TYPE>>&arr){for(auto&ex:arr)if(ex)Do(*ex.get());}
   template<class TYPE>
   void Do(TAutoPtr<TYPE>&r){if(r)Do(*r.get());}
+  real parse_ms=0;
   string main(const string&data){
     init();
-    t_target tar;
+    t_target tar;QapClock clock;
     auto r=load_obj_full(tar,data);
+    parse_ms=clock.MS();
     if(!r.ok){QapDebugMsg(r.msg);return {};}
     auto&dtn=dev.top.nesteds;
     target_only=true;
@@ -1281,5 +1289,6 @@ static void test_2025_06_10(/*IEnvRTTI&Env*/string fn)
   //string str=v4.main(inp);
   string out="// "+FToS(clock.MS())+" ms\n"+str2;
   std::cout<<out;
+  std::cerr<<"{\"parse_ms\":"<<v5.parse_ms<<",\"total_ms\":"<<clock.MS()<<",\"lexers\":"<<v5.target_item_counter<<",\"fields\":"<<v5.fields_counter<<"}"<<endl;
   gg=2;
 }

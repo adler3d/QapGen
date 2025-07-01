@@ -19,7 +19,7 @@ for (var [hub, articles] of Object.entries(data)) {
   let totalRating = 0;
   let totalViews = 0;
   let count = 0;
-  articles.length=1;
+  articles.length=20;
   //articles=[articles[19],articles[18],articles[17],articles[16]];
   for (const article of articles) {
     if(!article)continue;

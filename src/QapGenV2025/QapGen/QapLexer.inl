@@ -61,6 +61,9 @@ public:
   virtual bool go_any_str_from_vec(string&ref,const vector<string>&arr){QapDebugMsg("no way.");return false;}
   virtual bool go_any_str_from_vec(string&ref,const QapStrFinder&arr){QapDebugMsg("no way.");return false;}
 public:
+  bool go_any(string&ref,const QapStrFinder&arr){return go_any_str_from_vec(ref,arr);}
+  bool go_any(string&ref,const vector<string>&arr){return go_any_str_from_vec(ref,arr);}
+public:
   virtual bool go_blob(string&body,size_t count){QapDebugMsg("no way.");return false;}
 public:
   bool go_until(string&body,const string&aft){return go_end(body,aft);}
@@ -231,7 +234,7 @@ public:
     return !body.empty();
   }
   bitset<256> get_expected_bitset_go_const_raw(const char*const ptr,size_t size){
-    bitset<256> b;b[*(unsigned char*)ptr[0]]=true;
+    bitset<256> b;b[*(unsigned char*)ptr]=true;
     return b;
   }
   bool go_const_raw(const char*const ptr,size_t size){
@@ -1335,11 +1338,11 @@ struct t_load_obj_result{
 };
 
 template<class TYPE>
-t_load_obj_result load_obj_full(/*IEnvRTTI&Env,*/TYPE&obj,const string&data){
+t_load_obj_result load_obj_full(/*IEnvRTTI&Env,*/TYPE&obj,const string&data,bool fast_ok=true){
   t_load_obj_result out;
   out.pos=0;
   out.ok=load_obj(/*Env,*/obj,data,&out.pos);
-  out.msg="{\"ok\":"+BToS(out.ok)+",\"date\":\""+cur_date_str()+"\"}";
+  if(!out.ok||!fast_ok)out.msg="{\"ok\":"+BToS(out.ok)+",\"date\":\""+cur_date_str()+"\"}";
   if(out.ok)return out;
   auto buff=t_error_tool::get_codefrag(data,out.pos);
   buff="{\"offset\":"+IToS(out.pos)+"}\n"+buff;
