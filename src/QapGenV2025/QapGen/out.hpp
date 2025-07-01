@@ -1,4 +1,4 @@
-// 3316.612100 ms
+// 3404.313400 ms
 //===>>===i_str_item_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -2906,7 +2906,6 @@ struct t_test20250618_atrr{
       auto&ok=$.ok;
       return ok;
     }
-    [::]
   };
 #define DEF_PRO_NESTED(F)\
   /*<DEF_PRO_NESTED>*/\
