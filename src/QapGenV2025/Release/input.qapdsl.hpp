@@ -1,4 +1,9 @@
-
+t_parent_fullname_reslove_algo_test_20250701{
+  //t_parent_holder{t_foo:i_base{}}
+  t_other{
+    //t_bar:t_parent_holder::i_base{}
+  }
+}
 
 t_using_test_20250628{
   t_sep{" "}
@@ -773,20 +778,22 @@ t_cpp_code{
     t_bayan bayan;
     t_eater eater?;
   }
+  t_minor_eater{t_eater eater=minor<TAutoPtr<i_major>>();}
   t_without_bayan:i_bayan{
-    t_eater eater=minor<TAutoPtr<i_major>>();
-  }
+    t_minor_eater eater=minor<t_with_bayan>();
+  }/*
   t_a:i_strong_bayan{
     t_with_bayan wb;
   }
   t_b:i_strong_bayan{
     t_eater e=minor<t_with_bayan>();
-  }
+  }*/
   TAutoPtr<i_bayan> bayan;
 }
 // test
 
 t_fields_cmds_cppcode{
+  /*
   t_true_fcc{
     vector<t_sep_struct_field> arr;
     TAutoPtr<t_sep_struct_cmds> cmds?;
@@ -798,10 +805,10 @@ t_fields_cmds_cppcode{
   }
   t_cppcode{
     TAutoPtr<t_cpp_code> cppcode;
-  }
-  TAutoPtr<t_true_fcc> tfcc?;
-  TAutoPtr<t_cmds> cmds?;
-  TAutoPtr<t_cppcode> c?;
+  }*/
+  vector<t_sep_struct_field> arr?;
+  TAutoPtr<t_sep_struct_cmds> cmds?;
+  TAutoPtr<t_cpp_code> c?;
 }
 
 t_struct_body{

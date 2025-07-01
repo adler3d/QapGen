@@ -360,14 +360,26 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     return false;
   }
   int cmd_id=-1;
+  struct t_lexer{
+    string name;
+    string fullparent;
+    string fullname;
+    string fullowner;
+    vector<string> cmds;
+    bool is_interface=false;
+  };
+  vector<t_lexer> lexers;
+  vector<string> lexer_cmds;
+  bool cmds_grab=true;
   void Do(t_struct_cmd&r){
-    cmd_id++;
-    //cmd_anno=false;
-    //Do(r.mode);
-    if(r.mode&&t_struct_cmd_anno::UberCast(r.mode.get())){
-      int gg=1;
+    if(cmds_grab){
+      string cmdstr;
+      save_obj(r,cmdstr);
+      lexer_cmds.push_back(cmdstr);
     }
+    cmd_id++;
     char m='D';//r.cmdso?r.cmdso->get_mode():'D';
+    if(r.cmdso)QapDebugMsg("cmd_so is deprecated");
     QapAssert(r.cmdso||r.mode?bool(r.cmdso)!=bool(r.mode):true);
     auto*pm=t_struct_cmd_mode::UberCast(r.mode.get());
     string out=CToS(pm?pm->body:m);//CToS(r.mode?r.mode->get_mode():m);
@@ -536,11 +548,11 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     out+="NAME("+L.name+")"+parent_info+owner_info;
     dev.top.out+=out+"\n";
     out.clear();
-    struct t_visitor:t_fields_cmds_cppcode,t_cpp_code::i_strong_bayan::i_visitor,t_cpp_code::i_bayan::i_visitor{
+    struct t_visitor{//:t_fields_cmds_cppcode,t_cpp_code::i_strong_bayan::i_visitor,t_cpp_code::i_bayan::i_visitor{
       t_sep_struct_cmds*pcmds{};
       vector<t_sep_struct_field>*pfs{};
       string c;
-      void Do(t_cpp_code::t_a&r){save_obj(r.wb.eater,c);}
+      /*void Do(t_cpp_code::t_a&r){save_obj(r.wb.eater,c);}
       void Do(t_cpp_code::t_b&r){save_obj(r.e,c);}
       void Do(t_cpp_code::t_with_bayan&r){save_obj(r.eater,c);}
       void Do(t_cpp_code::t_without_bayan&r){save_obj(r.eater,c);}
@@ -553,10 +565,13 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         if(fcc.tfcc)Do(*fcc.tfcc.get());
         if(fcc.cmds)Do(*fcc.cmds.get());
         if(fcc.c)Do(*fcc.c.get());
-      }
+      }*/
     };
     t_visitor v;
-    if(r.body.fcc)v.Do(*r.body.fcc.get());
+    v.pfs=&r.body.fcc->arr;
+    v.pcmds=r.body.fcc->cmds.get();
+    save_obj(r.body.fcc->c,v.c);
+    //if(r.body.fcc)v.Do(*r.body.fcc.get());
     provars.clear();
     cmd_id=-1;
     if(v.pfs)Do(*v.pfs);
@@ -805,7 +820,52 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     body+="\n};\n";
     body=drop_empty_lines(body);
     dev.arr.back().out+=move_block("\n"+body+"\n",owner.empty()?"":"  ");
+    string fullname,fullowner;
+    for(auto&ex:dev.arr)if(!ex.lexer.name.empty())fullname+=ex.lexer.name+"::";
+    fullowner=fullname;if(fullowner.size()){fullowner.pop_back();fullowner.pop_back();}
+    fullname+=L.name;
+    lexers.push_back({L.name,get_fullparent(),fullname,fullowner,std::move(lexer_cmds),is_interface});
     dev.pop();
+  }
+  string get_fullpreowner(){
+    string fullname;
+    for(size_t i=0;i+1<dev.arr.size();i++){
+      auto&ex=dev.arr[i].lexer.name;
+      if(!ex.empty())fullname+=ex+"::";
+    }
+    return fullname;
+  }
+  string get_fullparent(){
+    auto&dtl=dev.top.lexer;
+    if(dtl.parent.empty())return {};
+    auto&iarr=dev.arr.back().iarr;
+    bool found=false;
+    for(auto&ex:iarr){
+      if(ex==dtl.parent)found=true;
+    }
+    if(!found)QapDebugMsg("lexer parent not found for "+dtl.name+":"+dtl.parent);
+    auto fpo=get_fullpreowner();
+    return fpo+"::"+dtl.parent;
+    /*
+    for(auto i=long long int(dev.arr.size())-1;i>=0;i--){
+      auto&ex=dev.arr[i];
+      string*pit=nullptr;
+      for(auto&it:ex.carr){
+        if(it!=dtl.parent)continue;
+        pit=&it;
+        break;
+      }
+      if(ex.lexer.name==dtl.parent)pit=&ex.lexer.name;
+      if(!pit)continue;
+      string fullname;
+      for(long long int j=0;j<dev.arr.size()&&j!=i;j++){
+        auto&ex=dev.arr[j].lexer.name;
+        if(!ex.empty())fullname+=ex+"::";
+      }
+      fullname+=*pit;
+      return fullname;
+    }*/
+    return {};
   }
   vector<TAutoPtr<t_target_item>> ibuf;
   bool target_only=false;
@@ -831,6 +891,13 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   template<class TYPE>
   void Do(TAutoPtr<TYPE>&r){if(r)Do(*r.get());}
   real parse_ms=0;
+  string poly_gen(){
+    for(auto&ex:lexers){
+      if(!ex.is_interface)continue;
+      //ex.;
+    }
+    return {};
+  }
   string main(const string&data){
     init();
     t_target tar;QapClock clock;
@@ -848,7 +915,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     target_only=false;
     interface_autogen();
     Do(tar);
-    dev.top.out+=get_at_end();
+    if(bool polygen=false){dev.top.out+=poly_gen();}else dev.top.out+=get_at_end();
     vector<i_target_item*> tarr;
     for(auto&ex:tar.arr)tarr.push_back(ex.get());
     auto listoftypes=get_list_of_types(tarr);
@@ -941,13 +1008,11 @@ struct t_class_def_fixer:
     if(drop_empty_lines(out).empty())return true;
     return false;
   }
-  void Do(t_meta_lexer::t_fields_cmds_cppcode::t_cmds&r){if(!is_empty(r.cppcode))r.cppcode=nullptr;}
-  void Do(t_meta_lexer::t_fields_cmds_cppcode::t_true_fcc&r){if(!is_empty(r.cppcode))r.cppcode=nullptr;}
-  void Do(t_meta_lexer::t_fields_cmds_cppcode::t_cppcode&r){if(!is_empty(r.cppcode))r.cppcode=nullptr;}
-  void Do(const t_fields_cmds_cppcode&fcc){
-    if(fcc.tfcc)Do(*fcc.tfcc.get());
-    if(fcc.cmds)Do(*fcc.cmds.get());
-    if(fcc.c)Do(*fcc.c.get());
+  //void Do(t_meta_lexer::t_fields_cmds_cppcode::t_cmds&r){if(!is_empty(r.cppcode))r.cppcode=nullptr;}
+  //void Do(t_meta_lexer::t_fields_cmds_cppcode::t_true_fcc&r){if(!is_empty(r.cppcode))r.cppcode=nullptr;}
+  //void Do(t_meta_lexer::t_fields_cmds_cppcode::t_cppcode&r){if(!is_empty(r.cppcode))r.cppcode=nullptr;}
+  void Do(t_fields_cmds_cppcode&fcc){
+    if(fcc.c)fcc.c=nullptr;
   }
   void Do(t_struct_def&r){}
   void Do(i_target_item&r){r.Use(*this);}
