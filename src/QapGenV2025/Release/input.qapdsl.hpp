@@ -22,51 +22,22 @@ t_number{
 typedef array<char,2> ARRAY2char;
 typedef array<char,4> ARRAY4char;
 
-i_str_item{
-  virtual string get_code()const{ QapDebugMsg("no way."); return ""; }
-  virtual string get_value()const{ QapDebugMsg("no way."); return ""; }
-}
-
 t_str_item_raw=>i_str_item{
   string body=any(dip_inv("\"\\\n"));
-  string get_code()const{return body;}
-  string get_value()const{return body;}
 }
 
 t_str_item_hex=>i_str_item{
   "\\x"
   ARRAY2char body=any_arr_char(gen_dips("09afAF"));
-  string get_code()const{return "\\x"+CToS(body[0])+CToS(body[1]);}
-  string get_value()const{
-    string code;
-    code.push_back(body[0]);
-    code.push_back(body[1]);
-    auto n=HToI_raw(code);
-    return CToS(n);
-  }
 }
 
 t_str_item_num=>i_str_item{
   "\\u"
   ARRAY2char body=any_arr_char(gen_dips("09"));
-  string get_code()const{return "\\u"+CToS(body[0])+CToS(body[1]);}
-  string get_value()const{
-    string code;
-    code.push_back(body[0]);
-    code.push_back(body[1]);
-    auto n=SToI(code);
-    return CToS(n);
-  }
 }
 t_str_item_fix=>i_str_item{
   "\\"
   char body=any_char("tfbrn\\\"\'"+gen_dips("07"));
-  string get_code()const{return "\\"+CToS(body);}
-  string get_value()const{
-    string code=get_code();
-    BinString str=code;
-    return str.data;
-  }
 }
 
 t_str_item{
@@ -74,68 +45,27 @@ t_str_item{
     "\""
     vector<TAutoPtr<i_str_item>> arr;
     "\""
-    string get_code()const{
-      string out;
-      for(int i=0;i<arr.size();i++) out+=arr[i]->get_code();
-      return out;
-    }
-    string get_value()const{
-      string out;
-      for(int i=0;i<arr.size();i++) out+=arr[i]->get_value();
-      return out;
-    }
   }
   string value=str<t_impl>();
-  string get_code()const{return value;}
-  string get_value()const{QapDebugMsg("no impl");return "";}
-}
-
-i_char_item{
-  virtual string get_code()const{QapDebugMsg("no way.");return "";}
-  virtual string get_value()const{QapDebugMsg("no way.");return "";}
 }
 
 t_char_item_raw=>i_char_item{
   string body=any(dip_inv("'\\\n"));
-  string get_code()const{return body;}
-  string get_value()const{return body;}
 }
 
 t_char_item_hex=>i_char_item{
   "\\x"
   ARRAY2char body=any_arr_char(gen_dips("09afAF"));
-  string get_code()const{return "\\x"+CToS(body[0])+CToS(body[1]);}
-  string get_value()const{
-    string code;
-    code.push_back(body[0]);
-    code.push_back(body[1]);
-    auto n=HToI_raw(code);
-    return CToS(n);
-  }
 }
 
 t_char_item_num=>i_char_item{
   "\\u"
   ARRAY4char body=any_arr_char(gen_dips("09"));
-  string get_code()const{return "\\u"+CToS(body[0])+CToS(body[1]);}
-  string get_value()const{
-    string code;
-    code.push_back(body[0]);
-    code.push_back(body[1]);
-    auto n=SToI(code);
-    return CToS(n);
-  }
 }
 
 t_char_item_fix=>i_char_item{
   "\\"
   char body=any_char("tfbrn\\\"\'"+gen_dips("07"));
-  string get_code()const{return "\\"+CToS(body);}
-  string get_value()const{
-    string code=get_code();
-    BinString str=code;
-    return str.data;
-  }
 }
 
 t_char_item{
@@ -143,70 +73,43 @@ t_char_item{
     "'"
     TAutoPtr<i_char_item> body;
     "'"
-    string get_code()const{return "'"+body->get_code()+"'";}
-    string get_value()const{return body->get_value();}
   }
   string value=str<t_impl>();
-  string get_code()const{return value;}
-  string get_value()const{QapDebugMsg("no impl"); return "";}
-}
-
-i_sep{
-  virtual string make_code()const{QapDebugMsg("no way.");return "";}
 }
 
 t_sep_seq:i_sep{
   string body=any(" \t\r\n");
-  string make_code()const{
-    return body;
-  }
 }
 
 t_c_comment:i_sep{
   "/*"
   string body=end("*/");
-  string make_code()const{
-    return "/*"+body+"*/";
-  }
 }
 
 t_cpp_comment=>i_sep{
   "//"
   string body=any(dip_inv("\n"))?;
-  string make_code()const{
-    return "//"+body+"\n";
-  }
 }
 
 t_sep{
   t_impl{
     vector<TAutoPtr<i_sep>> arr;
-    string make_code()const{
-      string out="";
-      for(int i=0;i<arr.size();i++){
-        out+=arr[i]->make_code();
-      }
-      return out;
-    }
   }
   string value=str<t_impl>();
-  string make_code()const{return value;}
 }
 
 t_name{
   t_keyword{
-    string value=any_str_from_vec(split("false,true,nullptr,this,struct,class,for,if,while,do,const,constexpr,else,operator,auto,continue,break,return,goto,virtual,override,public,private,protected,friend,template,typedef,using,namespace,decltype",","));
+    string value=any_str_from_vec(split("new,delete,default,consteval,false,true,nullptr,this,struct,class,for,if,while,do,const,constexpr,else,operator,auto,continue,break,return,goto,virtual,override,public,private,protected,friend,template,typedef,using,namespace,decltype",","));
   }
   t_impl{
     char A=any_char(gen_dips("azAZ")+"_$@");
     string B=any(gen_dips("azAZ09")+"_$@")?;
-    string get()const{return CToS(A)+B;}
   }
   t_impl_ex{
     t_impl impl=minor<t_keyword>();
   }
   string value=str<t_impl_ex>();
-  string get()const{return value;}
 }
 
 t_str:i_simple_expr{

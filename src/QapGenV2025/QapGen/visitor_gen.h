@@ -375,7 +375,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     {auto&arr=r.params.arr;for(int i=0;i<arr.size();i++)params_code.push_back(arr[i].body);}
     auto check=out!="O"?"    if(!ok)return ok;\n":"";
     out=out!="O"?"ok=":"";
-    string func_name=r.func.get();
+    string func_name=r.func.value;
     bool smart_func=find_smart_func(func_name);
     if(smart_func)
     {
@@ -388,7 +388,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       };
       string varname="g_static_var_"+IToS(cmd_id);
       string vardecl="    static const auto "+varname+"="+get_param1()+";\n";
-      out=vardecl+"    "+out+"dev."+r.func.get()+"("+param0+","+varname+");\n"+check;
+      out=vardecl+"    "+out+"dev."+r.func.value+"("+param0+","+varname+");\n"+check;
       procmds+=out;
     }else{
       procmds+="    "+out+"dev."+r.func.value+r.templ_params+"("+join(params_code,",")+");\n"+check;
