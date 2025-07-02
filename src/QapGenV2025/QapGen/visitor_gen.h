@@ -371,6 +371,10 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     vector<string> childs;
     vector<t_struct_field> farr;
     bool is_interface=false;
+    t_lexer(const t_lexer&)=delete;
+    t_lexer&operator=(const t_lexer&)=delete;
+    t_lexer(t_lexer&&)=default;
+    t_lexer&operator=(t_lexer&&)=default;
   };
   vector<t_lexer> lexers;
   vector<string> lexer_fields;
@@ -818,7 +822,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     string fullowner=get_fullpreowner();
     if(fullowner.size()){fullowner.pop_back();fullowner.pop_back();}
     string fullname=(fullowner.size()?fullowner+"::":"")+L.name;
-    lexers.push_back({L.name,get_fullparent(),fullname,fullowner,std::move(lexer_fields),std::move(lexer_cmds),is_interface?at_end.back().childs:vector<string>{},is_interface});
+    lexers.push_back({L.name,get_fullparent(),fullname,fullowner,std::move(lexer_fields),std::move(lexer_cmds),is_interface?at_end.back().childs:vector<string>{},{},is_interface});
     dev.pop();
   }
   string get_fullpreowner(){
@@ -890,8 +894,12 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   real parse_ms=0;
   void prepare_lexers_chached_fields(){
     for(auto&L:lexers){
-      L.farr.resize(L.fields.size());
-      QAP_FOREACH(L.fields,QapAssert(load_obj(L.farr[i],ex)));
+      L.farr.reserve(L.fields.size());
+      for(int i=0;i<L.fields.size();i++){
+        auto&ex=L.fields[i];
+        auto&b=qap_add_back(L.farr);
+        QapAssert(load_obj(b,ex));
+      }
     }
   }
   void collect_expected_chars(const t_cmd_param&param,string&out)const{
@@ -935,10 +943,11 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
   }
   const t_struct_field&find_field(const t_lexer&lexer,const std::string&name)const{
-    auto id=QAP_MINVAL_ID_OF_VEC(lexer.farr,ex.name.value==name?0:1);
-    auto&f=lexer.farr[id];
-    QapAssert(f.name.value==name);
-    return f;
+    for(auto&ex:lexer.farr){
+      if(ex.name.value==name)return ex;
+    }
+    QapDebugMsg("can't find field '"+name+"' inside lexer '"+lexer.fullname+"'");
+    return lexer.farr[0];
   }
   string lexer2vecofchar(const t_lexer&lexer)const{
     if(lexer.is_interface){
@@ -1149,12 +1158,12 @@ struct t_templ_sys_v05:t_templ_sys_v04,
 
   int lexer_lookup_test() {
     //std::vector<t_lexer> 
-    lexers = {
+    /*lexers = {
       {"t_real_expr", "a::b", "a::b::t_real_expr"},
       {"t_int_expr", "a", "a::t_int_expr"},
       {"t_string_expr", "", "t_string_expr"},
       {"t_some_expr", "a::b::c", "a::b::c::t_some_expr"}
-    };
+    };*/
 
     buildLexerTree();
 
