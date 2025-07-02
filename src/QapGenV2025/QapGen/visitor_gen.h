@@ -128,6 +128,7 @@ public:
     string full_owner;
     string base;
     string list;
+    vector<string> childs;
     string get_impl()const{
       vector<string> v={
         //"template<int>\n",
@@ -365,10 +366,13 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     string fullparent;
     string fullname;
     string fullowner;
+    vector<string> fields;
     vector<string> cmds;
+    vector<string> childs;
     bool is_interface=false;
   };
   vector<t_lexer> lexers;
+  vector<string> lexer_fields;
   vector<string> lexer_cmds;
   bool cmds_grab=true;
   void Do(t_struct_cmd&r){
@@ -419,14 +423,14 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     const string*plexer=dev.get_sep_lex(r.value);
     if(field.as_cmd){
       QapNoWay();
-      if(!plexer){field.cmdout={};return;}else{QapNoWay();return;}
-      field.cmdout="M+=go_const("+r.value+");";
+      //if(!plexer){field.cmdout={};return;}else{QapNoWay();return;}
+      //field.cmdout="M+=go_const("+r.value+");";
       return;
     }
     if(!plexer)return;
     fields_counter++;
     provars+="ADDVAR("+*plexer+",$sep"+IToS(cmd_id)+",DEF,$,$)\\\n";
-    //string make_cmd(t_ic_dev&icdev)const{return "M+=go_const("+value+");";}
+    lexer_fields.push_back(*plexer+" $sep"+IToS(cmd_id)+";");
   }
   t_ic_dev_v2 dev;
   struct t_field_info{
@@ -487,7 +491,10 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     string value_mem="$";
     out.push_back(!r.value?"$":value_mem);
     string s;
-    provars+="ADDVAR("+join(out,",")+","+(s.empty()?"$":s)+")\\\n";
+    auto ts=join(out,",");
+    string vs="$";
+    provars+="ADDVAR("+ts+","+vs+")\\\n";
+    lexer_fields.push_back(t+" "+r.name.value+";");
   }
   int fields_counter=0;
   string provars,procmds;
@@ -785,7 +792,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         body2+=drop_empty_lines(get_templ("GO_BASE").eval(inp));
         vector<string> full_owner;
         for(auto&ex:dev.arr)if(ex.lexer.name.size())full_owner.push_back(ex.lexer.name);
-        t_at_end ae={join(full_owner,"::"),L.name,qist};
+        t_at_end ae={join(full_owner,"::"),L.name,qist,arr};
         at_end.push_back(ae);
       }
       if(is_interface){
@@ -807,16 +814,15 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     body+="\n};\n";
     body=drop_empty_lines(body);
     dev.arr.back().out+=move_block("\n"+body+"\n",owner.empty()?"":"  ");
-    string fullname,fullowner;
-    for(auto&ex:dev.arr)if(!ex.lexer.name.empty())fullname+=ex.lexer.name+"::";
-    fullowner=fullname;if(fullowner.size()){fullowner.pop_back();fullowner.pop_back();}
-    fullname+=L.name;
-    lexers.push_back({L.name,get_fullparent(),fullname,fullowner,std::move(lexer_cmds),is_interface});
+    string fullowner=get_fullpreowner();
+    if(fullowner.size()){fullowner.pop_back();fullowner.pop_back();}
+    string fullname=(fullowner.size()?fullowner+"::":"")+L.name;
+    lexers.push_back({L.name,get_fullparent(),fullname,fullowner,std::move(lexer_fields),std::move(lexer_cmds),is_interface?at_end.back().childs:vector<string>{},is_interface});
     dev.pop();
   }
   string get_fullpreowner(){
     string fullname;
-    for(size_t i=0;i+1<dev.arr.size();i++){
+    for(size_t i=0;i<dev.arr.size();i++){
       auto&ex=dev.arr[i].lexer.name;
       if(!ex.empty())fullname+=ex+"::";
     }
@@ -824,6 +830,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   }
   string get_fullparent(){
     auto&dtl=dev.top.lexer;
+    if(dtl.name=="t_soft_brackets_code_with_sep"){
+      int gg=1;
+    }
     if(dtl.parent.empty())return {};
     auto&iarr=dev.arr.back().iarr;
     bool found=false;
@@ -832,7 +841,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
     if(!found)QapDebugMsg("lexer parent not found for "+dtl.name+":"+dtl.parent);
     auto fpo=get_fullpreowner();
-    return fpo+"::"+dtl.parent;
+    return fpo+dtl.parent;
     /*
     for(auto i=long long int(dev.arr.size())-1;i>=0;i--){
       auto&ex=dev.arr[i];
@@ -878,12 +887,230 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   template<class TYPE>
   void Do(TAutoPtr<TYPE>&r){if(r)Do(*r.get());}
   real parse_ms=0;
-  string poly_gen(){
-    for(auto&ex:lexers){
-      if(!ex.is_interface)continue;
-      //ex.;
+  vector<char> lexer2vecofchar(const t_lexer&lexer)const{
+    vector<char> out;
+    for(auto&c:lexer.cmds){
+      t_struct_cmd cmd;
+      QapAssert(load_obj(cmd,c));
+      auto*p=t_struct_cmd_mode::UberCast(cmd.mode.get());
+      QapAssert(p);
+      bool opt=p->body=='O';
+      auto fn=cmd.func.value;
+      if(fn=="go_const"){
+        auto s=cmd.params.arr[0].body;
+        QapAssert(s.size()>2);
+        //TAutoPtr<vector<i_str_item>> si;//load_obj(si,s);
+        auto bs=BinString::fullCppStr2RawStr(s);
+        out.push_back(bs[0]);
+        QapAssert(!opt);
+        return out;
+        int gg=1;
+      }
+      vector<t_struct_field> fields;fields.resize(lexer.fields.size());
+      QAP_FOREACH(lexer.fields,QapAssert(load_obj(fields[i],ex)));
+      if(fn=="go_auto"){
+        QapAssert(cmd.params.arr.size()==1);
+        auto&cpa0b=cmd.params.arr[0].body;
+        auto id=QAP_MINVAL_ID_OF_VEC(fields,ex.name.value==cpa0b?0:1);
+        auto&f=fields[id];
+        QapAssert(f.name.value==cpa0b);
+        auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
+        QapAssert(pvc);
+        auto&v=pvc->var;
+        if(v.name.value=="vector"){
+          QapAssert(v.tp);
+          typedef t_cppcore::t_varcall_expr::t_var t_var;
+          auto tp2var=[](const auto&tp,t_var&out){
+            auto*ptp=t_cppcore::t_varcall_expr::t_template_part::UberCast(tp.get());
+            string s;save_obj(ptp->expr,s);
+            QapAssert(load_obj(out,s));
+          };
+          t_var template_param;
+          tp2var(v.tp,template_param);
+          auto pn=template_param.name.value;
+          QapAssert(pn!="vector");
+          if(pn=="TAutoPtr"){
+            t_var inner_param;
+            tp2var(template_param.tp,inner_param);
+            auto inner_pn=inner_param.name.value;
+            auto*pl_inner=find_lexer_by_name_but_relative(inner_pn,lexer);
+            QapAssert(pl_inner);
+            auto nested_chars=lexer2vecofchar(*pl_inner);
+            QapAssert(!nested_chars.empty());
+            out+=nested_chars;
+            if(!opt)return out;
+            continue;
+          }
+          auto*pl=find_lexer_by_name_but_relative(pn,lexer);
+          QapAssert(pl);
+          out+=lexer2vecofchar(*pl);
+          if(!opt)return out;
+          continue;
+        }
+        int gg=1;
+      }
+      int gg_cmds=1;
+    }
+    return out;
+  }
+  string polylexer2fastimpl(const t_lexer&poly)const{
+    for(auto&ex:poly.childs){
+      auto*plexer=find_lexer_by_name_but_relative(ex,poly);
+      QapAssert(plexer);
+      auto ec=lexer2vecofchar(*plexer);
     }
     return {};
+  }
+  string poly_gen(){
+    for(auto&lexer:lexers){
+      if(!lexer.is_interface)continue;
+      polylexer2fastimpl(lexer);
+      int gg_lexer=1;
+    }
+    return {};
+  }
+
+  struct t_lexer_node {
+    t_lexer* lexer = nullptr;
+    std::vector<t_lexer_node*> children;
+  };
+  vector<t_lexer_node> lexer_nodes;
+
+  void buildLexerTree(){
+    std::unordered_map<std::string,t_lexer_node*> fn2ptr;
+    auto&nodes=lexer_nodes;
+    nodes.reserve(lexers.size());
+
+    for (auto& lexer : lexers) {
+      nodes.push_back({ &lexer, {} });
+      fn2ptr[lexer.fullname]=&nodes.back();
+    }
+
+    for (size_t i = 0; i < lexers.size(); ++i) {
+      const auto& owner = lexers[i].fullowner;
+      if(owner.empty())continue;
+      auto it = fn2ptr.find(owner);
+      if (it != fn2ptr.end()) {
+        it->second->children.push_back(&nodes[i]);
+      }
+    }
+  }
+
+  const t_lexer_node*findByFullname(const t_lexer_node&node,const std::string&fullname)const {
+    if(node.lexer->fullname==fullname){
+      return &node;
+    }
+    for(auto&child:node.children){
+      if(auto*found=findByFullname(*child,fullname)){
+        return found;
+      }
+    }
+    return nullptr;
+  }
+
+  const t_lexer_node*findLexerByNameRelative(const std::string&name,const t_lexer&from)const
+  {
+    // Абсолютный путь (начинается с "::")
+    if (name.size() >= 2 && name[0] == ':' && name[1] == ':') {
+      std::string absName = name.substr(2);
+      for (auto&root:lexer_nodes) {
+        if (auto*found=findByFullname(root,absName)) {
+          return found;
+        }
+      }
+      return nullptr;
+    }
+
+    std::vector<std::string> fromParts=split(from.fullowner,"::");
+
+    for(auto i = static_cast<long long int>(fromParts.size())-1;i>=0;--i){
+      std::string prefix;
+      if (i > 0) {
+        prefix = fromParts[0];
+        for (int j = 1; j <= i; ++j) {
+          prefix += "::" + fromParts[j];
+        }
+      }
+      std::string candidateFullname = prefix.empty() ? name : prefix + "::" + name;
+
+      for(auto&root:lexer_nodes){
+        if(auto*p=findByFullname(root,candidateFullname)){
+          return p;
+        }
+      }
+    }
+
+    if(fromParts.empty()){
+      for(auto&root:lexer_nodes){
+        if(auto*found=findByFullname(root,name)){
+          return found;
+        }
+      }
+    }
+    return nullptr;
+  }
+
+  int lexer_lookup_test() {
+    //std::vector<t_lexer> 
+    lexers = {
+      {"t_real_expr", "a::b", "a::b::t_real_expr"},
+      {"t_int_expr", "a", "a::t_int_expr"},
+      {"t_string_expr", "", "t_string_expr"},
+      {"t_some_expr", "a::b::c", "a::b::c::t_some_expr"}
+    };
+
+    buildLexerTree();
+
+    auto&roots=lexer_nodes;roots.reserve(lexers.size());
+    /*for (auto& node : lexer_nodes) {
+      if (node.lexer->fullowner.empty()) {
+        lexer_nodes.push_back(&node);
+      }
+    }*/
+
+    t_lexer fromLexer = {"t_some_expr", "a::b::c", "a::b::c::t_some_expr"};
+
+    auto* found = findLexerByNameRelative("t_real_expr", fromLexer);
+    if (found) {
+      std::cout << "Found lexer: " << found->lexer->fullname << std::endl;
+    } else {
+      std::cout << "Lexer not found" << std::endl;
+    }
+
+    found = findLexerByNameRelative("::t_string_expr", fromLexer);
+    if (found) {
+      std::cout << "Found lexer: " << found->lexer->fullname << std::endl;
+    } else {
+      std::cout << "Lexer not found" << std::endl;
+    }
+
+    found = findLexerByNameRelative("t_int_expr", fromLexer);
+    if (found) {
+      std::cout << "Found lexer: " << found->lexer->fullname << std::endl;
+    } else {
+      std::cout << "Lexer not found" << std::endl;
+    }
+    
+    t_lexer t_some_expr = {"t_some_expr", "a::b::c", ""};
+    found = findLexerByNameRelative("t_int_expr", t_some_expr);
+    if (found) {
+      std::cout << "Found lexer: " << found->lexer->fullname << std::endl;
+    } else {
+      std::cout << "Lexer not found" << std::endl;
+    }
+
+    found = findLexerByNameRelative("t_nonexistent", fromLexer);
+    if (found) {
+      std::cout << "Found lexer: " << found->lexer->fullname << std::endl;
+    } else {
+      std::cout << "Lexer not found" << std::endl;
+    }
+
+    return 0;
+  }
+
+  t_lexer*find_lexer_by_name_but_relative(const string&name,const t_lexer&from)const{
+    return findLexerByNameRelative(name,from)->lexer;
   }
   string main(const string&data){
     init();
@@ -902,7 +1129,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     target_only=false;
     interface_autogen();
     Do(tar);
-    if(bool polygen=false){dev.top.out+=poly_gen();}else dev.top.out+=get_at_end();
+    buildLexerTree();
+    //lexer_lookup_test();
+    if(bool polygen=true){dev.top.out+=poly_gen();}else dev.top.out+=get_at_end();
     vector<i_target_item*> tarr;
     for(auto&ex:tar.arr)tarr.push_back(ex.get());
     auto listoftypes=get_list_of_types(tarr);

@@ -964,3 +964,47 @@ QapToolsVector<TYPE> QapToolsVectorEx(vector<TYPE>&ref)
   QapToolsVector<TYPE> tmp={ref};return std::move(tmp);
 }
 template<class TYPE>bool qap_includes(const vector<TYPE>&arr,const TYPE&value){for(int i=0;i<arr.size();i++){if(arr[i]==value)return true;}return false;}
+
+
+template<class TYPE,class FUNC>
+int qap_minval_id_for_vec(vector<TYPE>&arr,FUNC func){
+  if(arr.empty())return -1;
+  decltype(func(arr[0],0)) val;int id=-1;
+  for(int i=0;i<arr.size();i++){
+    auto&ex=arr[i];
+    auto tmp=func(ex,i);
+    if(!i||tmp<val){
+      val=tmp;id=i;
+    }
+  }
+  return id;
+}
+template<class TYPE,class FUNC>
+int qap_minval_id_for_vec(const vector<TYPE>&arr,FUNC func){
+  if(arr.empty())return -1;
+  decltype(func(arr[0],0)) val;int id=-1;
+  for(int i=0;i<arr.size();i++){
+    auto&ex=arr[i];
+    auto tmp=func(ex,i);
+    if(!i||tmp<val){
+      val=tmp;id=i;
+    }
+  }
+  return id;
+}
+
+template<class TYPE>
+static void operator+=(vector<TYPE>&dest,const vector<TYPE>&arr){
+  for(int i=0;i<arr.size();i++){
+    dest.push_back(arr[i]);
+  }
+}
+
+//template<class TYPE>int qap_includes(const vector<TYPE>&arr,const TYPE&value){for(int i=0;i<arr.size();i++){if(arr[i]==value)return true;}return false;}
+template<class TYPE>int qap_includes_v2(const vector<TYPE>&arr,const TYPE&value){for(int i=0;i<arr.size();i++){if(arr[i]==value)return i;}return -1;}
+
+#define QAP_MINVAL_ID_OF_VEC(arr,code)qap_minval_id_for_vec(arr,[&](decltype(arr[0])&ex,int i){return code;})
+
+template<class TYPE,class FUNC>void qap_foreach(TYPE&&arr,FUNC func){auto n=arr.size();for(int i=0;i<n;i++)func(arr[i],i);}
+template<class TYPE,class FUNC>void qap_foreach(const TYPE&arr,FUNC func){auto n=arr.size();for(int i=0;i<n;i++)func(arr[i],i);}
+#define QAP_FOREACH(arr,code)qap_foreach(arr,[&](decltype(arr[0])&ex,int i){code;})
