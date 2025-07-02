@@ -1,4 +1,8 @@
 struct t_poly_tool:public t_config_2013{
+  struct t_lex{
+    std::function<void()> func;
+    CharMask m;
+  };
   t_doc doc;
   static t_poly_tool&get(/*IEnvRTTI&Env*/){
     static const string fn="config.cfg";

@@ -3,7 +3,6 @@
 #include "FromQapEng.h"
 //#include "QapMicro2/QapTools.h"
 typedef unsigned char uchar;
-#include "CppString.inl"
 #define TAutoPtr unique_ptr
 #include "detail.inl"
 #include "t_error_tool.inl"

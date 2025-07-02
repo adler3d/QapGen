@@ -33,6 +33,7 @@
 #include <math.h>
 #include <iomanip>
 #include <iostream>
+//#include <ctype.h>
 
 enum TMouseButton{mbLeft=257,mbRight=258,mbMiddle=259,};
 auto now=std::chrono::high_resolution_clock::now;
@@ -447,14 +448,14 @@ typedef unsigned char uchar;
 
 class CharMask{
 public:
-  bool mask[256];
+  array<bool,256> mask;
   CharMask(CharMask&&ref){for(uint i=0;i<sizeof(mask);i++)mask[i]=ref.mask[i];}
   CharMask(){for(uint i=0;i<sizeof(mask);i++)mask[i]=false;}
 public:
-  static CharMask fromStr(const string&str)
+  static CharMask fromStr(const string&str,bool weak=false)
   {
     CharMask tmp;
-    tmp.prepare(str);
+    tmp.prepare(str,weak);
     return std::move(tmp);
   }
 public:
@@ -471,14 +472,14 @@ public:
       QapDebugMsg(unallowed);
     }
   }
-  void prepare(const std::string&allowed)
+  void prepare(const std::string&allowed,bool weak=false)
   {
     for(uint i=0;i<sizeof(mask);i++)mask[i]=false;
     for(uint i=0;i<uint(allowed.size());i++)
     {
       unsigned char uc=uchar(allowed[i]);
       bool&flag=mask[uc];
-      QapAssert(!flag);
+      if(!weak)QapAssert(!flag);
       flag=true;
     }
   };
@@ -706,6 +707,13 @@ static string gen_dip(char from,char to){
   return out;
 }
 //-------------------------------------------//
+template<size_t size>
+static string gen_dips(const char(&rule)[size]){
+  string s;
+  s.resize(size-1);int i=-1;
+  for(auto&ex:rule){s[++i]=ex;}
+  return gen_dips(s);
+}
 static string gen_dips(const string&rule){
   QapAssert(!(rule.size()%2));
   string out;
@@ -1008,3 +1016,76 @@ template<class TYPE>int qap_includes_v2(const vector<TYPE>&arr,const TYPE&value)
 template<class TYPE,class FUNC>void qap_foreach(TYPE&&arr,FUNC func){auto n=arr.size();for(int i=0;i<n;i++)func(arr[i],i);}
 template<class TYPE,class FUNC>void qap_foreach(const TYPE&arr,FUNC func){auto n=arr.size();for(int i=0;i<n;i++)func(arr[i],i);}
 #define QAP_FOREACH(arr,code)qap_foreach(arr,[&](decltype(arr[0])&ex,int i){code;})
+
+#include <string>
+#include <vector>
+#include <algorithm>
+
+#include "CppString.inl"
+std::string build_ranges_string(const std::string& chars) {
+  if (chars.empty()) return "";
+
+  std::string ranges;
+  size_t start = 0;
+  size_t n = chars.size();
+
+  while (start < n) {
+    size_t end = start;
+    // Ищем максимальный диапазон подряд идущих символов
+    while (end + 1 < n && chars[end + 1] == chars[end] + 1) {
+      ++end;
+    }
+
+    // Добавляем в строку границы диапазона
+    ranges.push_back(chars[start]);
+    ranges.push_back(chars[end]);
+
+    start = end + 1;
+  }
+
+  return ranges;
+}
+
+std::string escape_char(char c) {
+  unsigned char uc = static_cast<unsigned char>(c);
+  switch (uc) {
+    case '\\': return "\\\\";
+    case '\"': return "\\\"";
+    case '\n': return "\\n";
+    case '\r': return "\\r";
+    case '\t': return "\\t";
+    default:
+      if (uc >= 32 && uc <= 126) { // Печатные ASCII символы
+        return std::string(1, c);
+      } else {
+          // Экранируем все остальные в \xHH
+        const char hex_chars[] = "0123456789ABCDEF";
+        std::string res = "\\x";
+        res += hex_chars[(uc >> 4) & 0xF];
+        res += hex_chars[uc & 0xF];
+        return res;
+      }
+  }
+}
+
+std::string generate_gen_dips_code(const std::string& chars) {
+  if (chars.empty()) return "\"\"";
+
+  // Уникализируем и сортируем символы
+  std::string sorted_chars = chars;
+  /*
+  std::sort(sorted_chars.begin(), sorted_chars.end());
+  sorted_chars.erase(std::unique(sorted_chars.begin(), sorted_chars.end()), sorted_chars.end());
+  */
+  // Строим строку диапазонов
+  std::string ranges = build_ranges_string(sorted_chars);
+  QapAssert(sorted_chars==gen_dips(ranges));
+  string out;
+  for(auto&ex:ranges)out+=escape_char(ex);//CppString::toCode((uchar&)ex);
+
+  // Генерируем вызов gen_dips
+  std::string code = "gen_dips(\"" + out + "\")";
+
+  return code;
+}
+

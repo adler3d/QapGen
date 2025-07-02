@@ -1062,9 +1062,41 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     return out;
   }
   string polylexer2fastimpl(const t_lexer&poly)const{
-    auto ec=polylexer2vecofchar(poly);
+    string out;
+    for(auto&ex:poly.childs){
+      auto*plexer=find_lexer_by_name_but_relative(ex,poly);
+      QapAssert(plexer);
+      string voc=lexer2vecofchar(*plexer);
+      auto m=CharMask::fromStr(voc,true);
+      string u;
+      for(size_t i=0;i<256;i++)if(m.mask[i])u.push_back((char&)i);
+      
+      std::string code = generate_gen_dips_code(u);
+      out += "/* lexer " + plexer->fullname + " */\n";
+      out += "auto chars_" + plexer->name + " = " + code + ";\n\n";
 
-    return {};
+      /*
+      auto x=gen_dips("\x00!#[]mo\x7F\x80\xFF");
+      if(x==u){
+        int gg=1;
+      }
+      auto y=CharMask::fromStr(x,true);
+      
+      for(int i=0;i<256;i++){
+        if(y.mask[i]!=m.mask[i]){
+          int fail=1;
+        }
+      }
+      QapAssert(y.mask==m.mask);
+      QapAssert(x.size()==u.size());
+      for(int i=0;i<x.size();i++){
+        if(x[i]!=u[i]){
+          int fail=1;
+        }
+      }*/
+      int gg=1;
+    }
+    return out;
   }
   string poly_gen(){
     prepare_lexers_chached_fields();

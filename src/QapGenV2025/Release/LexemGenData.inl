@@ -108,6 +108,23 @@ public:
     #include "QapLexPolyEndNoTemplate.inl"
   };
 ----------------------------------------------------------------
+#####-POLY_IMPL_FAST-#####
+----------------------------------------------------------------
+bool t_meta_lexer::i_code::t_poly_impl::load()
+{
+  struct t_lex{
+    std::function<void()> func;
+    CharMask m;
+  };
+  #define F(TYPE,MASK){[this](){go_for<TYPE>();},CharMask::fromStr(MASK,true)}
+  static t_poly_tool::t_lex lex[]={
+^^^LIST^^^
+  };
+  #include "poly_fast_impl.inl"
+  main();
+  return scope.ok;
+}
+----------------------------------------------------------------
 #####-END_OF_FILE-#####
 ----------------------------------------------------------------
-2025.06.27 19:16:18.158
+2025.07.02 20:39:02.005

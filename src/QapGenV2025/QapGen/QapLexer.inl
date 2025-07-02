@@ -60,6 +60,8 @@ public:
   virtual bool go_any_char(char&c,const CharMask&any){QapDebugMsg("no way.");return false;}
   virtual bool go_any_str_from_vec(string&ref,const vector<string>&arr){QapDebugMsg("no way.");return false;}
   virtual bool go_any_str_from_vec(string&ref,const QapStrFinder&arr){QapDebugMsg("no way.");return false;}
+  struct t_result{bool ok=false;char c=0;};
+  virtual t_result get_char_lt(){QapDebugMsg("no way.");return {};}
 public:
   bool go_any(string&ref,const QapStrFinder&arr){return go_any_str_from_vec(ref,arr);}
   bool go_any(string&ref,const vector<string>&arr){return go_any_str_from_vec(ref,arr);}
@@ -203,6 +205,7 @@ public:
   bool isSave(){return false;}
   bool isLoad(){return true;}
 public:
+  t_result get_char_lt(){return pos<mem.size()?t_result{true,mem[pos]}:t_result{};}
   bool go_any(string&body,const string&any){
     for(auto i=pos;i<mem.size();i++){
       auto e=any.find(CToS(mem[i]));

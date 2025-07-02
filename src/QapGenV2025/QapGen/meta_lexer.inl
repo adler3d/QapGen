@@ -6487,7 +6487,14 @@ bool t_cppcore::t_varcall_expr::i_part::t_poly_impl::load()
   return scope.ok;
 }
 bool t_meta_lexer::i_code::t_poly_impl::load()
-{
+{/*
+  static t_poly_tool::t_lex lex[]={
+    {[this](){go_for<t_name_code>();},CharMask::fromStr(gen_dips("\x00!#[]mo\x7F\x80\xFF"),true)},
+    {[this](){go_for<t_num_code>();},CharMask::fromStr(gen_dips("09"),true)}
+  };
+  #include "poly_fast_impl.inl"
+  main();
+  return scope.ok;*/
   #define F(TYPE)go_for<struct TYPE>();
   F(t_name_code);
   F(t_num_code);
