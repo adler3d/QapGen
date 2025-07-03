@@ -1104,6 +1104,120 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         if(opt)continue;
         return out;
       }
+      if(fn=="go_minor"){
+        QapAssert(cmd.params.arr.size()==1);
+        auto&cpa0b=cmd.params.arr[0].body;
+        auto&f=find_field(lexer,cpa0b);
+        auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
+        QapAssert(pvc);
+        auto&v=pvc->var;
+        if(v.name.value=="string")QapDebugMsg("go_diff dont support string type of field");
+        struct t_for_autoptr_r2{
+          bool con=false;
+          bool ret=false;
+          bool pass()const{return !con&&!ret;}
+          string out;
+        };
+        auto for_autoptr2=[&](const t_var&var,const string&tpn)->t_for_autoptr_r2{
+          if(tpn!="TAutoPtr")return {};
+          t_var inner_param;
+          tp2var(var.tp,inner_param);
+          auto inner_pn=inner_param.name.value;
+          auto*pl_inner=find_lexer_by_name_but_relative(inner_pn,lexer);
+          QapAssert(pl_inner);
+          auto nested_chars=lexer2vecofchar(*pl_inner);
+          QapAssert(!nested_chars.empty());
+          if(!opt)return {false,true,nested_chars};
+          return {true,false,nested_chars};
+        };
+        string our;bool template_lexer=false;
+        // тут надо сделать проход по 
+        if(v.name.value=="TAutoPtr"){
+          auto r=for_autoptr2(v,v.name.value);
+          our+=r.out;
+          template_lexer=true;
+          //if(r.ret)return out;
+          //if(r.con)continue;
+        }
+        if(v.name.value=="vector"){
+          template_lexer=true;
+          QapAssert(v.tp);
+          t_var template_param;
+          tp2var(v.tp,template_param);
+          auto tpn=template_param.name.value;
+          QapAssert(tpn!="vector");
+          auto r=for_autoptr2(template_param,tpn);
+          our+=r.out;
+          if(r.pass()){
+            auto*pl=find_lexer_by_name_but_relative(tpn,lexer);
+            QapAssert(pl);
+            our+=lexer2vecofchar(*pl);
+            //if(!opt)return out;
+            //continue;
+          }
+        }
+        if(!template_lexer){
+          auto*pl=find_lexer_by_name_but_relative(v.name.value,lexer);
+          QapAssert(pl);
+          our+=lexer2vecofchar(*pl);
+        }
+        auto minus=[](const string&our,const string&major){
+          auto m=CharMask::fromStr(our);
+          auto e=CharMask::fromStr(major);
+          string out;
+          for(size_t i=0;i<256;i++)if(!e.mask[i]&&m.mask[i])out.push_back(static_cast<char>(i));
+          return out;
+        };
+        string major;
+        //---
+        QapAssert(cmd.templ_params.size());
+        TAutoPtr<t_templ_params> tp;
+        QapAssert(load_obj(tp,cmd.templ_params));
+        QapAssert(tp->body.size());
+        TAutoPtr<t_type_templ_params> ttp;
+        QapAssert(load_obj(ttp,tp->body));
+        QapAssert(ttp);
+        QapAssert(ttp->first.body);
+        auto*ptit=t_meta_lexer::t_type_item_type::UberCast(ttp->first.body.get());
+        QapAssert(ptit);
+        if(ptit->type.value=="vector"||ptit->type.value=="TAutoPtr"){
+          QapAssert(ptit->param);
+          auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit->param->body.get());
+          QapAssert(ptta);
+          QapAssert(ptta->params);
+          QapAssert(ptta->params->first.body);
+          auto*ptit2=t_type_item_type::UberCast(ptta->params->first.body.get());
+          QapAssert(ptit2);
+          if(ptit2->param){
+            QapAssert(ptit2->type.value=="TAutoPtr");
+            auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit->param->body.get());
+            QapAssert(ptta);
+            QapAssert(ptta->params);
+            QapAssert(ptta->params->first.body);
+            auto*ptit3=t_type_item_type::UberCast(ptta->params->first.body.get());
+            QapAssert(!ptit3->param);
+            auto*pl=find_lexer_by_name_but_relative(ptit3->type.value,lexer);
+            QapAssert(pl);
+            major+=lexer2vecofchar(*pl);
+            out+=minus(our,major);
+            if(opt)continue;
+            return out;
+          }
+          auto*pl=find_lexer_by_name_but_relative(ptit2->type.value,lexer);
+          QapAssert(pl);
+          major+=lexer2vecofchar(*pl);
+          out+=minus(our,major);
+          if(opt)continue;
+          return out;
+        }
+        QapAssert(!ptit->param);
+        auto*pl=find_lexer_by_name_but_relative(ptit->type.value,lexer);
+        QapAssert(pl);
+        major+=lexer2vecofchar(*pl);
+        out+=minus(our,major);
+        if(opt)continue;
+        return out;
+      }
       QapDebugMsg("unsupported go_* method: "+fn);
       int gg_cmds=1;
     }
@@ -1153,7 +1267,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
 
   struct t_lexer_node {
     t_lexer* lexer = nullptr;
-    std::vector<t_lexer_node*> children;
+    std::vector<t_lexer_node*> childs;
   };
   vector<t_lexer_node> lexers_nodes;
 
@@ -1172,7 +1286,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       if(owner.empty())continue;
       auto it = fn2ptr.find(owner);
       if (it != fn2ptr.end()) {
-        it->second->children.push_back(&nodes[i]);
+        it->second->childs.push_back(&nodes[i]);
       }
     }
   }
@@ -1181,7 +1295,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     if(node.lexer->fullname==fullname){
       return &node;
     }
-    for(auto&child:node.children){
+    for(auto&child:node.childs){
       if(auto*found=findByFullname(*child,fullname)){
         return found;
       }
@@ -1194,7 +1308,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
 
     if (node->lexer->name == name) return node;
 
-    for (const auto& child : node->children) {
+    for (const auto& child : node->childs) {
       if(child->lexer->name==name)return child;
     }
     return nullptr;
