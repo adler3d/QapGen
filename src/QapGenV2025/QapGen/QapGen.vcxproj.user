@@ -4,13 +4,13 @@
     <LocalDebuggerWorkingDirectory>$(SolutionDir)Release</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <ShowAllFiles>false</ShowAllFiles>
-    <LocalDebuggerCommandArguments>t_json.qapdsl.hpp</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>input.qapdsl.hpp</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)Release</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <ShowAllFiles>false</ShowAllFiles>
-    <LocalDebuggerCommandArguments>t_json.qapdsl.hpp</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>input.qapdsl.hpp</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(WithAsserts)|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\Release</LocalDebuggerWorkingDirectory>
@@ -24,12 +24,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseO2|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)Release</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>t_json.qapdsl.hpp</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>input.qapdsl.hpp</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseWithAsserts|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)Release</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>t_json.qapdsl.hpp</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>input.qapdsl.hpp</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseWithAsserts|x64'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)Release</LocalDebuggerWorkingDirectory>
@@ -49,7 +49,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugMacro|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)Release</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>t_json.qapdsl.hpp</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>input.qapdsl.hpp</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)Release</LocalDebuggerWorkingDirectory>

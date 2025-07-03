@@ -656,8 +656,8 @@ t_struct_field_value {
 }
 t_struct_field:i_struct_field{
   t_qst{string s;{go_any(s,"*?");}}
-  TAutoPtr<i_struct_cmd_xxxx> mode?;
-  " "?
+  //TAutoPtr<i_struct_cmd_xxxx> mode?;
+  //" "?
   TAutoPtr<t_cppcore::i_expr> type;
   " "?
   t_name name;
@@ -668,11 +668,7 @@ t_struct_field:i_struct_field{
   ";"
   " "?
   TAutoPtr<t_attr> attr?;
-}
-
-t_sep_struct_field{
   " "?
-  i_struct_field body;
 }
 
 t_templ_params{
@@ -771,8 +767,8 @@ t_cpp_code_main:i_cpp_code{
 
 t_cpp_code{
   t_bayan{"[::]"}
-  t_fields:i_major{t_sep_struct_field f;}
-  t_cmds:i_major{t_sep_struct_cmds c;}
+  t_fields:i_major{t_struct_field f;}
+  t_cmds:i_major{t_struct_cmds c;}
   t_atr:i_major{TAutoPtr<t_attr> attr;}
   t_eater{vector<TAutoPtr<i_cpp_code>> arr;}
   t_with_bayan:i_bayan{
@@ -782,42 +778,23 @@ t_cpp_code{
   t_minor_eater{t_eater eater=minor<TAutoPtr<i_major>>();}
   t_without_bayan:i_bayan{
     t_minor_eater eater=minor<t_with_bayan>();
-  }/*
-  t_a:i_strong_bayan{
-    t_with_bayan wb;
   }
-  t_b:i_strong_bayan{
-    t_eater e=minor<t_with_bayan>();
-  }*/
+  " "?
   TAutoPtr<i_bayan> bayan;
 }
-// test
 
 t_fields_cmds_cppcode{
-  /*
-  t_true_fcc{
-    vector<t_sep_struct_field> arr;
-    TAutoPtr<t_sep_struct_cmds> cmds?;
-    TAutoPtr<t_cpp_code::i_strong_bayan> cppcode?;
-  }
-  t_cmds{
-    TAutoPtr<t_sep_struct_cmds> cmds;
-    TAutoPtr<t_cpp_code::i_strong_bayan> cppcode?;
-  }
-  t_cppcode{
-    TAutoPtr<t_cpp_code> cppcode;
-  }*/
-  vector<t_sep_struct_field> arr?;
-  TAutoPtr<t_sep_struct_cmds> cmds?;
+  vector<TAutoPtr<i_struct_field>> arr?;
+  TAutoPtr<t_struct_cmds> cmds?;
   TAutoPtr<t_cpp_code> c?;
 }
 
 t_struct_body{
   "{"
   vector<TAutoPtr<i_target_item>> nested?;
-  t_sep sep0?;
+  " "?;
   TAutoPtr<t_fields_cmds_cppcode> fcc;
-  t_sep sep1?;
+  " "?;
   "}"
 }
 

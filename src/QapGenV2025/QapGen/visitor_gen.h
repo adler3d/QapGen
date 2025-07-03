@@ -303,7 +303,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   F(t_const_field                 )\
   F(t_struct_field_value          )\
   F(t_struct_field                )\
-  F(t_sep_struct_field            )\
   F(t_templ_params                )\
   F(t_cmd_params                  )\
   F(t_cmd_param                   )\
@@ -459,9 +458,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
     if(field.as_cmd){
       char m=r.qst?(r.qst->s.find('?')==string::npos?'M':'O'):'D';
-      QapAssert(r.qst||r.mode?bool(r.qst)!=bool(r.mode):true);
-      QapAssert(!r.mode);
-      auto*pm=t_struct_cmd_mode::UberCast(r.mode.get());
+      //QapAssert(r.qst||r.mode?bool(r.qst)!=bool(r.mode):true);
+      //QapAssert(!r.mode);
+      //auto*pm=t_struct_cmd_mode::UberCast(r.mode.get());
       //string out=CToS(!r.qst?(r.mode?r.mode->get_mode():'D'):m)+"+=";
       string out=CToS(m)+"+=";
       string call,params;
@@ -471,8 +470,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         QapAssert(save_obj(pce->var,call));
         auto*p=pce->params.get();
         if(!p)QapDebugMsg("call with name = '"+call+"' dont have params");
-        if(p->arr.size()!=1)QapDebugMsg("look like you forget to remove var from params in field: "+lex2str(r));
-        save_obj(p->arr[0],params);
+        if(p->arr.size()>=2)QapDebugMsg("look like you forget to remove var from params in field: "+lex2str(r));
+        if(p->arr.size())save_obj(p->arr[0],params);
       }
       string go=r.value?call+"("+r.name.value+string(params.size()?","+params:"")+");":"auto("+r.name.value+");";
       field.cmdout+=out+"go_"+go;
@@ -510,7 +509,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   }
   int fields_counter=0;
   string provars,procmds;
-  void Do(t_sep_struct_field&r){Do(r.body);}
   void Do(t_target_item&r)override{
     r.def->Use(*this);
     auto L=def_info;
@@ -568,8 +566,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     dev.top.out+=out+"\n";
     out.clear();
     struct t_visitor:t_cpp_code::i_bayan_visitor{
-      t_sep_struct_cmds*pcmds{};
-      vector<t_sep_struct_field>*pfs{};
+      t_struct_cmds*pcmds{};
+      vector<TAutoPtr<i_struct_field>>*pfs{};
       string c;
       void Do(t_cpp_code::t_with_bayan&r)override{save_obj(r.eater,c);}
       void Do(t_cpp_code::t_without_bayan&r)override{save_obj(r.eater,c);}
@@ -613,10 +611,10 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       if(v.pfs){
         auto&arr=*v.pfs;
         for(auto&it:arr){
-          if(auto*p=t_struct_field::UberCast(it.body.get())){
+          if(auto*p=t_struct_field::UberCast(it.get())){
             if(p->value||p->qst){value_or_qst_or_const_found=true;break;}
           }
-          if(auto*p=t_const_field::UberCast(it.body.get())){
+          if(auto*p=t_const_field::UberCast(it.get())){
             value_or_qst_or_const_found=true;break;
           }
         }
@@ -629,7 +627,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         for(int i=0;fail;i++){
           fail=false;
           for(auto&it:arr){
-            if(auto*p=t_struct_field::UberCast(it.body.get()))if(p->name.value==s){s=pother+IToS(i);fail=true;break;}
+            if(auto*p=t_struct_field::UberCast(it.get()))if(p->name.value==s){s=pother+IToS(i);fail=true;break;}
           }
         }
       };
@@ -678,8 +676,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         int i=-1;
         for(auto&it:arr){
           i++;
-          auto*p=t_struct_field::UberCast(it.body.get());
-          auto*pc=t_const_field::UberCast(it.body.get());
+          auto*p=t_struct_field::UberCast(it.get());
+          auto*pc=t_const_field::UberCast(it.get());
           const string*plexer=nullptr;
           if(pc)plexer=this->dev.get_sep_lex(pc->value);
           if(plexer){
@@ -738,7 +736,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       if(!v.pfs)break;
       auto&arr=*v.pfs;
       for(auto&f:arr){
-        auto*p=t_struct_field::UberCast(f.body.get());
+        auto*p=t_struct_field::UberCast(f.get());
         if(!p||!p->attr)continue;
         auto&attrs=p->attr.get()->arr;
         vector<string> ats;
