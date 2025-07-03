@@ -9,6 +9,12 @@ struct t_meta_lexer;
 
 extern void UberInfoBox(const string&caption,const string&text);
 
+auto lex2str=[](auto&lex){
+  string out;
+  save_obj(lex,out);
+  return out;
+};
+
 struct t_templ_sys_v04:t_meta_lexer{
 public:
   class t_scope{
@@ -465,7 +471,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         QapAssert(save_obj(pce->var,call));
         auto*p=pce->params.get();
         if(!p)QapDebugMsg("call with name = '"+call+"' dont have params");
-        save_obj(p->arr,params);
+        if(p->arr.size()!=1)QapDebugMsg("look like you forget to remove var from params in field: "+lex2str(r));
+        save_obj(p->arr[0],params);
       }
       string go=r.value?call+"("+r.name.value+string(params.size()?","+params:"")+");":"auto("+r.name.value+");";
       field.cmdout+=out+"go_"+go;
@@ -1003,12 +1010,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         return out;
         int gg=1;
       }
-      auto lex2str=[](auto&lex){
-        string out;
-        save_obj(lex,out);
-        return out;
-      };
-      auto bad_type_checker=[lex2str](auto&lex,const string&type){
+      auto bad_type_checker=[](auto&lex,const string&type){
         string s=lex2str(*lex.get());
         return s.substr(0,type.size())==type;
       };

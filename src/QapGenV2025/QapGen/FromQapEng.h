@@ -1076,16 +1076,15 @@ std::string escape_char(char c,bool str=true) {
   }
 }
 
-std::string generate_gen_dips_code(const std::string& chars) {
+std::string generate_gen_dips_code(const std::string&chars){
   if (chars.empty()) return "\"\"";
   if(chars.size()==1)return "\""+escape_char(chars[0])+"\"";
-  // Уникализируем и сортируем символы
+  if(chars.size()<16){
+    std::string escaped;
+    for(char c:chars){escaped+=escape_char(c);}
+    return "\""+escaped+"\"";
+  }
   std::string sorted_chars = chars;
-  /*
-  std::sort(sorted_chars.begin(), sorted_chars.end());
-  sorted_chars.erase(std::unique(sorted_chars.begin(), sorted_chars.end()), sorted_chars.end());
-  */
-  // Строим строку диапазонов
   auto r=build_ranges_string(sorted_chars);
   auto r2=(gen_dips(r.ranges)+r.singles);
   auto m=CharMask::fromStr(r2,true);

@@ -1,4 +1,4 @@
-// 44.380000 ms
+// 579.828100 ms
 struct t_json{
   //===>>===i_value_visitor
   #define DEF_PRO_BLANK()
@@ -86,7 +86,7 @@ struct t_json{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_true);
         F(t_false);
@@ -164,6 +164,7 @@ struct t_json{
       return ok;
     }
   };
+  typedef array<char,4> ARRAY4char;
   struct t_string:public i_value{
     //===>>===i_item_visitor
     #define DEF_PRO_BLANK()
@@ -239,7 +240,7 @@ struct t_json{
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
       {
         #include "QapLexPolyBeg.inl"
-        bool load();/*
+        void load();/*
         {
           F(t_raw);
           F(t_fix);
@@ -301,7 +302,7 @@ struct t_json{
     #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_hex)PARENT(i_item)OWNER(t_string)
     #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
     ADDBEG()\
-    ADDVAR(array(char,4),arr,DEF,$,$)\
+    ADDVAR(ARRAY4char,arr,DEF,$,$)\
     ADDEND()
     //=====+>>>>>t_hex
     #include "QapGenStructNoTemplate.inl"
@@ -444,7 +445,7 @@ struct t_json{
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
       {
         #include "QapLexPolyBeg.inl"
-        bool load();/*
+        void load();/*
         {
           F(t_num);
           F(t_zero);
@@ -874,40 +875,57 @@ public:
   }
 public:
 };
-bool t_json::i_value::t_poly_impl::load()
+void t_json::i_value::t_poly_impl::load()
 {
-  #define F(TYPE)go_for<struct TYPE>();
-  F(t_true);
-  F(t_false);
-  F(t_null);
-  F(t_string);
-  F(t_number);
-  F(t_empty_array);
-  F(t_array);
-  F(t_empty_object);
-  F(t_object);
+  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
+  static std::array<t_lex,9> lex={
+    F(t_true,"t"),
+    F(t_false,"f"),
+    F(t_null,"n"),
+    F(t_string,"\""),
+    F(t_number,"-0123456789"),
+    F(t_empty_array,"["),
+    F(t_array,"["),
+    F(t_empty_object,"{"),
+    F(t_object,"{")
+  };
   #undef F
-  main();
-  return scope.ok;
+  #include "poly_fast_impl.inl"
+  main(&lex);
+  return;
 }
-bool t_json::t_string::i_item::t_poly_impl::load()
+void t_json::t_string::i_item::t_poly_impl::load()
 {
-  #define F(TYPE)go_for<struct TYPE>();
-  F(t_raw);
-  F(t_fix);
-  F(t_hex);
+  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
+  static std::array<t_lex,3> lex={
+    F(t_raw,gen_dips("\x00\t\x0B!#[]\xFF")),
+    F(t_fix,"\\"),
+    F(t_hex,"\\")
+  };
   #undef F
-  main();
-  return scope.ok;
+  #include "poly_fast_impl.inl"
+  main(&lex);
+  return;
 }
-bool t_json::t_number::i_int::t_poly_impl::load()
+void t_json::t_number::i_int::t_poly_impl::load()
 {
-  #define F(TYPE)go_for<struct TYPE>();
-  F(t_num);
-  F(t_zero);
+  i_dev::t_result r=dev.get_char_lt();
+  if(!r.ok){scope.ok=false;return;}
+  #define F(TYPE,MASK)
+  switch(r.c){
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':{t_num L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_num>(std::move(L));return;}
+    case '0':{t_zero L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_zero>(std::move(L));return;}
+    default:{scope.ok=false;return;}
+  }
   #undef F
-  main();
-  return scope.ok;
 }
 /*
 //list of types:
@@ -917,71 +935,46 @@ adler3d.github.io/test2013/
 //code:
 return decodeURIComponent(POST['data'].split("\n").join(""));
 //data:
-t%5fjson%7b%0a%0at%5ftrue%3d%3ei%5fvalue%7b%7bgo%5fconst%28%22true%22%29%3b%7d%7
-d%0at%5ffalse%3d%3ei%5fvalue%7b%7bgo%5fconst%28%22false%22%29%3b%7d%7d%0at%5fnul
-l%3d%3ei%5fvalue%7b%7bgo%5fconst%28%22null%22%29%3b%7d%7d%0a%0at%5fstring%3d%3ei
-%5fvalue%7b%0a%20%20t%5fraw%3d%3ei%5fitem%7bstring%20body%3b%7bgo%5fany%28body%2
-cdip%5finv%28%22%5c%22%5c%5c%5cn%22%29%29%3b%7d%7d%0a%20%20t%5ffix%3d%3ei%5fitem
-%7bchar%20body%3b%7bgo%5fconst%28%22%5c%5c%22%29%3bgo%5fany%5fchar%28body%2c%22%
-5c%22%5c%5c%2fbfnrt%22%29%3b%7d%7d%0a%20%20t%5fhex%3d%3ei%5fitem%7barray%28char%
-2c4%29%20arr%3b%7bgo%5fconst%28%22%5c%5cu%22%29%3bgo%5fany%5farr%5fchar%28arr%2c
-gen%5fdips%28%2209afAF%22%29%29%3b%7d%7d%0a%20%20t%5fitems%7bvector%3cTAutoPtr%3
-ci%5fitem%3e%3e%20arr%3b%7bgo%5fauto%28arr%29%3b%7d%7d%0a%20%20t%5fitems%20body%
-3b%0a%20%20%7b%0a%20%20%20%20go%5fconst%28%22%5c%22%22%29%3b%0a%20%20%20%20go%5f
-auto%28body%29%3b%0a%20%20%20%20go%5fconst%28%22%5c%22%22%29%3b%0a%20%20%7d%0a%7
-d%0a%0at%5fnumber%3d%3ei%5fvalue%7b%0a%20%20t%5fminus%7b%7bgo%5fconst%28%22%2d%2
-2%29%3b%7d%7d%0a%20%20t%5ffrac%7b%0a%20%20%20%20string%20arr%3b%0a%20%20%20%20%7
-b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%2e%22%29%3b%0a%20%20%20%20%20%20M%
-2b%3dgo%5fany%28arr%2cgen%5fdips%28%2209%22%29%29%3b%0a%20%20%20%20%7d%0a%20%20%
-7d%0a%20%20t%5fsign%7b%0a%20%20%20%20char%20sign%3b%0a%20%20%20%20%7b%0a%20%20%2
-0%20%20%20go%5fany%5fchar%28sign%2c%22%2d%2b%22%29%3b%0a%20%20%20%20%7d%0a%20%20
-%7d%0a%20%20t%5fexp%7b%0a%20%20%20%20char%20e%3b%0a%20%20%20%20TAutoPtr%3ct%5fsi
-gn%3e%20sign%3b%0a%20%20%20%20string%20arr%3b%0a%20%20%20%20%7b%0a%20%20%20%20%2
-0%20M%2b%3dgo%5fany%5fchar%28e%2c%22eE%22%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5f
-auto%28sign%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fany%28arr%2cgen%5fdips%28%2209
-%22%29%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fnum%3d%3ei%5fint%7b%0a%20
-%20%20%20char%20first%3b%0a%20%20%20%20string%20num%3b%0a%20%20%20%20%7b%0a%20%2
-0%20%20%20%20M%2b%3dgo%5fany%5fchar%28first%2cgen%5fdips%28%2219%22%29%29%3b%0a%
-20%20%20%20%20%20O%2b%3dgo%5fany%28num%2cgen%5fdips%28%2209%22%29%29%3b%0a%20%20
-%20%20%7d%0a%20%20%7d%0a%20%20t%5fzero%3d%3ei%5fint%7b%7bgo%5fconst%28%220%22%29
-%3b%7d%7d%0a%20%20TAutoPtr%3ct%5fminus%3e%20minus%3b%0a%20%20TAutoPtr%3ci%5fint%
-3e%20val%3b%0a%20%20TAutoPtr%3ct%5ffrac%3e%20frac%3b%0a%20%20TAutoPtr%3ct%5fexp%
-3e%20exp%3b%0a%20%20%7b%0a%20%20%20%20O%2b%3dgo%5fauto%28minus%29%3b%0a%20%20%20
-%20M%2b%3dgo%5fauto%28val%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28frac%29%3b%0a%2
-0%20%20%20O%2b%3dgo%5fauto%28exp%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fsep%7b%0a%20%2
-0string%20body%3b%0a%20%20%7b%0a%20%20%20%20go%5fany%28body%2c%22%20%5ct%5cr%5cn
-%22%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fempty%5farray%3d%3ei%5fvalue%7b%0a%20%20t%5
-fsep%20sep%3b%0a%20%20t%5fsep%20sep2%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fco
-nst%28%22%5b%22%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep%29%3b%0a%20%20%20%20M
-%2b%3dgo%5fconst%28%22%5d%22%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep2%29%3b%0
-a%20%20%7d%0a%7d%0a%0at%5fvalue%7b%0a%20%20t%5fsep%20sep%3b%0a%20%20TAutoPtr%3ci
-%5fvalue%3e%20body%3b%0a%20%20%7b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep%29%3b%0a%
-20%20%20%20M%2b%3dgo%5fauto%28body%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fcomma%5fvalu
-e%7b%0a%20%20t%5fsep%20sep%3b%0a%20%20t%5fvalue%20body%3b%0a%20%20%7b%0a%20%20%2
-0%20O%2b%3dgo%5fauto%28sep%29%3b%0a%20%20%20%20M%2b%3dgo%5fconst%28%22%2c%22%29%
-3b%0a%20%20%20%20M%2b%3dgo%5fauto%28body%29%3b%0a%20%20%7d%0a%7d%0a%0at%5farray%
-3d%3ei%5fvalue%7b%0a%20%20t%5fvalue%20first%3b%0a%20%20vector%3ct%5fcomma%5fvalu
-e%3e%20arr%3b%0a%20%20t%5fsep%20sep%3b%0a%20%20t%5fsep%20sep2%3b%0a%20%20%7b%0a%
-20%20%20%20M%2b%3dgo%5fconst%28%22%5b%22%29%3b%0a%20%20%20%20M%2b%3dgo%5fauto%28
-first%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20O%2b%3dgo%5
-fauto%28sep%29%3b%0a%20%20%20%20M%2b%3dgo%5fconst%28%22%5d%22%29%3b%0a%20%20%20%
-20O%2b%3dgo%5fauto%28sep2%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fempty%5fobject%3d%3ei
-%5fvalue%7b%0a%20%20t%5fsep%20sep%3b%0a%20%20t%5fsep%20sep2%3b%0a%20%20%7b%0a%20
-%20%20%20M%2b%3dgo%5fconst%28%22%7b%22%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28se
-p%29%3b%0a%20%20%20%20M%2b%3dgo%5fconst%28%22%7d%22%29%3b%0a%20%20%20%20O%2b%3dg
-o%5fauto%28sep2%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fpair%7b%0a%20%20t%5fsep%20sep0%
-3b%0a%20%20t%5fstring%20key%3b%0a%20%20t%5fsep%20sep1%3b%0a%20%20t%5fvalue%20val
-ue%3b%0a%20%20%7b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20M%2b
-%3dgo%5fauto%28key%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20
-%20M%2b%3dgo%5fconst%28%22%3a%22%29%3b%0a%20%20%20%20M%2b%3dgo%5fauto%28value%29
-%3b%0a%20%20%7d%0a%7d%0a%0at%5fcomma%5fpair%7b%0a%20%20t%5fsep%20sep%3b%0a%20%20
-t%5fpair%20body%3b%0a%20%20%7b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep%29%3b%0a%20%
-20%20%20M%2b%3dgo%5fconst%28%22%2c%22%29%3b%0a%20%20%20%20M%2b%3dgo%5fauto%28bod
-y%29%3b%0a%20%20%7d%0a%7d%0a%0at%5fobject%3d%3ei%5fvalue%7b%0a%20%20t%5fpair%20f
-irst%3b%0a%20%20vector%3ct%5fcomma%5fpair%3e%20arr%3b%0a%20%20t%5fsep%20sep%3b%0
-a%20%20t%5fsep%20sep2%3b%0a%20%20%7b%0a%20%20%20%20M%2b%3dgo%5fconst%28%22%7b%22
-%29%3b%0a%20%20%20%20M%2b%3dgo%5fauto%28first%29%3b%0a%20%20%20%20O%2b%3dgo%5fau
-to%28arr%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep%29%3b%0a%20%20%20%20M%2b%3dg
-o%5fconst%28%22%7d%22%29%3b%0a%20%20%20%20O%2b%3dgo%5fauto%28sep2%29%3b%0a%20%20
-%7d%0a%7d%0a%0a%7d
+t%5fjson%7b%0a%0a%20%20t%5ftrue%3d%3ei%5fvalue%7b%22true%22%7d%0a%20%20t%5ffalse
+%3d%3ei%5fvalue%7b%22false%22%7d%0a%20%20t%5fnull%3d%3ei%5fvalue%7b%22null%22%7d
+%0a%20%20typedef%20array%3cchar%2c4%3e%20ARRAY4char%3b%0a%20%20t%5fstring%3d%3ei
+%5fvalue%7b%0a%20%20%20%20t%5fraw%3d%3ei%5fitem%7bstring%20body%3dany%28dip%5fin
+v%28%22%5c%22%5c%5c%5cn%22%29%29%3b%7d%0a%20%20%20%20t%5ffix%3d%3ei%5fitem%7b%22
+%5c%5c%22%20char%20body%3dany%5fchar%28%22%5c%22%5c%5c%2fbfnrt%22%29%3b%7d%0a%20
+%20%20%20t%5fhex%3d%3ei%5fitem%7b%22%5c%5cu%22%20ARRAY4char%20arr%3dany%5farr%5f
+char%28gen%5fdips%28%2209afAF%22%29%29%3b%7d%0a%20%20%20%20t%5fitems%7bvector%3c
+TAutoPtr%3ci%5fitem%3e%3e%20arr%3b%7d%0a%20%20%20%20%22%5c%22%22%0a%20%20%20%20t
+%5fitems%20body%3b%0a%20%20%20%20%22%5c%22%22%0a%20%20%7d%0a%0a%20%20t%5fnumber%
+3d%3ei%5fvalue%7b%0a%20%20%20%20t%5fminus%7b%22%2d%22%7d%0a%20%20%20%20t%5ffrac%
+7b%22%2e%22%20string%20arr%3dany%28gen%5fdips%28%2209%22%29%29%3b%7d%0a%20%20%20
+%20t%5fsign%7bchar%20sign%3dany%5fchar%28%22%2d%2b%22%29%3b%7d%0a%20%20%20%20t%5
+fexp%7b%0a%20%20%20%20%20%20char%20e%3dany%5fchar%28%22eE%22%29%3b%0a%20%20%20%2
+0%20%20TAutoPtr%3ct%5fsign%3e%20sign%3f%3b%0a%20%20%20%20%20%20string%20arr%3dan
+y%28gen%5fdips%28%2209%22%29%29%3b%0a%20%20%20%20%20%20%0a%20%20%20%20%7d%0a%20%
+20%20%20t%5fnum%3d%3ei%5fint%7b%0a%20%20%20%20%20%20char%20first%3dany%5fchar%28
+gen%5fdips%28%2219%22%29%29%3b%0a%20%20%20%20%20%20string%20num%3dany%28gen%5fdi
+ps%28%2209%22%29%29%3f%3b%0a%20%20%20%20%7d%0a%20%20%20%20t%5fzero%3d%3ei%5fint%
+7b%220%22%7d%0a%20%20%20%20TAutoPtr%3ct%5fminus%3e%20minus%3f%3b%0a%20%20%20%20T
+AutoPtr%3ci%5fint%3e%20val%3b%0a%20%20%20%20TAutoPtr%3ct%5ffrac%3e%20frac%3f%3b%
+0a%20%20%20%20TAutoPtr%3ct%5fexp%3e%20exp%3f%3b%0a%20%20%7d%0a%0a%20%20t%5fsep%7
+b%0a%20%20%20%20string%20body%3dany%28%22%20%5ct%5cr%5cn%22%29%3b%0a%20%20%7d%0a
+%0a%20%20t%5fempty%5farray%3d%3ei%5fvalue%7b%0a%20%20%20%20%22%5b%22%0a%20%20%20
+%20t%5fsep%20sep%3f%3b%0a%20%20%20%20%22%5d%22%0a%20%20%20%20t%5fsep%20sep2%3f%3
+b%0a%20%20%7d%0a%0a%20%20t%5fvalue%7b%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%20
+%20%20TAutoPtr%3ci%5fvalue%3e%20body%3b%0a%20%20%7d%0a%0a%20%20t%5fcomma%5fvalue
+%7b%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%20%20%20%22%2c%22%0a%20%20%20%20t%5f
+value%20body%3b%0a%20%20%7d%0a%0a%20%20t%5farray%3d%3ei%5fvalue%7b%0a%20%20%20%2
+0%22%5b%22%0a%20%20%20%20t%5fvalue%20first%3b%0a%20%20%20%20vector%3ct%5fcomma%5
+fvalue%3e%20arr%3f%3b%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%20%20%20%22%5d%22%
+0a%20%20%20%20t%5fsep%20sep2%3f%3b%0a%20%20%7d%0a%0a%20%20t%5fempty%5fobject%3d%
+3ei%5fvalue%7b%0a%20%20%20%20%22%7b%22%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%2
+0%20%20%22%7d%22%0a%20%20%20%20t%5fsep%20sep2%3f%3b%0a%20%20%7d%0a%0a%20%20t%5fp
+air%7b%0a%20%20%20%20t%5fsep%20sep0%3f%3b%0a%20%20%20%20t%5fstring%20key%3b%0a%2
+0%20%20%20t%5fsep%20sep1%3f%3b%0a%20%20%20%20%22%3a%22%0a%20%20%20%20t%5fvalue%2
+0value%3b%0a%20%20%7d%0a%0a%20%20t%5fcomma%5fpair%7b%0a%20%20%20%20t%5fsep%20sep
+%3f%3b%0a%20%20%20%20%22%2c%22%0a%20%20%20%20t%5fpair%20body%3b%0a%20%20%7d%0a%0
+a%20%20t%5fobject%3d%3ei%5fvalue%7b%0a%20%20%20%20%22%7b%22%0a%20%20%20%20t%5fpa
+ir%20first%3b%0a%20%20%20%20vector%3ct%5fcomma%5fpair%3e%20arr%3f%3b%0a%20%20%20
+%20t%5fsep%20sep%3f%3b%0a%20%20%20%20%22%7d%22%0a%20%20%20%20t%5fsep%20sep2%3f%3
+b%0a%20%20%7d%0a%0a%7d
 */
