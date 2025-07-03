@@ -1493,7 +1493,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     Do(tar);
     buildLexerTree();
     //lexer_lookup_test();
-    if(bool polygen=true){dev.top.out+=poly_gen();}else dev.top.out+=get_at_end();
+    if(bool polygen=false){dev.top.out+=poly_gen();}else dev.top.out+=get_at_end();
     vector<i_target_item*> tarr;
     for(auto&ex:tar.arr)tarr.push_back(ex.get());
     auto listoftypes=get_list_of_types(tarr);
