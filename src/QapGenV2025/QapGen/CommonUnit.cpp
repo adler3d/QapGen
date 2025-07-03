@@ -3,7 +3,11 @@
 #include "FromQapEng.h"
 //#include "QapMicro2/QapTools.h"
 typedef unsigned char uchar;
-#define TAutoPtr unique_ptr
+//#define TAutoPtr unique_ptr
+#include "unique_pool_ptr.hpp"
+#define TAutoPtr UniquePoolPtr
+#define TAutoPtr UniquePoolPtr
+#define make_unique make_unique_pool
 #include "detail.inl"
 #include "t_error_tool.inl"
 #include "QapLexer.inl"

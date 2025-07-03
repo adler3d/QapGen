@@ -1,4 +1,4 @@
-// 2878.410000 ms
+// 2993.098400 ms
 //===>>===i_str_item_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -69,6 +69,7 @@ ADDEND()
 public:
   typedef i_str_item_visitor i_visitor;
   virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+  virtual ~i_str_item()=default;
 public:
   virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
   struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -157,6 +158,7 @@ ADDEND()
 public:
   typedef i_char_item_visitor i_visitor;
   virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+  virtual ~i_char_item()=default;
 public:
   virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
   struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -243,6 +245,7 @@ ADDEND()
 public:
   typedef i_sep_visitor i_visitor;
   virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+  virtual ~i_sep()=default;
 public:
   virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
   struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -332,6 +335,7 @@ ADDEND()
 public:
   typedef i_simple_expr_visitor i_visitor;
   virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+  virtual ~i_simple_expr()=default;
 public:
   virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
   struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -1166,6 +1170,7 @@ struct t_cppcore{
   public:
     typedef i_expr_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_expr()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -1991,6 +1996,7 @@ struct t_cppcore{
     public:
       typedef i_val_visitor i_visitor;
       virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_val()=default;
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -2308,6 +2314,7 @@ struct t_cppcore{
     public:
       typedef i_val_visitor i_visitor;
       virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_val()=default;
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -2600,6 +2607,7 @@ struct t_cppcore{
     public:
       typedef i_part_visitor i_visitor;
       virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_part()=default;
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -3034,6 +3042,7 @@ struct t_meta_lexer{
   public:
     typedef i_code_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_code()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -3135,6 +3144,7 @@ struct t_meta_lexer{
   public:
     typedef i_code_with_sep_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_code_with_sep()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -3228,6 +3238,7 @@ struct t_meta_lexer{
   public:
     typedef i_type_item_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_type_item()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -3313,6 +3324,7 @@ struct t_meta_lexer{
   public:
     typedef i_type_templ_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_type_templ()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -3396,6 +3408,7 @@ struct t_meta_lexer{
   public:
     typedef i_struct_cmd_xxxx_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_struct_cmd_xxxx()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -3479,6 +3492,7 @@ struct t_meta_lexer{
   public:
     typedef i_struct_field_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_struct_field()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -3564,6 +3578,7 @@ struct t_meta_lexer{
   public:
     typedef i_struct_cmd_so_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_struct_cmd_so()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -3648,6 +3663,7 @@ struct t_meta_lexer{
   public:
     typedef i_cpp_code_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_cpp_code()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -3731,6 +3747,7 @@ struct t_meta_lexer{
   public:
     typedef i_def_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_def()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -3820,6 +3837,7 @@ struct t_meta_lexer{
   public:
     typedef i_target_item_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_target_item()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -4798,6 +4816,7 @@ struct t_meta_lexer{
     public:
       typedef i_sc_item_visitor i_visitor;
       virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_sc_item()=default;
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -5110,6 +5129,7 @@ struct t_meta_lexer{
     public:
       typedef i_cmd_param_expr_visitor i_visitor;
       virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_cmd_param_expr()=default;
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -5596,6 +5616,7 @@ struct t_meta_lexer{
     public:
       typedef i_major_visitor i_visitor;
       virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_major()=default;
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -5680,6 +5701,7 @@ struct t_meta_lexer{
     public:
       typedef i_bayan_visitor i_visitor;
       virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_bayan()=default;
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -6135,6 +6157,7 @@ struct t_meta_lexer{
     public:
       typedef i_qa_visitor i_visitor;
       virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_qa()=default;
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>

@@ -91,6 +91,7 @@ public:
 public:
   typedef ^^^I_BASE^^^_visitor i_visitor;
   virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+  virtual ~^^^I_BASE^^^()=default;
 ----------------------------------------------------------------
 #####-GO_BASE-#####
 ----------------------------------------------------------------

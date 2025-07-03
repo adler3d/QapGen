@@ -291,7 +291,7 @@ public:
       rec.info=strtype.c_str();
       if(scope.ok)
       {
-        rec.object=std::make_unique<T>(std::move(tmp));
+        rec.object=make_unique<T>(std::move(tmp));
         //auto*p=rec.object.get();
         //*p=std::move(tmp);
         if(!count)first_id=out_arr.size();

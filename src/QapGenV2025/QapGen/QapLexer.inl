@@ -1071,7 +1071,7 @@ static bool go_for_item(
   TYPE tmp;
   ok=tmp.go(dev);
   if(!ok)return ok;
-  ref=std::make_unique<TYPE>(std::move(tmp));
+  ref=make_unique<TYPE>(std::move(tmp));
   //auto*p=ref.build<TYPE>(dev.getEnv());
   //*p=std::move(tmp);
   return ok;
@@ -1128,7 +1128,7 @@ go_for_item(i_dev&dev,TAutoPtr<TYPE>&ref){
   TYPE tmp;// создаём на стэке, т.к при загрузке основной сценарий - это скорее всего фэйл(таки надо это проверить). нам не нужно дополнительные выделения памяти.
   ok=tmp.go(dev);
   if(!ok)return ok;
-  ref=std::make_unique<TYPE>(std::move(tmp)); // редкий сценарий, можно и память выделить.
+  ref=make_unique<TYPE>(std::move(tmp)); // редкий сценарий, можно и память выделить.
   return ok;
 }
 

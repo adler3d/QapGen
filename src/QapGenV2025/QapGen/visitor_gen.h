@@ -1477,46 +1477,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     return nullptr;
   }
 
-  //from=="t_str_item"; name="t_impl"; // насамом деле t_str_item содержит в себе t_impl
-  /*const t_lexer_node* findLexerByNameRelative(const std::string& name, const t_lexer& from) const {
-    // Абсолютный путь (начинается с "::")
-    if (name.size() >= 2 && name[0] == ':' && name[1] == ':') {
-        std::string absName = name.substr(2);
-        for (auto& root : lexers_nodes) {
-            if (auto* found = findByFullname(root, absName)) {
-                return found;
-            }
-        }
-        return nullptr;
-    }
-
-    std::vector<std::string> fromParts = split(from.fullowner, "::");
-
-    for (auto i = static_cast<long long int>(fromParts.size()) - 1; i >= 0; --i) {
-        if (fromParts.empty()) break;
-
-        std::string prefix = fromParts[0];
-        for (int j = 1; j <= i; ++j) {
-            prefix += "::" + fromParts[j];
-        }
-        std::string candidateFullname = prefix + "::" + name;
-
-        for (auto& root : lexers_nodes) {
-            if (auto* p = findByFullname(root, candidateFullname)) {
-                return p;
-            }
-        }
-    }
-    if(fromParts.empty()){
-      for(auto&root:lexers_nodes){
-        if(auto*found=findByFullname(root,name)){
-          return found;
-        }
-      }
-    }
-    return nullptr;
-  }*/
-
   int lexer_lookup_test() {
     //std::vector<t_lexer> 
     /*lexers = {
