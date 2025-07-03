@@ -646,6 +646,7 @@ t_const_field:i_struct_field{
   TAutoPtr<t_qst> qst?;
   " "?
   TAutoPtr<t_semicolon> sc?;
+  " "?
 }
 
 t_struct_field_value {
@@ -785,6 +786,7 @@ t_cpp_code{
 
 t_fields_cmds_cppcode{
   vector<TAutoPtr<i_struct_field>> arr?;
+  " "?
   TAutoPtr<t_struct_cmds> cmds?;
   TAutoPtr<t_cpp_code> c?;
 }
@@ -792,9 +794,9 @@ t_fields_cmds_cppcode{
 t_struct_body{
   "{"
   vector<TAutoPtr<i_target_item>> nested?;
-  " "?;
+  " "?
   TAutoPtr<t_fields_cmds_cppcode> fcc;
-  " "?;
+  " "?
   "}"
 }
 
