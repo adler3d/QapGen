@@ -7,7 +7,7 @@ if(char2lexs.empty()){
   }
 }
 i_dev::t_result r=dev.get_char_lt();
-if(!r.ok){scope.ok=false;return false;}
+if(!r.ok){scope.ok=false;return;}
 auto&arr=char2lexs[(uchar&)r.c];
-if(arr.empty()){scope.ok=false;return false;}
+if(arr.empty()){scope.ok=false;return;}
 for(auto&ex:arr)ex->func(this);

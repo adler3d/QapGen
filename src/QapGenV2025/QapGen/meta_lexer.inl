@@ -1,4 +1,4 @@
-// 4035.273100 ms
+// 3541.892700 ms
 //===>>===i_str_item_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -74,7 +74,7 @@ public:
   struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
   {
     #include "QapLexPolyBeg.inl"
-    bool load();/*
+    void load();/*
     {
       F(t_str_item_raw);
       F(t_str_item_hex);
@@ -162,7 +162,7 @@ public:
   struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
   {
     #include "QapLexPolyBeg.inl"
-    bool load();/*
+    void load();/*
     {
       F(t_char_item_raw);
       F(t_char_item_hex);
@@ -248,7 +248,7 @@ public:
   struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
   {
     #include "QapLexPolyBeg.inl"
-    bool load();/*
+    void load();/*
     {
       F(t_sep_seq);
       F(t_c_comment);
@@ -337,7 +337,7 @@ public:
   struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
   {
     #include "QapLexPolyBeg.inl"
-    bool load();/*
+    void load();/*
     {
       F(t_str);
       F(t_char);
@@ -1171,7 +1171,7 @@ struct t_cppcore{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_int_expr);
         F(t_char_expr);
@@ -1996,7 +1996,7 @@ struct t_cppcore{
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
       {
         #include "QapLexPolyBeg.inl"
-        bool load();/*
+        void load();/*
         {
           F(t_zero);
           F(t_num);
@@ -2313,7 +2313,7 @@ struct t_cppcore{
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
       {
         #include "QapLexPolyBeg.inl"
-        bool load();/*
+        void load();/*
         {
           F(t_num);
           F(t_zero);
@@ -2605,7 +2605,7 @@ struct t_cppcore{
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
       {
         #include "QapLexPolyBeg.inl"
-        bool load();/*
+        void load();/*
         {
           F(t_dd_part);
           F(t_template_part);
@@ -3039,7 +3039,7 @@ struct t_meta_lexer{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_name_code);
         F(t_num_code);
@@ -3140,7 +3140,7 @@ struct t_meta_lexer{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_name_code_with_sep);
         F(t_num_code_with_sep);
@@ -3233,7 +3233,7 @@ struct t_meta_lexer{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_type_item_string);
         F(t_type_item_char);
@@ -3318,7 +3318,7 @@ struct t_meta_lexer{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_type_templ_angle);
         F(t_type_templ_soft);
@@ -3401,7 +3401,7 @@ struct t_meta_lexer{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_struct_cmd_mode);
         F(t_struct_cmd_anno);
@@ -3484,7 +3484,7 @@ struct t_meta_lexer{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_const_field);
         F(t_struct_field);
@@ -3569,7 +3569,7 @@ struct t_meta_lexer{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_struct_cmd_suffix);
         F(t_struct_cmd_optional);
@@ -3653,7 +3653,7 @@ struct t_meta_lexer{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_cpp_code_sep);
         F(t_cpp_code_main);
@@ -3736,7 +3736,7 @@ struct t_meta_lexer{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_class_def);
         F(t_struct_def);
@@ -3825,7 +3825,7 @@ struct t_meta_lexer{
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
     {
       #include "QapLexPolyBeg.inl"
-      bool load();/*
+      void load();/*
       {
         F(t_target_sep);
         F(t_target_item);
@@ -4803,7 +4803,7 @@ struct t_meta_lexer{
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
       {
         #include "QapLexPolyBeg.inl"
-        bool load();/*
+        void load();/*
         {
           F(t_c_item);
           F(t_s_item);
@@ -5135,7 +5135,7 @@ struct t_meta_lexer{
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
       {
         #include "QapLexPolyBeg.inl"
-        bool load();/*
+        void load();/*
         {
           F(t_expr_call);
           F(t_expr_str);
@@ -5621,7 +5621,7 @@ struct t_meta_lexer{
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
       {
         #include "QapLexPolyBeg.inl"
-        bool load();/*
+        void load();/*
         {
           F(t_fields);
           F(t_cmds);
@@ -5705,7 +5705,7 @@ struct t_meta_lexer{
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
       {
         #include "QapLexPolyBeg.inl"
-        bool load();/*
+        void load();/*
         {
           F(t_with_bayan);
           F(t_without_bayan);
@@ -6157,7 +6157,7 @@ struct t_meta_lexer{
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
       {
         #include "QapLexPolyBeg.inl"
-        bool load();/*
+        void load();/*
         {
           F(t_str_ap);
           F(t_str_qu);
@@ -6403,7 +6403,7 @@ public:
   }
 public:
 };
-bool i_str_item::t_poly_impl::load()
+void i_str_item::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,4> lex={
@@ -6415,9 +6415,9 @@ bool i_str_item::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool i_char_item::t_poly_impl::load()
+void i_char_item::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,4> lex={
@@ -6429,9 +6429,9 @@ bool i_char_item::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool i_sep::t_poly_impl::load()
+void i_sep::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,3> lex={
@@ -6442,9 +6442,9 @@ bool i_sep::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool i_simple_expr::t_poly_impl::load()
+void i_simple_expr::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,5> lex={
@@ -6457,9 +6457,9 @@ bool i_simple_expr::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_cppcore::i_expr::t_poly_impl::load()
+void t_cppcore::i_expr::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,7> lex={
@@ -6474,9 +6474,9 @@ bool t_cppcore::i_expr::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_cppcore::t_int_expr::i_val::t_poly_impl::load()
+void t_cppcore::t_int_expr::i_val::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,2> lex={
@@ -6486,9 +6486,9 @@ bool t_cppcore::t_int_expr::i_val::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_cppcore::t_real_expr::i_val::t_poly_impl::load()
+void t_cppcore::t_real_expr::i_val::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,2> lex={
@@ -6498,9 +6498,9 @@ bool t_cppcore::t_real_expr::i_val::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_cppcore::t_varcall_expr::i_part::t_poly_impl::load()
+void t_cppcore::t_varcall_expr::i_part::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,2> lex={
@@ -6510,9 +6510,9 @@ bool t_cppcore::t_varcall_expr::i_part::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_meta_lexer::i_code::t_poly_impl::load()
+void t_meta_lexer::i_code::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,8> lex={
@@ -6528,9 +6528,9 @@ bool t_meta_lexer::i_code::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_meta_lexer::i_code_with_sep::t_poly_impl::load()
+void t_meta_lexer::i_code_with_sep::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,8> lex={
@@ -6546,9 +6546,9 @@ bool t_meta_lexer::i_code_with_sep::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_meta_lexer::i_type_item::t_poly_impl::load()
+void t_meta_lexer::i_type_item::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,4> lex={
@@ -6560,33 +6560,37 @@ bool t_meta_lexer::i_type_item::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_meta_lexer::i_type_templ::t_poly_impl::load()
+void t_meta_lexer::i_type_templ::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,2> lex={
-    F(t_type_templ_angle,"<"),
-    F(t_type_templ_soft,"(")
-  };
+  i_dev::t_result r=dev.get_char_lt();
+  if(!r.ok){scope.ok=false;return;}
+  #define F(TYPE,MASK)
+  switch(r.c){
+    case '<':{t_type_templ_angle L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_type_templ_angle>(std::move(L));return;}
+    case '(':{t_type_templ_soft L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_type_templ_soft>(std::move(L));return;}
+    default:{scope.ok=false;return;}
+  }
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return scope.ok;
 }
-bool t_meta_lexer::i_struct_cmd_xxxx::t_poly_impl::load()
+void t_meta_lexer::i_struct_cmd_xxxx::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,2> lex={
-    F(t_struct_cmd_mode,"DMO"),
-    F(t_struct_cmd_anno,"@mo")
-  };
+  i_dev::t_result r=dev.get_char_lt();
+  if(!r.ok){scope.ok=false;return;}
+  #define F(TYPE,MASK)
+  switch(r.c){
+    case 'D':
+    case 'M':
+    case 'O':{t_struct_cmd_mode L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_struct_cmd_mode>(std::move(L));return;}
+    case '@':
+    case 'm':
+    case 'o':{t_struct_cmd_anno L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_struct_cmd_anno>(std::move(L));return;}
+    default:{scope.ok=false;return;}
+  }
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return scope.ok;
 }
-bool t_meta_lexer::i_struct_field::t_poly_impl::load()
+void t_meta_lexer::i_struct_field::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,2> lex={
@@ -6596,22 +6600,23 @@ bool t_meta_lexer::i_struct_field::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_meta_lexer::i_struct_cmd_so::t_poly_impl::load()
+void t_meta_lexer::i_struct_cmd_so::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,3> lex={
-    F(t_struct_cmd_suffix,"!?"),
-    F(t_struct_cmd_optional,"["),
-    F(t_struct_cmd_opt_v2,";")
-  };
+  i_dev::t_result r=dev.get_char_lt();
+  if(!r.ok){scope.ok=false;return;}
+  #define F(TYPE,MASK)
+  switch(r.c){
+    case '!':
+    case '?':{t_struct_cmd_suffix L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_struct_cmd_suffix>(std::move(L));return;}
+    case '[':{t_struct_cmd_optional L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_struct_cmd_optional>(std::move(L));return;}
+    case ';':{t_struct_cmd_opt_v2 L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_struct_cmd_opt_v2>(std::move(L));return;}
+    default:{scope.ok=false;return;}
+  }
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return scope.ok;
 }
-bool t_meta_lexer::i_cpp_code::t_poly_impl::load()
+void t_meta_lexer::i_cpp_code::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,2> lex={
@@ -6621,9 +6626,9 @@ bool t_meta_lexer::i_cpp_code::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_meta_lexer::i_def::t_poly_impl::load()
+void t_meta_lexer::i_def::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,2> lex={
@@ -6633,9 +6638,9 @@ bool t_meta_lexer::i_def::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_meta_lexer::i_target_item::t_poly_impl::load()
+void t_meta_lexer::i_target_item::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,5> lex={
@@ -6648,21 +6653,21 @@ bool t_meta_lexer::i_target_item::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_meta_lexer::t_const_field::i_sc_item::t_poly_impl::load()
+void t_meta_lexer::t_const_field::i_sc_item::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,2> lex={
-    F(t_c_item,"'"),
-    F(t_s_item,"\"")
-  };
+  i_dev::t_result r=dev.get_char_lt();
+  if(!r.ok){scope.ok=false;return;}
+  #define F(TYPE,MASK)
+  switch(r.c){
+    case '\'':{t_c_item L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_c_item>(std::move(L));return;}
+    case '"':{t_s_item L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_s_item>(std::move(L));return;}
+    default:{scope.ok=false;return;}
+  }
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return scope.ok;
 }
-bool t_meta_lexer::t_cmd_param::i_cmd_param_expr::t_poly_impl::load()
+void t_meta_lexer::t_cmd_param::i_cmd_param_expr::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,3> lex={
@@ -6673,9 +6678,9 @@ bool t_meta_lexer::t_cmd_param::i_cmd_param_expr::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_meta_lexer::t_cpp_code::i_major::t_poly_impl::load()
+void t_meta_lexer::t_cpp_code::i_major::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,3> lex={
@@ -6686,9 +6691,9 @@ bool t_meta_lexer::t_cpp_code::i_major::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_meta_lexer::t_cpp_code::i_bayan::t_poly_impl::load()
+void t_meta_lexer::t_cpp_code::i_bayan::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,2> lex={
@@ -6698,19 +6703,19 @@ bool t_meta_lexer::t_cpp_code::i_bayan::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
 }
-bool t_meta_lexer::t_target_using::i_qa::t_poly_impl::load()
+void t_meta_lexer::t_target_using::i_qa::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,2> lex={
-    F(t_str_ap,"'"),
-    F(t_str_qu,"\"")
-  };
+  i_dev::t_result r=dev.get_char_lt();
+  if(!r.ok){scope.ok=false;return;}
+  #define F(TYPE,MASK)
+  switch(r.c){
+    case '\'':{t_str_ap L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_str_ap>(std::move(L));return;}
+    case '"':{t_str_qu L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_str_qu>(std::move(L));return;}
+    default:{scope.ok=false;return;}
+  }
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return scope.ok;
 }
 /*
 //list of types:

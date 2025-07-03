@@ -1053,14 +1053,15 @@ t_ranges_result build_ranges_string(const std::string& chars) {
 }
 
 
-std::string escape_char(char c) {
+std::string escape_char(char c,bool str=true) {
   unsigned char uc = static_cast<unsigned char>(c);
   switch (uc) {
     case '\\': return "\\\\";
-    case '\"': return "\\\"";
+    case '\"': return str?"\\\"":"\"";
     case '\n': return "\\n";
     case '\r': return "\\r";
     case '\t': return "\\t";
+    case '\'': return str?"'":"\\'";
     default:
       if (uc >= 32 && uc <= 126) { // Печатные ASCII символы
         return std::string(1, c);

@@ -99,7 +99,7 @@ public:
   struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
   {
     #include "QapLexPolyBeg.inl"
-    bool load();/*
+    void load();/*
     {
 ^^^LIST^^^      (void)count;(void)first_id;(void)out_arr;(void)this;
       main();
@@ -110,7 +110,7 @@ public:
 ----------------------------------------------------------------
 #####-POLY_IMPL_FAST-#####
 ----------------------------------------------------------------
-bool ^^^POLY^^^::t_poly_impl::load()
+void ^^^POLY^^^::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static std::array<t_lex,^^^N^^^> lex={
@@ -119,9 +119,23 @@ bool ^^^POLY^^^::t_poly_impl::load()
   #undef F
   #include "poly_fast_impl.inl"
   main(&lex);
-  return scope.ok;
+  return;
+}
+----------------------------------------------------------------
+#####-POLY_IMPL_MEGA_FAST-#####
+----------------------------------------------------------------
+void ^^^POLY^^^::t_poly_impl::load()
+{
+  i_dev::t_result r=dev.get_char_lt();
+  if(!r.ok){scope.ok=false;return;}
+  #define F(TYPE,MASK)
+  switch(r.c){
+^^^CODE^^^
+    default:{scope.ok=false;return;}
+  }
+  #undef F
 }
 ----------------------------------------------------------------
 #####-END_OF_FILE-#####
 ----------------------------------------------------------------
-2025.07.02 20:44:57.444
+2025.07.03 18:43:14.389

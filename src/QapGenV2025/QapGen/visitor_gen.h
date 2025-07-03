@@ -1302,6 +1302,13 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   string polylexer2fastimpl(const t_lexer&poly){
     string out;
     vector<string> lines;
+    vector<CharMask> cases;
+    vector<string> types;
+    vector<string> sc;
+    bool mega_fast=true;
+    if(poly.name.find("i_type_templ")!=string::npos){
+      int gg=1;
+    }
     for(auto&ex:poly.childs){
       auto*plexer=find_lexer_by_name_but_relative(ex,poly);
       QapAssert(plexer);
@@ -1313,9 +1320,41 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       }
       std::string code=generate_gen_dips_code(u);
       lines.push_back("    F("+plexer->name+","+code+")");
+      if(code[0]=='"'&&code.back()=='"'){
+        auto c=BinString::fullCppStr2RawStr(code);
+        //auto&b=qap_add_back(cases);
+        CharMask m;
+        if(c.size()>10)mega_fast=false;
+        for(auto&ex:c){
+          auto u=(uchar)ex;
+          for(auto&ex:cases)if(ex.mask[u])mega_fast=false;
+          m.mask[u]=true;
+        }
+        cases.push_back(std::move(m));
+        sc.push_back(c);
+        types.push_back(plexer->name);
+      }else mega_fast=false;
       int gg=1;
     }
     t_templ_sys_v02::t_inp inp;
+    if(mega_fast){
+      vector<string> codes;int i=-1;
+      for(auto&ex:cases){
+        i++;
+        auto&arr=sc[i];
+        vector<string> pre;
+        for(auto&c:arr){
+          pre.push_back("    case '"+escape_char(c,false)+"'");
+        }
+        auto&t=types[i];
+        //{t_struct_cmd_mode L;auto&ok=scope.ok;ok=dev.go_auto(L);if(ok)ref=make_unique<t_struct_cmd_mode>(std::move(L));return ok;}
+        codes.push_back(join(pre,":\n")+":{"+t+" L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<"+t+">(std::move(L));return;}");
+      }
+      inp.add("CODE",join(codes,"\n"));
+      inp.add("POLY",poly.fullname);
+      out+=get_templ("POLY_IMPL_MEGA_FAST").eval(inp);
+      return out;
+    }
     inp.add("LIST",join(lines,",\n"));
     inp.add("POLY",poly.fullname);
     inp.add("N",IToS(lines.size()));
