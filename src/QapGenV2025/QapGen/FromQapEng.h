@@ -1022,29 +1022,34 @@ template<class TYPE,class FUNC>void qap_foreach(const TYPE&arr,FUNC func){auto n
 #include <algorithm>
 
 #include "CppString.inl"
-std::string build_ranges_string(const std::string& chars) {
-  if (chars.empty()) return "";
-
-  std::string ranges;
+struct t_ranges_result {
+  std::string ranges;  // пары символов для диапазонов (start < end)
+  std::string singles; // одиночные символы
+};
+t_ranges_result build_ranges_string(const std::string& chars) {
+  t_ranges_result result;
+  if (chars.empty()) return result;
   size_t start = 0;
   size_t n = chars.size();
-
   while (start < n) {
     size_t end = start;
     // Ищем максимальный диапазон подряд идущих символов
     while (end + 1 < n && chars[end + 1] == chars[end] + 1) {
       ++end;
     }
-
-    // Добавляем в строку границы диапазона
-    ranges.push_back(chars[start]);
-    ranges.push_back(chars[end]);
-
+    if (end == start) {
+      // Одиночный символ
+      result.singles.push_back(chars[start]);
+    } else {
+      // Диапазон из нескольких символов
+      result.ranges.push_back(chars[start]);
+      result.ranges.push_back(chars[end]);
+    }
     start = end + 1;
   }
-
-  return ranges;
+  return result;
 }
+
 
 std::string escape_char(char c) {
   unsigned char uc = static_cast<unsigned char>(c);
@@ -1070,7 +1075,7 @@ std::string escape_char(char c) {
 
 std::string generate_gen_dips_code(const std::string& chars) {
   if (chars.empty()) return "\"\"";
-
+  if(chars.size()==1)return "\""+escape_char(chars[0])+"\"";
   // Уникализируем и сортируем символы
   std::string sorted_chars = chars;
   /*
@@ -1078,14 +1083,13 @@ std::string generate_gen_dips_code(const std::string& chars) {
   sorted_chars.erase(std::unique(sorted_chars.begin(), sorted_chars.end()), sorted_chars.end());
   */
   // Строим строку диапазонов
-  std::string ranges = build_ranges_string(sorted_chars);
-  QapAssert(sorted_chars==gen_dips(ranges));
-  string out;
-  for(auto&ex:ranges)out+=escape_char(ex);//CppString::toCode((uchar&)ex);
-
+  auto r=build_ranges_string(sorted_chars);
+  QapAssert(sorted_chars==gen_dips(r.ranges)+r.singles);
+  string out,so;
+  for(auto&ex:r.ranges)out+=escape_char(ex);//CppString::toCode((uchar&)ex);
+  for(auto&ex:r.singles)so+=escape_char(ex);
   // Генерируем вызов gen_dips
-  std::string code = "gen_dips(\"" + out + "\")";
-
+  std::string code="gen_dips(\""+out+"\")+\""+so+"\"";
   return code;
 }
 

@@ -110,16 +110,13 @@ public:
 ----------------------------------------------------------------
 #####-POLY_IMPL_FAST-#####
 ----------------------------------------------------------------
-bool t_meta_lexer::i_code::t_poly_impl::load()
+bool ^^^POLY^^^::t_poly_impl::load()
 {
-  struct t_lex{
-    std::function<void()> func;
-    CharMask m;
-  };
   #define F(TYPE,MASK){[this](){go_for<TYPE>();},CharMask::fromStr(MASK,true)}
   static t_poly_tool::t_lex lex[]={
 ^^^LIST^^^
   };
+  #undef F
   #include "poly_fast_impl.inl"
   main();
   return scope.ok;
@@ -127,4 +124,4 @@ bool t_meta_lexer::i_code::t_poly_impl::load()
 ----------------------------------------------------------------
 #####-END_OF_FILE-#####
 ----------------------------------------------------------------
-2025.07.02 20:39:02.005
+2025.07.02 20:44:57.444

@@ -994,7 +994,30 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         auto p1s=BinString::fullCppStr2RawStr(p1);
         if(p1s.size()==1)QapDebugMsg("use go_any(dip_inv("+p1+")) instead of go_end("+p1+")");
         QapDebugMsg("go_end with str - under construction");
-      }
+    }
+      typedef t_cppcore::t_varcall_expr::t_var t_var;
+      auto tp2var=[](const auto&tp,t_var&out){
+        auto*ptp=t_cppcore::t_varcall_expr::t_template_part::UberCast(tp.get());
+        string s;save_obj(ptp->expr,s);
+        QapAssert(load_obj(out,s));
+      };
+      struct t_for_autoptr_r{
+        bool con=false;
+        bool ret=false;
+      };
+      auto for_autoptr=[&](const t_var&var,const string&tpn)->t_for_autoptr_r{
+        if(tpn!="TAutoPtr")return {};
+        t_var inner_param;
+        tp2var(var.tp,inner_param);
+        auto inner_pn=inner_param.name.value;
+        auto*pl_inner=find_lexer_by_name_but_relative(inner_pn,lexer);
+        QapAssert(pl_inner);
+        auto nested_chars=lexer2vecofchar(*pl_inner);
+        QapAssert(!nested_chars.empty());
+        out+=nested_chars;
+        if(!opt)return {false,true};
+        return {true,false};
+      };
       if(fn=="go_auto"){
         QapAssert(cmd.params.arr.size()==1);
         auto&cpa0b=cmd.params.arr[0].body;
@@ -1002,29 +1025,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
         QapAssert(pvc);
         auto&v=pvc->var;
-        typedef t_cppcore::t_varcall_expr::t_var t_var;
-        auto tp2var=[](const auto&tp,t_var&out){
-          auto*ptp=t_cppcore::t_varcall_expr::t_template_part::UberCast(tp.get());
-          string s;save_obj(ptp->expr,s);
-          QapAssert(load_obj(out,s));
-        };
-        struct t_for_autoptr_r{
-          bool con=false;
-          bool ret=false;
-        };
-        auto for_autoptr=[&](const t_var&var,const string&tpn)->t_for_autoptr_r{
-          if(tpn!="TAutoPtr")return {};
-          t_var inner_param;
-          tp2var(var.tp,inner_param);
-          auto inner_pn=inner_param.name.value;
-          auto*pl_inner=find_lexer_by_name_but_relative(inner_pn,lexer);
-          QapAssert(pl_inner);
-          auto nested_chars=lexer2vecofchar(*pl_inner);
-          QapAssert(!nested_chars.empty());
-          out+=nested_chars;
-          if(!opt)return {false,true};
-          return {true,false};
-        };
         if(v.name.value=="TAutoPtr"){
           auto r=for_autoptr(v,v.name.value);
           if(r.ret)return out;
@@ -1045,7 +1045,64 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           if(!opt)return out;
           continue;
         }
-        int gg=1;
+        auto*pl=find_lexer_by_name_but_relative(v.name.value,lexer);
+        QapAssert(pl);
+        out+=lexer2vecofchar(*pl);
+        if(!opt)return out;
+        continue;
+      }
+      if(fn=="go_str"){
+        QapAssert(cmd.params.arr.size()==1);
+        auto&cpa0b=cmd.params.arr[0].body;
+        auto&f=find_field(lexer,cpa0b);
+        auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
+        QapAssert(pvc);
+        auto&v=pvc->var;
+        if(v.name.value!="string")QapDebugMsg("go_str support only string type of field");
+        QapAssert(cmd.templ_params.size());
+        TAutoPtr<t_templ_params> tp;
+        QapAssert(load_obj(tp,cmd.templ_params));
+        QapAssert(tp->body.size());
+        TAutoPtr<t_type_templ_params> ttp;
+        QapAssert(load_obj(ttp,tp->body));
+        QapAssert(ttp);
+        QapAssert(ttp->first.body);
+        auto*ptit=t_meta_lexer::t_type_item_type::UberCast(ttp->first.body.get());
+        QapAssert(ptit);
+        if(ptit->type.value=="vector"||ptit->type.value=="TAutoPtr"){
+          QapAssert(ptit->param);
+          auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit->param->body.get());
+          QapAssert(ptta);
+          QapAssert(ptta->params);
+          QapAssert(ptta->params->first.body);
+          auto*ptit2=t_type_item_type::UberCast(ptta->params->first.body.get());
+          QapAssert(ptit2);
+          if(ptit2->param){
+            QapAssert(ptit2->type.value=="TAutoPtr");
+            auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit->param->body.get());
+            QapAssert(ptta);
+            QapAssert(ptta->params);
+            QapAssert(ptta->params->first.body);
+            auto*ptit3=t_type_item_type::UberCast(ptta->params->first.body.get());
+            QapAssert(!ptit3->param);
+            auto*pl=find_lexer_by_name_but_relative(ptit3->type.value,lexer);
+            QapAssert(pl);
+            out+=lexer2vecofchar(*pl);
+            if(opt)continue;
+            return out;
+          }
+          auto*pl=find_lexer_by_name_but_relative(ptit2->type.value,lexer);
+          QapAssert(pl);
+          out+=lexer2vecofchar(*pl);
+          if(opt)continue;
+          return out;
+        }
+        QapAssert(!ptit->param);
+        auto*pl=find_lexer_by_name_but_relative(ptit->type.value,lexer);
+        QapAssert(pl);
+        out+=lexer2vecofchar(*pl);
+        if(opt)continue;
+        return out;
       }
       QapDebugMsg("unsupported go_* method: "+fn);
       int gg_cmds=1;
@@ -1061,8 +1118,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
     return out;
   }
-  string polylexer2fastimpl(const t_lexer&poly)const{
+  string polylexer2fastimpl(const t_lexer&poly){
     string out;
+    vector<string> lines;
     for(auto&ex:poly.childs){
       auto*plexer=find_lexer_by_name_but_relative(ex,poly);
       QapAssert(plexer);
@@ -1072,30 +1130,15 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       for(size_t i=0;i<256;i++)if(m.mask[i])u.push_back((char&)i);
       
       std::string code = generate_gen_dips_code(u);
-      out += "/* lexer " + plexer->fullname + " */\n";
-      out += "auto chars_" + plexer->name + " = " + code + ";\n\n";
-
-      /*
-      auto x=gen_dips("\x00!#[]mo\x7F\x80\xFF");
-      if(x==u){
-        int gg=1;
-      }
-      auto y=CharMask::fromStr(x,true);
-      
-      for(int i=0;i<256;i++){
-        if(y.mask[i]!=m.mask[i]){
-          int fail=1;
-        }
-      }
-      QapAssert(y.mask==m.mask);
-      QapAssert(x.size()==u.size());
-      for(int i=0;i<x.size();i++){
-        if(x[i]!=u[i]){
-          int fail=1;
-        }
-      }*/
+      //out += "/* lexer " + plexer->fullname + " */\n";
+      //out += "auto chars_" + plexer->name + " = " + code + ";\n\n";
+      lines.push_back("    F("+plexer->name+","+code+")");
       int gg=1;
     }
+    t_templ_sys_v02::t_inp inp;
+    inp.add("LIST",join(lines,",\n"));
+    inp.add("POLY",poly.fullname);
+    out+=get_templ("POLY_IMPL_FAST").eval(inp);
     return out;
   }
   string poly_gen(){
@@ -1112,11 +1155,11 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     t_lexer* lexer = nullptr;
     std::vector<t_lexer_node*> children;
   };
-  vector<t_lexer_node> lexer_nodes;
+  vector<t_lexer_node> lexers_nodes;
 
   void buildLexerTree(){
     std::unordered_map<std::string,t_lexer_node*> fn2ptr;
-    auto&nodes=lexer_nodes;
+    auto&nodes=lexers_nodes;
     nodes.reserve(lexers.size());
 
     for (auto& lexer : lexers) {
@@ -1145,48 +1188,113 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
     return nullptr;
   }
+  // –екурсивный поиск лексера с именем name внутри узла node
+  const t_lexer_node* findByNameInside(const t_lexer_node* node, const std::string& name) const {
+    if (!node) return nullptr;
 
-  const t_lexer_node*findLexerByNameRelative(const std::string&name,const t_lexer&from)const
-  {
-    // јбсолютный путь (начинаетс€ с "::")
+    if (node->lexer->name == name) return node;
+
+    for (const auto& child : node->children) {
+      if(child->lexer->name==name)return child;
+    }
+    return nullptr;
+  }
+
+  const t_lexer_node* findLexerByNameRelative(const std::string& name, const t_lexer& from) const {
+    // 1. Ќайти корневой узел дл€ from.name
+    const t_lexer_node* fromNode = nullptr;
+    for (auto& n : lexers_nodes) {
+      if (n.lexer->fullname == from.name) {
+        fromNode=&n;
+        break;
+      }
+    }
+
+    // 2. ≈сли нашли fromNode Ч ищем внутри него
+    if (fromNode) {
+      if (auto* inside = findByNameInside(fromNode, name)) {
+        return inside;
+      }
+    }
+
+    // 3. ≈сли не нашли внутри, ищем по абсолютному пути (если есть)
     if (name.size() >= 2 && name[0] == ':' && name[1] == ':') {
       std::string absName = name.substr(2);
-      for (auto&root:lexer_nodes) {
-        if (auto*found=findByFullname(root,absName)) {
+      for (auto& root : lexers_nodes) {
+        if (auto* found = findByFullname(root, absName)) {
           return found;
         }
       }
       return nullptr;
     }
 
-    std::vector<std::string> fromParts=split(from.fullowner,"::");
-
-    for(auto i = static_cast<long long int>(fromParts.size())-1;i>=0;--i){
-      std::string prefix;
-      if (i > 0) {
-        prefix = fromParts[0];
+    // 4. ≈сли from.fullowner не пустой Ч ищем по составному имени
+    if (!from.fullowner.empty()) {
+      std::vector<std::string> fromParts = split(from.fullowner, "::");
+      for (auto i = static_cast<long long int>(fromParts.size()) - 1; i >= 0; --i) {
+        std::string prefix = fromParts[0];
         for (int j = 1; j <= i; ++j) {
           prefix += "::" + fromParts[j];
         }
-      }
-      std::string candidateFullname = prefix.empty() ? name : prefix + "::" + name;
+        std::string candidateFullname = prefix + "::" + name;
 
-      for(auto&root:lexer_nodes){
-        if(auto*p=findByFullname(root,candidateFullname)){
-          return p;
+        for (auto& n : lexers_nodes) {
+          if (auto* p = findByFullname(n, candidateFullname)) {
+            return p;
+          }
         }
       }
     }
 
+    // 5. », наконец, глобальный поиск по имени
+    for (auto& root : lexers_nodes) {
+      if (auto* found = findByFullname(root, name)) {
+        return found;
+      }
+    }
+
+    return nullptr;
+  }
+
+  //from=="t_str_item"; name="t_impl"; // насамом деле t_str_item содержит в себе t_impl
+  /*const t_lexer_node* findLexerByNameRelative(const std::string& name, const t_lexer& from) const {
+    // јбсолютный путь (начинаетс€ с "::")
+    if (name.size() >= 2 && name[0] == ':' && name[1] == ':') {
+        std::string absName = name.substr(2);
+        for (auto& root : lexers_nodes) {
+            if (auto* found = findByFullname(root, absName)) {
+                return found;
+            }
+        }
+        return nullptr;
+    }
+
+    std::vector<std::string> fromParts = split(from.fullowner, "::");
+
+    for (auto i = static_cast<long long int>(fromParts.size()) - 1; i >= 0; --i) {
+        if (fromParts.empty()) break;
+
+        std::string prefix = fromParts[0];
+        for (int j = 1; j <= i; ++j) {
+            prefix += "::" + fromParts[j];
+        }
+        std::string candidateFullname = prefix + "::" + name;
+
+        for (auto& root : lexers_nodes) {
+            if (auto* p = findByFullname(root, candidateFullname)) {
+                return p;
+            }
+        }
+    }
     if(fromParts.empty()){
-      for(auto&root:lexer_nodes){
+      for(auto&root:lexers_nodes){
         if(auto*found=findByFullname(root,name)){
           return found;
         }
       }
     }
     return nullptr;
-  }
+  }*/
 
   int lexer_lookup_test() {
     //std::vector<t_lexer> 
@@ -1199,10 +1307,10 @@ struct t_templ_sys_v05:t_templ_sys_v04,
 
     buildLexerTree();
 
-    auto&roots=lexer_nodes;roots.reserve(lexers.size());
-    /*for (auto& node : lexer_nodes) {
+    auto&roots=lexers_nodes;roots.reserve(lexers.size());
+    /*for (auto& node : lexers_nodes) {
       if (node.lexer->fullowner.empty()) {
-        lexer_nodes.push_back(&node);
+        lexers_nodes.push_back(&node);
       }
     }*/
 
@@ -1248,7 +1356,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   }
 
   t_lexer*find_lexer_by_name_but_relative(const string&name,const t_lexer&from)const{
-    return findLexerByNameRelative(name,from)->lexer;
+    auto*pl=findLexerByNameRelative(name,from);
+    QapAssert(pl);
+    return pl->lexer;
   }
   string main(const string&data){
     init();

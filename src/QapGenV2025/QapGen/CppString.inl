@@ -183,7 +183,9 @@ public:
     for(int i=0;i<ref.size();i++)
     {
       uchar ex=ref[i];
-      if((!mask[ex])||(prev=='\\'))
+      auto m=mask[ex];
+      if(ex=='\'')m=true;
+      if((!m)||(prev=='\\'))
       {
         #define F(A,B){if((prev==B[0])&&(ex==B[1])){data.push_back(A);prev=0;continue;}}
         F('\\',"\\\\")
