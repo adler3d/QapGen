@@ -320,13 +320,13 @@ void ssd_test(){
     QapDebugMsg(FToS2(ms)+" "+FToS(n/ms));
   }
 }*/
-
+/*
 void test20250630_json_test(){
   TAutoPtr<t_json::i_value> v;
   QapClock clock;
   load_obj_full(v,file_get_contents("test.json"));
   cerr<<clock.MS()<<endl;
-}
+}*/
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
   //test20250630_json_test();  return 0; // 655.864 ms for 2 251 060 באיע 3.4322 mb/s vs nodejs(10.42mb/sec)
