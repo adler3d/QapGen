@@ -112,13 +112,13 @@ public:
 ----------------------------------------------------------------
 bool ^^^POLY^^^::t_poly_impl::load()
 {
-  #define F(TYPE,MASK){[this](){go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static t_poly_tool::t_lex lex[]={
+  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
+  static std::array<t_lex,^^^N^^^> lex={
 ^^^LIST^^^
   };
   #undef F
   #include "poly_fast_impl.inl"
-  main();
+  main(&lex);
   return scope.ok;
 }
 ----------------------------------------------------------------

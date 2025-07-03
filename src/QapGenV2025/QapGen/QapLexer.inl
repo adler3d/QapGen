@@ -25,6 +25,9 @@ struct t_fallback{
   t_scope_tool mandatory;
   t_scope_tool optional;
   t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev),ok(mandatory.ok),ptr(ptr),pos(-1),err_count(0){
+    if(&dev==(i_dev_base*)0xCCCCCCCC){
+      int fail=1;
+    }
     if(ptr)dev.push(this);
   }
  ~t_fallback(){

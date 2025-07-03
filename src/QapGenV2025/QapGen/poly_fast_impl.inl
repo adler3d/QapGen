@@ -10,4 +10,4 @@ i_dev::t_result r=dev.get_char_lt();
 if(!r.ok){scope.ok=false;return false;}
 auto&arr=char2lexs[(uchar&)r.c];
 if(arr.empty()){scope.ok=false;return false;}
-for(auto&ex:arr)ex->func();
+for(auto&ex:arr)ex->func(this);

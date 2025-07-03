@@ -696,13 +696,15 @@ public:
 };
 *///-------------------------------------------//
 static string gen_dip(char from,char to){
-  QapAssert(from<to);
+  auto f=(uchar)from;
+  auto t=(uchar)to;
+  QapAssert(f<t);
   string out;
-  out.reserve(to-from);
-  bool flag=from!=to;
-  for(auto c=from;flag;c++){
-    flag=flag&&(c!=to);
-    out.push_back(c);
+  out.reserve(t-f);
+  bool flag=f!=t;
+  for(auto c=f;flag;c++){
+    flag=flag&&(c!=t);
+    out.push_back((char)c);
   }
   return out;
 }
@@ -1034,7 +1036,7 @@ t_ranges_result build_ranges_string(const std::string& chars) {
   while (start < n) {
     size_t end = start;
     // »щем максимальный диапазон подр€д идущих символов
-    while (end + 1 < n && chars[end + 1] == chars[end] + 1) {
+    while (end+1<n&&((uchar)chars[end+1])==(((uchar)chars[end])+1)){
       ++end;
     }
     if (end == start) {

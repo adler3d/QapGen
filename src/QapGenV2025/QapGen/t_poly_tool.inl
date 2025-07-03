@@ -1,8 +1,8 @@
 struct t_poly_tool:public t_config_2013{
-  struct t_lex{
-    std::function<void()> func;
-    CharMask m;
-  };
+  //struct t_lex{
+  //  std::function<void(t_poly_tool*)> func;
+  //  CharMask m;
+  //};
   t_doc doc;
   static t_poly_tool&get(/*IEnvRTTI&Env*/){
     static const string fn="config.cfg";
@@ -49,10 +49,17 @@ public:
     return back;
   }
   template<class TYPE>
-  vector<t_item>&get_base_arr(/*IEnvRTTI&Env,*/const string&basetype,vector<TYPE>&inp){
+  vector<t_item>&get_base_arr(/*IEnvRTTI&Env,*/const string&basetype,vector<TYPE>&inp,const vector<string>&types){
     auto&base=find(basetype);
     auto&arr=base.arr;
     if(arr.size()==inp.size())return arr;
+    if(arr.size()){
+      if(arr.size()!=types.size())QapNoWay();
+      for(auto&ex:arr){
+        QapAssert(qap_includes(types,ex.type));
+      }
+      return arr;
+    }
     QapAssert(base.arr.empty());
     arr.resize(inp.size());
     for(int i=0;i<arr.size();i++){
@@ -269,6 +276,11 @@ public:
     int&first_id;
     const string&strbasetype;
     //IEnvRTTI&Env;
+    struct t_lex{
+      const char*pname=nullptr;
+      std::function<void(typename TYPE::t_poly_impl*)> func;
+      CharMask m;
+    };
     template<class T>
     void go_for(){
       t_fallback scope(dev,__FUNCTION__);
@@ -289,7 +301,8 @@ public:
       out_arr.push_back(std::move(rec));
       scope.ok=false;
     }
-    void main()
+    template<size_t N=0>
+    void main(array<t_lex,N>*plexs=nullptr)
     {
       typedef t_poly_tool::t_out_rec<TYPE> t_out_rec;
       if(!count){scope.ok=false;return;}
@@ -306,7 +319,11 @@ public:
         return;
       }
       auto&tool=t_poly_tool::get(/*Env*/);
-      auto&arr=tool.get_base_arr(/*Env,*/strbasetype,out_arr);
+      static vector<string> types;
+      if(types.empty()&&plexs){
+        for(auto&ex:*plexs)types.push_back(ex.pname);
+      }
+      auto&arr=tool.get_base_arr(/*Env,*/strbasetype,out_arr,types);
       vector<t_out_rec> out;
       auto update_mass=[&](){
         for(int i=0;i<out.size();i++){

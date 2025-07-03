@@ -913,7 +913,12 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       if (!item_ptr) continue;
       if(auto expr_str=t_expr_str::UberCast(item_ptr.get())){
         QapAssert(!vecofstr);
-        out+=expr_str->body;
+        auto&s=expr_str->body;
+        QapAssert(s.size()>=2);
+        QapAssert(s[0]=='"');
+        QapAssert(s.back()='"');
+        auto raw=s.size()==2?"":BinString::fullCppStr2RawStr(s);
+        out+=raw;
       }
       else if(auto expr_call=t_expr_call::UberCast(item_ptr.get())){
         if(expr_call->func.value=="split"){
@@ -1059,7 +1064,17 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         t_var inner_param;
         tp2var(var.tp,inner_param);
         auto inner_pn=inner_param.name.value;
-        auto*pl_inner=find_lexer_by_name_but_relative(inner_pn,lexer);
+        vector<string> ftn;
+        if(inner_param.tp){
+          auto*p=t_cppcore::t_varcall_expr::t_dd_part::UberCast(inner_param.tp.get());
+          QapAssert(p);
+          auto&arr=p->arr;
+          for(auto&ex:arr){
+            ftn.push_back(ex.name.value);
+          }
+        }
+        string ln=inner_pn+(ftn.size()?"::":"")+join(ftn,"::");
+        auto*pl_inner=find_lexer_by_name_but_relative(ln,lexer);
         QapAssert(pl_inner);
         auto nested_chars=lexer2vecofchar(*pl_inner);
         QapAssert(!nested_chars.empty());
@@ -1180,7 +1195,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           return {true,false,nested_chars};
         };
         string our;bool template_lexer=false;
-        // тут надо сделать проход по 
         if(v.name.value=="TAutoPtr"){
           auto r=for_autoptr2(v,v.name.value);
           our+=r.out;
@@ -1210,6 +1224,10 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           QapAssert(pl);
           our+=lexer2vecofchar(*pl);
         }
+        out+=our;
+        if(opt)continue;
+        return out;
+        // unreachable code now because of wrong hi-level semantic logic. minus is not acceptable in most complex cases
         auto minus=[](const string&our,const string&major){
           auto m=CharMask::fromStr(our,true);
           auto e=CharMask::fromStr(major,true);
@@ -1290,28 +1308,29 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       string voc=lexer2vecofchar(*plexer);
       auto m=CharMask::fromStr(voc,true);
       string u;
-      for(size_t i=0;i<256;i++)if(m.mask[i])u.push_back((char)i);
-      
-      std::string code = generate_gen_dips_code(u);
-      //out += "/* lexer " + plexer->fullname + " */\n";
-      //out += "auto chars_" + plexer->name + " = " + code + ";\n\n";
+      for(size_t i=0;i<256;i++){
+        if(m.mask[i])u.push_back((char)i);
+      }
+      std::string code=generate_gen_dips_code(u);
       lines.push_back("    F("+plexer->name+","+code+")");
       int gg=1;
     }
     t_templ_sys_v02::t_inp inp;
     inp.add("LIST",join(lines,",\n"));
     inp.add("POLY",poly.fullname);
+    inp.add("N",IToS(lines.size()));
     out+=get_templ("POLY_IMPL_FAST").eval(inp);
     return out;
   }
   string poly_gen(){
+    string out;
     prepare_lexers_chached_fields();
     for(auto&lexer:lexers){
       if(!lexer.is_interface)continue;
-      polylexer2fastimpl(lexer);
+      out+=polylexer2fastimpl(lexer)+"\n";
       int gg_lexer=1;
     }
-    return {};
+    return out;
   }
 
   struct t_lexer_node {
