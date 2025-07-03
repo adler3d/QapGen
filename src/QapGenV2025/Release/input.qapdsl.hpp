@@ -348,7 +348,6 @@ t_varcall_expr:i_expr{
     vector<t_elem> arr;
   }
   t_template_part:i_part{
-    t_sep sepB?;
     "<"
     t_sep sep0?;
     vector<t_lev14> expr=vec(",");
@@ -361,6 +360,7 @@ t_varcall_expr:i_expr{
     vector<t_sb_expr> arr;
   }
   t_item{
+    t_sep sepB?;
     "."
     t_sep sep0?;
     t_name name;
@@ -368,6 +368,7 @@ t_varcall_expr:i_expr{
   }
   t_var{
     t_name name;
+    t_sep sep0?;
     TAutoPtr<i_part> tp?;
     TAutoPtr<t_arr> arr?;
     vector<t_item> items?;

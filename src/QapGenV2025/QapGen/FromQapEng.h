@@ -1084,12 +1084,20 @@ std::string generate_gen_dips_code(const std::string& chars) {
   */
   // Строим строку диапазонов
   auto r=build_ranges_string(sorted_chars);
-  QapAssert(sorted_chars==gen_dips(r.ranges)+r.singles);
+  auto r2=(gen_dips(r.ranges)+r.singles);
+  auto m=CharMask::fromStr(r2,true);
+  string u;
+  for(size_t i=0;i<256;i++)if(m.mask[i])u.push_back((char)i);
+  QapAssert(sorted_chars==u);
   string out,so;
   for(auto&ex:r.ranges)out+=escape_char(ex);//CppString::toCode((uchar&)ex);
   for(auto&ex:r.singles)so+=escape_char(ex);
   // Генерируем вызов gen_dips
-  std::string code="gen_dips(\""+out+"\")+\""+so+"\"";
+  if(!out.empty()){
+    out="gen_dips(\""+out+"\")";
+  }else QapAssert(so.size());
+  if(!so.empty())so=string(out.empty()?"":"+")+"\""+so+"\"";
+  std::string code=out+so;
   return code;
 }
 

@@ -991,7 +991,7 @@ static bool go_for_poly(i_dev&dev,TAutoPtr<TYPE>&ref){
 
 template<class TYPE>
 static bool go_for_item(i_dev&dev,const TYPE&ref,...){
-  static_assert(false,"no way! 2025.06.26 12:07:07.855");
+  static_assert(false,"no way! 2025.06.26 12:07:07.855"); // look like you call save_obj with const lexer
   //static_assert(false,__FILE__":"__FUNCTION__" => so bad :(");
   //QapDebugMsg(Sys$$<TYPE>::GetRTTI(dev.getEnv())->GetFullName()+" => no way!");
   return false;

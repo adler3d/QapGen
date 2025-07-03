@@ -902,7 +902,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       }
     }
   }
-  void collect_expected_chars(const t_cmd_param&param,string&out)const{
+  void collect_expected_chars(const t_cmd_param&param,string&out,bool vecofstr=false)const{
     typedef t_meta_lexer::t_cmd_param::t_expr_str t_expr_str;
     typedef t_meta_lexer::t_cmd_param::t_expr_call t_expr_call;
     typedef t_meta_lexer::t_cmd_param::t_impl t_impl;
@@ -912,10 +912,34 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     for (auto& item_ptr : impl.arr) {
       if (!item_ptr) continue;
       if(auto expr_str=t_expr_str::UberCast(item_ptr.get())){
+        QapAssert(!vecofstr);
         out+=expr_str->body;
       }
       else if(auto expr_call=t_expr_call::UberCast(item_ptr.get())){
+        if(expr_call->func.value=="split"){
+          QapAssert(vecofstr);
+          QapAssert(expr_call->params && expr_call->params->arr.size()==2);
+          auto&p0=expr_call->params->arr[0];
+          auto&p1=expr_call->params->arr[1];
+          t_meta_lexer::t_cmd_param::t_impl impl0,impl1;
+          QapAssert(load_obj(impl0,p0.body));
+          QapAssert(load_obj(impl1,p1.body));
+          QapAssert(impl0.arr.size()==1);
+          QapAssert(impl1.arr.size()==1);
+          auto*sp0=t_expr_str::UberCast(impl0.arr[0].get());
+          auto*sp1=t_expr_str::UberCast(impl1.arr[0].get());
+          QapAssert(sp0&&sp1);
+          QapAssert(sp1->body.size());
+          auto v=split(BinString::fullCppStr2RawStr(sp0->body),BinString::fullCppStr2RawStr(sp1->body));
+          QapAssert(v.size());
+          for(auto&ex:v){
+            QapAssert(ex.size());
+            out.push_back(ex[0]);
+          }
+          int gg=1;
+        }
         if(expr_call->func.value=="gen_dips"){
+          QapAssert(!vecofstr);
           QapAssert(expr_call->params && expr_call->params->arr.size()==1);
           auto& first_param = expr_call->params->arr[0];
           t_meta_lexer::t_cmd_param::t_impl impl;
@@ -924,10 +948,11 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           if(auto*str_param=t_expr_str::UberCast(impl.arr[0].get())){
             auto s=gen_dips(BinString::fullCppStr2RawStr(str_param->body));;
             out+=s;
-          }
+          }else QapNoWay();
           int gg=1;
         }
         if(expr_call->func.value=="dip_inv"){
+          QapAssert(!vecofstr);
           QapAssert(expr_call->params && expr_call->params->arr.size()==1);
           auto& first_param = expr_call->params->arr[0];
           t_meta_lexer::t_cmd_param param;
@@ -973,15 +998,39 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         return out;
         int gg=1;
       }
-      if(fn=="go_any"){
+      auto lex2str=[](auto&lex){
+        string out;
+        save_obj(lex,out);
+        return out;
+      };
+      auto bad_type_checker=[lex2str](auto&lex,const string&type){
+        string s=lex2str(*lex.get());
+        return s.substr(0,type.size())==type;
+      };
+      if(fn=="go_any"||fn=="go_any_char"){
         QapAssert(cmd.params.arr.size()==2);
         auto&cpa0b=cmd.params.arr[0].body;
         auto&f=find_field(lexer,cpa0b);
+        if(fn=="go_any")QapAssert(bad_type_checker(f.type,"string"));
+        if(fn=="go_any_char")QapAssert(bad_type_checker(f.type,"char"));
         auto p0=cmd.params.arr[0].body;
         auto p1=cmd.params.arr[1].body;// выражение типа gen_dips("09")+"str"+"other_str"
         t_cmd_param p1p;
         QapAssert(load_obj(p1p,p1));
         collect_expected_chars(p1p,out);
+        if(opt)continue;
+        return out;
+      }
+      if(fn=="go_any_str_from_vec"){
+        QapAssert(cmd.params.arr.size()==2);
+        auto&cpa0b=cmd.params.arr[0].body;
+        auto&f=find_field(lexer,cpa0b);
+        QapAssert(bad_type_checker(f.type,"string"));
+        auto p0=cmd.params.arr[0].body;
+        auto p1=cmd.params.arr[1].body;// выражение типа split("0,9",",")
+        t_cmd_param p1p;
+        QapAssert(load_obj(p1p,p1));
+        collect_expected_chars(p1p,out,true);
         if(opt)continue;
         return out;
       }
@@ -994,7 +1043,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         auto p1s=BinString::fullCppStr2RawStr(p1);
         if(p1s.size()==1)QapDebugMsg("use go_any(dip_inv("+p1+")) instead of go_end("+p1+")");
         QapDebugMsg("go_end with str - under construction");
-    }
+      }
       typedef t_cppcore::t_varcall_expr::t_var t_var;
       auto tp2var=[](const auto&tp,t_var&out){
         auto*ptp=t_cppcore::t_varcall_expr::t_template_part::UberCast(tp.get());
@@ -1162,8 +1211,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           our+=lexer2vecofchar(*pl);
         }
         auto minus=[](const string&our,const string&major){
-          auto m=CharMask::fromStr(our);
-          auto e=CharMask::fromStr(major);
+          auto m=CharMask::fromStr(our,true);
+          auto e=CharMask::fromStr(major,true);
           string out;
           for(size_t i=0;i<256;i++)if(!e.mask[i]&&m.mask[i])out.push_back(static_cast<char>(i));
           return out;
@@ -1241,7 +1290,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       string voc=lexer2vecofchar(*plexer);
       auto m=CharMask::fromStr(voc,true);
       string u;
-      for(size_t i=0;i<256;i++)if(m.mask[i])u.push_back((char&)i);
+      for(size_t i=0;i<256;i++)if(m.mask[i])u.push_back((char)i);
       
       std::string code = generate_gen_dips_code(u);
       //out += "/* lexer " + plexer->fullname + " */\n";
@@ -1318,7 +1367,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     // 1. Найти корневой узел для from.name
     const t_lexer_node* fromNode = nullptr;
     for (auto& n : lexers_nodes) {
-      if (n.lexer->fullname == from.name) {
+      if (n.lexer->fullname == from.fullname) {
         fromNode=&n;
         break;
       }
