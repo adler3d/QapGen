@@ -8,7 +8,7 @@
 #include <unordered_set>
 
 #define QAP_UPP_FREE_LIST
-#define QAP_UPP_COUNTERS
+//#define QAP_UPP_COUNTERS
 #ifdef QAP_UPP_COUNTERS
 unordered_map<string,size_t> t2maxn,t2c;
 #endif
@@ -63,7 +63,7 @@ class Pool {
   //std::mutex mtx;
 
 //template<typename T>
-  Pool(size_t chunk_sz = 8+0*192*8/sizeof(T)) : chunk_size(chunk_sz) {chunks.reserve(64);/*free_list.reserve(chunk_sz/2);*/}
+  Pool(size_t chunk_sz = 64+0*192*8/sizeof(T)) : chunk_size(chunk_sz) {chunks.reserve(64);/*free_list.reserve(chunk_sz/2);*/}
 
 public:
   Pool(const Pool&) = delete;
@@ -78,8 +78,8 @@ public:
   T* allocate(Args&&... args) {
     g_unique_pool_ptr_counter++;
     //std::lock_guard<std::mutex> lock(mtx);
-    t2c[T::ProxySys$$::GetFullName()]++;
     #ifdef QAP_UPP_COUNTERS
+    t2c[T::ProxySys$$::GetFullName()]++;
     curn++;
     t2maxn[T::ProxySys$$::GetFullName()]=max(t2maxn[T::ProxySys$$::GetFullName()],curn);
     #endif

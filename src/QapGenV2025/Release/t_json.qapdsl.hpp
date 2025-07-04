@@ -38,62 +38,64 @@ t_json{
   t_sep{
     string body=any(" \t\r\n");
   }
-
+  using " " as t_sep;
+  /*
   t_empty_array=>i_value{
     "["
     t_sep sep?;
     "]"
     t_sep sep2?;
-  }
+  }*/
 
   t_value{
-    t_sep sep?;
     TAutoPtr<i_value> body;
+    " "?
   }
 
   t_comma_value{
-    t_sep sep?;
     ","
     t_value body;
+    " "?
   }
 
   t_array=>i_value{
     "["
-    t_value first;
+    " "?
+    t_value first?;
     vector<t_comma_value> arr?;
-    t_sep sep?;
     "]"
-    t_sep sep2?;
+    " "?
   }
-
+  /*
   t_empty_object=>i_value{
     "{"
     t_sep sep?;
     "}"
     t_sep sep2?;
-  }
+  }*/
 
   t_pair{
-    t_sep sep0?;
     t_string key;
-    t_sep sep1?;
+    " "?
     ":"
+    " "?
     t_value value;
   }
 
   t_comma_pair{
-    t_sep sep?;
     ","
+    " "?
     t_pair body;
   }
 
   t_object=>i_value{
     "{"
-    t_pair first;
+    " "?
+    t_pair first?;
     vector<t_comma_pair> arr?;
-    t_sep sep?;
+    " "?
     "}"
-    t_sep sep2?;
+    " "?
   }
 
 }

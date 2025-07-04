@@ -129,7 +129,7 @@ void ^^^POLY^^^::t_poly_impl::load()
 {
   i_dev::t_result r=dev.get_char_lt();
   if(!r.ok){scope.ok=false;return;}
-  #define F(TYPE,MASK)
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
   switch(r.c){
 ^^^CODE^^^
     default:{scope.ok=false;return;}

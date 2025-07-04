@@ -1324,7 +1324,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         auto c=BinString::fullCppStr2RawStr(code);
         //auto&b=qap_add_back(cases);
         CharMask m;
-        if(c.size()>10)mega_fast=false;
+        if(c.size()>16)mega_fast=false;
         for(auto&ex:c){
           auto u=(uchar)ex;
           for(auto&ex:cases)if(ex.mask[u])mega_fast=false;
@@ -1348,7 +1348,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         }
         auto&t=types[i];
         //{t_struct_cmd_mode L;auto&ok=scope.ok;ok=dev.go_auto(L);if(ok)ref=make_unique<t_struct_cmd_mode>(std::move(L));return ok;}
-        codes.push_back(join(pre,":\n")+":{"+t+" L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<"+t+">(std::move(L));return;}");
+        //codes.push_back(join(pre,":\n")+":{"+t+" L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<"+t+">(std::move(L));return;}");
+        codes.push_back(join(pre,":\n")+":F("+t+");");
       }
       inp.add("CODE",join(codes,"\n"));
       inp.add("POLY",poly.fullname);
@@ -1547,6 +1548,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     auto r=load_obj_full(tar,data);
     parse_ms=clock.MS();
     if(!r.ok){QapDebugMsg(r.msg);return {};}
+    //return "";
     auto&dtn=dev.top.nesteds;
     target_only=true;
     dtn.need_igrab=true;

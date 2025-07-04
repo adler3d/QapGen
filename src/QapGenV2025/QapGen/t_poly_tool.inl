@@ -318,6 +318,11 @@ public:
         use(ex);
         return;
       }
+      #ifndef QAP_POLY_TOOL_DEBUG
+      auto id=QAP_MINVAL_ID_OF_VEC(out_arr,-ex.pos);
+      use(out_arr[id]);
+      return;
+      #endif
       auto&tool=t_poly_tool::get(/*Env*/);
       static vector<string> types;
       if(types.empty()&&plexs){

@@ -312,6 +312,7 @@
       <AdditionalOptions>/bigobj /Zm180 %(AdditionalOptions)</AdditionalOptions>
       <SDLCheck>false</SDLCheck>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

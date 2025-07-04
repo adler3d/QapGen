@@ -1303,6 +1303,7 @@ bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
   bool ok=dev.go_auto(out);
   if(ok)
   {
+    #ifdef QAP_LOAD_OBJ_DEBUG
     string output;
     t_save_dev dev(output);
     bool ret=dev.go_auto(out);
@@ -1319,6 +1320,7 @@ bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
         QapDebugMsg(two_text_diff(output,data));
       }
     }
+    #endif
   }else out={};
   if(!ok&&pmaxpos){
     *pmaxpos=Clamp<int>(dev.maxpos+1,1,data.size())-1;

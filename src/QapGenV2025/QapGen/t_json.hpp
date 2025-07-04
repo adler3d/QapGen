@@ -1,4 +1,4 @@
-// 579.828100 ms
+// 582.203900 ms
 struct t_json{
   //===>>===i_value_visitor
   #define DEF_PRO_BLANK()
@@ -9,9 +9,7 @@ struct t_json{
     ADD(t_null)\
     ADD(t_string)\
     ADD(t_number)\
-    ADD(t_empty_array)\
     ADD(t_array)\
-    ADD(t_empty_object)\
     ADD(t_object)\
   ADDEND()
   class i_value;
@@ -62,9 +60,7 @@ struct t_json{
   //  void Do(t_null&r){}
   //  void Do(t_string&r){}
   //  void Do(t_number&r){}
-  //  void Do(t_empty_array&r){}
   //  void Do(t_array&r){}
-  //  void Do(t_empty_object&r){}
   //  void Do(t_object&r){}
   //};
   #undef LIST
@@ -81,6 +77,7 @@ struct t_json{
   public:
     typedef i_value_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+    virtual ~i_value()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -93,9 +90,7 @@ struct t_json{
         F(t_null);
         F(t_string);
         F(t_number);
-        F(t_empty_array);
         F(t_array);
-        F(t_empty_object);
         F(t_object);
         (void)count;(void)first_id;(void)out_arr;(void)this;
         main();
@@ -235,6 +230,7 @@ struct t_json{
     public:
       typedef i_item_visitor i_visitor;
       virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_item()=default;
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -440,6 +436,7 @@ struct t_json{
     public:
       typedef i_int_visitor i_visitor;
       virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_int()=default;
     public:
       virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
       struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -638,38 +635,19 @@ struct t_json{
       return ok;
     }
   };
-  struct t_empty_array:public i_value{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_empty_array)PARENT(i_value)OWNER(t_json)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDVAR(t_sep,sep,DEF,$,$)\
-  ADDVAR(t_sep,sep2,DEF,$,$)\
-  ADDEND()
-  //=====+>>>>>t_empty_array
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_empty_array
-  public:
-    void Use(i_visitor&A){A.Do(*this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
-  public:
-    bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
-      auto&ok=$.ok;
-      ok=dev.go_const("[");
-      if(!ok)return ok;
-      dev.go_auto(sep);
-      ok=dev.go_const("]");
-      if(!ok)return ok;
-      dev.go_auto(sep2);
-      return ok;
-    }
-  };
+    /*
+    t_empty_array=>i_value{
+      "["
+      t_sep sep?;
+      "]"
+      t_sep sep2?;
+    }*/
   struct t_value{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_value)OWNER(t_json)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(t_sep,sep,DEF,$,$)\
   ADDVAR(TAutoPtr<i_value>,body,DEF,$,$)\
+  ADDVAR(t_sep,$sep1,DEF,$,$)\
   ADDEND()
   //=====+>>>>>t_value
   #include "QapGenStructNoTemplate.inl"
@@ -678,9 +656,9 @@ struct t_json{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      dev.go_auto(sep);
       ok=dev.go_auto(body);
       if(!ok)return ok;
+      dev.go_auto($sep1);
       return ok;
     }
   };
@@ -688,8 +666,8 @@ struct t_json{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_comma_value)OWNER(t_json)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(t_sep,sep,DEF,$,$)\
   ADDVAR(t_value,body,DEF,$,$)\
+  ADDVAR(t_sep,$sep2,DEF,$,$)\
   ADDEND()
   //=====+>>>>>t_comma_value
   #include "QapGenStructNoTemplate.inl"
@@ -698,11 +676,11 @@ struct t_json{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      dev.go_auto(sep);
       ok=dev.go_const(",");
       if(!ok)return ok;
       ok=dev.go_auto(body);
       if(!ok)return ok;
+      dev.go_auto($sep2);
       return ok;
     }
   };
@@ -710,10 +688,10 @@ struct t_json{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_array)PARENT(i_value)OWNER(t_json)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
+  ADDVAR(t_sep,$sep1,DEF,$,$)\
   ADDVAR(t_value,first,DEF,$,$)\
   ADDVAR(vector<t_comma_value>,arr,DEF,$,$)\
-  ADDVAR(t_sep,sep,DEF,$,$)\
-  ADDVAR(t_sep,sep2,DEF,$,$)\
+  ADDVAR(t_sep,$sep5,DEF,$,$)\
   ADDEND()
   //=====+>>>>>t_array
   #include "QapGenStructNoTemplate.inl"
@@ -727,49 +705,29 @@ struct t_json{
       auto&ok=$.ok;
       ok=dev.go_const("[");
       if(!ok)return ok;
-      ok=dev.go_auto(first);
-      if(!ok)return ok;
+      dev.go_auto($sep1);
+      dev.go_auto(first);
       dev.go_auto(arr);
-      dev.go_auto(sep);
       ok=dev.go_const("]");
       if(!ok)return ok;
-      dev.go_auto(sep2);
+      dev.go_auto($sep5);
       return ok;
     }
   };
-  struct t_empty_object:public i_value{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_empty_object)PARENT(i_value)OWNER(t_json)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDVAR(t_sep,sep,DEF,$,$)\
-  ADDVAR(t_sep,sep2,DEF,$,$)\
-  ADDEND()
-  //=====+>>>>>t_empty_object
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_empty_object
-  public:
-    void Use(i_visitor&A){A.Do(*this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
-  public:
-    bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
-      auto&ok=$.ok;
-      ok=dev.go_const("{");
-      if(!ok)return ok;
-      dev.go_auto(sep);
-      ok=dev.go_const("}");
-      if(!ok)return ok;
-      dev.go_auto(sep2);
-      return ok;
-    }
-  };
+    /*
+    t_empty_object=>i_value{
+      "{"
+      t_sep sep?;
+      "}"
+      t_sep sep2?;
+    }*/
   struct t_pair{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_pair)OWNER(t_json)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(t_sep,sep0,DEF,$,$)\
   ADDVAR(t_string,key,DEF,$,$)\
-  ADDVAR(t_sep,sep1,DEF,$,$)\
+  ADDVAR(t_sep,$sep1,DEF,$,$)\
+  ADDVAR(t_sep,$sep3,DEF,$,$)\
   ADDVAR(t_value,value,DEF,$,$)\
   ADDEND()
   //=====+>>>>>t_pair
@@ -779,12 +737,12 @@ struct t_json{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      dev.go_auto(sep0);
       ok=dev.go_auto(key);
       if(!ok)return ok;
-      dev.go_auto(sep1);
+      dev.go_auto($sep1);
       ok=dev.go_const(":");
       if(!ok)return ok;
+      dev.go_auto($sep3);
       ok=dev.go_auto(value);
       if(!ok)return ok;
       return ok;
@@ -794,7 +752,7 @@ struct t_json{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_comma_pair)OWNER(t_json)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(t_sep,sep,DEF,$,$)\
+  ADDVAR(t_sep,$sep1,DEF,$,$)\
   ADDVAR(t_pair,body,DEF,$,$)\
   ADDEND()
   //=====+>>>>>t_comma_pair
@@ -804,9 +762,9 @@ struct t_json{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      dev.go_auto(sep);
       ok=dev.go_const(",");
       if(!ok)return ok;
+      dev.go_auto($sep1);
       ok=dev.go_auto(body);
       if(!ok)return ok;
       return ok;
@@ -816,10 +774,11 @@ struct t_json{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_object)PARENT(i_value)OWNER(t_json)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
+  ADDVAR(t_sep,$sep1,DEF,$,$)\
   ADDVAR(t_pair,first,DEF,$,$)\
   ADDVAR(vector<t_comma_pair>,arr,DEF,$,$)\
-  ADDVAR(t_sep,sep,DEF,$,$)\
-  ADDVAR(t_sep,sep2,DEF,$,$)\
+  ADDVAR(t_sep,$sep4,DEF,$,$)\
+  ADDVAR(t_sep,$sep6,DEF,$,$)\
   ADDEND()
   //=====+>>>>>t_object
   #include "QapGenStructNoTemplate.inl"
@@ -833,32 +792,30 @@ struct t_json{
       auto&ok=$.ok;
       ok=dev.go_const("{");
       if(!ok)return ok;
-      ok=dev.go_auto(first);
-      if(!ok)return ok;
+      dev.go_auto($sep1);
+      dev.go_auto(first);
       dev.go_auto(arr);
-      dev.go_auto(sep);
+      dev.go_auto($sep4);
       ok=dev.go_const("}");
       if(!ok)return ok;
-      dev.go_auto(sep2);
+      dev.go_auto($sep6);
       return ok;
     }
   };
 #define DEF_PRO_NESTED(F)\
   /*<DEF_PRO_NESTED>*/\
-  F(t_true        )\
-  F(t_false       )\
-  F(t_null        )\
-  F(t_string      )\
-  F(t_number      )\
-  F(t_sep         )\
-  F(t_empty_array )\
-  F(t_value       )\
-  F(t_comma_value )\
-  F(t_array       )\
-  F(t_empty_object)\
-  F(t_pair        )\
-  F(t_comma_pair  )\
-  F(t_object      )\
+  F(t_true       )\
+  F(t_false      )\
+  F(t_null       )\
+  F(t_string     )\
+  F(t_number     )\
+  F(t_sep        )\
+  F(t_value      )\
+  F(t_comma_value)\
+  F(t_array      )\
+  F(t_pair       )\
+  F(t_comma_pair )\
+  F(t_object     )\
   /*</DEF_PRO_NESTED>*/
 #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_json)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
@@ -877,22 +834,30 @@ public:
 };
 void t_json::i_value::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,9> lex={
-    F(t_true,"t"),
-    F(t_false,"f"),
-    F(t_null,"n"),
-    F(t_string,"\""),
-    F(t_number,"-0123456789"),
-    F(t_empty_array,"["),
-    F(t_array,"["),
-    F(t_empty_object,"{"),
-    F(t_object,"{")
-  };
+  i_dev::t_result r=dev.get_char_lt();
+  if(!r.ok){scope.ok=false;return;}
+  #define F(TYPE,MASK)
+  switch(r.c){
+    case 't':{t_true L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_true>(std::move(L));return;}
+    case 'f':{t_false L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_false>(std::move(L));return;}
+    case 'n':{t_null L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_null>(std::move(L));return;}
+    case '"':{t_string L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_string>(std::move(L));return;}
+    case '-':
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':{t_number L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_number>(std::move(L));return;}
+    case '[':{t_array L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_array>(std::move(L));return;}
+    case '{':{t_object L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_object>(std::move(L));return;}
+    default:{scope.ok=false;return;}
+  }
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
 }
 void t_json::t_string::i_item::t_poly_impl::load()
 {
@@ -958,23 +923,23 @@ ps%28%2209%22%29%29%3f%3b%0a%20%20%20%20%7d%0a%20%20%20%20t%5fzero%3d%3ei%5fint%
 AutoPtr%3ci%5fint%3e%20val%3b%0a%20%20%20%20TAutoPtr%3ct%5ffrac%3e%20frac%3f%3b%
 0a%20%20%20%20TAutoPtr%3ct%5fexp%3e%20exp%3f%3b%0a%20%20%7d%0a%0a%20%20t%5fsep%7
 b%0a%20%20%20%20string%20body%3dany%28%22%20%5ct%5cr%5cn%22%29%3b%0a%20%20%7d%0a
-%0a%20%20t%5fempty%5farray%3d%3ei%5fvalue%7b%0a%20%20%20%20%22%5b%22%0a%20%20%20
-%20t%5fsep%20sep%3f%3b%0a%20%20%20%20%22%5d%22%0a%20%20%20%20t%5fsep%20sep2%3f%3
-b%0a%20%20%7d%0a%0a%20%20t%5fvalue%7b%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%20
-%20%20TAutoPtr%3ci%5fvalue%3e%20body%3b%0a%20%20%7d%0a%0a%20%20t%5fcomma%5fvalue
-%7b%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%20%20%20%22%2c%22%0a%20%20%20%20t%5f
-value%20body%3b%0a%20%20%7d%0a%0a%20%20t%5farray%3d%3ei%5fvalue%7b%0a%20%20%20%2
-0%22%5b%22%0a%20%20%20%20t%5fvalue%20first%3b%0a%20%20%20%20vector%3ct%5fcomma%5
-fvalue%3e%20arr%3f%3b%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%20%20%20%22%5d%22%
-0a%20%20%20%20t%5fsep%20sep2%3f%3b%0a%20%20%7d%0a%0a%20%20t%5fempty%5fobject%3d%
-3ei%5fvalue%7b%0a%20%20%20%20%22%7b%22%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%2
-0%20%20%22%7d%22%0a%20%20%20%20t%5fsep%20sep2%3f%3b%0a%20%20%7d%0a%0a%20%20t%5fp
-air%7b%0a%20%20%20%20t%5fsep%20sep0%3f%3b%0a%20%20%20%20t%5fstring%20key%3b%0a%2
-0%20%20%20t%5fsep%20sep1%3f%3b%0a%20%20%20%20%22%3a%22%0a%20%20%20%20t%5fvalue%2
-0value%3b%0a%20%20%7d%0a%0a%20%20t%5fcomma%5fpair%7b%0a%20%20%20%20t%5fsep%20sep
-%3f%3b%0a%20%20%20%20%22%2c%22%0a%20%20%20%20t%5fpair%20body%3b%0a%20%20%7d%0a%0
-a%20%20t%5fobject%3d%3ei%5fvalue%7b%0a%20%20%20%20%22%7b%22%0a%20%20%20%20t%5fpa
-ir%20first%3b%0a%20%20%20%20vector%3ct%5fcomma%5fpair%3e%20arr%3f%3b%0a%20%20%20
-%20t%5fsep%20sep%3f%3b%0a%20%20%20%20%22%7d%22%0a%20%20%20%20t%5fsep%20sep2%3f%3
-b%0a%20%20%7d%0a%0a%7d
+%20%20using%20%22%20%22%20as%20t%5fsep%3b%0a%20%20%2f%2a%0a%20%20t%5fempty%5farr
+ay%3d%3ei%5fvalue%7b%0a%20%20%20%20%22%5b%22%0a%20%20%20%20t%5fsep%20sep%3f%3b%0
+a%20%20%20%20%22%5d%22%0a%20%20%20%20t%5fsep%20sep2%3f%3b%0a%20%20%7d%2a%2f%0a%0
+a%20%20t%5fvalue%7b%0a%20%20%20%20TAutoPtr%3ci%5fvalue%3e%20body%3b%0a%20%20%20%
+20%22%20%22%3f%0a%20%20%7d%0a%0a%20%20t%5fcomma%5fvalue%7b%0a%20%20%20%20%22%2c%
+22%0a%20%20%20%20t%5fvalue%20body%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%7d%0a%0
+a%20%20t%5farray%3d%3ei%5fvalue%7b%0a%20%20%20%20%22%5b%22%0a%20%20%20%20%22%20%
+22%3f%0a%20%20%20%20t%5fvalue%20first%3f%3b%0a%20%20%20%20vector%3ct%5fcomma%5fv
+alue%3e%20arr%3f%3b%0a%20%20%20%20%22%5d%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%
+7d%0a%20%20%2f%2a%0a%20%20t%5fempty%5fobject%3d%3ei%5fvalue%7b%0a%20%20%20%20%22
+%7b%22%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%20%20%20%22%7d%22%0a%20%20%20%20t
+%5fsep%20sep2%3f%3b%0a%20%20%7d%2a%2f%0a%0a%20%20t%5fpair%7b%0a%20%20%20%20t%5fs
+tring%20key%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20%22%3a%22%0a%20%20%20%20
+%22%20%22%3f%0a%20%20%20%20t%5fvalue%20value%3b%0a%20%20%7d%0a%0a%20%20t%5fcomma
+%5fpair%7b%0a%20%20%20%20%22%2c%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20t%5f
+pair%20body%3b%0a%20%20%7d%0a%0a%20%20t%5fobject%3d%3ei%5fvalue%7b%0a%20%20%20%2
+0%22%7b%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20t%5fpair%20first%3f%3b%0a%20
+%20%20%20vector%3ct%5fcomma%5fpair%3e%20arr%3f%3b%0a%20%20%20%20%22%20%22%3f%0a%
+20%20%20%20%22%7d%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%7d%0a%0a%7d
 */

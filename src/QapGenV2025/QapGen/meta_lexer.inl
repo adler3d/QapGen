@@ -1,4 +1,4 @@
-// 2993.098400 ms
+// 3463.589900 ms
 //===>>===i_str_item_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -6485,9 +6485,9 @@ void t_cppcore::t_int_expr::i_val::t_poly_impl::load()
 {
   i_dev::t_result r=dev.get_char_lt();
   if(!r.ok){scope.ok=false;return;}
-  #define F(TYPE,MASK)
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
   switch(r.c){
-    case '0':{t_zero L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_zero>(std::move(L));return;}
+    case '0':F(t_zero);
     case '1':
     case '2':
     case '3':
@@ -6496,7 +6496,7 @@ void t_cppcore::t_int_expr::i_val::t_poly_impl::load()
     case '6':
     case '7':
     case '8':
-    case '9':{t_num L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_num>(std::move(L));return;}
+    case '9':F(t_num);
     default:{scope.ok=false;return;}
   }
   #undef F
@@ -6505,7 +6505,7 @@ void t_cppcore::t_real_expr::i_val::t_poly_impl::load()
 {
   i_dev::t_result r=dev.get_char_lt();
   if(!r.ok){scope.ok=false;return;}
-  #define F(TYPE,MASK)
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
   switch(r.c){
     case '1':
     case '2':
@@ -6515,8 +6515,8 @@ void t_cppcore::t_real_expr::i_val::t_poly_impl::load()
     case '6':
     case '7':
     case '8':
-    case '9':{t_num L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_num>(std::move(L));return;}
-    case '0':{t_zero L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_zero>(std::move(L));return;}
+    case '9':F(t_num);
+    case '0':F(t_zero);
     default:{scope.ok=false;return;}
   }
   #undef F
@@ -6525,15 +6525,15 @@ void t_cppcore::t_varcall_expr::i_part::t_poly_impl::load()
 {
   i_dev::t_result r=dev.get_char_lt();
   if(!r.ok){scope.ok=false;return;}
-  #define F(TYPE,MASK)
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
   switch(r.c){
     case '\t':
     case '\n':
     case '\r':
     case ' ':
     case '/':
-    case ':':{t_dd_part L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_dd_part>(std::move(L));return;}
-    case '<':{t_template_part L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_template_part>(std::move(L));return;}
+    case ':':F(t_dd_part);
+    case '<':F(t_template_part);
     default:{scope.ok=false;return;}
   }
   #undef F
@@ -6592,10 +6592,10 @@ void t_meta_lexer::i_type_templ::t_poly_impl::load()
 {
   i_dev::t_result r=dev.get_char_lt();
   if(!r.ok){scope.ok=false;return;}
-  #define F(TYPE,MASK)
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
   switch(r.c){
-    case '<':{t_type_templ_angle L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_type_templ_angle>(std::move(L));return;}
-    case '(':{t_type_templ_soft L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_type_templ_soft>(std::move(L));return;}
+    case '<':F(t_type_templ_angle);
+    case '(':F(t_type_templ_soft);
     default:{scope.ok=false;return;}
   }
   #undef F
@@ -6604,14 +6604,14 @@ void t_meta_lexer::i_struct_cmd_xxxx::t_poly_impl::load()
 {
   i_dev::t_result r=dev.get_char_lt();
   if(!r.ok){scope.ok=false;return;}
-  #define F(TYPE,MASK)
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
   switch(r.c){
     case 'D':
     case 'M':
-    case 'O':{t_struct_cmd_mode L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_struct_cmd_mode>(std::move(L));return;}
+    case 'O':F(t_struct_cmd_mode);
     case '@':
     case 'm':
-    case 'o':{t_struct_cmd_anno L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_struct_cmd_anno>(std::move(L));return;}
+    case 'o':F(t_struct_cmd_anno);
     default:{scope.ok=false;return;}
   }
   #undef F
@@ -6632,12 +6632,12 @@ void t_meta_lexer::i_struct_cmd_so::t_poly_impl::load()
 {
   i_dev::t_result r=dev.get_char_lt();
   if(!r.ok){scope.ok=false;return;}
-  #define F(TYPE,MASK)
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
   switch(r.c){
     case '!':
-    case '?':{t_struct_cmd_suffix L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_struct_cmd_suffix>(std::move(L));return;}
-    case '[':{t_struct_cmd_optional L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_struct_cmd_optional>(std::move(L));return;}
-    case ';':{t_struct_cmd_opt_v2 L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_struct_cmd_opt_v2>(std::move(L));return;}
+    case '?':F(t_struct_cmd_suffix);
+    case '[':F(t_struct_cmd_optional);
+    case ';':F(t_struct_cmd_opt_v2);
     default:{scope.ok=false;return;}
   }
   #undef F
@@ -6685,10 +6685,10 @@ void t_meta_lexer::t_const_field::i_sc_item::t_poly_impl::load()
 {
   i_dev::t_result r=dev.get_char_lt();
   if(!r.ok){scope.ok=false;return;}
-  #define F(TYPE,MASK)
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
   switch(r.c){
-    case '\'':{t_c_item L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_c_item>(std::move(L));return;}
-    case '"':{t_s_item L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_s_item>(std::move(L));return;}
+    case '\'':F(t_c_item);
+    case '"':F(t_s_item);
     default:{scope.ok=false;return;}
   }
   #undef F
@@ -6735,10 +6735,10 @@ void t_meta_lexer::t_target_using::i_qa::t_poly_impl::load()
 {
   i_dev::t_result r=dev.get_char_lt();
   if(!r.ok){scope.ok=false;return;}
-  #define F(TYPE,MASK)
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
   switch(r.c){
-    case '\'':{t_str_ap L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_str_ap>(std::move(L));return;}
-    case '"':{t_str_qu L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_str_qu>(std::move(L));return;}
+    case '\'':F(t_str_ap);
+    case '"':F(t_str_qu);
     default:{scope.ok=false;return;}
   }
   #undef F

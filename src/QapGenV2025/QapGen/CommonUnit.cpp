@@ -4,10 +4,30 @@
 //#include "QapMicro2/QapTools.h"
 typedef unsigned char uchar;
 size_t g_unique_pool_ptr_counter=0;
-//#define TAutoPtr unique_ptr
+
+#define QAP_USE_UNIQUE_POOL_PTR
+#define QAP_STD_DEBUG
+#ifdef QAP_STD_DEBUG
+#define QAP_LOAD_OBJ_DEBUG
+#define QAP_POLY_TOOL_DEBUG
+#else
+//#define QAP_WITHOUT_ALL_DEBUG
+#endif
+#ifdef QAP_WITHOUT_ALL_DEBUG
+#undef QapAssert
+#undef QapNoWay
+#undef QapDebugMsg
+#define QapAssert(CODE){CODE;}
+#define QapNoWay(...){}
+#define QapDebugMsg(...){}
+#endif
+#ifndef QAP_USE_UNIQUE_POOL_PTR
+#define TAutoPtr unique_ptr
+#else
 #include "unique_pool_ptr.hpp"
 #define TAutoPtr UniquePoolPtr
 #define make_unique make_unique_pool
+#endif
 #include "detail.inl"
 #include "t_error_tool.inl"
 #include "QapLexer.inl"
@@ -17,9 +37,12 @@ size_t g_unique_pool_ptr_counter=0;
 //typedef array<char,4> ARRAY4char;
 //#include "raw_cpp_lexem.inl"
 //#include "t_line_lexer.inl"
+//#define JSON_TEST
+#ifdef JSON_TEST
+#include "t_json.hpp"
+#else
 #include "visitor_gen.h"
-//#include "t_json.hpp"
-
+#endif
 #include <iostream>
 #ifdef _WIN32
 #include <shellapi.h>
@@ -324,13 +347,16 @@ void ssd_test(){
     QapDebugMsg(FToS2(ms)+" "+FToS(n/ms));
   }
 }*/
-/*
+#ifdef JSON_TEST
 void test20250630_json_test(){
+  for(;;){
   TAutoPtr<t_json::i_value> v;
   QapClock clock;
   load_obj_full(v,file_get_contents("test.json"));
   cerr<<clock.MS()<<endl;
-}*/
+  }
+}
+#endif
 
 void printMapsJsonLike(
     const std::unordered_map<std::string, size_t>& t2maxn,
@@ -367,8 +393,11 @@ void printMapsJsonLike(
 
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
-  //test20250630_json_test();  return 0; // 655.864 ms for 2 251 060 באיע 3.4322 mb/s vs nodejs(10.42mb/sec)
+  #ifdef JSON_TEST
+  test20250630_json_test();  return 0;
+  #else// 655.864 ms for 2 251 060 באיע 3.4322 mb/s vs nodejs(10.42mb/sec)
                                        // 536.882 ms - 4.199 mb/sec - new version
+                                       // 272.522 ms - 8.260 mb/sec - without debug stuff
   //for(;;);
   //main2();
   //file_put_contents("test.bin",s);
@@ -380,10 +409,13 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   LPWSTR*argv=CommandLineToArgvW(GetCommandLineW(),&argc);
   string fn;if(argc>1)fn.resize(wcslen(argv[1]));
   if(fn.size())wcstombs(&fn[0],argv[1],wcslen(argv[1])+1);
-  test_2025_06_10(fn);
-
+  //for(;;){
+    test_2025_06_10(fn);
+  //}
+  #ifdef QAP_UPP_COUNTERS
   printMapsJsonLike(t2maxn,t2c);
-
+  #endif
+  #endif
   return 0;
 }
 #else
