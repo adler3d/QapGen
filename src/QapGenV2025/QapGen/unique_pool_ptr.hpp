@@ -127,25 +127,42 @@ public:
   }
 };
 
+struct IPoolDeleterBase {
+  virtual ~IPoolDeleterBase() = default;
+  virtual void deleteObject(void* ptr) const noexcept = 0;
+};
+
 template<typename T>
-struct PoolDeleter {
-  void operator()(T* ptr) const noexcept {
+struct PoolDeleter : IPoolDeleterBase {
+  void deleteObject(void* ptr) const noexcept override {
     if (ptr) {
-      Pool<T>::instance().deallocate(ptr);
+      Pool<T>::instance().deallocate(static_cast<T*>(ptr));
     }
   }
 };
 
 template<typename T>
-class UniquePoolPtr {
+struct UniquePoolPtr {
   T* ptr = nullptr;
-  PoolDeleter<T> deleter;
+  const IPoolDeleterBase* deleter = nullptr; // сырой указатель
 
 public:
   UniquePoolPtr() = default;
 
-  explicit UniquePoolPtr(T* p) : ptr(p) {}
+  UniquePoolPtr(T* p, const IPoolDeleterBase* d)
+    : ptr(p), deleter(d) {}
 
+  ~UniquePoolPtr() {
+    reset();
+  }
+
+  void reset(T* p = nullptr) {
+    if (ptr && deleter) {
+      deleter->deleteObject(ptr);
+    }
+    ptr = p;
+  }
+public:
   UniquePoolPtr(const UniquePoolPtr&) = delete;
   UniquePoolPtr& operator=(const UniquePoolPtr&) = delete;
 
@@ -163,25 +180,15 @@ public:
     }
     return *this;
   }
-
-  ~UniquePoolPtr() {
-    reset();
-  }
-
+  
   T* get() const { return ptr; }
   T* operator->() const { return ptr; }
   T& operator*() const { return *ptr; }
 
-  void reset(T* p = nullptr) {
-    if (ptr) {
-      deleter(ptr);
-    }
-    ptr = p;
-  }
-
   T* release() {
     T* temp = ptr;
     ptr = nullptr;
+    deleter = nullptr; 
     return temp;
   }
 
@@ -193,13 +200,16 @@ public:
   UniquePoolPtr& operator=(UniquePoolPtr<U>&& other) noexcept {
     static_assert(std::is_convertible<U*, T*>::value, "Incompatible pointer types");
     reset(other.release());
+    deleter = other.deleter;
+    other.deleter = nullptr;
     return *this;
   }
 
   template<typename U>
-  UniquePoolPtr(UniquePoolPtr<U>&& other) noexcept {
+  UniquePoolPtr(UniquePoolPtr<U>&& other) noexcept
+    : ptr(other.release()), deleter(other.deleter) {
     static_assert(std::is_convertible<U*, T*>::value, "Incompatible pointer types");
-    ptr = other.release();
+    other.deleter = nullptr;
   }
 
   UniquePoolPtr& operator=(std::nullptr_t) noexcept {
@@ -208,10 +218,9 @@ public:
   }
 };
 
-
-// Функция создания объекта с выделением из пула
 template<typename T, typename... Args>
 UniquePoolPtr<T> make_unique_pool(Args&&... args) {
-  T* p = Pool<T>::instance().allocate(std::forward<Args>(args)...);
-  return UniquePoolPtr<T>(p);
+  T* raw_ptr = Pool<T>::instance().allocate(std::forward<Args>(args)...);
+  static const PoolDeleter<T> static_deleter_instance;
+  return UniquePoolPtr(raw_ptr, &static_deleter_instance);
 }
