@@ -1,65 +1,94 @@
 const fs = require('fs');
 const path = require('path');
 
-// Путь к входному JSON-файлу с данными
-//const inputFile = path.resolve(__dirname, 'habr_hubs_stats_programming_monthly.json');
-const inputFile = path.resolve(__dirname, 'habr_hubs_stats_programming_daily.json');
+const inputFile = path.resolve(__dirname, 'habr_hubs_stats_programming_weekly.json');//monthly
+const outputFile = path.resolve(__dirname, 'top_hubs_by_rating_filtered.json');
 
-// Путь к выходному JSON-файлу с результатами
-const outputFile = path.resolve(__dirname, 'top_hubs_by_rating.json');
-
-// Читаем и парсим JSON
 const rawData = fs.readFileSync(inputFile, 'utf-8');
 const data = JSON.parse(rawData);
 
-const hubStats = {};
-
-// Обрабатываем каждый хаб
-for (var [hub, articles] of Object.entries(data)) {
-  let totalRating = 0;
-  let totalViews = 0;
-  let count = 0;
-  articles.length=20;
-  //articles=[articles[19],articles[18],articles[17],articles[16]];
-  for (const article of articles) {
-    if(!article)continue;
-    //if(article.hubs.includes("cpp"))console.log(JSON.stringify(article,0,2));
-    //if(article.hubs.length!=1)continue;
-    const rating = article.rating || 0;
-    const views = article.views || 0;
-
-    if (rating > 0) {
-      totalRating += rating;
-      totalViews += views;
-      count++;
-    }
-  }
-
-  if (count > 0) {
-    const avgRating = totalRating / count;
-    const viewsPerRating = totalRating > 0 ? totalViews / totalRating : 0;
-
-    hubStats[hub] = {
-      hub,
-      average_rating: avgRating,
-      avg_views: totalViews/count,
-      views_per_rating: viewsPerRating,
-      articles_count: count,
-    };
+// Фильтруем хабы с количеством статей >= 16
+const filteredHubsByCount = {};
+for (const [hub, articles] of Object.entries(data)) {
+  if (articles.length >= 16) {
+    filteredHubsByCount[hub] = articles;
   }
 }
+//console.log(`hub with >=16 articles: ${Object.keys(filteredHubsByCount).length}`);
 
-// Сортируем по среднему рейтингу по убыванию
-var sortedHubs = Object.values(hubStats).filter(e=>e.articles_count>=0).sort((a, b) => (b.avg_views - a.avg_views));
-//sortedHubs.length=30;
-//sortedHubs=sortedHubs.sort((a, b) => (b.average_rating - a.average_rating));
-//sortedHubs=sortedHubs.sort((a, b) => -(b.views_per_rating - a.views_per_rating));
-sortedHubs.length=20;
-sortedHubs=sortedHubs.sort((a, b) => (b.avg_views - a.avg_views));
-// Выводим топ-20 в консоль                              
+// Функция для подсчёта статистики по хабам
+function calculateHubStats(data) {
+  const hubStats = {};
+  for (const [hub, articles] of Object.entries(data)) {
+    let totalRating = 0;
+    let totalViews = 0;
+    let count = 0;
+    const limitedArticles = articles.slice(0, 20);
+    for (const article of limitedArticles) {
+      if (!article) continue;
+      const rating = article.rating || 0;
+      const views = article.views || 0;
+      if (rating > 0) {
+        totalRating += rating;
+        totalViews += views;
+        count++;
+      }
+    }
+    if (count > 0) {
+      hubStats[hub] = {
+        hub,
+        average_rating: totalRating / count,
+        avg_views: totalViews / count,
+        views_per_rating: totalRating > 0 ? totalViews / totalRating : 0,
+        articles_count: count,
+      };
+    }
+  }
+  return hubStats;
+}
+
+// Считаем статистику по отфильтрованным хабам
+const hubStats = calculateHubStats(filteredHubsByCount);
+
+// Создаём словарь avg_views по хабам
+const avgViewsByHub = {};
+for (const [hub, stats] of Object.entries(hubStats)) {
+  avgViewsByHub[hub] = stats.avg_views;
+}
+
+const threshold = 1.05; // 5% запас
+
+// Фильтруем статьи внутри каждого хаба
+const filteredData = {};
+for (const [hub, articles] of Object.entries(filteredHubsByCount)) {
+  const hubAvgViews = avgViewsByHub[hub];
+  if (hubAvgViews === undefined) {
+    filteredData[hub] = articles;
+    continue;
+  }
+  filteredData[hub] = articles.filter(article => {
+    if (!article || !Array.isArray(article.hubs)) return false;
+    const hasMorePopularHub = article.hubs.some(h => {
+      const otherAvgViews = avgViewsByHub[h];
+      return otherAvgViews !== undefined && otherAvgViews > hubAvgViews * threshold;
+    });
+    return !hasMorePopularHub;
+  });
+  //console.log(`${hub}: src ${articles.length}, after ${filteredData[hub].length}`);
+}
+
+// Пересчитываем статистику по отфильтрованным статьям
+const filteredHubStats = calculateHubStats(filteredData);
+
+// Сортируем по avg_views по убыванию
+const sortedHubs = Object.values(filteredHubStats)
+  .filter(h => h.articles_count >= 0)
+  .sort((a, b) => b.avg_views - a.avg_views);
+
+// Выводим результаты
 console.log(`Rank | Hub                  | Avg Rating  | avg_views   | Views/Rating | Articles`);
 console.log('---------------------------------------------------------------------------------');
-sortedHubs.slice(0, 20).forEach((hubInfo, idx) => {
+sortedHubs.slice(0, 46).forEach((hubInfo, idx) => {
   console.log(
     `${String(idx + 1).padEnd(4)} | ` +
     `${hubInfo.hub.padEnd(20)} | ` +
@@ -70,6 +99,6 @@ sortedHubs.slice(0, 20).forEach((hubInfo, idx) => {
   );
 });
 
-// Сохраняем полный результат в JSON
+// Сохраняем результат
 fs.writeFileSync(outputFile, JSON.stringify(sortedHubs, null, 2), 'utf-8');
-console.log(`\nlist in ${outputFile}`);
+console.log(`\nFiltered list saved to ${outputFile}`);
