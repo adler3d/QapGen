@@ -4,10 +4,10 @@
 //#include "QapMicro2/QapTools.h"
 typedef unsigned char uchar;
 size_t g_unique_pool_ptr_counter=0;
-#define TAutoPtr unique_ptr
-//#include "unique_pool_ptr.hpp"
-//#define TAutoPtr UniquePoolPtr
-//#define make_unique make_unique_pool
+//#define TAutoPtr unique_ptr
+#include "unique_pool_ptr.hpp"
+#define TAutoPtr UniquePoolPtr
+#define make_unique make_unique_pool
 #include "detail.inl"
 #include "t_error_tool.inl"
 #include "QapLexer.inl"
@@ -331,6 +331,29 @@ void test20250630_json_test(){
   load_obj_full(v,file_get_contents("test.json"));
   cerr<<clock.MS()<<endl;
 }*/
+void printMapsJsonLike(
+    const std::unordered_map<std::string, size_t>& t2maxn,
+    const std::unordered_map<std::string, size_t>& t2c)
+{
+    std::cerr << "{\n";
+
+    auto printMap = [](const std::unordered_map<std::string, size_t>& m, const std::string& name) {
+        std::cerr << "  \"" << name << "\": {\n";
+        size_t count = 0;
+        for (const auto& [key, value] : m) {
+            std::cerr << "    \"" << key << "\": " << value;
+            if (++count < m.size()) std::cerr << ",";
+            std::cerr << "\n";
+        }
+        std::cerr << "  }";
+    };
+
+    printMap(t2maxn, "t2maxn");
+    std::cerr << ",\n";
+    printMap(t2c, "t2c");
+    std::cerr << "\n}\n";
+}
+
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
   //test20250630_json_test();  return 0; // 655.864 ms for 2 251 060 באיע 3.4322 mb/s vs nodejs(10.42mb/sec)
@@ -347,6 +370,9 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   string fn;if(argc>1)fn.resize(wcslen(argv[1]));
   if(fn.size())wcstombs(&fn[0],argv[1],wcslen(argv[1])+1);
   test_2025_06_10(fn);
+
+  printMapsJsonLike(t2maxn,t2c);
+
   return 0;
 }
 #else

@@ -6,8 +6,11 @@
 #include <mutex>
 #include <type_traits>
 
-static size_t g_unique_pool_ptr_counter = 0;
-
+//static size_t g_unique_pool_ptr_counter = 0;
+//unordered_map<size_t,size_t> t2n,t2c;
+//t_meta_lexer::t_attr::ProxySys$$::GetFullName();
+unordered_map<string,size_t> t2maxn,t2c;
+#define QAP_UPP_FREE_LSIT
 template<typename T>
 class Pool {
   struct Chunk {
@@ -21,14 +24,43 @@ class Pool {
     ~Chunk() {
       ::operator delete(data);
     }
+
+    // Конструктор перемещения
+    Chunk(Chunk&& other) noexcept
+      : data(other.data), capacity(other.capacity), used(other.used) {
+      other.data = nullptr;
+      other.capacity = 0;
+      other.used = 0;
+    }
+
+    Chunk& operator=(Chunk&& other) noexcept {
+      if (this != &other) {
+        ::operator delete(data);
+        data = other.data;
+        capacity = other.capacity;
+        used = other.used;
+        other.data = nullptr;
+        other.capacity = 0;
+        other.used = 0;
+      }
+      return *this;
+    }
+
+    // Запретить копирование
+    Chunk(const Chunk&) = delete;
+    Chunk& operator=(const Chunk&) = delete;
   };
 
-  std::vector<std::unique_ptr<Chunk>> chunks;
+  std::vector<Chunk> chunks;
+  #ifdef QAP_UPP_FREE_LSIT
   std::vector<T*> free_list; // Список освобождённых объектов для повторного использования
+  #endif
   size_t chunk_size;
+  size_t curn=0;
   //std::mutex mtx;
 
-  Pool(size_t chunk_sz = 16) : chunk_size(chunk_sz) {}
+//template<typename T>
+  Pool(size_t chunk_sz = 8+0*192*8/sizeof(T)) : chunk_size(chunk_sz) {chunks.reserve(64);/*free_list.reserve(chunk_sz/2);*/}
 
 public:
   Pool(const Pool&) = delete;
@@ -43,8 +75,11 @@ public:
   T* allocate(Args&&... args) {
     g_unique_pool_ptr_counter++;
     //std::lock_guard<std::mutex> lock(mtx);
-
+    t2c[T::ProxySys$$::GetFullName()]++;
+    curn++;
+    t2maxn[T::ProxySys$$::GetFullName()]=max(t2maxn[T::ProxySys$$::GetFullName()],curn);
     T* ptr = nullptr;
+    #ifdef QAP_UPP_FREE_LSIT
     if (!free_list.empty()) {
       ptr = free_list.back();
       free_list.pop_back();
@@ -52,34 +87,39 @@ public:
       new(ptr) T(std::forward<Args>(args)...);
       return ptr;
     }
-
-    if (chunks.empty() || chunks.back()->used == chunks.back()->capacity) {
-      chunks.emplace_back(std::make_unique<Chunk>(chunk_size));
+    #endif
+    if (chunks.empty() || chunks.back().used == chunks.back().capacity) {
+      chunks.emplace_back(Chunk{chunk_size});
     }
-    Chunk* chunk = chunks.back().get();
-    ptr = &chunk->data[chunk->used++];
+    Chunk&chunk=chunks.back();
+    ptr = &chunk.data[chunk.used++];
     new(ptr) T(std::forward<Args>(args)...);
     return ptr;
   }
 
   void deallocate(T* ptr) {
     if (!ptr) return;
+    curn--;
     // Вызываем деструктор объекта
     ptr->~T();
+    #ifdef QAP_UPP_FREE_LSIT
     // Добавляем объект в free_list для повторного использования
     free_list.push_back(ptr);
+    #endif
   }
 
   void clear() {
     //std::lock_guard<std::mutex> lock(mtx);
     // Вызываем деструкторы для всех занятых объектов в чанках
     for (auto& chunk : chunks) {
-      for (size_t i = 0; i < chunk->used; ++i) {
-        chunk->data[i].~T();
+      for (size_t i = 0; i < chunk.used; ++i) {
+        chunk.data[i].~T();
       }
-      chunk->used = 0;
+      chunk.used = 0;
     }
+    #ifdef QAP_UPP_FREE_LSIT
     free_list.clear();
+    #endif
   }
 
   ~Pool() {
@@ -87,10 +127,19 @@ public:
   }
 };
 
-// Умный указатель с поддержкой пула
+template<typename T>
+struct PoolDeleter {
+  void operator()(T* ptr) const noexcept {
+    if (ptr) {
+      Pool<T>::instance().deallocate(ptr);
+    }
+  }
+};
+
 template<typename T>
 class UniquePoolPtr {
   T* ptr = nullptr;
+  PoolDeleter<T> deleter;
 
 public:
   UniquePoolPtr() = default;
@@ -100,14 +149,16 @@ public:
   UniquePoolPtr(const UniquePoolPtr&) = delete;
   UniquePoolPtr& operator=(const UniquePoolPtr&) = delete;
 
-  UniquePoolPtr(UniquePoolPtr&& other) noexcept : ptr(other.ptr) {
-    other.ptr = nullptr;
+  UniquePoolPtr(UniquePoolPtr&& other) noexcept
+    : ptr(other.ptr), deleter(std::move(other.deleter)) {
+      other.ptr = nullptr;
   }
 
   UniquePoolPtr& operator=(UniquePoolPtr&& other) noexcept {
     if (this != &other) {
       reset();
       ptr = other.ptr;
+      deleter = std::move(other.deleter);
       other.ptr = nullptr;
     }
     return *this;
@@ -123,7 +174,7 @@ public:
 
   void reset(T* p = nullptr) {
     if (ptr) {
-      Pool<T>::instance().deallocate(ptr);
+      deleter(ptr);
     }
     ptr = p;
   }
@@ -137,14 +188,14 @@ public:
   explicit operator bool() const {
     return ptr != nullptr;
   }
-  
+
   template<typename U>
   UniquePoolPtr& operator=(UniquePoolPtr<U>&& other) noexcept {
     static_assert(std::is_convertible<U*, T*>::value, "Incompatible pointer types");
     reset(other.release());
     return *this;
   }
-  
+
   template<typename U>
   UniquePoolPtr(UniquePoolPtr<U>&& other) noexcept {
     static_assert(std::is_convertible<U*, T*>::value, "Incompatible pointer types");
@@ -156,6 +207,7 @@ public:
     return *this;
   }
 };
+
 
 // Функция создания объекта с выделением из пула
 template<typename T, typename... Args>
