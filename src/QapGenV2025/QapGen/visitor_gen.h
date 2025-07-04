@@ -1999,6 +1999,6 @@ static void test_2025_06_10(/*IEnvRTTI&Env*/string fn)
   //string str=v4.main(inp);
   string out="// "+FToS(clock.MS())+" ms\n"+str2;
   std::cout<<out;
-  std::cerr<<"{\"parse_ms\":"<<v5.parse_ms<<",\"total_ms\":"<<clock.MS()<<",\"lexers\":"<<v5.target_item_counter<<",\"fields\":"<<v5.fields_counter<<"}"<<endl;
+  std::cerr<<"{\"parse_ms\":"<<v5.parse_ms<<",\"total_ms\":"<<clock.MS()<<",\"lexers\":"<<v5.target_item_counter<<",\"fields\":"<<v5.fields_counter<<",\"g_unique_pool_ptr_counter\":"<<g_unique_pool_ptr_counter<<"}"<<endl;
   gg=2;
 }

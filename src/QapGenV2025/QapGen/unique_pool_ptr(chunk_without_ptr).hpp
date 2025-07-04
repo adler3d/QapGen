@@ -7,7 +7,7 @@
 #include <type_traits>
 
 static size_t g_unique_pool_ptr_counter = 0;
-
+//#define QAP_UPP_FREE_LSIT
 template<typename T>
 class Pool {
   struct Chunk {
@@ -21,14 +21,42 @@ class Pool {
     ~Chunk() {
       ::operator delete(data);
     }
+
+    // Конструктор перемещения
+    Chunk(Chunk&& other) noexcept
+      : data(other.data), capacity(other.capacity), used(other.used) {
+      other.data = nullptr;
+      other.capacity = 0;
+      other.used = 0;
+    }
+
+    Chunk& operator=(Chunk&& other) noexcept {
+      if (this != &other) {
+        ::operator delete(data);
+        data = other.data;
+        capacity = other.capacity;
+        used = other.used;
+        other.data = nullptr;
+        other.capacity = 0;
+        other.used = 0;
+      }
+      return *this;
+    }
+
+    // Запретить копирование
+    Chunk(const Chunk&) = delete;
+    Chunk& operator=(const Chunk&) = delete;
   };
 
-  std::vector<std::unique_ptr<Chunk>> chunks;
+  std::vector<Chunk> chunks;
+  #ifdef QAP_UPP_FREE_LSIT
   std::vector<T*> free_list; // Список освобождённых объектов для повторного использования
+  #endif
   size_t chunk_size;
   //std::mutex mtx;
 
-  Pool(size_t chunk_sz = 16) : chunk_size(chunk_sz) {}
+//template<typename T>
+  Pool(size_t chunk_sz = (16+0*192*8/sizeof(T))) : chunk_size(chunk_sz) {chunks.reserve(64);/*free_list.reserve(chunk_sz/2);*/}
 
 public:
   Pool(const Pool&) = delete;
@@ -45,6 +73,7 @@ public:
     //std::lock_guard<std::mutex> lock(mtx);
 
     T* ptr = nullptr;
+    #ifdef QAP_UPP_FREE_LSIT
     if (!free_list.empty()) {
       ptr = free_list.back();
       free_list.pop_back();
@@ -52,12 +81,12 @@ public:
       new(ptr) T(std::forward<Args>(args)...);
       return ptr;
     }
-
-    if (chunks.empty() || chunks.back()->used == chunks.back()->capacity) {
-      chunks.emplace_back(std::make_unique<Chunk>(chunk_size));
+    #endif
+    if (chunks.empty() || chunks.back().used == chunks.back().capacity) {
+      chunks.emplace_back(Chunk{chunk_size});
     }
-    Chunk* chunk = chunks.back().get();
-    ptr = &chunk->data[chunk->used++];
+    Chunk&chunk=chunks.back();
+    ptr = &chunk.data[chunk.used++];
     new(ptr) T(std::forward<Args>(args)...);
     return ptr;
   }
@@ -66,20 +95,24 @@ public:
     if (!ptr) return;
     // Вызываем деструктор объекта
     ptr->~T();
+    #ifdef QAP_UPP_FREE_LSIT
     // Добавляем объект в free_list для повторного использования
     free_list.push_back(ptr);
+    #endif
   }
 
   void clear() {
     //std::lock_guard<std::mutex> lock(mtx);
     // Вызываем деструкторы для всех занятых объектов в чанках
     for (auto& chunk : chunks) {
-      for (size_t i = 0; i < chunk->used; ++i) {
-        chunk->data[i].~T();
+      for (size_t i = 0; i < chunk.used; ++i) {
+        chunk.data[i].~T();
       }
-      chunk->used = 0;
+      chunk.used = 0;
     }
+    #ifdef QAP_UPP_FREE_LSIT
     free_list.clear();
+    #endif
   }
 
   ~Pool() {

@@ -28,7 +28,7 @@ class Pool {
   size_t chunk_size;
   //std::mutex mtx;
 
-  Pool(size_t chunk_sz = 16) : chunk_size(chunk_sz) {}
+  Pool(size_t chunk_sz = 8) : chunk_size(chunk_sz) {}
 
 public:
   Pool(const Pool&) = delete;
@@ -42,16 +42,17 @@ public:
   template<typename... Args>
   T* allocate(Args&&... args) {
     g_unique_pool_ptr_counter++;
+    //return new T(std::forward<Args>(args)...);
     //std::lock_guard<std::mutex> lock(mtx);
 
     T* ptr = nullptr;
-    if (!free_list.empty()) {
+    /*if (!free_list.empty()) {
       ptr = free_list.back();
       free_list.pop_back();
       // Конструируем объект заново на месте
       new(ptr) T(std::forward<Args>(args)...);
       return ptr;
-    }
+    }*/
 
     if (chunks.empty() || chunks.back()->used == chunks.back()->capacity) {
       chunks.emplace_back(std::make_unique<Chunk>(chunk_size));
@@ -63,6 +64,7 @@ public:
   }
 
   void deallocate(T* ptr) {
+    return;
     if (!ptr) return;
     // Вызываем деструктор объекта
     ptr->~T();
