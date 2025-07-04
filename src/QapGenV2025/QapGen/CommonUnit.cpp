@@ -331,6 +331,7 @@ void test20250630_json_test(){
   load_obj_full(v,file_get_contents("test.json"));
   cerr<<clock.MS()<<endl;
 }*/
+
 void printMapsJsonLike(
     const std::unordered_map<std::string, size_t>& t2maxn,
     const std::unordered_map<std::string, size_t>& t2c)
@@ -338,11 +339,20 @@ void printMapsJsonLike(
     std::cerr << "{\n";
 
     auto printMap = [](const std::unordered_map<std::string, size_t>& m, const std::string& name) {
+        // Копируем пары в вектор
+        std::vector<std::pair<std::string, size_t>> vec(m.begin(), m.end());
+
+        // Сортируем по значению по убыванию
+        std::sort(vec.begin(), vec.end(),
+                  [](const auto& a, const auto& b) {
+                      return a.second > b.second;
+                  });
+
         std::cerr << "  \"" << name << "\": {\n";
-        size_t count = 0;
-        for (const auto& [key, value] : m) {
+        for (size_t i = 0; i < vec.size(); ++i) {
+            const auto& [key, value] = vec[i];
             std::cerr << "    \"" << key << "\": " << value;
-            if (++count < m.size()) std::cerr << ",";
+            if (i + 1 < vec.size()) std::cerr << ",";
             std::cerr << "\n";
         }
         std::cerr << "  }";
@@ -353,6 +363,7 @@ void printMapsJsonLike(
     printMap(t2c, "t2c");
     std::cerr << "\n}\n";
 }
+
 
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
