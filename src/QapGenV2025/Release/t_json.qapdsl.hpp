@@ -39,13 +39,6 @@ t_json{
     string body=any(" \t\r\n");
   }
   using " " as t_sep;
-  /*
-  t_empty_array=>i_value{
-    "["
-    t_sep sep?;
-    "]"
-    t_sep sep2?;
-  }*/
 
   t_value{
     TAutoPtr<i_value> body;
@@ -66,13 +59,6 @@ t_json{
     "]"
     " "?
   }
-  /*
-  t_empty_object=>i_value{
-    "{"
-    t_sep sep?;
-    "}"
-    t_sep sep2?;
-  }*/
 
   t_pair{
     t_string key;
