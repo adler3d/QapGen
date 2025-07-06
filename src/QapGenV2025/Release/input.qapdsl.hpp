@@ -789,7 +789,7 @@ t_cpp_code{
 }
 
 t_target_struct:i_target_item{
-  t_sc{string kw=any_str_from_vec(split("struct,class",","));" "?}
+  t_keyword{string kw=any_str_from_vec(split("struct,class",","));" "?}
   t_body_semicolon:i_struct_impl{";"}
   t_body_impl:i_struct_impl{
     "{"
@@ -808,7 +808,7 @@ t_target_struct:i_target_item{
     " "?
     t_name parent;
   }
-  TAutoPtr<t_sc> sc?;
+  TAutoPtr<t_keyword> kw?;
   t_name name;
   " "?
   TAutoPtr<t_parent> parent?;

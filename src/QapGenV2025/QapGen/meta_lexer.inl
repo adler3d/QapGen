@@ -1,4 +1,4 @@
-// 3167.850800 ms
+// 141.886100 ms
 //===>>===i_str_item_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -5967,16 +5967,16 @@ struct t_cmd_param;
         #include "QapLexPolyEndNoTemplate.inl"
       };
     };
-    struct t_sc{
-    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_sc)OWNER(t_target_struct)
+    struct t_keyword{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_keyword)OWNER(t_target_struct)
     #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
     ADDBEG()\
     ADDVAR(string,kw,DEF,$,$)\
     ADDVAR(t_sep,$sep1,DEF,$,$)\
     ADDEND()
-    //=====+>>>>>t_sc
+    //=====+>>>>>t_keyword
     #include "QapGenStructNoTemplate.inl"
-    //<<<<<+=====t_sc
+    //<<<<<+=====t_keyword
     public:
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
@@ -6072,7 +6072,7 @@ struct t_cmd_param;
     };
   #define DEF_PRO_NESTED(F)\
     /*<DEF_PRO_NESTED>*/\
-    F(t_sc            )\
+    F(t_keyword       )\
     F(t_body_semicolon)\
     F(t_body_impl     )\
     F(t_parent        )\
@@ -6080,7 +6080,7 @@ struct t_cmd_param;
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_target_struct)PARENT(i_target_item)OWNER(t_meta_lexer)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(TAutoPtr<t_sc>,sc,DEF,$,$)\
+  ADDVAR(TAutoPtr<t_keyword>,kw,DEF,$,$)\
   ADDVAR(t_name,name,DEF,$,$)\
   ADDVAR(t_sep,$sep2,DEF,$,$)\
   ADDVAR(TAutoPtr<t_parent>,parent,DEF,$,$)\
@@ -6097,7 +6097,7 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      dev.go_auto(sc);
+      dev.go_auto(kw);
       ok=dev.go_auto(name);
       if(!ok)return ok;
       dev.go_auto($sep2);
@@ -7132,33 +7132,33 @@ ayan%7b%0a%20%20%20%20t%5fbayan%20bayan%3b%0a%20%20%20%20t%5feater%20eater%3f%3b
 i%5fmajor%3e%3e%28%29%3b%7d%0a%20%20t%5fwithout%5fbayan%3ai%5fbayan%7b%0a%20%20%
 20%20t%5fminor%5feater%20eater%3dminor%3ct%5fwith%5fbayan%3e%28%29%3b%0a%20%20%7
 d%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ci%5fbayan%3e%20bayan%3b%0a%7d%0a%0at%5
-ftarget%5fstruct%3ai%5ftarget%5fitem%7b%0a%20%20t%5fsc%7bstring%20kw%3dany%5fstr
-%5ffrom%5fvec%28split%28%22struct%2cclass%22%2c%22%2c%22%29%29%3b%22%20%22%3f%7d
-%0a%20%20t%5fbody%5fsemicolon%3ai%5fstruct%5fimpl%7b%22%3b%22%7d%0a%20%20t%5fbod
-y%5fimpl%3ai%5fstruct%5fimpl%7b%0a%20%20%20%20%22%7b%22%0a%20%20%20%20vector%3cT
-AutoPtr%3ci%5ftarget%5fitem%3e%3e%20nested%3f%3b%0a%20%20%20%20%22%20%22%3f%0a%2
-0%20%20%20vector%3cTAutoPtr%3ci%5fstruct%5ffield%3e%3e%20arr%3f%3b%0a%20%20%20%2
-0%22%20%22%3f%0a%20%20%20%20TAutoPtr%3ct%5fstruct%5fcmds%3e%20cmds%3f%3b%0a%20%2
-0%20%20%22%20%22%3f%0a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3e%20c%3f%3b%0a%20%2
-0%20%20%22%20%22%3f%0a%20%20%20%20%22%7d%22%0a%20%20%7d%0a%20%20t%5fparent%7b%0a
-%20%20%20%20string%20arrow%5for%5fcolon%3dany%5fstr%5ffrom%5fvec%28split%28%22%3
-d%3e%2c%3a%22%2c%22%2c%22%29%29%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20t%5f
-name%20parent%3b%0a%20%20%7d%0a%20%20TAutoPtr%3ct%5fsc%3e%20sc%3f%3b%0a%20%20t%5
-fname%20name%3b%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ct%5fparent%3e%20parent%3
-f%3b%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ci%5fstruct%5fimpl%3e%20body%3b%0a%7
-d%0a%0at%5ftarget%5fsemicolon%3ai%5ftarget%5fitem%7bvector%3ct%5fsemicolon%3e%20
-arr%3b%7d%0at%5ftarget%5fsep%3ai%5ftarget%5fitem%7bt%5fsep%20sep%3b%7d%0a%0at%5f
-target%5fusing%3ai%5ftarget%5fitem%7b%0a%20%20t%5fstr%5fap%3ai%5fqa%7b%0a%20%20%
-20%20%22%27%22%0a%20%20%20%20string%20body%3dstr%3cTAutoPtr%3ci%5fchar%5fitem%3e
-%3e%28%29%3b%0a%20%20%20%20%22%27%22%0a%20%20%7d%0a%20%20t%5fstr%5fqu%3ai%5fqa%7
-b%0a%20%20%20%20%22%5c%22%22%0a%20%20%20%20string%20body%3dstr%3cvector%3cTAutoP
-tr%3ci%5fstr%5fitem%3e%3e%3e%28%29%3b%0a%20%20%20%20%22%5c%22%22%0a%20%20%7d%0a%
-20%20%22using%22%0a%20%20%22%20%22%0a%20%20string%20s%3dstr%3cTAutoPtr%3ci%5fqa%
-3e%3e%28%29%3b%0a%20%20%22%20%22%0a%20%20%22as%22%0a%20%20%22%20%22%0a%20%20stri
-ng%20lexer%3dstr%3ct%5fname%3e%28%29%3b%0a%20%20%22%20%22%3f%0a%20%20%22%3b%22%0
-a%7d%0a%0at%5ftarget%5ftypedef%3ai%5ftarget%5fitem%7b%0a%20%20%22typedef%22%0a%2
-0%20%22%20%22%0a%20%20t%5fcppcore%3a%3at%5fvarcall%5fexpr%3a%3at%5fvar%20type%3b
-%0a%20%20%22%20%22%3f%0a%20%20t%5fname%20name%3b%0a%20%20%22%20%22%3f%0a%20%20%2
-2%3b%22%0a%7d%0a%0at%5ftarget%7b%0a%20%20vector%3cTAutoPtr%3ci%5ftarget%5fitem%3
-e%3e%20arr%3b%0a%7d%0a%7d%0a%2f%2f
+ftarget%5fstruct%3ai%5ftarget%5fitem%7b%0a%20%20t%5fkeyword%7bstring%20kw%3dany%
+5fstr%5ffrom%5fvec%28split%28%22struct%2cclass%22%2c%22%2c%22%29%29%3b%22%20%22%
+3f%7d%0a%20%20t%5fbody%5fsemicolon%3ai%5fstruct%5fimpl%7b%22%3b%22%7d%0a%20%20t%
+5fbody%5fimpl%3ai%5fstruct%5fimpl%7b%0a%20%20%20%20%22%7b%22%0a%20%20%20%20vecto
+r%3cTAutoPtr%3ci%5ftarget%5fitem%3e%3e%20nested%3f%3b%0a%20%20%20%20%22%20%22%3f
+%0a%20%20%20%20vector%3cTAutoPtr%3ci%5fstruct%5ffield%3e%3e%20arr%3f%3b%0a%20%20
+%20%20%22%20%22%3f%0a%20%20%20%20TAutoPtr%3ct%5fstruct%5fcmds%3e%20cmds%3f%3b%0a
+%20%20%20%20%22%20%22%3f%0a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3e%20c%3f%3b%0a
+%20%20%20%20%22%20%22%3f%0a%20%20%20%20%22%7d%22%0a%20%20%7d%0a%20%20t%5fparent%
+7b%0a%20%20%20%20string%20arrow%5for%5fcolon%3dany%5fstr%5ffrom%5fvec%28split%28
+%22%3d%3e%2c%3a%22%2c%22%2c%22%29%29%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%2
+0t%5fname%20parent%3b%0a%20%20%7d%0a%20%20TAutoPtr%3ct%5fkeyword%3e%20kw%3f%3b%0
+a%20%20t%5fname%20name%3b%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ct%5fparent%3e%
+20parent%3f%3b%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ci%5fstruct%5fimpl%3e%20bo
+dy%3b%0a%7d%0a%0at%5ftarget%5fsemicolon%3ai%5ftarget%5fitem%7bvector%3ct%5fsemic
+olon%3e%20arr%3b%7d%0at%5ftarget%5fsep%3ai%5ftarget%5fitem%7bt%5fsep%20sep%3b%7d
+%0a%0at%5ftarget%5fusing%3ai%5ftarget%5fitem%7b%0a%20%20t%5fstr%5fap%3ai%5fqa%7b
+%0a%20%20%20%20%22%27%22%0a%20%20%20%20string%20body%3dstr%3cTAutoPtr%3ci%5fchar
+%5fitem%3e%3e%28%29%3b%0a%20%20%20%20%22%27%22%0a%20%20%7d%0a%20%20t%5fstr%5fqu%
+3ai%5fqa%7b%0a%20%20%20%20%22%5c%22%22%0a%20%20%20%20string%20body%3dstr%3cvecto
+r%3cTAutoPtr%3ci%5fstr%5fitem%3e%3e%3e%28%29%3b%0a%20%20%20%20%22%5c%22%22%0a%20
+%20%7d%0a%20%20%22using%22%0a%20%20%22%20%22%0a%20%20string%20s%3dstr%3cTAutoPtr
+%3ci%5fqa%3e%3e%28%29%3b%0a%20%20%22%20%22%0a%20%20%22as%22%0a%20%20%22%20%22%0a
+%20%20string%20lexer%3dstr%3ct%5fname%3e%28%29%3b%0a%20%20%22%20%22%3f%0a%20%20%
+22%3b%22%0a%7d%0a%0at%5ftarget%5ftypedef%3ai%5ftarget%5fitem%7b%0a%20%20%22typed
+ef%22%0a%20%20%22%20%22%0a%20%20t%5fcppcore%3a%3at%5fvarcall%5fexpr%3a%3at%5fvar
+%20type%3b%0a%20%20%22%20%22%3f%0a%20%20t%5fname%20name%3b%0a%20%20%22%20%22%3f%
+0a%20%20%22%3b%22%0a%7d%0a%0at%5ftarget%7b%0a%20%20vector%3cTAutoPtr%3ci%5ftarge
+t%5fitem%3e%3e%20arr%3b%0a%7d%0a%7d%0a%2f%2f
 */
