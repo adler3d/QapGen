@@ -983,8 +983,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       t_struct_cmd cmd;
       QapAssert(load_obj(cmd,c));
       auto*p=t_struct_cmd_mode::UberCast(cmd.mode.get());
-      QapAssert(p);
-      bool opt=p->body=='O';
+      //QapAssert(p);
+      bool opt=p?p->body=='O':false;
       auto fn=cmd.func.value;
       if(fn=="go_const"){
         QapAssert(cmd.params.arr.size()==1);
@@ -2082,7 +2082,7 @@ static void test_2025_06_10(/*IEnvRTTI&Env*/string fn,bool dontoptimize=false)
     string out=cdf.main(file_get_contents(fn));
     file_put_contents(fn,out);
   }
-  if(bool need_v1_to_v2=true){
+  if(bool need_v1_to_v2=false){
     t_qapdls_v1_to_v2 q12;
     string out=q12.main(file_get_contents(fn));
     file_put_contents(fn,drop_empty_lines(out));
