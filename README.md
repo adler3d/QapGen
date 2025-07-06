@@ -13,7 +13,7 @@ Like this:
     Save it in samples/input.qapdsl
     Run QapGen.exe
     Take the generated C++ code from the opened window.
-    Paste it into a project like Sgon somewhere near the main function (you still need to find it). // this point needs to be improved.
+    Paste it into https://github.com/adler3d/unordered/blob/master/code/SimpleCalc/Sgon/CommonUnit.cpp somewhere near the main function (you still need to find it). // this point needs to be improved.
     In main, write TAutoPtr&lt;your_root_node&gt; root;
     load_obj(Env,root,your_string_from_which_you_need_to_load_code_into_AST);
     Use the AST you just loaded into root.
