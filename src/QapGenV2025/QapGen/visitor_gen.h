@@ -1626,9 +1626,11 @@ struct t_class_def_fixer:
   template<class TYPE>
   void Do(TYPE*p){if(p)Do(*p);}
   template<class TYPE>
+  void Do(TYPE&r){r.Use(*this);}
+  template<class TYPE>
   void Do(vector<TYPE>&arr){for(auto&ex:arr)Do(&ex);}
   template<class TYPE>
-  void Do(vector<TAutoPtr<TYPE>>&arr){for(auto&ex:arr)if(ex)Do(ex.get());}
+  void Do(vector<TAutoPtr<TYPE>>&arr){for(auto&ex:arr)if(ex)Do(*ex.get());}
   template<class TYPE>
   void Do(TAutoPtr<TYPE>&r){if(r)Do(*r.get());}
   template<class TYPE>
@@ -1638,8 +1640,6 @@ struct t_class_def_fixer:
     if(drop_empty_lines(out).empty())return true;
     return false;
   }
-  void Do(t_target_struct::i_struct_impl&r){r.Use(*this);}
-  void Do(i_target_item&r){r.Use(*this);}
   void Do(t_body_semicolon&r)override{}
   void Do(t_body_impl&r)override{if(cppcode_killer)r.c=nullptr;Do(r.nested);}
   void Do(t_target_semicolon&r)override{}
@@ -1664,6 +1664,112 @@ struct t_class_def_fixer:
   }
 };
 #endif
+
+struct t_qapdls_v1_to_v2:
+  t_templ_sys_v04,
+  t_meta_lexer::i_target_item_visitor,
+  t_meta_lexer::t_target_struct::i_struct_impl::i_visitor,
+  t_meta_lexer::i_struct_cmd_xxxx::i_visitor
+{
+  #define ADD(F)typedef t_meta_lexer::F F;
+    ADD(t_target_semicolon)\
+    ADD(t_target_sep)\
+    ADD(t_target_struct)\
+    ADD(t_target_using)\
+    ADD(t_target_typedef)\
+    ADD(i_target_item)\
+    ADD(t_struct_cmd_mode)\
+    ADD(t_struct_cmd_anno)\
+      //
+  #undef ADD
+  template<class TYPE>
+  void Do(TYPE*p){if(p)Do(*p);}
+  template<class TYPE>
+  void Do(TYPE&r){r.Use(*this);}
+  template<class TYPE>
+  void Do(vector<TYPE>&arr){for(auto&ex:arr)Do(&ex);}
+  template<class TYPE>
+  void Do(vector<TAutoPtr<TYPE>>&arr){for(auto&ex:arr)if(ex)Do(*ex.get());}
+  template<class TYPE>
+  void Do(TAutoPtr<TYPE>&r){if(r)Do(*r.get());}
+  //template<class TYPE>
+  void Do(t_body_semicolon&r)override{}
+  bool opt=false;
+  void Do(t_struct_cmd_mode&r){opt=r.body=='O';}
+  void Do(t_struct_cmd_anno&r){opt=r.mode[0]=='o';if(r.mode.size()>1)opt=r.mode[1]=='o';}
+  t_struct_field&find_field(const vector<TAutoPtr<i_struct_field>>&arr,const std::string&name)const{
+    for(auto&ex:arr){
+      auto*pf=t_struct_field::UberCast(ex.get());
+      QapAssert(pf);
+      if(pf->name.value==name)return *pf;
+    }
+    QapDebugMsg("can't find field '"+name+"' inside lexer '"+lexers.back()+"'");
+    static t_struct_field tmp;
+    return tmp;
+  }
+  void Do(t_body_impl&r)override{
+    Do(r.nested);
+    if(!r.cmds)return;
+    auto&arr=r.cmds->arr;
+    vector<string> fields;
+    for(auto&ex:arr){
+      opt=false;
+      if(ex.body.mode)Do(ex.body.mode.get());
+      auto&f=ex.body.func.value;
+      QapAssert(f.size()>3&&f.substr(0,3)=="go_");
+      auto res=f.substr(3);
+      auto&params=ex.body.params.arr;
+      QapAssert(params.size());
+      string pad;
+      string pad2;
+      for(int i=0;i<lexers.size();i++)pad+="  ";
+      for(int i=1;i<lexers.size();i++)pad2+="  ";
+      if(res=="const"){
+        fields.push_back("\n"+pad+params[0].body+"\n"+pad2);
+        continue;
+      }
+      auto&src=find_field(r.arr,params[0].body);
+      if(res=="auto"){
+        src.qst=nullptr;
+        if(opt)load_obj(src.qst,"?");
+        fields.push_back("\n"+pad+lex2str(src)+"\n"+pad2);
+        continue;
+      }
+      vector<string> sparams;
+      for(int i=1;i<params.size();i++){
+        sparams.push_back(params[i].body);
+      }
+      fields.push_back("\n"+pad+lex2str(src.type)+""+src.name.value+"="+res+ex.body.templ_params+"("+join(sparams,",")+")"+string(opt?"?":"")+";\n"+pad2);
+    }
+    r.arr.clear();
+    auto mem=join(fields,"");
+    t_load_dev dev(mem);
+    bool ok=dev.go_auto(r.arr);
+    QapAssert(ok);
+    r.cmds=nullptr;
+  }
+  void Do(t_target_semicolon&r)override{}
+  void Do(t_target_sep&r)override{}
+  void Do(t_target_struct::t_parent&r){if(r.arrow_or_colon.size())r.arrow_or_colon=":";}
+  vector<string> lexers;
+  void Do(t_target_struct&r)override{lexers.push_back(r.name.value);Do(r.parent);Do(r.body);lexers.pop_back();}
+  void Do(t_target_using&r)override{}
+  void Do(t_target_typedef&r)override{}
+  string main(const string&data){
+    t_target tar;
+    auto fs=load_obj_full(/*Env,*/tar,data);
+    if(!fs.ok){cerr<<fs.msg<<endl;return "fail";}
+    if(tar.arr.empty()){return "!target\n\n"+fs.msg;}
+    for(auto&ex:tar.arr){
+      auto*p=ex.get();
+      p->Use(*this);
+    }
+    string out;
+    save_obj(tar,out);
+    return out;
+  }
+};
+
 /*
 class TLexemGeneratorFuncs_v01{
 public:
@@ -1975,6 +2081,12 @@ static void test_2025_06_10(/*IEnvRTTI&Env*/string fn,bool dontoptimize=false)
     t_class_def_fixer cdf;
     string out=cdf.main(file_get_contents(fn));
     file_put_contents(fn,out);
+  }
+  if(bool need_v1_to_v2=true){
+    t_qapdls_v1_to_v2 q12;
+    string out=q12.main(file_get_contents(fn));
+    file_put_contents(fn,drop_empty_lines(out));
+    int gg=1;
   }
   t_templ_sys_v05 v5;
   string str2=v5.main(inp,dontoptimize);
