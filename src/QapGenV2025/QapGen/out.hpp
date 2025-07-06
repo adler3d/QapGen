@@ -1,4 +1,4 @@
-// 141.886100 ms
+// 2401.055900 ms
 //===>>===i_str_item_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -6470,340 +6470,222 @@ public:
 //
 void i_str_item::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,4> lex={
-    F(t_str_item_raw,gen_dips("\x00\t\x0B!#[]\xFF")),
-    F(t_str_item_hex,"\\"),
-    F(t_str_item_num,"\\"),
-    F(t_str_item_fix,"\\")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_str_item_raw);
+  F(t_str_item_hex);
+  F(t_str_item_num);
+  F(t_str_item_fix);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void i_char_item::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,4> lex={
-    F(t_char_item_raw,gen_dips("\x00\t\x0B&([]\xFF")),
-    F(t_char_item_hex,"\\"),
-    F(t_char_item_num,"\\"),
-    F(t_char_item_fix,"\\")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_char_item_raw);
+  F(t_char_item_hex);
+  F(t_char_item_num);
+  F(t_char_item_fix);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void i_sep::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,3> lex={
-    F(t_sep_seq,"\t\n\r "),
-    F(t_c_comment,"/"),
-    F(t_cpp_comment,"/")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_sep_seq);
+  F(t_c_comment);
+  F(t_cpp_comment);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void i_simple_expr::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,5> lex={
-    F(t_str,"\""),
-    F(t_char,"'"),
-    F(t_num,"0123456789"),
-    F(t_id,gen_dips("@Zaz")+"$_"),
-    F(t_sign,gen_dips("%&*/:?")+"!^|~")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_str);
+  F(t_char);
+  F(t_num);
+  F(t_id);
+  F(t_sign);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void t_cppcore::i_expr::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,7> lex={
-    F(t_int_expr,"0123456789"),
-    F(t_char_expr,"'"),
-    F(t_bool_expr,"ft"),
-    F(t_string_expr,"\""),
-    F(t_real_expr,"0123456789"),
-    F(t_varcall_expr,gen_dips("@Zaz")+"$_"),
-    F(t_block_expr,"(")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_int_expr);
+  F(t_char_expr);
+  F(t_bool_expr);
+  F(t_string_expr);
+  F(t_real_expr);
+  F(t_varcall_expr);
+  F(t_block_expr);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void t_cppcore::t_int_expr::i_val::t_poly_impl::load()
 {
-  i_dev::t_result r=dev.get_char_lt();
-  if(!r.ok){scope.ok=false;return;}
-  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
-  switch(r.c){
-    case '0':F(t_zero);
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':F(t_num);
-    default:{scope.ok=false;return;}
-  }
+  #define F(TYPE)go_for<TYPE>();
+  F(t_zero);
+  F(t_num);
   #undef F
+  main();
 }
 void t_cppcore::t_real_expr::i_val::t_poly_impl::load()
 {
-  i_dev::t_result r=dev.get_char_lt();
-  if(!r.ok){scope.ok=false;return;}
-  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
-  switch(r.c){
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':F(t_num);
-    case '0':F(t_zero);
-    default:{scope.ok=false;return;}
-  }
+  #define F(TYPE)go_for<TYPE>();
+  F(t_num);
+  F(t_zero);
   #undef F
+  main();
 }
 void t_cppcore::t_varcall_expr::i_part::t_poly_impl::load()
 {
-  i_dev::t_result r=dev.get_char_lt();
-  if(!r.ok){scope.ok=false;return;}
-  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
-  switch(r.c){
-    case '\t':
-    case '\n':
-    case '\r':
-    case ' ':
-    case '/':
-    case ':':F(t_dd_part);
-    case '<':F(t_template_part);
-    default:{scope.ok=false;return;}
-  }
+  #define F(TYPE)go_for<TYPE>();
+  F(t_dd_part);
+  F(t_template_part);
   #undef F
+  main();
 }
 void t_meta_lexer::i_code::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,8> lex={
-    F(t_name_code,gen_dips("@Zaz")+"$_"),
-    F(t_num_code,"0123456789"),
-    F(t_str_code,"\""),
-    F(t_char_code,"'"),
-    F(t_sign_code,gen_dips("%&*/:?")+"!^|~"),
-    F(t_soft_brackets_code,"("),
-    F(t_hard_brackets_code,"["),
-    F(t_curly_brackets_code,"{")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_name_code);
+  F(t_num_code);
+  F(t_str_code);
+  F(t_char_code);
+  F(t_sign_code);
+  F(t_soft_brackets_code);
+  F(t_hard_brackets_code);
+  F(t_curly_brackets_code);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void t_meta_lexer::i_code_with_sep::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,8> lex={
-    F(t_name_code_with_sep,gen_dips("@Zaz")+"$_"),
-    F(t_num_code_with_sep,"0123456789"),
-    F(t_str_code_with_sep,"\""),
-    F(t_char_code_with_sep,"'"),
-    F(t_sign_code_with_sep,gen_dips("%&*/:?")+"!^|~"),
-    F(t_soft_brackets_code_with_sep,"("),
-    F(t_hard_brackets_code_with_sep,"["),
-    F(t_curly_brackets_code_with_sep,"{")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_name_code_with_sep);
+  F(t_num_code_with_sep);
+  F(t_str_code_with_sep);
+  F(t_char_code_with_sep);
+  F(t_sign_code_with_sep);
+  F(t_soft_brackets_code_with_sep);
+  F(t_hard_brackets_code_with_sep);
+  F(t_curly_brackets_code_with_sep);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void t_meta_lexer::i_type_item::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,4> lex={
-    F(t_type_item_string,"\""),
-    F(t_type_item_char,"'"),
-    F(t_type_item_number,"0123456789"),
-    F(t_type_item_type,gen_dips("@Zaz")+"$:_")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_type_item_string);
+  F(t_type_item_char);
+  F(t_type_item_number);
+  F(t_type_item_type);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void t_meta_lexer::i_type_templ::t_poly_impl::load()
 {
-  i_dev::t_result r=dev.get_char_lt();
-  if(!r.ok){scope.ok=false;return;}
-  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
-  switch(r.c){
-    case '<':F(t_type_templ_angle);
-    case '(':F(t_type_templ_soft);
-    default:{scope.ok=false;return;}
-  }
+  #define F(TYPE)go_for<TYPE>();
+  F(t_type_templ_angle);
+  F(t_type_templ_soft);
   #undef F
+  main();
 }
 void t_meta_lexer::i_struct_cmd_xxxx::t_poly_impl::load()
 {
-  i_dev::t_result r=dev.get_char_lt();
-  if(!r.ok){scope.ok=false;return;}
-  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
-  switch(r.c){
-    case 'D':
-    case 'M':
-    case 'O':F(t_struct_cmd_mode);
-    case '@':
-    case 'm':
-    case 'o':F(t_struct_cmd_anno);
-    default:{scope.ok=false;return;}
-  }
+  #define F(TYPE)go_for<TYPE>();
+  F(t_struct_cmd_mode);
+  F(t_struct_cmd_anno);
   #undef F
+  main();
 }
 void t_meta_lexer::i_struct_field::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,4> lex={
-    F(t_sep_field,"\t\n\r /"),
-    F(t_semicolon_field,";"),
-    F(t_const_field,"\"'"),
-    F(t_struct_field,gen_dips("'(09@Zaz")+"\"$_")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_sep_field);
+  F(t_semicolon_field);
+  F(t_const_field);
+  F(t_struct_field);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void t_meta_lexer::i_struct_cmd_so::t_poly_impl::load()
 {
-  i_dev::t_result r=dev.get_char_lt();
-  if(!r.ok){scope.ok=false;return;}
-  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
-  switch(r.c){
-    case '!':
-    case '?':F(t_struct_cmd_suffix);
-    case '[':F(t_struct_cmd_optional);
-    case ';':F(t_struct_cmd_opt_v2);
-    default:{scope.ok=false;return;}
-  }
+  #define F(TYPE)go_for<TYPE>();
+  F(t_struct_cmd_suffix);
+  F(t_struct_cmd_optional);
+  F(t_struct_cmd_opt_v2);
   #undef F
+  main();
 }
 void t_meta_lexer::i_cpp_code::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,2> lex={
-    F(t_cpp_code_sep,"\t\n\r /"),
-    F(t_cpp_code_main,gen_dips("!\"$(*[^_a|")+"~")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_cpp_code_sep);
+  F(t_cpp_code_main);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void t_meta_lexer::i_target_item::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,5> lex={
-    F(t_target_struct,gen_dips("@Zaz")+"$_"),
-    F(t_target_semicolon,";"),
-    F(t_target_sep,"\t\n\r /"),
-    F(t_target_using,"u"),
-    F(t_target_typedef,"t")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_target_struct);
+  F(t_target_semicolon);
+  F(t_target_sep);
+  F(t_target_using);
+  F(t_target_typedef);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void t_meta_lexer::t_const_field::i_sc_item::t_poly_impl::load()
 {
-  i_dev::t_result r=dev.get_char_lt();
-  if(!r.ok){scope.ok=false;return;}
-  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
-  switch(r.c){
-    case '\'':F(t_c_item);
-    case '"':F(t_s_item);
-    default:{scope.ok=false;return;}
-  }
+  #define F(TYPE)go_for<TYPE>();
+  F(t_c_item);
+  F(t_s_item);
   #undef F
+  main();
 }
 void t_meta_lexer::t_cmd_param::i_cmd_param_expr::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,3> lex={
-    F(t_expr_call,gen_dips("@Zaz")+"$_"),
-    F(t_expr_str,"\""),
-    F(t_expr_var,gen_dips("@Zaz")+"$_")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_expr_call);
+  F(t_expr_str);
+  F(t_expr_var);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void t_meta_lexer::t_cpp_code::i_major::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,3> lex={
-    F(t_fields,gen_dips("'(09@Zaz")+"\"$_"),
-    F(t_cmds,"{"),
-    F(t_atr,"[")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_fields);
+  F(t_cmds);
+  F(t_atr);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void t_meta_lexer::t_cpp_code::i_bayan::t_poly_impl::load()
 {
-  #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
-  static std::array<t_lex,2> lex={
-    F(t_with_bayan,"["),
-    F(t_without_bayan,gen_dips("\t\n \"$(*[^_a|")+"\r~")
-  };
+  #define F(TYPE)go_for<TYPE>();
+  F(t_with_bayan);
+  F(t_without_bayan);
   #undef F
-  #include "poly_fast_impl.inl"
-  main(&lex);
-  return;
+  main();
 }
 void t_meta_lexer::t_target_struct::i_struct_impl::t_poly_impl::load()
 {
-  i_dev::t_result r=dev.get_char_lt();
-  if(!r.ok){scope.ok=false;return;}
-  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
-  switch(r.c){
-    case ';':F(t_body_semicolon);
-    case '{':F(t_body_impl);
-    default:{scope.ok=false;return;}
-  }
+  #define F(TYPE)go_for<TYPE>();
+  F(t_body_semicolon);
+  F(t_body_impl);
   #undef F
+  main();
 }
 void t_meta_lexer::t_target_using::i_qa::t_poly_impl::load()
 {
-  i_dev::t_result r=dev.get_char_lt();
-  if(!r.ok){scope.ok=false;return;}
-  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
-  switch(r.c){
-    case '\'':F(t_str_ap);
-    case '"':F(t_str_qu);
-    default:{scope.ok=false;return;}
-  }
+  #define F(TYPE)go_for<TYPE>();
+  F(t_str_ap);
+  F(t_str_qu);
   #undef F
+  main();
 }
 /*
 //list of types:

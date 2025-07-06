@@ -133,13 +133,12 @@ public:
     string get_impl()const{
       vector<string> v={
         //"template<int>\n",
-        "bool "+(full_owner.empty()?"":full_owner+"::")+base+"::t_poly_impl::load()\n",
+        "void "+(full_owner.empty()?"":full_owner+"::")+base+"::t_poly_impl::load()\n",
         "{\n",
-        "  #define F(TYPE)go_for<struct TYPE>();\n",
+        "  #define F(TYPE)go_for<TYPE>();\n",
         list,
         "  #undef F\n",
         "  main();\n",
-        "  return scope.ok;\n"
         "}\n"
       };
       return join(v,"");
@@ -1105,14 +1104,14 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         if(!opt)return out;
         continue;
       }
-      if(fn=="go_str"){
+      if(fn=="go_str"||fn=="go_vec"){
         QapAssert(cmd.params.arr.size()==1);
         auto&cpa0b=cmd.params.arr[0].body;
         auto&f=find_field(lexer,cpa0b);
         auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
         QapAssert(pvc);
         auto&v=pvc->var;
-        if(v.name.value!="string")QapDebugMsg("go_str support only string type of field");
+        if(fn=="go_str"&&v.name.value!="string")QapDebugMsg("go_str support only string type of field");
         QapAssert(cmd.templ_params.size());
         TAutoPtr<t_templ_params> tp;
         QapAssert(load_obj(tp,cmd.templ_params));
@@ -1353,7 +1352,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     return out;
   }
   string poly_gen(){
-    string out="\n";
+    string out;
     prepare_lexers_chached_fields();
     for(auto&lexer:lexers){
       if(!lexer.is_interface)continue;
@@ -1533,7 +1532,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     QapAssert(pl);
     return pl->lexer;
   }
-  string main(const string&data){
+  string main(const string&data,bool dontoptimize){
     init();
     t_target tar;QapClock clock;
     auto r=load_obj_full(tar,data);
@@ -1553,7 +1552,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     Do(tar);
     buildLexerTree();
     //lexer_lookup_test();
-    if(bool polygen=true){dev.top.out+=poly_gen();}else dev.top.out+=get_at_end();
+    dev.top.out+="\n";
+    if(bool polygen=!dontoptimize){dev.top.out+=poly_gen();}else dev.top.out+=get_at_end();
     vector<i_target_item*> tarr;
     for(auto&ex:tar.arr)tarr.push_back(ex.get());
     auto listoftypes=get_list_of_types(tarr);
@@ -1950,7 +1950,7 @@ void test_2014_02_13(IEnvRTTI&Env)
 }*/
 #include <iostream>
 
-static void test_2025_06_10(/*IEnvRTTI&Env*/string fn)
+static void test_2025_06_10(/*IEnvRTTI&Env*/string fn,bool dontoptimize=false)
 {
   QapClock clock;
   //string content=file_get_contents("LexemGenData.inl");
@@ -1977,7 +1977,7 @@ static void test_2025_06_10(/*IEnvRTTI&Env*/string fn)
     file_put_contents(fn,out);
   }
   t_templ_sys_v05 v5;
-  string str2=v5.main(inp);
+  string str2=v5.main(inp,dontoptimize);
   //string str=v4.main(inp);
   string out="// "+FToS(clock.MS())+" ms\n"+str2;
   std::cout<<out;

@@ -409,8 +409,10 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   LPWSTR*argv=CommandLineToArgvW(GetCommandLineW(),&argc);
   string fn;if(argc>1)fn.resize(wcslen(argv[1]));
   if(fn.size())wcstombs(&fn[0],argv[1],wcslen(argv[1])+1);
+  string no;if(argc>2)no.resize(wcslen(argv[2]));
+  if(no.size())wcstombs(&no[0],argv[2],wcslen(argv[2])+1);
   //for(;;){
-    test_2025_06_10(fn);
+    test_2025_06_10(fn,no.size()?true:false);
   //}
   #ifdef QAP_UPP_COUNTERS
   printMapsJsonLike(t2maxn,t2c);
