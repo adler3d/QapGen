@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const inputFile = path.resolve(__dirname, 'habr_hubs_stats_programming_weekly.json');//monthly
+const inputFile = path.resolve(__dirname, 'habr_hubs_stats_programming_monthly.json');//monthly
 const outputFile = path.resolve(__dirname, 'top_hubs_by_rating_filtered.json');
 
 const rawData = fs.readFileSync(inputFile, 'utf-8');

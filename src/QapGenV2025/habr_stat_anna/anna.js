@@ -9,7 +9,7 @@ const baseUrl = 'https://habr.com';
 // node script.js programming week
 //const [,, startHub = 'programming', period = 1?'daily':(1?'yearly':(1?'monthly':'weekly'))] = process.argv;
 const [,, startHub = 'programming', period = 'daily'] = process.argv;
-
+console.log(period);
 const visitedHubs = new Set();
 const results = {};
 

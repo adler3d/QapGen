@@ -54,12 +54,9 @@ public:
   static vector<string> get_nested_list(const vector<i_target_item*>&arr){
     vector<string> out;
     for(int i=0;i<arr.size();i++){
-      //auto&ex=*arr[i];
-      auto*p=t_target_item::UberCast(arr[i]);
+      auto*p=t_target_struct::UberCast(arr[i]);
       if(!p)continue;
-      auto*pd=t_struct_def::UberCast(p->def.get());
-      auto*ps=t_class_def::UberCast(p->def.get());
-      out.push_back(pd?pd->name.value:ps->name.value);
+      out.push_back(p->name.value);
     }
     return out;
   }
@@ -68,14 +65,12 @@ public:
     vector<string> out;
     for(int i=0;i<arr.size();i++){
       auto&ex=arr[i];
-      auto*p=dynamic_cast<const t_target_item*>(ex);
-      if(!p)continue;
-      auto*pc=t_class_def::UberCast(p->def.get());
-      if(!pc||pc->parent.value.empty())continue;
+      auto*pc=t_target_struct::UberCast(arr[i]);
+      if(!pc||!pc->parent)continue;
       bool flag=false;
-      for(int j=0;j<out.size();j++)flag=flag||(pc->parent.value==out[j]);
+      for(int j=0;j<out.size();j++)flag=flag||(pc->parent->parent.value==out[j]);
       if(flag)continue;
-      out.push_back(pc->parent.value);
+      out.push_back(pc->parent->parent.value);
     }
     return out;
   }
@@ -161,11 +156,9 @@ public:
     vector<string> out;
     string line;
     for(int i=0;i<arr.size();i++){
-      auto*p=dynamic_cast<const t_target_item*>(arr[i]);
+      auto*p=t_target_struct::UberCast(arr[i]);
       if(!p)continue;
-      auto*pc=t_class_def::UberCast(p->def.get());
-      auto*ps=t_struct_def::UberCast(p->def.get());
-      string&n=pc?pc->name.value:ps->name.value;
+      string&n=p->name.value;
       string item="F("+n+")";
       if(line.size()+item.size()>=80){
         out.push_back(std::move(line));
@@ -211,9 +204,9 @@ struct t_ic_dev_v2{
     bool need_grab=false;
     bool need_igrab=false;
     vector<string> list;
-    vector<t_meta_lexer::t_target_item*> arr;
-    vector<t_meta_lexer::t_target_item*> piarr;
-    vector<t_meta_lexer::t_target_item*> pcarr;
+    vector<t_meta_lexer::t_target_struct*> arr;
+    vector<t_meta_lexer::t_target_struct*> piarr;
+    vector<t_meta_lexer::t_target_struct*> pcarr;
   };
   struct t_level{
     t_lexer lexer;
@@ -258,7 +251,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   t_meta_lexer::i_struct_cmd_xxxx::i_visitor,
   t_meta_lexer::i_struct_field::i_visitor,
   t_meta_lexer::i_struct_cmd_so::i_visitor,
-  t_meta_lexer::i_def::i_visitor
+  t_meta_lexer::t_target_struct::i_struct_impl::i_visitor
 {
   #pragma region typedefs
   #define F(T)typedef t_templ_sys_v04::T T;
@@ -300,6 +293,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   F(t_struct_cmd_mode             )\
   F(t_sep_value                   )\
   F(t_attr                        )\
+  F(t_sep_field                   )\
+  F(t_semicolon_field             )\
   F(t_const_field                 )\
   F(t_struct_field_value          )\
   F(t_struct_field                )\
@@ -317,13 +312,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   F(t_cpp_code_sep                )\
   F(t_cpp_code_main               )\
   F(t_cpp_code                    )\
-  F(t_fields_cmds_cppcode         )\
-  F(t_struct_body                 )\
-  F(t_class_def                   )\
-  F(t_struct_def                  )\
+  F(t_target_struct               )\
+  F(t_target_semicolon            )\
   F(t_target_sep                  )\
-  F(t_target_item                 )\
-  F(t_target_decl                 )\
   F(t_target_using                )\
   F(t_target_typedef              )\
   F(t_target                      )\
@@ -335,7 +326,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   F(i_struct_field   )\
   F(i_struct_cmd_so  )\
   F(i_cpp_code       )\
-  F(i_def            )\
   F(i_target_item    )\
   //
   #undef F
@@ -343,7 +333,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   F(i_struct_cmd_xxxx)
   F(i_struct_field   )
   F(i_struct_cmd_so  )
-  F(i_def            )
   F(i_target_item    )
   #undef F
   #pragma endregion
@@ -353,13 +342,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   void Do(t_struct_cmd_optional&r)override{}
   void Do(t_struct_cmd_opt_v2&r)override{}
   t_ic_dev_v2::t_lexer def_info;
-  void Do(t_class_def&r)override{
-    def_info.name=r.name.value;def_info.parent=r.parent.value;def_info.sep.clear();
-  }
-  void Do(t_struct_def&r)override{
-    def_info.name=r.name.value;def_info.parent.clear();def_info.sep.clear();
-  }
-  void Do(t_target_sep&r)override{}
   static bool find_smart_func(const string&func){
     static const vector<string> arr=split("go_any_str_from_vec|go_any_arr_char|go_any|go_any_char","|");
     for(int i=0;i<arr.size();i++)if(arr[i]==func)return true;
@@ -423,6 +405,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   void Do(t_struct_cmds&r){for(auto&ex:r.arr)Do(ex);}
   void Do(t_sep_struct_cmd&r){Do(r.body);}
   void Do(t_sep_struct_cmds&r){Do(r.body);}
+  void Do(t_semicolon_field&r)override{}
   void Do(t_const_field&r)override{
     if(field.find_qst){
       field.find_qst_result=false;
@@ -509,8 +492,13 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   }
   int fields_counter=0;
   string provars,procmds;
-  void Do(t_target_item&r)override{
-    r.def->Use(*this);
+  void Do(t_target_struct&r)override{
+    if(!t_target_struct::t_body_impl::UberCast(r.body.get())){
+      QapAssert(t_target_struct::t_body_semicolon::UberCast(r.body.get()));
+      if(!target_only)dev.top.out+="\nstruct "+r.name.value+";\n";
+      return;
+    }
+    def_info.name=r.name.value;def_info.parent=r.parent?r.parent->parent.value:"";def_info.sep.clear();
     auto L=def_info;
     auto&dtn=dev.top.nesteds;
     if(dtn.need_igrab){
@@ -531,7 +519,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       return;
     }
     target_item_counter++;
-    L.sep=r.sep0.value;
+    //L.sep=r.sep0.value;
     if(is_interface!=interfaces_only)return;
     dev.push();
     dev.top.lexer=def_info;
@@ -544,7 +532,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     DoGrab(r);
     dev.top.out+=out+"\n";
     interface_autogen();
-    Do(r.body.nested);
+    Do(r.body);
     out.clear();
     do{
       auto&arr=dev.top.nesteds.list;
@@ -561,21 +549,27 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       out.push_back("  /*</DEF_PRO_NESTED>*/");
       out2+="\n#define DEF_PRO_NESTED(F)\\\n"+join(out,"\n")+"\n";
     }while(false);
+    out+="\n";
     out+="#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)";
     out+="NAME("+L.name+")"+parent_info+owner_info;
     dev.top.out+=out+"\n";
     out.clear();
-    struct t_visitor:t_cpp_code::i_bayan_visitor{
+    struct t_visitor:t_cpp_code::i_bayan_visitor,t_target_struct::i_struct_impl::i_visitor{
       t_struct_cmds*pcmds{};
       vector<TAutoPtr<i_struct_field>>*pfs{};
       string c;
       void Do(t_cpp_code::t_with_bayan&r)override{save_obj(r.eater,c);}
       void Do(t_cpp_code::t_without_bayan&r)override{save_obj(r.eater,c);}
+      void Do(t_body_semicolon&r)override{}
+      void Do(t_body_impl&r)override{if(r.cmds)pcmds=r.cmds.get();if(r.arr.size())pfs=&r.arr;if(r.c)r.c->bayan->Use(*this);}
+      void Do(TAutoPtr<i_struct_impl>&r){if(r)r->Use(*this);}
     };
     t_visitor v;
-    v.pfs=&r.body.fcc->arr;
-    v.pcmds=r.body.fcc->cmds.get();
-    if(r.body.fcc->c)r.body.fcc->c->bayan->Use(v);
+    //v.pfs=&r.body.fcc->arr;
+    //v.pcmds=r.body.fcc->cmds.get();
+    //if(r.body.fcc->c)r.body.fcc->c->bayan->Use(v);
+    QapAssert(r.body);
+    v.Do(r.body);
     provars.clear();
     cmd_id=-1;
     if(v.pfs)Do(*v.pfs);
@@ -605,7 +599,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       t_out out;
     };
     t_target_item_out c;
-    if(r.body.fcc&&!is_interface)for(int iter=1;iter;iter--)
+    if(r.body&&!is_interface)for(int iter=1;iter;iter--)
     {
       bool value_or_qst_or_const_found=false;
       if(v.pfs){
@@ -639,7 +633,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       for(int iter=1;iter;iter--)
       {
         {
-          auto&arr=r.body.nested;
+          auto*pb=t_target_struct::t_body_impl::UberCast(r.body.get());
+          if(!pb)continue;
+          auto&arr=pb->nested;
           out.nested.resize(arr.size());
           for(int i=0;i<arr.size();i++){
             auto&ex=arr[i];
@@ -647,13 +643,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
             to=ex.get();
           }
         }
-        if(!r.body.fcc)break;
-        /*if(v.pfs){
-          provars.clear();
-          cmd_id=-1;
-          Do(*v.pfs);
-          out.provars=provars;
-        }*/
+        //if(!r.body.fcc)break;
+        //if(v.pcmds||v.pfs)QapAssert(bool(v.pcmds)!=bool(v.pfs));
         if(v.pcmds)
         {
           procmds.clear();cmd_id=-1;
@@ -756,13 +747,15 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       auto&pcarr=dev.arr.back().nesteds.pcarr;
       vector<string> list;
       for(auto&ex:pcarr){
-        def_info={};
-        Do(ex->def);
-        if(def_info.name=="t_var_expr"){
-          int gg=1;
-        }
-        if(def_info.parent!=L.name)continue;
-        list.push_back(def_info.name);
+        //def_info={};
+        //def_only=true;
+        //Do(ex->def);
+        //def_only=false;
+        //if(ex.name.value=="t_var_expr"){
+        //  int gg=1;
+        //}
+        if(!ex->parent||ex->parent->parent.value!=L.name)continue;
+        list.push_back(ex->name.value);
       }
       string out;
       {
@@ -775,15 +768,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         inp.add("DO_LIST",join(viz_with_doo(list),"\n"));
         inp.add("COMMENT_DO_LIST",join(viz_with_cdo(list),"\n"));
         before_head+=get_templ("VISITOR").eval(inp);
-      }
-      {
-        static t_target_item ti;
-        static t_struct_def*psd=nullptr;
-        if(!psd){
-          ti.def=std::move(make_unique<t_struct_def>());
-          psd=dynamic_cast<t_struct_def*>(ti.def.get());
-        }
-        psd->name.value=L.name;
       }
       string body2;
       {
@@ -873,12 +857,14 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }*/
     return {};
   }
-  vector<TAutoPtr<t_target_item>> ibuf;
+  vector<TAutoPtr<t_target_struct>> ibuf;
   bool target_only=false;
   int target_item_counter=0;
-  void Do(t_target_decl&r)override{
-    if(target_only)return;
-    dev.top.out+="  struct "+r.name+";";
+  void Do(t_target_semicolon&r)override{}
+  void Do(t_target_sep&r)override{
+    auto&dtn=dev.top.nesteds;
+    if(dtn.need_igrab||dtn.need_grab)return;
+    if(!target_only)dev.top.out+=r.sep.value;
   }
   void Do(t_target_using&r)override{if(!target_only)dev.add_sep_lex(r.s,r.lexer);}
   void Do(t_target_typedef&r)override{
@@ -887,7 +873,11 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     QapAssert(save_obj(r.type,t));
     dev.top.out+="typedef "+t+" "+r.name.value+";\n";
   }
+  void Do(t_sep_field&r)override{}
+  void Do(t_body_semicolon&r)override{}
+  void Do(t_body_impl&r)override{Do(r.nested);}
   void Do(t_target&r){Do(r.arr);}
+  void Do(t_target_struct::i_struct_impl&r){r.Use(*this);}
   template<class TYPE>
   void Do(TYPE*p){if(p)Do(*p);}
   template<class TYPE>
@@ -1363,7 +1353,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     return out;
   }
   string poly_gen(){
-    string out;
+    string out="\n";
     prepare_lexers_chached_fields();
     for(auto&lexer:lexers){
       if(!lexer.is_interface)continue;
@@ -1539,6 +1529,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
 
   t_lexer*find_lexer_by_name_but_relative(const string&name,const t_lexer&from)const{
     auto*pl=findLexerByNameRelative(name,from);
+    if(!pl)QapDebugMsg("lexer not found name='"+name+"' from='"+from.fullname+"'");
     QapAssert(pl);
     return pl->lexer;
   }
@@ -1585,15 +1576,14 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   void interface_autogen(){
     auto&dtn=dev.top.nesteds;
     for(auto&ex:dev.top.iarr){
-      t_target_item*pni=nullptr;
+      t_target_struct*pni=nullptr;
       for(auto&it:dtn.arr){
-        it->def->Use(*this);
-        if(def_info.name!=ex)continue;
+        if(it->name.value!=ex)continue;
         pni=it;
         break;
       }
       if(!pni){
-        auto u=make_unique<t_target_item>();
+        auto u=make_unique<t_target_struct>();
         pni=u.get();
         load_obj(*pni,ex+"{}");
         ibuf.push_back(std::move(u));
@@ -1606,13 +1596,13 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
   }
   bool interfaces_only=false;
-  void DoGrab(t_target_item&r){
+  void DoGrab(t_target_struct&r){
     target_only=true;
     dev.top.nesteds.need_igrab=true;
-    Do(r.body.nested);
+    Do(r.body);
     dev.top.nesteds.need_igrab=false;
     dev.top.nesteds.need_grab=true;
-    Do(r.body.nested);
+    Do(r.body);
     dev.top.nesteds.need_grab=false;
     target_only=false;
   }
@@ -1622,16 +1612,14 @@ struct t_templ_sys_v05:t_templ_sys_v04,
 struct t_class_def_fixer:
   t_templ_sys_v04,
   t_meta_lexer::i_target_item_visitor,
-  t_meta_lexer::i_def_visitor
+  t_meta_lexer::t_target_struct::i_struct_impl::i_visitor
 {
   #define ADD(F)typedef t_meta_lexer::F F;
+    ADD(t_target_semicolon)\
     ADD(t_target_sep)\
-    ADD(t_target_item)\
-    ADD(t_target_decl)\
+    ADD(t_target_struct)\
     ADD(t_target_using)\
     ADD(t_target_typedef)\
-    ADD(t_class_def)\
-    ADD(t_struct_def)\
     ADD(i_target_item)\
       //
   #undef ADD
@@ -1643,11 +1631,6 @@ struct t_class_def_fixer:
   void Do(vector<TAutoPtr<TYPE>>&arr){for(auto&ex:arr)if(ex)Do(ex.get());}
   template<class TYPE>
   void Do(TAutoPtr<TYPE>&r){if(r)Do(*r.get());}
-  void Do(t_class_def&r){
-    r.sep0.value="";
-    r.sep1.value="";
-    r.arrow_or_colon=":";
-  }
   template<class TYPE>
   bool is_empty(TYPE&r){
     string out;
@@ -1655,19 +1638,16 @@ struct t_class_def_fixer:
     if(drop_empty_lines(out).empty())return true;
     return false;
   }
-  //void Do(t_meta_lexer::t_fields_cmds_cppcode::t_cmds&r){if(!is_empty(r.cppcode))r.cppcode=nullptr;}
-  //void Do(t_meta_lexer::t_fields_cmds_cppcode::t_true_fcc&r){if(!is_empty(r.cppcode))r.cppcode=nullptr;}
-  //void Do(t_meta_lexer::t_fields_cmds_cppcode::t_cppcode&r){if(!is_empty(r.cppcode))r.cppcode=nullptr;}
-  void Do(t_fields_cmds_cppcode&fcc){
-    if(fcc.c)fcc.c=nullptr;
-  }
-  void Do(t_struct_def&r){}
+  void Do(t_target_struct::i_struct_impl&r){r.Use(*this);}
   void Do(i_target_item&r){r.Use(*this);}
-  void Do(t_target_sep&r){}
-  void Do(t_target_item&r){r.def->Use(*this);Do(r.body.nested);Do(r.body.fcc);}
-  void Do(t_target_decl&r){}
-  void Do(t_target_using&r){}
-  void Do(t_target_typedef&r){}
+  void Do(t_body_semicolon&r)override{}
+  void Do(t_body_impl&r)override{if(cppcode_killer)r.c=nullptr;Do(r.nested);}
+  void Do(t_target_semicolon&r)override{}
+  void Do(t_target_sep&r)override{}
+  void Do(t_target_struct::t_parent&r){if(r.arrow_or_colon.size())r.arrow_or_colon=":";}
+  void Do(t_target_struct&r)override{Do(r.parent);Do(r.body);}
+  void Do(t_target_using&r)override{}
+  void Do(t_target_typedef&r)override{}
   bool cppcode_killer=true;
   string main(const string&data){
     t_target tar;

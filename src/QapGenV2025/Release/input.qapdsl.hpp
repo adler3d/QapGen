@@ -637,6 +637,10 @@ t_attr{
   " "?
   "]"
 }
+
+t_sep_field:i_struct_field{" "?}
+t_semicolon_field:i_struct_field{TAutoPtr<t_semicolon> sc;}
+
 t_const_field:i_struct_field{
   t_qst{"?"}
   t_c_item:i_sc_item{t_char_item body;}
@@ -655,10 +659,10 @@ t_struct_field_value {
   " "?
   TAutoPtr<t_cppcore::t_varcall_expr> expr;
 }
+  
+t_qst{string s;{go_any(s,"*?");}}
+
 t_struct_field:i_struct_field{
-  t_qst{string s;{go_any(s,"*?");}}
-  //TAutoPtr<i_struct_cmd_xxxx> mode?;
-  //" "?
   TAutoPtr<t_cppcore::i_expr> type;
   " "?
   t_name name;
@@ -708,7 +712,7 @@ t_cmd_param{
 }
 t_struct_cmd_anno:i_struct_cmd_xxxx{
   string mode=any_str_from_vec(split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));
-  " ";
+  " "
 }
 
 t_struct_cmd_suffix:i_struct_cmd_so{
@@ -784,47 +788,36 @@ t_cpp_code{
   TAutoPtr<i_bayan> bayan;
 }
 
-t_fields_cmds_cppcode{
-  vector<TAutoPtr<i_struct_field>> arr?;
-  " "?
-  TAutoPtr<t_struct_cmds> cmds?;
-  TAutoPtr<t_cpp_code> c?;
-}
-
-t_struct_body{
-  "{"
-  vector<TAutoPtr<i_target_item>> nested?;
-  " "?
-  TAutoPtr<t_fields_cmds_cppcode> fcc;
-  " "?
-  "}"
-}
-
-t_class_def:i_def{
+t_target_struct:i_target_item{
+  t_sc{string kw=any_str_from_vec(split("struct,class",","));" "?}
+  t_body_semicolon:i_struct_impl{";"}
+  t_body_impl:i_struct_impl{
+    "{"
+    vector<TAutoPtr<i_target_item>> nested?;
+    " "?
+    vector<TAutoPtr<i_struct_field>> arr?;
+    " "?
+    TAutoPtr<t_struct_cmds> cmds?;
+    " "?
+    TAutoPtr<t_cpp_code> c?;
+    " "?
+    "}"
+  }
+  t_parent{
+    string arrow_or_colon=any_str_from_vec(split("=>,:",","));
+    " "?
+    t_name parent;
+  }
+  TAutoPtr<t_sc> sc?;
   t_name name;
-  t_sep sep0?;
-  string arrow_or_colon=any_str_from_vec(split("=>,:",","));
-  t_sep sep1?;
-  t_name parent;
+  " "?
+  TAutoPtr<t_parent> parent?;
+  " "?
+  TAutoPtr<i_struct_impl> body;
 }
 
-t_struct_def:i_def{
-  t_name name;
-}
-t_target_sep:i_target_item{" "}
-t_target_item:i_target_item{
-  t_sep sep0?;
-  TAutoPtr<i_def> def;
-  t_sep sep1?;
-  t_struct_body body;
-}
-
-t_target_decl:i_target_item{
-  " "?
-  string name=str<t_name>();
-  " "?
-  ";"
-}
+t_target_semicolon:i_target_item{vector<t_semicolon> arr;}
+t_target_sep:i_target_item{t_sep sep;}
 
 t_target_using:i_target_item{
   t_str_ap:i_qa{
@@ -837,7 +830,6 @@ t_target_using:i_target_item{
     string body=str<vector<TAutoPtr<i_str_item>>>();
     "\""
   }
-  " "?
   "using"
   " "
   string s=str<TAutoPtr<i_qa>>();
