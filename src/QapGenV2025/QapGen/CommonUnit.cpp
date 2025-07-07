@@ -389,7 +389,7 @@ void printMapsJsonLike(
     printMap(t2c, "t2c");
     std::cerr << "\n}\n";
 }
-
+#pragma comment(lib,"user32")
 
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
