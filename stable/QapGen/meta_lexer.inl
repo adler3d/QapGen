@@ -5219,8 +5219,11 @@ struct t_cmd_param;
         bool go(i_dev&dev){
           t_fallback $(dev,__FUNCTION__);
           auto&ok=$.ok;
+          if(global_debug)cerr<<"bef self"<<endl;
           dev.go_auto(self);
+          if(global_debug)cerr<<"aft self"<<endl;
           ok=dev.go_auto(name);
+          if(global_debug)cerr<<"aft t_impl::go_auto"<<endl;
           if(!ok)return ok;
           return ok;
         }

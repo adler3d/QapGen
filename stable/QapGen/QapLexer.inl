@@ -927,7 +927,9 @@ bool i_dev::go_str(string&ref)
         t_fallback subscope(*this,__FUNCTION__);
         bool&ok=subscope.ok;
         TYPE tmp;
+        if(global_debug)cerr<<"bef go_auto"<<endl;
         ok=go_auto(tmp);
+        if(global_debug)cerr<<"aft go_auto"<<endl;
         if(!ok)break;
         QapAssert(CheckTAutoPtrIsNotEmpty(tmp));
         arr.push_back(std::move(tmp));

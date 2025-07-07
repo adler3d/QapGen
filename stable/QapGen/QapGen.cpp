@@ -28,6 +28,8 @@ size_t g_unique_pool_ptr_counter=0;
 #define TAutoPtr UniquePoolPtr
 #define make_unique make_unique_pool
 #endif
+
+bool global_debug=false;
 #include "detail.inl"
 #include "t_error_tool.inl"
 #include "QapLexer.inl"

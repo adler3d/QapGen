@@ -1,7 +1,6 @@
 //#include "StdAfx.h"
 
 struct t_meta_lexer;
-bool global_debug=false;
 #include "meta_lexer.inl"
 #include "templ_lexer_v02.inl"
 
