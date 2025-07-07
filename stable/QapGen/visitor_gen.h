@@ -575,7 +575,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     cmd_id=-1;
     if(v.pfs)Do(*v.pfs);
     
-    if(L.name="t_number")cerr<<"Do(*v.pfs) :"+L.name<<endl;
+    if(L.name=="t_number")cerr<<"Do(*v.pfs) :"+L.name<<endl;
     auto&body=dev.top.out;
     {
       t_templ_sys_v02::t_inp inp;
@@ -602,7 +602,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       t_out out;
     };
     t_target_item_out c;
-    if(L.name="t_number")cerr<<"bef r.body&&!is_interface :"+L.name<<endl;
+    if(L.name=="t_number")cerr<<"bef r.body&&!is_interface :"+L.name<<endl;
     if(r.body&&!is_interface)for(int iter=1;iter;iter--)
     {
       bool value_or_qst_or_const_found=false;
@@ -711,7 +711,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       inp.add("DEV",dev);
       body+=get_templ("GO_IMPL").eval(inp);
     }
-    if(L.name="t_number")cerr<<"aft r.body&&!is_interface :"+L.name<<endl;
+    if(L.name=="t_number")cerr<<"aft r.body&&!is_interface :"+L.name<<endl;
     if(!c.out.nested.empty())if(c.out.nested.size()>2)
     {
       auto iarr=get_iarr(c.out.nested);
@@ -727,7 +727,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       inp.add("DO_LIST",join(dolist,"\n"));
       body+=get_templ("NESTED_VISITOR").eval(inp);
     }
-    if(L.name="t_number")cerr<<"bef need_attrs :"+L.name<<endl;
+    if(L.name=="t_number")cerr<<"bef need_attrs :"+L.name<<endl;
     if(bool need_attrs=true)for(int iter=1;iter;iter--){
       vector<string> oarr;
       if(!v.pfs)break;
@@ -809,7 +809,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     if(!c.out.cppcode.empty()){
       body+=c.out.cppcode;
     }
-    if(L.name="t_number")cerr<<"bef before_head+out+body :"+L.name<<endl;
+    if(L.name=="t_number")cerr<<"bef before_head+out+body :"+L.name<<endl;
     body=std::move(before_head+out+body);
     body=drop_empty_lines(body);
     body+="\n};\n";
