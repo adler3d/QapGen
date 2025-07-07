@@ -52,7 +52,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CommonUnit.cpp">
+    <ClCompile Include="QapGen.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
