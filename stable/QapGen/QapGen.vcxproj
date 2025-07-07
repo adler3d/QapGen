@@ -372,15 +372,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CommonUnit.cpp">
-      <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">OldStyle</DebugInformationFormat>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</MultiProcessorCompilation>
-      <MinimalRebuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</MinimalRebuild>
-      <CreateHotpatchableImage Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CreateHotpatchableImage>
-      <FunctionLevelLinking Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</FunctionLevelLinking>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="GUI_Panel.inl" />
     <None Include="main.inl" />
     <None Include="part0.inl" />
@@ -394,6 +385,9 @@
   <ItemGroup>
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="sys_core.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="QapGen.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

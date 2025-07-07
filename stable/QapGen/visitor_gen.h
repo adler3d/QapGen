@@ -357,6 +357,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     vector<string> childs;
     vector<t_struct_field> farr;
     bool is_interface=false;
+    t_lexer()=default;
     t_lexer(const t_lexer&)=delete;
     t_lexer&operator=(const t_lexer&)=delete;
     t_lexer(t_lexer&&)=default;
@@ -830,7 +831,35 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     string fullowner=get_fullpreowner();
     if(fullowner.size()){fullowner.pop_back();fullowner.pop_back();}
     string fullname=(fullowner.size()?fullowner+"::":"")+L.name;
-    lexers.push_back({L.name,get_fullparent(),fullname,fullowner,std::move(lexer_fields),std::move(lexer_cmds),is_interface?at_end.back().childs:vector<string>{},{},is_interface});
+    /*
+      struct t_lexer{
+    string name;
+    string fullparent;
+    string fullname;
+    string fullowner;
+    vector<string> fields;
+    vector<string> cmds;
+    vector<string> childs;
+    vector<t_struct_field> farr;
+    bool is_interface=false;
+    t_lexer()=default;
+    t_lexer(const t_lexer&)=delete;
+    t_lexer&operator=(const t_lexer&)=delete;
+    t_lexer(t_lexer&&)=default;
+    t_lexer&operator=(t_lexer&&)=default;
+  };
+    */
+    t_lexer OL;
+    OL.name=L.name;
+    OL.fullparent=get_fullparent();
+    OL.fullname=fullname;
+    OL.fullowner=fullowner;
+    OL.fields=std::move(lexer_fields);
+    OL.cmds=std::move(lexer_cmds);
+    OL.childs=is_interface?at_end.back().childs:vector<string>{};
+    OL.farr={};
+    OL.is_interface=is_interface;
+    lexers.push_back(std::move(OL));
     dev.pop();
   }
   string get_fullpreowner(){
