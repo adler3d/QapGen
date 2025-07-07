@@ -1,7 +1,7 @@
 //#include "StdAfx.h"
 
 struct t_meta_lexer;
-
+bool global_debug=false;
 #include "meta_lexer.inl"
 #include "templ_lexer_v02.inl"
 
@@ -695,7 +695,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           t_struct_cmd sc;
           cerr<<cmd<<endl;
           if(L.name=="t_number")cerr<<"bef load_obj_full(sc,cmd); :"+L.name<<endl;
+          if(L.name=="t_number")global_debug=true;
           auto res=load_obj_full(sc,cmd);
+          if(L.name=="t_number")global_debug=false;
           if(L.name=="t_number")cerr<<"aft load_obj_full(sc,cmd); :"+L.name<<endl;
           if(!res.ok){
             QapDebugMsg("t_struct_field::make_cmd return wrong code:\n"+res.msg);
