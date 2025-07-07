@@ -427,6 +427,7 @@ int main(int argc,char*argv[])
   string fn;
   if(argc>1)fn=argv[1];
   test_2025_06_10(fn);
+  cerr<<"\ndone!\n"<<endl;
   return 0;
 }
 #endif
