@@ -709,13 +709,6 @@ static string gen_dip(char from,char to){
   return out;
 }
 //-------------------------------------------//
-template<size_t size>
-static string gen_dips(const char(&rule)[size]){
-  string s;
-  s.resize(size-1);int i=-1;
-  for(auto&ex:rule){s[++i]=ex;}
-  return gen_dips(s);
-}
 static string gen_dips(const string&rule){
   QapAssert(!(rule.size()%2));
   string out;
@@ -723,6 +716,13 @@ static string gen_dips(const string&rule){
     out+=gen_dip(rule[i+0],rule[i+1]);
   }
   return out;
+}
+template<size_t size>
+static string gen_dips(const char(&rule)[size]){
+  string s;
+  s.resize(size-1);int i=-1;
+  for(auto&ex:rule){s[++i]=ex;}
+  return gen_dips(s);
 }
 //-------------------------------------------//
 static string dip_inv(const string&dip){
