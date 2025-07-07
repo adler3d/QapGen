@@ -42,3 +42,5 @@
 /stable/.vs/QapGen/v15
 /stable/Debug
 /stable/QapGen/Debug
+/stable/CommonUnit.exe
+/stable/CommonUnit.obj
