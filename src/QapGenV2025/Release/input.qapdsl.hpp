@@ -443,12 +443,12 @@ var gen=function(lex,mk){
     var json=JSON.stringify;
     var m={soft:["(",")"],hard:["[","]"],curly:["{","}"]}
     for(var k in m)if(lex.includes(k))return [
-      lex+"_with_sep=>i_code_with_sep{",
+      lex+"_with_sep:i_code_with_sep{",
       "  "+json(m[k][0])+' " "? vector<TAutoPtr<i_code_with_sep>> body?; '+json(m[k][1])+' " "?',
       "}"
     ].join("\n");
   }
-  return lex+"_with_sep=>i_code_with_sep{"+lex+" body;t_sep sep?;}";
+  return lex+"_with_sep:i_code_with_sep{"+lex+" body;t_sep sep?;}";
 }
 var out=[];
 var arr=POST['data'].split("\n@@@")[0].split("\r").join("").split("\n");

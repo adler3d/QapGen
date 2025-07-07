@@ -1,29 +1,31 @@
-// 480.204400 ms
-struct t_asmcpplike2016{
-  //===>>===i_param_visitor
+// 1558.882300 ms
+struct t_simple_stat_lex{
+  //===>>===i_expr_visitor
   #define DEF_PRO_BLANK()
   #define LIST(ADDBEG,ADD,ADDEND)\
   ADDBEG()\
-    ADD(t_char_param)\
-    ADD(t_str_param)\
-    ADD(t_num_param)\
-    ADD(t_ptr_reg_param)\
-    ADD(t_ptr_num_param)\
-    ADD(t_name_param)\
+    ADD(t_int_expr)\
+    ADD(t_char_expr)\
+    ADD(t_bool_expr)\
+    ADD(t_string_expr)\
+    ADD(t_real_expr)\
+    ADD(t_var_expr)\
+    ADD(t_block_expr)\
+    ADD(t_call_expr)\
   ADDEND()
-  class i_param;
+  class i_expr;
   #define ADD(TYPE)class TYPE;
   LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
   #undef ADD
-  class i_param_visitor{
+  class i_expr_visitor{
   public:
-    typedef t_asmcpplike2016::i_param i_param;
+    typedef t_simple_stat_lex::i_expr i_expr;
   public:
     #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
-    #define ADD(U)typedef t_asmcpplike2016::U U;//typedef t_asmcpplike2016::U U;
+    #define ADD(U)typedef t_simple_stat_lex::U U;//typedef t_simple_stat_lex::U U;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -45,37 +47,39 @@ struct t_asmcpplike2016{
     // DC 28.73 // 1.13 sec
     // empty 27.60 
     template<class TYPE>
-    static TYPE*UberCast(i_param*p){
-      if(!p)return nullptr;Is<TYPE,i_param_visitor> IS;p->Use(IS);return IS.ptr;
+    static TYPE*UberCast(i_expr*p){
+      if(!p)return nullptr;Is<TYPE,i_expr_visitor> IS;p->Use(IS);return IS.ptr;
     }
     #else
     template<class TYPE>
-    static TYPE*UberCast(i_param*p){return dynamic_cast<TYPE*>(p);}
+    static TYPE*UberCast(i_expr*p){return dynamic_cast<TYPE*>(p);}
     #endif
   };
-  //struct t_visitor:public i_param_visitor{
-  //  void Do(t_char_param&r){}
-  //  void Do(t_str_param&r){}
-  //  void Do(t_num_param&r){}
-  //  void Do(t_ptr_reg_param&r){}
-  //  void Do(t_ptr_num_param&r){}
-  //  void Do(t_name_param&r){}
+  //struct t_visitor:public i_expr_visitor{
+  //  void Do(t_int_expr&r){}
+  //  void Do(t_char_expr&r){}
+  //  void Do(t_bool_expr&r){}
+  //  void Do(t_string_expr&r){}
+  //  void Do(t_real_expr&r){}
+  //  void Do(t_var_expr&r){}
+  //  void Do(t_block_expr&r){}
+  //  void Do(t_call_expr&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
-  //===<<===i_param_visitor
-  struct i_param{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_param)OWNER(t_asmcpplike2016)
+  //===<<===i_expr_visitor
+  struct i_expr{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_expr)OWNER(t_simple_stat_lex)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
   ADDEND()
-  //=====+>>>>>i_param
+  //=====+>>>>>i_expr
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====i_param
+  //<<<<<+=====i_expr
   public:
-    typedef i_param_visitor i_visitor;
+    typedef i_expr_visitor i_visitor;
     virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
-    virtual ~i_param()=default;
+    virtual ~i_expr()=default;
   public:
     virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
     struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
@@ -83,12 +87,14 @@ struct t_asmcpplike2016{
       #include "QapLexPolyBeg.inl"
       void load();/*
       {
-        F(t_char_param);
-        F(t_str_param);
-        F(t_num_param);
-        F(t_ptr_reg_param);
-        F(t_ptr_num_param);
-        F(t_name_param);
+        F(t_int_expr);
+        F(t_char_expr);
+        F(t_bool_expr);
+        F(t_string_expr);
+        F(t_real_expr);
+        F(t_var_expr);
+        F(t_block_expr);
+        F(t_call_expr);
         (void)count;(void)first_id;(void)out_arr;(void)this;
         main();
         return scope.ok;
@@ -100,9 +106,22 @@ struct t_asmcpplike2016{
   #define DEF_PRO_BLANK()
   #define LIST(ADDBEG,ADD,ADDEND)\
   ADDBEG()\
-    ADD(t_cmd_stat)\
-    ADD(t_block_stat)\
+    ADD(t_var_stat)\
     ADD(t_sep_stat)\
+    ADD(t_block_stat)\
+    ADD(t_expr_stat)\
+    ADD(t_set_oper_stat)\
+    ADD(t_func_stat)\
+    ADD(t_oper_stat)\
+    ADD(t_ret_stat)\
+    ADD(t_null_stat)\
+    ADD(t_postfix_oper_stat)\
+    ADD(t_break_stat)\
+    ADD(t_continue_stat)\
+    ADD(t_for_stat)\
+    ADD(t_if_stat)\
+    ADD(t_struct_stat)\
+    ADD(t_template_stat)\
   ADDEND()
   class i_stat;
   #define ADD(TYPE)class TYPE;
@@ -110,13 +129,13 @@ struct t_asmcpplike2016{
   #undef ADD
   class i_stat_visitor{
   public:
-    typedef t_asmcpplike2016::i_stat i_stat;
+    typedef t_simple_stat_lex::i_stat i_stat;
   public:
     #define ADD(TYPE)virtual void Do(TYPE&r)=0;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
-    #define ADD(U)typedef t_asmcpplike2016::U U;//typedef t_asmcpplike2016::U U;
+    #define ADD(U)typedef t_simple_stat_lex::U U;//typedef t_simple_stat_lex::U U;
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   public:
@@ -147,15 +166,28 @@ struct t_asmcpplike2016{
     #endif
   };
   //struct t_visitor:public i_stat_visitor{
-  //  void Do(t_cmd_stat&r){}
-  //  void Do(t_block_stat&r){}
+  //  void Do(t_var_stat&r){}
   //  void Do(t_sep_stat&r){}
+  //  void Do(t_block_stat&r){}
+  //  void Do(t_expr_stat&r){}
+  //  void Do(t_set_oper_stat&r){}
+  //  void Do(t_func_stat&r){}
+  //  void Do(t_oper_stat&r){}
+  //  void Do(t_ret_stat&r){}
+  //  void Do(t_null_stat&r){}
+  //  void Do(t_postfix_oper_stat&r){}
+  //  void Do(t_break_stat&r){}
+  //  void Do(t_continue_stat&r){}
+  //  void Do(t_for_stat&r){}
+  //  void Do(t_if_stat&r){}
+  //  void Do(t_struct_stat&r){}
+  //  void Do(t_template_stat&r){}
   //};
   #undef LIST
   #undef DEF_PRO_BLANK
   //===<<===i_stat_visitor
   struct i_stat{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_stat)OWNER(t_asmcpplike2016)
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_stat)OWNER(t_simple_stat_lex)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
   ADDEND()
@@ -173,9 +205,22 @@ struct t_asmcpplike2016{
       #include "QapLexPolyBeg.inl"
       void load();/*
       {
-        F(t_cmd_stat);
-        F(t_block_stat);
+        F(t_var_stat);
         F(t_sep_stat);
+        F(t_block_stat);
+        F(t_expr_stat);
+        F(t_set_oper_stat);
+        F(t_func_stat);
+        F(t_oper_stat);
+        F(t_ret_stat);
+        F(t_null_stat);
+        F(t_postfix_oper_stat);
+        F(t_break_stat);
+        F(t_continue_stat);
+        F(t_for_stat);
+        F(t_if_stat);
+        F(t_struct_stat);
+        F(t_template_stat);
         (void)count;(void)first_id;(void)out_arr;(void)this;
         main();
         return scope.ok;
@@ -183,322 +228,850 @@ struct t_asmcpplike2016{
       #include "QapLexPolyEndNoTemplate.inl"
     };
   };
-  //===>>===i_item_visitor
-  #define DEF_PRO_BLANK()
-  #define LIST(ADDBEG,ADD,ADDEND)\
-  ADDBEG()\
-    ADD(t_proc_item)\
-    ADD(t_sep_item)\
-    ADD(t_struct_item)\
-  ADDEND()
-  class i_item;
-  #define ADD(TYPE)class TYPE;
-  LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
-  #undef ADD
-  class i_item_visitor{
-  public:
-    typedef t_asmcpplike2016::i_item i_item;
-  public:
-    #define ADD(TYPE)virtual void Do(TYPE&r)=0;
-    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
-    #undef ADD
-  public:
-    #define ADD(U)typedef t_asmcpplike2016::U U;//typedef t_asmcpplike2016::U U;
-    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
-    #undef ADD
-  public:
-    #ifdef QAP_FAST_UBERCAST
-    template<class TYPE,class Visitor>
-    struct Is:public Visitor{
-      TYPE*ptr{};
-    public:
-      #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
-      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
-      #undef ADD
-    };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
-    template<class TYPE>
-    static TYPE*UberCast(i_item*p){
-      if(!p)return nullptr;Is<TYPE,i_item_visitor> IS;p->Use(IS);return IS.ptr;
-    }
-    #else
-    template<class TYPE>
-    static TYPE*UberCast(i_item*p){return dynamic_cast<TYPE*>(p);}
-    #endif
-  };
-  //struct t_visitor:public i_item_visitor{
-  //  void Do(t_proc_item&r){}
-  //  void Do(t_sep_item&r){}
-  //  void Do(t_struct_item&r){}
-  //};
-  #undef LIST
-  #undef DEF_PRO_BLANK
-  //===<<===i_item_visitor
-  struct i_item{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_item)OWNER(t_asmcpplike2016)
+  struct t_lev03{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_lev03)OWNER(t_simple_stat_lex)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
+  ADDVAR(string,oper,DEF,$,$)\
+  ADDVAR(TAutoPtr<i_expr>,expr,DEF,$,$)\
   ADDEND()
-  //=====+>>>>>i_item
+  //=====+>>>>>t_lev03
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====i_item
-  public:
-    typedef i_item_visitor i_visitor;
-    virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
-    virtual ~i_item()=default;
-  public:
-    virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
-    struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
-    {
-      #include "QapLexPolyBeg.inl"
-      void load();/*
-      {
-        F(t_proc_item);
-        F(t_sep_item);
-        F(t_struct_item);
-        (void)count;(void)first_id;(void)out_arr;(void)this;
-        main();
-        return scope.ok;
-      }*/
-      #include "QapLexPolyEndNoTemplate.inl"
-    };
-  };
-  struct t_minus{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_minus)OWNER(t_asmcpplike2016)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDEND()
-  //=====+>>>>>t_minus
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_minus
+  //<<<<<+=====t_lev03
   public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      ok=dev.go_const("-");
+      static const auto g_static_var_0=QapStrFinder::fromArr(split("+,-,!,~",","));
+      dev.go_any_str_from_vec(oper,g_static_var_0);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
       return ok;
     }
   };
-  struct t_num_impl{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_num_impl)OWNER(t_asmcpplike2016)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDVAR(string,minus,DEF,$,$)\
-  ADDVAR(string,num,DEF,$,$)\
-  ADDEND()
-  //=====+>>>>>t_num_impl
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_num_impl
-  public:
-    bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
-      auto&ok=$.ok;
-      dev.go_str<t_minus>(minus);
-      static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-      ok=dev.go_any(num,g_static_var_1);
-      if(!ok)return ok;
-      return ok;
-    }
-  };
-  struct t_num{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_num)OWNER(t_asmcpplike2016)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDVAR(string,value,DEF,$,$)\
-  ADDEND()
-  //=====+>>>>>t_num
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_num
-  public:
-    bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
-      auto&ok=$.ok;
-      ok=dev.go_str<t_num_impl>(value);
-      if(!ok)return ok;
-      return ok;
-    }
-  };
-  struct t_char_param:public i_param{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_char_param)PARENT(i_param)OWNER(t_asmcpplike2016)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDVAR(t_char,value,DEF,$,$)\
-  ADDEND()
-  //=====+>>>>>t_char_param
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_char_param
-  public:
-    void Use(i_visitor&A){A.Do(*this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
-  public:
-    bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
-      auto&ok=$.ok;
-      ok=dev.go_auto(value);
-      if(!ok)return ok;
-      return ok;
-    }
-  };
-  struct t_str_param:public i_param{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_str_param)PARENT(i_param)OWNER(t_asmcpplike2016)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDVAR(t_str,value,DEF,$,$)\
-  ADDEND()
-  //=====+>>>>>t_str_param
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_str_param
-  public:
-    void Use(i_visitor&A){A.Do(*this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
-  public:
-    bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
-      auto&ok=$.ok;
-      ok=dev.go_auto(value);
-      if(!ok)return ok;
-      return ok;
-    }
-  };
-  struct t_num_param:public i_param{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_num_param)PARENT(i_param)OWNER(t_asmcpplike2016)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDVAR(t_num,value,DEF,$,$)\
-  ADDEND()
-  //=====+>>>>>t_num_param
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_num_param
-  public:
-    void Use(i_visitor&A){A.Do(*this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
-  public:
-    bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
-      auto&ok=$.ok;
-      ok=dev.go_auto(value);
-      if(!ok)return ok;
-      return ok;
-    }
-  };
-  struct t_ptr_reg_param:public i_param{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_ptr_reg_param)PARENT(i_param)OWNER(t_asmcpplike2016)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDVAR(string,reg,DEF,$,$)\
-  ADDEND()
-  //=====+>>>>>t_ptr_reg_param
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_ptr_reg_param
-  public:
-    void Use(i_visitor&A){A.Do(*this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
-  public:
-    bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
-      auto&ok=$.ok;
-      ok=dev.go_const("ptr[");
-      if(!ok)return ok;
-      ok=dev.go_str<t_name>(reg);
-      if(!ok)return ok;
-      ok=dev.go_const("]");
-      if(!ok)return ok;
-      return ok;
-    }
-  };
-  struct t_ptr_num_param:public i_param{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_ptr_num_param)PARENT(i_param)OWNER(t_asmcpplike2016)
-  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
-  ADDBEG()\
-  ADDVAR(string,num,DEF,$,$)\
-  ADDEND()
-  //=====+>>>>>t_ptr_num_param
-  #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_ptr_num_param
-  public:
-    void Use(i_visitor&A){A.Do(*this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
-  public:
-    bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
-      auto&ok=$.ok;
-      ok=dev.go_const("ptr[");
-      if(!ok)return ok;
-      ok=dev.go_str<t_num>(num);
-      if(!ok)return ok;
-      ok=dev.go_const("]");
-      if(!ok)return ok;
-      return ok;
-    }
-  };
-  struct t_name_param:public i_param{
-    struct t_ext{
-    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_ext)OWNER(t_name_param)
+  struct t_lev05{
+    struct t_oper{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper)OWNER(t_lev05)
     #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
     ADDBEG()\
-    ADDVAR(string,field,DEF,$,$)\
+    ADDVAR(string,value,DEF,$,$)\
     ADDEND()
-    //=====+>>>>>t_ext
+    //=====+>>>>>t_oper
     #include "QapGenStructNoTemplate.inl"
-    //<<<<<+=====t_ext
+    //<<<<<+=====t_oper
     public:
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
-        ok=dev.go_const("[\"");
+        static const auto g_static_var_0=QapStrFinder::fromArr(split("*,/,%",","));
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
         if(!ok)return ok;
-        ok=dev.go_str<t_name>(field);
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev05)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_oper,oper,DEF,$,$)\
+    ADDVAR(t_lev03,expr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(oper);
         if(!ok)return ok;
-        ok=dev.go_const("\"]");
+        ok=dev.go_auto(expr);
         if(!ok)return ok;
         return ok;
       }
     };
   #define DEF_PRO_NESTED(F)\
     /*<DEF_PRO_NESTED>*/\
-    F(t_ext)\
+    F(t_oper)\
+    F(t_item)\
     /*</DEF_PRO_NESTED>*/
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_name_param)PARENT(i_param)OWNER(t_asmcpplike2016)
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_lev05)OWNER(t_simple_stat_lex)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(t_name,name,DEF,$,$)\
-  ADDVAR(vector<t_ext>,arr,DEF,$,$)\
+  ADDVAR(t_lev03,expr,DEF,$,$)\
+  ADDVAR(vector<t_item>,arr,DEF,$,$)\
   ADDEND()
-  //=====+>>>>>t_name_param
+  //=====+>>>>>t_lev05
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_name_param
-  public:
-    void Use(i_visitor&A){A.Do(*this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  //<<<<<+=====t_lev05
   public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      ok=dev.go_auto(name);
+      ok=dev.go_auto(expr);
       if(!ok)return ok;
       dev.go_auto(arr);
       return ok;
     }
   public:
   };
-  struct t_cmd_stat:public i_stat{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_cmd_stat)PARENT(i_stat)OWNER(t_asmcpplike2016)
+  struct t_lev06{
+    struct t_oper{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper)OWNER(t_lev06)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,value,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_oper
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_oper
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        static const auto g_static_var_0=QapStrFinder::fromArr(split("+,-",","));
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev06)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_oper,oper,DEF,$,$)\
+    ADDVAR(t_lev05,expr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(oper);
+        if(!ok)return ok;
+        ok=dev.go_auto(expr);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_oper)\
+    F(t_item)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_lev06)OWNER(t_simple_stat_lex)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(string,cmd,DEF,$,$)\
-  ADDVAR(vector<TAutoPtr<i_param>>,arr,DEF,$,$)\
+  ADDVAR(t_lev05,expr,DEF,$,$)\
+  ADDVAR(vector<t_item>,arr,DEF,$,$)\
   ADDEND()
-  //=====+>>>>>t_cmd_stat
+  //=====+>>>>>t_lev06
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_cmd_stat
+  //<<<<<+=====t_lev06
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(expr);
+      if(!ok)return ok;
+      dev.go_auto(arr);
+      return ok;
+    }
+  public:
+  };
+  struct t_lev07{
+    struct t_oper{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper)OWNER(t_lev07)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,value,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_oper
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_oper
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        static const auto g_static_var_0=QapStrFinder::fromArr(split("<<,>>",","));
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev07)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_oper,oper,DEF,$,$)\
+    ADDVAR(t_lev06,expr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(oper);
+        if(!ok)return ok;
+        ok=dev.go_auto(expr);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_oper)\
+    F(t_item)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_lev07)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_lev06,expr,DEF,$,$)\
+  ADDVAR(vector<t_item>,arr,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_lev07
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_lev07
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(expr);
+      if(!ok)return ok;
+      dev.go_auto(arr);
+      return ok;
+    }
+  public:
+  };
+  struct t_lev08{
+    struct t_oper{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper)OWNER(t_lev08)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,value,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_oper
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_oper
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        static const auto g_static_var_0=QapStrFinder::fromArr(split("<,<=,>,>=",","));
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev08)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_oper,oper,DEF,$,$)\
+    ADDVAR(t_lev07,expr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(oper);
+        if(!ok)return ok;
+        ok=dev.go_auto(expr);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_oper)\
+    F(t_item)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_lev08)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_lev07,expr,DEF,$,$)\
+  ADDVAR(vector<t_item>,arr,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_lev08
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_lev08
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(expr);
+      if(!ok)return ok;
+      dev.go_auto(arr);
+      return ok;
+    }
+  public:
+  };
+  struct t_lev09{
+    struct t_oper{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper)OWNER(t_lev09)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,value,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_oper
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_oper
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        static const auto g_static_var_0=QapStrFinder::fromArr(split("==,!=",","));
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev09)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_oper,oper,DEF,$,$)\
+    ADDVAR(t_lev08,expr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(oper);
+        if(!ok)return ok;
+        ok=dev.go_auto(expr);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_oper)\
+    F(t_item)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_lev09)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_lev08,expr,DEF,$,$)\
+  ADDVAR(vector<t_item>,arr,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_lev09
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_lev09
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(expr);
+      if(!ok)return ok;
+      dev.go_auto(arr);
+      return ok;
+    }
+  public:
+  };
+  struct t_lev10{
+    struct t_oper{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper)OWNER(t_lev10)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,value,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_oper
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_oper
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        static const auto g_static_var_0=QapStrFinder::fromArr(split("&",","));
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev10)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_oper,oper,DEF,$,$)\
+    ADDVAR(t_lev09,expr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(oper);
+        if(!ok)return ok;
+        ok=dev.go_auto(expr);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_oper)\
+    F(t_item)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_lev10)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_lev09,expr,DEF,$,$)\
+  ADDVAR(vector<t_item>,arr,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_lev10
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_lev10
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(expr);
+      if(!ok)return ok;
+      dev.go_auto(arr);
+      return ok;
+    }
+  public:
+  };
+  struct t_lev11{
+    struct t_oper{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper)OWNER(t_lev11)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,value,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_oper
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_oper
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        static const auto g_static_var_0=QapStrFinder::fromArr(split("^",","));
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev11)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_oper,oper,DEF,$,$)\
+    ADDVAR(t_lev10,expr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(oper);
+        if(!ok)return ok;
+        ok=dev.go_auto(expr);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_oper)\
+    F(t_item)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_lev11)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_lev10,expr,DEF,$,$)\
+  ADDVAR(vector<t_item>,arr,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_lev11
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_lev11
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(expr);
+      if(!ok)return ok;
+      dev.go_auto(arr);
+      return ok;
+    }
+  public:
+  };
+  struct t_lev12{
+    struct t_oper{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper)OWNER(t_lev12)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,value,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_oper
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_oper
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        static const auto g_static_var_0=QapStrFinder::fromArr(split("|",","));
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev12)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_oper,oper,DEF,$,$)\
+    ADDVAR(t_lev11,expr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(oper);
+        if(!ok)return ok;
+        ok=dev.go_auto(expr);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_oper)\
+    F(t_item)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_lev12)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_lev11,expr,DEF,$,$)\
+  ADDVAR(vector<t_item>,arr,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_lev12
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_lev12
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(expr);
+      if(!ok)return ok;
+      dev.go_auto(arr);
+      return ok;
+    }
+  public:
+  };
+  struct t_lev13{
+    struct t_oper{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper)OWNER(t_lev13)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,value,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_oper
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_oper
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        static const auto g_static_var_0=QapStrFinder::fromArr(split("&&",","));
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev13)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_oper,oper,DEF,$,$)\
+    ADDVAR(t_lev12,expr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(oper);
+        if(!ok)return ok;
+        ok=dev.go_auto(expr);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_oper)\
+    F(t_item)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_lev13)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_lev12,expr,DEF,$,$)\
+  ADDVAR(vector<t_item>,arr,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_lev13
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_lev13
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(expr);
+      if(!ok)return ok;
+      dev.go_auto(arr);
+      return ok;
+    }
+  public:
+  };
+  struct t_lev14{
+    struct t_oper{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper)OWNER(t_lev14)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,value,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_oper
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_oper
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        static const auto g_static_var_0=QapStrFinder::fromArr(split("||",","));
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_lev14)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_oper,oper,DEF,$,$)\
+    ADDVAR(t_lev13,expr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(oper);
+        if(!ok)return ok;
+        ok=dev.go_auto(expr);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_oper)\
+    F(t_item)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_lev14)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_lev13,expr,DEF,$,$)\
+  ADDVAR(vector<t_item>,arr,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_lev14
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_lev14
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(expr);
+      if(!ok)return ok;
+      dev.go_auto(arr);
+      return ok;
+    }
+  public:
+  };
+  struct t_string{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_string)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(string,value,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_string
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_string
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_const("\"");
+      if(!ok)return ok;
+      dev.go_str<vector<TAutoPtr<i_str_item>>>(value);
+      ok=dev.go_const("\"");
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_int_expr:public i_expr{
+    //===>>===i_val_visitor
+    #define DEF_PRO_BLANK()
+    #define LIST(ADDBEG,ADD,ADDEND)\
+    ADDBEG()\
+      ADD(t_zero)\
+      ADD(t_num)\
+    ADDEND()
+    class i_val;
+    #define ADD(TYPE)class TYPE;
+    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+    #undef ADD
+    class i_val_visitor{
+    public:
+      typedef t_int_expr::i_val i_val;
+    public:
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #define ADD(U)typedef t_int_expr::U U;//typedef t_int_expr::U U;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #ifdef QAP_FAST_UBERCAST
+      template<class TYPE,class Visitor>
+      struct Is:public Visitor{
+        TYPE*ptr{};
+      public:
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
+        LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+        #undef ADD
+      };
+      // 10kk bench:     31.81 ns/call               59.41 ns/call
+      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
+      // Od   :          1678.17     vs              1610.70
+      // Debug:          4948.20     vs              4892.66
+      // compilation time:
+      // UC 32.21 // 4.61 sec //408%
+      // DC 28.73 // 1.13 sec
+      // empty 27.60 
+      template<class TYPE>
+      static TYPE*UberCast(i_val*p){
+        if(!p)return nullptr;Is<TYPE,i_val_visitor> IS;p->Use(IS);return IS.ptr;
+      }
+      #else
+      template<class TYPE>
+      static TYPE*UberCast(i_val*p){return dynamic_cast<TYPE*>(p);}
+      #endif
+    };
+    //struct t_visitor:public i_val_visitor{
+    //  void Do(t_zero&r){}
+    //  void Do(t_num&r){}
+    //};
+    #undef LIST
+    #undef DEF_PRO_BLANK
+    //===<<===i_val_visitor
+    struct i_val{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_val)OWNER(t_int_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>i_val
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====i_val
+    public:
+      typedef i_val_visitor i_visitor;
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_val()=default;
+    public:
+      virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
+      struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
+      {
+        #include "QapLexPolyBeg.inl"
+        void load();/*
+        {
+          F(t_zero);
+          F(t_num);
+          (void)count;(void)first_id;(void)out_arr;(void)this;
+          main();
+          return scope.ok;
+        }*/
+        #include "QapLexPolyEndNoTemplate.inl"
+      };
+    };
+    struct t_zero:public i_val{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_zero)PARENT(i_val)OWNER(t_int_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>t_zero
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_zero
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_const("0");
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_num:public i_val{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_num)PARENT(i_val)OWNER(t_int_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>t_num
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_num
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        return ok;
+      }
+      char first='1';
+        string num;
+        {
+          M+=go_any_char(first,gen_dips("19"));
+          O+=go_any(num,gen_dips("09"));
+        }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_zero)\
+    F(t_num )\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_int_expr)PARENT(i_expr)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(string,value,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_int_expr
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_int_expr
   public:
     void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
@@ -506,28 +1079,358 @@ struct t_asmcpplike2016{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      ok=dev.go_str<t_name>(cmd);
+      ok=dev.go_str<TAutoPtr<i_val>>(value);
       if(!ok)return ok;
-      ok=dev.go_const("(");
+      return ok;
+    }
+  public:
+  };
+  struct t_type_expr{
+    struct t_params{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_params)OWNER(t_type_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,type,DEF,$,$)\
+    ADDVAR(t_int_expr,count,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_params
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_params
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_const("{");
+        if(!ok)return ok;
+        ok=dev.go_str<t_type_expr>(type);
+        if(!ok)return ok;
+        ok=dev.go_const(",");
+        if(!ok)return ok;
+        ok=dev.go_auto(count);
+        if(!ok)return ok;
+        ok=dev.go_const("}");
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_elem{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_elem)OWNER(t_type_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_name,name,DEF,$,$)\
+    ADDVAR(TAutoPtr<t_params>,params,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_elem
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_elem
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(name);
+        if(!ok)return ok;
+        dev.go_auto(params);
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_type_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_sep,sep0,DEF,$,$)\
+    ADDVAR(t_sep,sep1,DEF,$,$)\
+    ADDVAR(t_elem,body,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        dev.go_auto(sep0);
+        ok=dev.go_const("::");
+        if(!ok)return ok;
+        dev.go_auto(sep1);
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_params)\
+    F(t_elem  )\
+    F(t_item  )\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_type_expr)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_elem,first,DEF,$,$)\
+  ADDVAR(vector<t_item>,arr,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_type_expr
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_type_expr
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(first);
       if(!ok)return ok;
-      dev.go_vec(arr,",");
-      ok=dev.go_const(");");
+      dev.go_auto(arr);
+      return ok;
+    }
+  public:
+  };
+  struct t_var_stat:public i_stat{
+    //===>>===i_impl_visitor
+    #define DEF_PRO_BLANK()
+    #define LIST(ADDBEG,ADD,ADDEND)\
+    ADDBEG()\
+      ADD(t_type_impl)\
+      ADD(t_auto_impl)\
+    ADDEND()
+    class i_impl;
+    #define ADD(TYPE)class TYPE;
+    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+    #undef ADD
+    class i_impl_visitor{
+    public:
+      typedef t_var_stat::i_impl i_impl;
+    public:
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #define ADD(U)typedef t_var_stat::U U;//typedef t_var_stat::U U;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #ifdef QAP_FAST_UBERCAST
+      template<class TYPE,class Visitor>
+      struct Is:public Visitor{
+        TYPE*ptr{};
+      public:
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
+        LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+        #undef ADD
+      };
+      // 10kk bench:     31.81 ns/call               59.41 ns/call
+      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
+      // Od   :          1678.17     vs              1610.70
+      // Debug:          4948.20     vs              4892.66
+      // compilation time:
+      // UC 32.21 // 4.61 sec //408%
+      // DC 28.73 // 1.13 sec
+      // empty 27.60 
+      template<class TYPE>
+      static TYPE*UberCast(i_impl*p){
+        if(!p)return nullptr;Is<TYPE,i_impl_visitor> IS;p->Use(IS);return IS.ptr;
+      }
+      #else
+      template<class TYPE>
+      static TYPE*UberCast(i_impl*p){return dynamic_cast<TYPE*>(p);}
+      #endif
+    };
+    //struct t_visitor:public i_impl_visitor{
+    //  void Do(t_type_impl&r){}
+    //  void Do(t_auto_impl&r){}
+    //};
+    #undef LIST
+    #undef DEF_PRO_BLANK
+    //===<<===i_impl_visitor
+    struct i_impl{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_impl)OWNER(t_var_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>i_impl
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====i_impl
+    public:
+      typedef i_impl_visitor i_visitor;
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_impl()=default;
+    public:
+      virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
+      struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
+      {
+        #include "QapLexPolyBeg.inl"
+        void load();/*
+        {
+          F(t_type_impl);
+          F(t_auto_impl);
+          (void)count;(void)first_id;(void)out_arr;(void)this;
+          main();
+          return scope.ok;
+        }*/
+        #include "QapLexPolyEndNoTemplate.inl"
+      };
+    };
+    struct t_value{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_value)OWNER(t_var_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_sep,sep0,DEF,$,$)\
+    ADDVAR(t_sep,sep1,DEF,$,$)\
+    ADDVAR(t_lev14,value,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_value
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_value
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        dev.go_auto(sep0);
+        ok=dev.go_const("=");
+        if(!ok)return ok;
+        dev.go_auto(sep1);
+        ok=dev.go_auto(value);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_type_impl:public i_impl{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_type_impl)PARENT(i_impl)OWNER(t_var_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_type_expr,type,DEF,$,$)\
+    ADDVAR(t_sep,sep0,DEF,$,$)\
+    ADDVAR(t_name,name,DEF,$,$)\
+    ADDVAR(TAutoPtr<t_value>,value,DEF,$,$)\
+    ADDVAR(t_sep,sep1,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_type_impl
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_type_impl
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(type);
+        if(!ok)return ok;
+        ok=dev.go_auto(sep0);
+        if(!ok)return ok;
+        ok=dev.go_auto(name);
+        if(!ok)return ok;
+        dev.go_auto(value);
+        dev.go_auto(sep1);
+        return ok;
+      }
+    };
+    struct t_auto_impl:public i_impl{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_auto_impl)PARENT(i_impl)OWNER(t_var_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_sep,sep0,DEF,$,$)\
+    ADDVAR(t_name,name,DEF,$,$)\
+    ADDVAR(TAutoPtr<t_value>,value,DEF,$,$)\
+    ADDVAR(t_sep,sep1,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_auto_impl
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_auto_impl
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_const("auto");
+        if(!ok)return ok;
+        ok=dev.go_auto(sep0);
+        if(!ok)return ok;
+        ok=dev.go_auto(name);
+        if(!ok)return ok;
+        dev.go_auto(value);
+        dev.go_auto(sep1);
+        return ok;
+      }
+    };
+    struct t_impl{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_impl)OWNER(t_var_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(TAutoPtr<i_impl>,impl,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_impl
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_impl
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(impl);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_value    )\
+    F(t_type_impl)\
+    F(t_auto_impl)\
+    F(t_impl     )\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_var_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_impl,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_var_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_var_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      ok=dev.go_const(";");
+      if(!ok)return ok;
+      return ok;
+    }
+  public:
+  };
+  struct t_sep_stat:public i_stat{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_sep_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_sep,sep,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_sep_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_sep_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(sep);
       if(!ok)return ok;
       return ok;
     }
   };
-  struct t_block_stat:public i_stat{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_block_stat)PARENT(i_stat)OWNER(t_asmcpplike2016)
+  struct t_command_block{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_command_block)OWNER(t_simple_stat_lex)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
   ADDVAR(vector<TAutoPtr<i_stat>>,arr,DEF,$,$)\
   ADDEND()
-  //=====+>>>>>t_block_stat
+  //=====+>>>>>t_command_block
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_block_stat
-  public:
-    void Use(i_visitor&A){A.Do(*this);}
-    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  //<<<<<+=====t_command_block
   public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
@@ -540,15 +1443,80 @@ struct t_asmcpplike2016{
       return ok;
     }
   };
-  struct t_sep_stat:public i_stat{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_sep_stat)PARENT(i_stat)OWNER(t_asmcpplike2016)
+  struct t_block_stat:public i_stat{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_block_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_command_block,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_block_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_block_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_expr_stat:public i_stat{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_expr_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_lev14,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_expr_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_expr_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      ok=dev.go_const(";");
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_char_expr:public i_expr{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_char_expr)PARENT(i_expr)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_char_item,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_char_expr
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_char_expr
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_bool_expr:public i_expr{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_bool_expr)PARENT(i_expr)OWNER(t_simple_stat_lex)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
   ADDVAR(string,value,DEF,$,$)\
   ADDEND()
-  //=====+>>>>>t_sep_stat
+  //=====+>>>>>t_bool_expr
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_sep_stat
+  //<<<<<+=====t_bool_expr
   public:
     void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
@@ -556,22 +1524,21 @@ struct t_asmcpplike2016{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      ok=dev.go_str<t_sep>(value);
+      static const auto g_static_var_0=QapStrFinder::fromArr(split("true,false",","));
+      ok=dev.go_any_str_from_vec(value,g_static_var_0);
       if(!ok)return ok;
       return ok;
     }
   };
-  struct t_proc_item:public i_item{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_proc_item)PARENT(i_item)OWNER(t_asmcpplike2016)
+  struct t_string_expr:public i_expr{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_string_expr)PARENT(i_expr)OWNER(t_simple_stat_lex)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(t_str,name,DEF,$,$)\
-  ADDVAR(string,sep,DEF,$,$)\
-  ADDVAR(vector<TAutoPtr<i_stat>>,arr,DEF,$,$)\
+  ADDVAR(t_string,body,DEF,$,$)\
   ADDEND()
-  //=====+>>>>>t_proc_item
+  //=====+>>>>>t_string_expr
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_proc_item
+  //<<<<<+=====t_string_expr
   public:
     void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
@@ -579,58 +1546,788 @@ struct t_asmcpplike2016{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      ok=dev.go_const("{proc(");
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_real_expr:public i_expr{
+    //===>>===i_val_visitor
+    #define DEF_PRO_BLANK()
+    #define LIST(ADDBEG,ADD,ADDEND)\
+    ADDBEG()\
+      ADD(t_num)\
+      ADD(t_zero)\
+    ADDEND()
+    class i_val;
+    #define ADD(TYPE)class TYPE;
+    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+    #undef ADD
+    class i_val_visitor{
+    public:
+      typedef t_real_expr::i_val i_val;
+    public:
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #define ADD(U)typedef t_real_expr::U U;//typedef t_real_expr::U U;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #ifdef QAP_FAST_UBERCAST
+      template<class TYPE,class Visitor>
+      struct Is:public Visitor{
+        TYPE*ptr{};
+      public:
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
+        LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+        #undef ADD
+      };
+      // 10kk bench:     31.81 ns/call               59.41 ns/call
+      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
+      // Od   :          1678.17     vs              1610.70
+      // Debug:          4948.20     vs              4892.66
+      // compilation time:
+      // UC 32.21 // 4.61 sec //408%
+      // DC 28.73 // 1.13 sec
+      // empty 27.60 
+      template<class TYPE>
+      static TYPE*UberCast(i_val*p){
+        if(!p)return nullptr;Is<TYPE,i_val_visitor> IS;p->Use(IS);return IS.ptr;
+      }
+      #else
+      template<class TYPE>
+      static TYPE*UberCast(i_val*p){return dynamic_cast<TYPE*>(p);}
+      #endif
+    };
+    //struct t_visitor:public i_val_visitor{
+    //  void Do(t_num&r){}
+    //  void Do(t_zero&r){}
+    //};
+    #undef LIST
+    #undef DEF_PRO_BLANK
+    //===<<===i_val_visitor
+    struct i_val{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_val)OWNER(t_real_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>i_val
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====i_val
+    public:
+      typedef i_val_visitor i_visitor;
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_val()=default;
+    public:
+      virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
+      struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
+      {
+        #include "QapLexPolyBeg.inl"
+        void load();/*
+        {
+          F(t_num);
+          F(t_zero);
+          (void)count;(void)first_id;(void)out_arr;(void)this;
+          main();
+          return scope.ok;
+        }*/
+        #include "QapLexPolyEndNoTemplate.inl"
+      };
+    };
+    struct t_frac{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_frac)OWNER(t_real_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,arr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_frac
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_frac
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_const(".");
+        if(!ok)return ok;
+        static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
+        ok=dev.go_any(arr,g_static_var_1);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_sign{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_sign)OWNER(t_real_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>t_sign
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_sign
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        return ok;
+      }
+      char sign='+';
+        {
+          go_any_char(sign,"-+");
+        }
+    };
+    struct t_exp{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_exp)OWNER(t_real_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>t_exp
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_exp
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        return ok;
+      }
+      char e='e';
+        TAutoPtr<t_sign> sign;
+        string arr;
+        {
+          M+=go_any_char(e,"eE");
+          O+=go_auto(sign);
+          M+=go_any(arr,gen_dips("09"));
+        }
+    };
+    struct t_num:public i_val{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_num)PARENT(i_val)OWNER(t_real_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>t_num
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_num
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        return ok;
+      }
+      char first='1';
+        string num;
+        {
+          M+=go_any_char(first,gen_dips("19"));
+          O+=go_any(num,gen_dips("09"));
+        }
+    };
+    struct t_zero:public i_val{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_zero)PARENT(i_val)OWNER(t_real_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>t_zero
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_zero
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_const("0");
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_impl{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_impl)OWNER(t_real_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(TAutoPtr<i_val>,val,DEF,$,$)\
+    ADDVAR(TAutoPtr<t_frac>,frac,DEF,$,$)\
+    ADDVAR(TAutoPtr<t_exp>,exp,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_impl
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_impl
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(val);
+        if(!ok)return ok;
+        ok=dev.go_auto(frac);
+        if(!ok)return ok;
+        dev.go_auto(exp);
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_frac)\
+    F(t_sign)\
+    F(t_exp )\
+    F(t_num )\
+    F(t_zero)\
+    F(t_impl)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_real_expr)PARENT(i_expr)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(string,value,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_real_expr
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_real_expr
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_str<t_impl>(value);
+      if(!ok)return ok;
+      return ok;
+    }
+  public:
+  };
+  struct t_var_expr:public i_expr{
+    struct t_elem{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_elem)OWNER(t_var_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_sep,sep0,DEF,$,$)\
+    ADDVAR(t_lev14,expr,DEF,$,$)\
+    ADDVAR(t_sep,sep1,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_elem
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_elem
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_const("[");
+        if(!ok)return ok;
+        dev.go_auto(sep0);
+        ok=dev.go_auto(expr);
+        if(!ok)return ok;
+        dev.go_auto(sep1);
+        ok=dev.go_const("]");
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_item{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_item)OWNER(t_var_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_name,name,DEF,$,$)\
+    ADDVAR(vector<t_elem>,arr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_item
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_item
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(name);
+        if(!ok)return ok;
+        dev.go_auto(arr);
+        return ok;
+      }
+    };
+    struct t_impl{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_impl)OWNER(t_var_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(vector<t_item>,arr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_impl
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_impl
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_vec(arr,".");
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_elem)\
+    F(t_item)\
+    F(t_impl)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_var_expr)PARENT(i_expr)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_impl,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_var_expr
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_var_expr
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      return ok;
+    }
+  public:
+  };
+  struct t_block_expr:public i_expr{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_block_expr)PARENT(i_expr)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_lev14,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_block_expr
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_block_expr
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_const("(");
+      if(!ok)return ok;
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      ok=dev.go_const(")");
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_call_param{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_call_param)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_sep,sep0,DEF,$,$)\
+  ADDVAR(t_lev14,body,DEF,$,$)\
+  ADDVAR(t_sep,sep1,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_call_param
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_call_param
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      dev.go_auto(sep0);
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      dev.go_auto(sep1);
+      return ok;
+    }
+  };
+  struct t_call_params{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_call_params)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_sep,sep,DEF,$,$)\
+  ADDVAR(vector<t_call_param>,arr,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_call_params
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_call_params
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_const("(");
+      if(!ok)return ok;
+      dev.go_auto(sep);
+      dev.go_vec(arr,",");
+      ok=dev.go_const(")");
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_call_expr:public i_expr{
+    //===>>===i_call_visitor
+    #define DEF_PRO_BLANK()
+    #define LIST(ADDBEG,ADD,ADDEND)\
+    ADDBEG()\
+      ADD(t_dot)\
+      ADD(t_colon)\
+    ADDEND()
+    class i_call;
+    #define ADD(TYPE)class TYPE;
+    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+    #undef ADD
+    class i_call_visitor{
+    public:
+      typedef t_call_expr::i_call i_call;
+    public:
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #define ADD(U)typedef t_call_expr::U U;//typedef t_call_expr::U U;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #ifdef QAP_FAST_UBERCAST
+      template<class TYPE,class Visitor>
+      struct Is:public Visitor{
+        TYPE*ptr{};
+      public:
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
+        LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+        #undef ADD
+      };
+      // 10kk bench:     31.81 ns/call               59.41 ns/call
+      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
+      // Od   :          1678.17     vs              1610.70
+      // Debug:          4948.20     vs              4892.66
+      // compilation time:
+      // UC 32.21 // 4.61 sec //408%
+      // DC 28.73 // 1.13 sec
+      // empty 27.60 
+      template<class TYPE>
+      static TYPE*UberCast(i_call*p){
+        if(!p)return nullptr;Is<TYPE,i_call_visitor> IS;p->Use(IS);return IS.ptr;
+      }
+      #else
+      template<class TYPE>
+      static TYPE*UberCast(i_call*p){return dynamic_cast<TYPE*>(p);}
+      #endif
+    };
+    //struct t_visitor:public i_call_visitor{
+    //  void Do(t_dot&r){}
+    //  void Do(t_colon&r){}
+    //};
+    #undef LIST
+    #undef DEF_PRO_BLANK
+    //===<<===i_call_visitor
+    struct i_call{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_call)OWNER(t_call_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>i_call
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====i_call
+    public:
+      typedef i_call_visitor i_visitor;
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_call()=default;
+    public:
+      virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
+      struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
+      {
+        #include "QapLexPolyBeg.inl"
+        void load();/*
+        {
+          F(t_dot);
+          F(t_colon);
+          (void)count;(void)first_id;(void)out_arr;(void)this;
+          main();
+          return scope.ok;
+        }*/
+        #include "QapLexPolyEndNoTemplate.inl"
+      };
+    };
+    struct t_dot:public i_call{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_dot)PARENT(i_call)OWNER(t_call_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_var_expr::t_impl,body,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_dot
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_dot
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_colon:public i_call{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_colon)PARENT(i_call)OWNER(t_call_expr)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(vector<t_name>,arr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_colon
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_colon
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_bin_oper(arr,"::");
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_dot  )\
+    F(t_colon)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_call_expr)PARENT(i_expr)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(TAutoPtr<i_call>,call,DEF,$,$)\
+  ADDVAR(t_sep,sep,DEF,$,$)\
+  ADDVAR(t_call_params,params,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_call_expr
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_call_expr
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(call);
+      if(!ok)return ok;
+      dev.go_auto(sep);
+      ok=dev.go_auto(params);
+      if(!ok)return ok;
+      return ok;
+    }
+  public:
+  };
+  struct t_param{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_param)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_sep,sep0,DEF,$,$)\
+  ADDVAR(string,type,DEF,$,$)\
+  ADDVAR(t_sep,sep1,DEF,$,$)\
+  ADDVAR(t_name,name,DEF,$,$)\
+  ADDVAR(t_sep,sep2,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_param
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_param
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      dev.go_auto(sep0);
+      ok=dev.go_str<t_type_expr>(type);
+      if(!ok)return ok;
+      ok=dev.go_auto(sep1);
       if(!ok)return ok;
       ok=dev.go_auto(name);
       if(!ok)return ok;
-      ok=dev.go_const("){");
-      if(!ok)return ok;
-      dev.go_str<t_sep>(sep);
-      ok=dev.go_auto(arr);
-      if(!ok)return ok;
-      ok=dev.go_const("}}");
-      if(!ok)return ok;
+      dev.go_auto(sep2);
       return ok;
     }
   };
-  struct t_field{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_field)OWNER(t_asmcpplike2016)
+  struct t_params{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_params)OWNER(t_simple_stat_lex)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(t_str,type,DEF,$,$)\
-  ADDVAR(t_str,name,DEF,$,$)\
-  ADDVAR(string,sep,DEF,$,$)\
+  ADDVAR(vector<t_param>,arr,DEF,$,$)\
+  ADDVAR(t_sep,sep,DEF,$,$)\
   ADDEND()
-  //=====+>>>>>t_field
+  //=====+>>>>>t_params
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_field
+  //<<<<<+=====t_params
   public:
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      ok=dev.go_const("FIELD(");
+      ok=dev.go_const("(");
       if(!ok)return ok;
+      dev.go_vec(arr,",");
+      dev.go_auto(sep);
+      ok=dev.go_const(")");
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_set_oper{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_set_oper)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_var_expr::t_impl,var,DEF,$,$)\
+  ADDVAR(string,oper,DEF,$,$)\
+  ADDVAR(t_lev14,expr,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_set_oper
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_set_oper
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(var);
+      if(!ok)return ok;
+      static const auto g_static_var_1=QapStrFinder::fromArr(split("=,+=,-=,*=,/=,%=,|=,&=,^=,<<=,>>=",","));
+      ok=dev.go_any_str_from_vec(oper,g_static_var_1);
+      if(!ok)return ok;
+      ok=dev.go_auto(expr);
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_set_oper_stat:public i_stat{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_set_oper_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_set_oper,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_set_oper_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_set_oper_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      ok=dev.go_const(";");
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_func_stat:public i_stat{
+    struct t_impl{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_impl)OWNER(t_func_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(string,type,DEF,$,$)\
+    ADDVAR(t_sep,sep0,DEF,$,$)\
+    ADDVAR(t_name,name,DEF,$,$)\
+    ADDVAR(t_sep,sep1,DEF,$,$)\
+    ADDVAR(t_params,params,DEF,$,$)\
+    ADDVAR(t_sep,sep2,DEF,$,$)\
+    ADDVAR(t_command_block,body,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_impl
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_impl
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_str<t_type_expr>(type);
+        if(!ok)return ok;
+        ok=dev.go_auto(sep0);
+        if(!ok)return ok;
+        ok=dev.go_auto(name);
+        if(!ok)return ok;
+        dev.go_auto(sep1);
+        ok=dev.go_auto(params);
+        if(!ok)return ok;
+        dev.go_auto(sep2);
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_impl)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_func_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_impl,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_func_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_func_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      return ok;
+    }
+  public:
+  };
+  struct t_oper_stat:public i_stat{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_name,type,DEF,$,$)\
+  ADDVAR(t_sep,sep0,DEF,$,$)\
+  ADDVAR(t_sep,sep1,DEF,$,$)\
+  ADDVAR(string,oper,DEF,$,$)\
+  ADDVAR(t_sep,sep2,DEF,$,$)\
+  ADDVAR(t_params,params,DEF,$,$)\
+  ADDVAR(t_sep,sep3,DEF,$,$)\
+  ADDVAR(t_command_block,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_oper_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_oper_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
       ok=dev.go_auto(type);
       if(!ok)return ok;
-      ok=dev.go_const(",");
+      ok=dev.go_auto(sep0);
       if(!ok)return ok;
-      ok=dev.go_auto(name);
+      ok=dev.go_const("operator");
       if(!ok)return ok;
-      ok=dev.go_const(");");
+      dev.go_auto(sep1);
+      static const auto g_static_var_4=QapStrFinder::fromArr(split("=,+=,-=,*=,/=,%=,|=,&=,^=,<<=,>>=,||,&&,|,^,&,==,!=,<,<=,>,>=,<<,>>,+,-,*,/,%,++,--,~,!",","));
+      ok=dev.go_any_str_from_vec(oper,g_static_var_4);
       if(!ok)return ok;
-      dev.go_str<t_sep>(sep);
+      dev.go_auto(sep2);
+      ok=dev.go_auto(params);
+      if(!ok)return ok;
+      dev.go_auto(sep3);
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
       return ok;
     }
   };
-  struct t_sep_item:public i_item{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_sep_item)PARENT(i_item)OWNER(t_asmcpplike2016)
+  struct t_ret_stat:public i_stat{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_ret_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(string,value,DEF,$,$)\
+  ADDVAR(t_sep,sep0,DEF,$,$)\
+  ADDVAR(t_lev14,body,DEF,$,$)\
+  ADDVAR(t_sep,sep1,DEF,$,$)\
   ADDEND()
-  //=====+>>>>>t_sep_item
+  //=====+>>>>>t_ret_stat
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_sep_item
+  //<<<<<+=====t_ret_stat
   public:
     void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
@@ -638,22 +2335,26 @@ struct t_asmcpplike2016{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      ok=dev.go_str<t_sep>(value);
+      ok=dev.go_const("return");
+      if(!ok)return ok;
+      ok=dev.go_auto(sep0);
+      if(!ok)return ok;
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      dev.go_auto(sep1);
+      ok=dev.go_const(";");
       if(!ok)return ok;
       return ok;
     }
   };
-  struct t_struct_item:public i_item{
-  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_struct_item)PARENT(i_item)OWNER(t_asmcpplike2016)
+  struct t_null_stat:public i_stat{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_null_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
-  ADDVAR(t_str,name,DEF,$,$)\
-  ADDVAR(string,sep,DEF,$,$)\
-  ADDVAR(vector<t_field>,arr,DEF,$,$)\
   ADDEND()
-  //=====+>>>>>t_struct_item
+  //=====+>>>>>t_null_stat
   #include "QapGenStructNoTemplate.inl"
-  //<<<<<+=====t_struct_item
+  //<<<<<+=====t_null_stat
   public:
     void Use(i_visitor&A){A.Do(*this);}
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
@@ -661,132 +2362,1309 @@ struct t_asmcpplike2016{
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
-      ok=dev.go_const("{STRUCT(");
-      if(!ok)return ok;
-      ok=dev.go_auto(name);
-      if(!ok)return ok;
-      ok=dev.go_const("){");
-      if(!ok)return ok;
-      dev.go_str<t_sep>(sep);
-      ok=dev.go_auto(arr);
-      if(!ok)return ok;
-      ok=dev.go_const("}}");
+      ok=dev.go_const(";");
       if(!ok)return ok;
       return ok;
     }
+  };
+  struct t_postfix_oper{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_postfix_oper)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_var_expr::t_impl,var,DEF,$,$)\
+  ADDVAR(string,oper,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_postfix_oper
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_postfix_oper
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(var);
+      if(!ok)return ok;
+      static const auto g_static_var_1=QapStrFinder::fromArr(split("++,--",","));
+      ok=dev.go_any_str_from_vec(oper,g_static_var_1);
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_postfix_oper_stat:public i_stat{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_postfix_oper_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_postfix_oper,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_postfix_oper_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_postfix_oper_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_break_stat:public i_stat{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_break_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDEND()
+  //=====+>>>>>t_break_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_break_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_const("break;");
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_continue_stat:public i_stat{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_continue_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDEND()
+  //=====+>>>>>t_continue_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_continue_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_const("continue;");
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_for_stat:public i_stat{
+    //===>>===i_next_visitor
+    #define DEF_PRO_BLANK()
+    #define LIST(ADDBEG,ADD,ADDEND)\
+    ADDBEG()\
+      ADD(t_set)\
+      ADD(t_postfix)\
+    ADDEND()
+    class i_next;
+    #define ADD(TYPE)class TYPE;
+    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+    #undef ADD
+    class i_next_visitor{
+    public:
+      typedef t_for_stat::i_next i_next;
+    public:
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #define ADD(U)typedef t_for_stat::U U;//typedef t_for_stat::U U;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #ifdef QAP_FAST_UBERCAST
+      template<class TYPE,class Visitor>
+      struct Is:public Visitor{
+        TYPE*ptr{};
+      public:
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
+        LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+        #undef ADD
+      };
+      // 10kk bench:     31.81 ns/call               59.41 ns/call
+      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
+      // Od   :          1678.17     vs              1610.70
+      // Debug:          4948.20     vs              4892.66
+      // compilation time:
+      // UC 32.21 // 4.61 sec //408%
+      // DC 28.73 // 1.13 sec
+      // empty 27.60 
+      template<class TYPE>
+      static TYPE*UberCast(i_next*p){
+        if(!p)return nullptr;Is<TYPE,i_next_visitor> IS;p->Use(IS);return IS.ptr;
+      }
+      #else
+      template<class TYPE>
+      static TYPE*UberCast(i_next*p){return dynamic_cast<TYPE*>(p);}
+      #endif
+    };
+    //struct t_visitor:public i_next_visitor{
+    //  void Do(t_set&r){}
+    //  void Do(t_postfix&r){}
+    //};
+    #undef LIST
+    #undef DEF_PRO_BLANK
+    //===<<===i_next_visitor
+    struct i_next{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_next)OWNER(t_for_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>i_next
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====i_next
+    public:
+      typedef i_next_visitor i_visitor;
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_next()=default;
+    public:
+      virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
+      struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
+      {
+        #include "QapLexPolyBeg.inl"
+        void load();/*
+        {
+          F(t_set);
+          F(t_postfix);
+          (void)count;(void)first_id;(void)out_arr;(void)this;
+          main();
+          return scope.ok;
+        }*/
+        #include "QapLexPolyEndNoTemplate.inl"
+      };
+    };
+    struct t_set:public i_next{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_set)PARENT(i_next)OWNER(t_for_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_set_oper,body,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_set
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_set
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_postfix:public i_next{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_postfix)PARENT(i_next)OWNER(t_for_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_postfix_oper,body,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_postfix
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_postfix
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_next{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_next)OWNER(t_for_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(TAutoPtr<i_next>,body,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_next
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_next
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_set    )\
+    F(t_postfix)\
+    F(t_next   )\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_for_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_sep,sep0,DEF,$,$)\
+  ADDVAR(t_sep,sep1,DEF,$,$)\
+  ADDVAR(TAutoPtr<t_var_stat::t_impl>,init,DEF,$,$)\
+  ADDVAR(t_sep,sep2,DEF,$,$)\
+  ADDVAR(t_sep,sep3,DEF,$,$)\
+  ADDVAR(TAutoPtr<t_lev14>,cond,DEF,$,$)\
+  ADDVAR(t_sep,sep4,DEF,$,$)\
+  ADDVAR(t_sep,sep5,DEF,$,$)\
+  ADDVAR(TAutoPtr<t_next>,next,DEF,$,$)\
+  ADDVAR(t_sep,sep6,DEF,$,$)\
+  ADDVAR(t_sep,sep7,DEF,$,$)\
+  ADDVAR(TAutoPtr<i_stat>,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_for_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_for_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_const("for");
+      if(!ok)return ok;
+      dev.go_auto(sep0);
+      ok=dev.go_const("(");
+      if(!ok)return ok;
+      dev.go_auto(sep1);
+      dev.go_auto(init);
+      dev.go_auto(sep2);
+      ok=dev.go_const(";");
+      if(!ok)return ok;
+      dev.go_auto(sep3);
+      dev.go_auto(cond);
+      dev.go_auto(sep4);
+      ok=dev.go_const(";");
+      if(!ok)return ok;
+      dev.go_auto(sep5);
+      dev.go_auto(next);
+      dev.go_auto(sep6);
+      ok=dev.go_const(")");
+      if(!ok)return ok;
+      dev.go_auto(sep7);
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      return ok;
+    }
+  public:
+  };
+  struct t_if_stat:public i_stat{
+    struct t_else{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_else)OWNER(t_if_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_sep,sep0,DEF,$,$)\
+    ADDVAR(t_sep,sep1,DEF,$,$)\
+    ADDVAR(TAutoPtr<i_stat>,body,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_else
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_else
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        dev.go_auto(sep0);
+        ok=dev.go_const("else");
+        if(!ok)return ok;
+        dev.go_auto(sep1);
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_else)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_if_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_sep,sep0,DEF,$,$)\
+  ADDVAR(t_sep,sep1,DEF,$,$)\
+  ADDVAR(t_lev14,cond,DEF,$,$)\
+  ADDVAR(t_sep,sep2,DEF,$,$)\
+  ADDVAR(t_sep,sep3,DEF,$,$)\
+  ADDVAR(TAutoPtr<i_stat>,bef,DEF,$,$)\
+  ADDVAR(TAutoPtr<t_else>,aft,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_if_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_if_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_const("if");
+      if(!ok)return ok;
+      dev.go_auto(sep0);
+      ok=dev.go_const("(");
+      if(!ok)return ok;
+      dev.go_auto(sep1);
+      ok=dev.go_auto(cond);
+      if(!ok)return ok;
+      dev.go_auto(sep2);
+      ok=dev.go_const(")");
+      if(!ok)return ok;
+      dev.go_auto(sep3);
+      ok=dev.go_auto(bef);
+      if(!ok)return ok;
+      dev.go_auto(aft);
+      return ok;
+    }
+  public:
+  };
+  struct t_struct{
+    struct t_field{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_field)OWNER(t_struct)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_sep,sep0,DEF,$,$)\
+    ADDVAR(t_var_stat::t_type_impl,body,DEF,$,$)\
+    ADDVAR(t_sep,sep1,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_field
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_field
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        dev.go_auto(sep0);
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        ok=dev.go_const(";");
+        if(!ok)return ok;
+        dev.go_auto(sep1);
+        return ok;
+      }
+    };
+    struct t_method{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_method)OWNER(t_struct)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_sep,sep0,DEF,$,$)\
+    ADDVAR(t_func_stat::t_impl,body,DEF,$,$)\
+    ADDVAR(t_sep,sep1,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_method
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_method
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        dev.go_auto(sep0);
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        dev.go_auto(sep1);
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_field )\
+    F(t_method)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_struct)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_sep,sep0,DEF,$,$)\
+  ADDVAR(t_name,name,DEF,$,$)\
+  ADDVAR(t_sep,sep1,DEF,$,$)\
+  ADDVAR(vector<t_sep_struct>,arr,DEF,$,$)\
+  ADDVAR(vector<t_field>,fields,DEF,$,$)\
+  ADDVAR(vector<t_method>,methods,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_struct
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_struct
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_const("struct");
+      if(!ok)return ok;
+      ok=dev.go_auto(sep0);
+      if(!ok)return ok;
+      ok=dev.go_auto(name);
+      if(!ok)return ok;
+      dev.go_auto(sep1);
+      ok=dev.go_const("{");
+      if(!ok)return ok;
+      dev.go_auto(arr);
+      dev.go_auto(fields);
+      dev.go_auto(methods);
+      ok=dev.go_const("}");
+      if(!ok)return ok;
+      return ok;
+    }
+  public:
+  };
+  struct t_sep_struct{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_sep_struct)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_sep,sep0,DEF,$,$)\
+  ADDVAR(t_struct,body,DEF,$,$)\
+  ADDVAR(t_sep,sep1,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_sep_struct
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_sep_struct
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      dev.go_auto(sep0);
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      dev.go_auto(sep1);
+      return ok;
+    }
+  };
+  struct t_struct_stat:public i_stat{
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_struct_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_struct,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_struct_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_struct_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      return ok;
+    }
+  };
+  struct t_template_stat:public i_stat{
+    //===>>===i_body_visitor
+    #define DEF_PRO_BLANK()
+    #define LIST(ADDBEG,ADD,ADDEND)\
+    ADDBEG()\
+      ADD(t_func_body)\
+      ADD(t_oper_body)\
+      ADD(t_struct_body)\
+    ADDEND()
+    class i_body;
+    #define ADD(TYPE)class TYPE;
+    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+    #undef ADD
+    class i_body_visitor{
+    public:
+      typedef t_template_stat::i_body i_body;
+    public:
+      #define ADD(TYPE)virtual void Do(TYPE&r)=0;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #define ADD(U)typedef t_template_stat::U U;//typedef t_template_stat::U U;
+      LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+      #undef ADD
+    public:
+      #ifdef QAP_FAST_UBERCAST
+      template<class TYPE,class Visitor>
+      struct Is:public Visitor{
+        TYPE*ptr{};
+      public:
+        #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
+        LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+        #undef ADD
+      };
+      // 10kk bench:     31.81 ns/call               59.41 ns/call
+      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
+      // Od   :          1678.17     vs              1610.70
+      // Debug:          4948.20     vs              4892.66
+      // compilation time:
+      // UC 32.21 // 4.61 sec //408%
+      // DC 28.73 // 1.13 sec
+      // empty 27.60 
+      template<class TYPE>
+      static TYPE*UberCast(i_body*p){
+        if(!p)return nullptr;Is<TYPE,i_body_visitor> IS;p->Use(IS);return IS.ptr;
+      }
+      #else
+      template<class TYPE>
+      static TYPE*UberCast(i_body*p){return dynamic_cast<TYPE*>(p);}
+      #endif
+    };
+    //struct t_visitor:public i_body_visitor{
+    //  void Do(t_func_body&r){}
+    //  void Do(t_oper_body&r){}
+    //  void Do(t_struct_body&r){}
+    //};
+    #undef LIST
+    #undef DEF_PRO_BLANK
+    //===<<===i_body_visitor
+    struct i_body{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(i_body)OWNER(t_template_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDEND()
+    //=====+>>>>>i_body
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====i_body
+    public:
+      typedef i_body_visitor i_visitor;
+      virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+      virtual ~i_body()=default;
+    public:
+      virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
+      struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
+      {
+        #include "QapLexPolyBeg.inl"
+        void load();/*
+        {
+          F(t_func_body);
+          F(t_oper_body);
+          F(t_struct_body);
+          (void)count;(void)first_id;(void)out_arr;(void)this;
+          main();
+          return scope.ok;
+        }*/
+        #include "QapLexPolyEndNoTemplate.inl"
+      };
+    };
+    struct t_param{
+      struct t_type{
+      #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_type)OWNER(t_param)
+      #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+      ADDBEG()\
+      ADDEND()
+      //=====+>>>>>t_type
+      #include "QapGenStructNoTemplate.inl"
+      //<<<<<+=====t_type
+      public:
+        bool go(i_dev&dev){
+          t_fallback $(dev,__FUNCTION__);
+          auto&ok=$.ok;
+          ok=dev.go_const("class");
+          if(!ok)return ok;
+          return ok;
+        }
+      };
+    #define DEF_PRO_NESTED(F)\
+      /*<DEF_PRO_NESTED>*/\
+      F(t_type)\
+      /*</DEF_PRO_NESTED>*/
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_param)OWNER(t_template_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_sep,sep0,DEF,$,$)\
+    ADDVAR(t_type,type,DEF,$,$)\
+    ADDVAR(t_sep,sep1,DEF,$,$)\
+    ADDVAR(t_name,name,DEF,$,$)\
+    ADDVAR(t_sep,sep2,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_param
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_param
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        dev.go_auto(sep0);
+        ok=dev.go_auto(type);
+        if(!ok)return ok;
+        dev.go_auto(sep1);
+        ok=dev.go_auto(name);
+        if(!ok)return ok;
+        dev.go_auto(sep2);
+        return ok;
+      }
+    public:
+    };
+    struct t_params{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_params)OWNER(t_template_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(vector<t_param>,arr,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_params
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_params
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_const("{");
+        if(!ok)return ok;
+        ok=dev.go_vec(arr,",");
+        if(!ok)return ok;
+        ok=dev.go_const("}");
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_func_body:public i_body{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_func_body)PARENT(i_body)OWNER(t_template_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_func_stat::t_impl,body,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_func_body
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_func_body
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_oper_body:public i_body{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_oper_body)PARENT(i_body)OWNER(t_template_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_oper_stat,body,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_oper_body
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_oper_body
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+    struct t_struct_body:public i_body{
+    #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_struct_body)PARENT(i_body)OWNER(t_template_stat)
+    #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+    ADDBEG()\
+    ADDVAR(t_struct,body,DEF,$,$)\
+    ADDEND()
+    //=====+>>>>>t_struct_body
+    #include "QapGenStructNoTemplate.inl"
+    //<<<<<+=====t_struct_body
+    public:
+      void Use(i_visitor&A){A.Do(*this);}
+      static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+    public:
+      bool go(i_dev&dev){
+        t_fallback $(dev,__FUNCTION__);
+        auto&ok=$.ok;
+        ok=dev.go_auto(body);
+        if(!ok)return ok;
+        return ok;
+      }
+    };
+  #define DEF_PRO_NESTED(F)\
+    /*<DEF_PRO_NESTED>*/\
+    F(t_param      )\
+    F(t_params     )\
+    F(t_func_body  )\
+    F(t_oper_body  )\
+    F(t_struct_body)\
+    /*</DEF_PRO_NESTED>*/
+  #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_template_stat)PARENT(i_stat)OWNER(t_simple_stat_lex)
+  #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+  ADDBEG()\
+  ADDVAR(t_sep,sep0,DEF,$,$)\
+  ADDVAR(t_params,params,DEF,$,$)\
+  ADDVAR(t_sep,sep1,DEF,$,$)\
+  ADDVAR(TAutoPtr<i_body>,body,DEF,$,$)\
+  ADDEND()
+  //=====+>>>>>t_template_stat
+  #include "QapGenStructNoTemplate.inl"
+  //<<<<<+=====t_template_stat
+  public:
+    void Use(i_visitor&A){A.Do(*this);}
+    static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+  public:
+    bool go(i_dev&dev){
+      t_fallback $(dev,__FUNCTION__);
+      auto&ok=$.ok;
+      ok=dev.go_const("template");
+      if(!ok)return ok;
+      dev.go_auto(sep0);
+      ok=dev.go_auto(params);
+      if(!ok)return ok;
+      dev.go_auto(sep1);
+      ok=dev.go_auto(body);
+      if(!ok)return ok;
+      return ok;
+    }
+  public:
   };
 #define DEF_PRO_NESTED(F)\
   /*<DEF_PRO_NESTED>*/\
-  F(t_minus        )\
-  F(t_num_impl     )\
-  F(t_num          )\
-  F(t_char_param   )\
-  F(t_str_param    )\
-  F(t_num_param    )\
-  F(t_ptr_reg_param)\
-  F(t_ptr_num_param)\
-  F(t_name_param   )\
-  F(t_cmd_stat     )\
-  F(t_block_stat   )\
-  F(t_sep_stat     )\
-  F(t_proc_item    )\
-  F(t_field        )\
-  F(t_sep_item     )\
-  F(t_struct_item  )\
+  F(t_lev03            )\
+  F(t_lev05            )\
+  F(t_lev06            )\
+  F(t_lev07            )\
+  F(t_lev08            )\
+  F(t_lev09            )\
+  F(t_lev10            )\
+  F(t_lev11            )\
+  F(t_lev12            )\
+  F(t_lev13            )\
+  F(t_lev14            )\
+  F(t_string           )\
+  F(t_int_expr         )\
+  F(t_type_expr        )\
+  F(t_var_stat         )\
+  F(t_sep_stat         )\
+  F(t_command_block    )\
+  F(t_block_stat       )\
+  F(t_expr_stat        )\
+  F(t_char_expr        )\
+  F(t_bool_expr        )\
+  F(t_string_expr      )\
+  F(t_real_expr        )\
+  F(t_var_expr         )\
+  F(t_block_expr       )\
+  F(t_call_param       )\
+  F(t_call_params      )\
+  F(t_call_expr        )\
+  F(t_param            )\
+  F(t_params           )\
+  F(t_set_oper         )\
+  F(t_set_oper_stat    )\
+  F(t_func_stat        )\
+  F(t_oper_stat        )\
+  F(t_ret_stat         )\
+  F(t_null_stat        )\
+  F(t_postfix_oper     )\
+  F(t_postfix_oper_stat)\
+  F(t_break_stat       )\
+  F(t_continue_stat    )\
+  F(t_for_stat         )\
+  F(t_if_stat          )\
+  F(t_struct           )\
+  F(t_sep_struct       )\
+  F(t_struct_stat      )\
+  F(t_template_stat    )\
   /*</DEF_PRO_NESTED>*/
-#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_asmcpplike2016)
+#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_simple_stat_lex)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
 ADDBEG()\
-ADDVAR(vector<TAutoPtr<i_item>>,arr,DEF,$,$)\
 ADDEND()
-//=====+>>>>>t_asmcpplike2016
+//=====+>>>>>t_simple_stat_lex
 #include "QapGenStructNoTemplate.inl"
-//<<<<<+=====t_asmcpplike2016
+//<<<<<+=====t_simple_stat_lex
 public:
   bool go(i_dev&dev){
     t_fallback $(dev,__FUNCTION__);
     auto&ok=$.ok;
-    ok=dev.go_const("{");
-    if(!ok)return ok;
-    ok=dev.go_auto(arr);
-    if(!ok)return ok;
-    ok=dev.go_const("}");
+    ok=dev.go_const("");
     if(!ok)return ok;
     return ok;
   }
 public:
 };
-void t_asmcpplike2016::i_param::t_poly_impl::load()
+void t_simple_stat_lex::i_expr::t_poly_impl::load()
 {
   #define F(TYPE)go_for<TYPE>();
-  F(t_char_param);
-  F(t_str_param);
-  F(t_num_param);
-  F(t_ptr_reg_param);
-  F(t_ptr_num_param);
-  F(t_name_param);
+  F(t_int_expr);
+  F(t_char_expr);
+  F(t_bool_expr);
+  F(t_string_expr);
+  F(t_real_expr);
+  F(t_var_expr);
+  F(t_block_expr);
+  F(t_call_expr);
   #undef F
   main();
 }
-void t_asmcpplike2016::i_stat::t_poly_impl::load()
+void t_simple_stat_lex::i_stat::t_poly_impl::load()
 {
   #define F(TYPE)go_for<TYPE>();
-  F(t_cmd_stat);
-  F(t_block_stat);
+  F(t_var_stat);
   F(t_sep_stat);
+  F(t_block_stat);
+  F(t_expr_stat);
+  F(t_set_oper_stat);
+  F(t_func_stat);
+  F(t_oper_stat);
+  F(t_ret_stat);
+  F(t_null_stat);
+  F(t_postfix_oper_stat);
+  F(t_break_stat);
+  F(t_continue_stat);
+  F(t_for_stat);
+  F(t_if_stat);
+  F(t_struct_stat);
+  F(t_template_stat);
   #undef F
   main();
 }
-void t_asmcpplike2016::i_item::t_poly_impl::load()
+void t_simple_stat_lex::t_int_expr::i_val::t_poly_impl::load()
 {
   #define F(TYPE)go_for<TYPE>();
-  F(t_proc_item);
-  F(t_sep_item);
-  F(t_struct_item);
+  F(t_zero);
+  F(t_num);
+  #undef F
+  main();
+}
+void t_simple_stat_lex::t_var_stat::i_impl::t_poly_impl::load()
+{
+  #define F(TYPE)go_for<TYPE>();
+  F(t_type_impl);
+  F(t_auto_impl);
+  #undef F
+  main();
+}
+void t_simple_stat_lex::t_real_expr::i_val::t_poly_impl::load()
+{
+  #define F(TYPE)go_for<TYPE>();
+  F(t_num);
+  F(t_zero);
+  #undef F
+  main();
+}
+void t_simple_stat_lex::t_call_expr::i_call::t_poly_impl::load()
+{
+  #define F(TYPE)go_for<TYPE>();
+  F(t_dot);
+  F(t_colon);
+  #undef F
+  main();
+}
+void t_simple_stat_lex::t_for_stat::i_next::t_poly_impl::load()
+{
+  #define F(TYPE)go_for<TYPE>();
+  F(t_set);
+  F(t_postfix);
+  #undef F
+  main();
+}
+void t_simple_stat_lex::t_template_stat::i_body::t_poly_impl::load()
+{
+  #define F(TYPE)go_for<TYPE>();
+  F(t_func_body);
+  F(t_oper_body);
+  F(t_struct_body);
   #undef F
   main();
 }
 /*
 //list of types:
-F(t_asmcpplike2016)
+F(t_simple_stat_lex)
 //app:
 adler3d.github.io/test2013/
 //code:
 return decodeURIComponent(POST['data'].split("\n").join(""));
 //data:
-t%5fasmcpplike2016%7b%0a%20%20t%5fminus%7b%0a%20%20%20%20%22%2d%22%0a%20%20%7d%0
-a%20%20t%5fnum%5fimpl%7b%0a%20%20%20%20string%20minus%3dstr%3ct%5fminus%3e%28%29
-%3f%3b%0a%20%20%20%20string%20num%3dany%28gen%5fdips%28%2209%22%29%29%3b%0a%20%2
-0%7d%0a%20%20t%5fnum%7b%0a%20%20%20%20string%20value%3dstr%3ct%5fnum%5fimpl%3e%2
-8%29%3b%0a%20%20%7d%0a%20%20t%5fchar%5fparam%3ai%5fparam%7b%0a%20%20%20%20t%5fch
-ar%20value%3b%0a%20%20%7d%0a%20%20t%5fstr%5fparam%3ai%5fparam%7b%0a%20%20%20%20t
-%5fstr%20value%3b%0a%20%20%7d%0a%20%20t%5fnum%5fparam%3ai%5fparam%7b%0a%20%20%20
-%20t%5fnum%20value%3b%0a%20%20%7d%0a%20%20t%5fptr%5freg%5fparam%3ai%5fparam%7b%0
-a%20%20%20%20%22ptr%5b%22%0a%20%20%20%20string%20reg%3dstr%3ct%5fname%3e%28%29%3
-b%0a%20%20%20%20%22%5d%22%0a%20%20%7d%0a%20%20t%5fptr%5fnum%5fparam%3ai%5fparam%
-7b%0a%20%20%20%20%22ptr%5b%22%0a%20%20%20%20string%20num%3dstr%3ct%5fnum%3e%28%2
-9%3b%0a%20%20%20%20%22%5d%22%0a%20%20%7d%0a%20%20t%5fname%5fparam%3ai%5fparam%7b
-%0a%20%20%20%20t%5fext%7b%0a%20%20%20%20%20%20%22%5b%5c%22%22%0a%20%20%20%20%20%
-20string%20field%3dstr%3ct%5fname%3e%28%29%3b%0a%20%20%20%20%20%20%22%5c%22%5d%2
-2%0a%20%20%20%20%7d%0a%20%20%20%20t%5fname%20name%3b%0a%20%20%20%20vector%3ct%5f
-ext%3e%20arr%3f%3b%0a%20%20%7d%0a%20%20t%5fcmd%5fstat%3ai%5fstat%7b%0a%20%20%20%
-20string%20cmd%3dstr%3ct%5fname%3e%28%29%3b%0a%20%20%20%20%22%28%22%0a%20%20%20%
-20vector%3cTAutoPtr%3ci%5fparam%3e%3e%20arr%3dvec%28%22%2c%22%29%3f%3b%0a%20%20%
-20%20%22%29%3b%22%0a%20%20%7d%0a%20%20t%5fblock%5fstat%3ai%5fstat%7b%0a%20%20%20
-%20%22%7b%22%0a%20%20%20%20vector%3cTAutoPtr%3ci%5fstat%3e%3e%20arr%3f%3b%0a%20%
-20%20%20%22%7d%22%0a%20%20%7d%0a%20%20t%5fsep%5fstat%3ai%5fstat%7b%0a%20%20%20%2
-0string%20value%3dstr%3ct%5fsep%3e%28%29%3b%0a%20%20%7d%0a%20%20t%5fproc%5fitem%
-3ai%5fitem%7b%0a%20%20%20%20%22%7bproc%28%22%0a%20%20%20%20t%5fstr%20name%3b%0a%
-20%20%20%20%22%29%7b%22%0a%20%20%20%20string%20sep%3dstr%3ct%5fsep%3e%28%29%3f%3
-b%0a%20%20%20%20vector%3cTAutoPtr%3ci%5fstat%3e%3e%20arr%3b%0a%20%20%20%20%22%7d
-%7d%22%0a%20%20%7d%0a%20%20t%5ffield%7b%0a%20%20%20%20%22FIELD%28%22%0a%20%20%20
-%20t%5fstr%20type%3b%0a%20%20%20%20%22%2c%22%0a%20%20%20%20t%5fstr%20name%3b%0a%
-20%20%20%20%22%29%3b%22%0a%20%20%20%20string%20sep%3dstr%3ct%5fsep%3e%28%29%3f%3
-b%0a%20%20%7d%0a%20%20t%5fsep%5fitem%3ai%5fitem%7b%0a%20%20%20%20string%20value%
-3dstr%3ct%5fsep%3e%28%29%3b%0a%20%20%7d%0a%20%20t%5fstruct%5fitem%3ai%5fitem%7b%
-0a%20%20%20%20%22%7bSTRUCT%28%22%0a%20%20%20%20t%5fstr%20name%3b%0a%20%20%20%20%
-22%29%7b%22%0a%20%20%20%20string%20sep%3dstr%3ct%5fsep%3e%28%29%3f%3b%0a%20%20%2
-0%20vector%3ct%5ffield%3e%20arr%3b%0a%20%20%20%20%22%7d%7d%22%0a%20%20%7d%0a%20%
-20%22%7b%22%0a%20%20vector%3cTAutoPtr%3ci%5fitem%3e%3e%20arr%3b%0a%20%20%22%7d%2
-2%0a%7d
+t%5fsimple%5fstat%5flex%7b%0a%20%20t%5flev03%7b%0a%20%20%20%20string%20oper%3b%0
+a%20%20%20%20TAutoPtr%3ci%5fexpr%3e%20expr%3b%0a%20%20%20%20%7b%0a%20%20%20%20%2
+0%20O%2b%3dgo%5fany%5fstr%5ffrom%5fvec%28oper%2csplit%28%22%2b%2c%2d%2c%21%2c%7e
+%22%2c%22%2c%22%29%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28expr%29%3b%0a%20
+%20%20%20%7d%0a%20%20%7d%0a%20%20t%5flev05%7b%0a%20%20%20%20t%5foper%7b%0a%20%20
+%20%20%20%20string%20value%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20
+go%5fany%5fstr%5ffrom%5fvec%28value%2csplit%28%22%2a%2c%2f%2c%25%22%2c%22%2c%22%
+29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fitem%7b%0a%
+20%20%20%20%20%20t%5foper%20oper%3b%0a%20%20%20%20%20%20t%5flev03%20expr%3b%0a%2
+0%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fauto%28oper%29%3b%0a%20%20%20
+%20%20%20%20%20go%5fauto%28expr%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%
+0a%20%20%20%20t%5flev03%20expr%3b%0a%20%20%20%20vector%3ct%5fitem%3e%20arr%3b%0a
+%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28expr%29%3b%0a%20%20%20%20
+%20%20O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5flev
+06%7b%0a%20%20%20%20t%5foper%7b%0a%20%20%20%20%20%20string%20value%3b%0a%20%20%2
+0%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fany%5fstr%5ffrom%5fvec%28value%2csp
+lit%28%22%2b%2c%2d%22%2c%22%2c%22%29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%2
+0%7d%0a%20%20%20%20t%5fitem%7b%0a%20%20%20%20%20%20t%5foper%20oper%3b%0a%20%20%2
+0%20%20%20t%5flev05%20expr%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20
+go%5fauto%28oper%29%3b%0a%20%20%20%20%20%20%20%20go%5fauto%28expr%29%3b%0a%20%20
+%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5flev05%20expr%3b%0a%20%20%20%
+20vector%3ct%5fitem%3e%20arr%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%
+5fauto%28expr%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20
+%20%7d%0a%20%20%7d%0a%20%20t%5flev07%7b%0a%20%20%20%20t%5foper%7b%0a%20%20%20%20
+%20%20string%20value%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fa
+ny%5fstr%5ffrom%5fvec%28value%2csplit%28%22%3c%3c%2c%3e%3e%22%2c%22%2c%22%29%29%
+3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fitem%7b%0a%20%20%
+20%20%20%20t%5foper%20oper%3b%0a%20%20%20%20%20%20t%5flev06%20expr%3b%0a%20%20%2
+0%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fauto%28oper%29%3b%0a%20%20%20%20%20
+%20%20%20go%5fauto%28expr%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%
+20%20%20t%5flev06%20expr%3b%0a%20%20%20%20vector%3ct%5fitem%3e%20arr%3b%0a%20%20
+%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28expr%29%3b%0a%20%20%20%20%20%20
+O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5flev08%7b%
+0a%20%20%20%20t%5foper%7b%0a%20%20%20%20%20%20string%20value%3b%0a%20%20%20%20%2
+0%20%7b%0a%20%20%20%20%20%20%20%20go%5fany%5fstr%5ffrom%5fvec%28value%2csplit%28
+%22%3c%2c%3c%3d%2c%3e%2c%3e%3d%22%2c%22%2c%22%29%29%3b%0a%20%20%20%20%20%20%7d%0
+a%20%20%20%20%7d%0a%20%20%20%20t%5fitem%7b%0a%20%20%20%20%20%20t%5foper%20oper%3
+b%0a%20%20%20%20%20%20t%5flev07%20expr%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20
+%20%20%20%20go%5fauto%28oper%29%3b%0a%20%20%20%20%20%20%20%20go%5fauto%28expr%29
+%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5flev07%20expr%3b%
+0a%20%20%20%20vector%3ct%5fitem%3e%20arr%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%
+20M%2b%3dgo%5fauto%28expr%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28arr%29%3b
+%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5flev09%7b%0a%20%20%20%20t%5foper%7b%0a
+%20%20%20%20%20%20string%20value%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20
+%20%20go%5fany%5fstr%5ffrom%5fvec%28value%2csplit%28%22%3d%3d%2c%21%3d%22%2c%22%
+2c%22%29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fitem%
+7b%0a%20%20%20%20%20%20t%5foper%20oper%3b%0a%20%20%20%20%20%20t%5flev08%20expr%3
+b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fauto%28oper%29%3b%0a%20
+%20%20%20%20%20%20%20go%5fauto%28expr%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%
+20%7d%0a%20%20%20%20t%5flev08%20expr%3b%0a%20%20%20%20vector%3ct%5fitem%3e%20arr
+%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28expr%29%3b%0a%20%20
+%20%20%20%20O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t
+%5flev10%7b%0a%20%20%20%20t%5foper%7b%0a%20%20%20%20%20%20string%20value%3b%0a%2
+0%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fany%5fstr%5ffrom%5fvec%28valu
+e%2csplit%28%22%26%22%2c%22%2c%22%29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%2
+0%7d%0a%20%20%20%20t%5fitem%7b%0a%20%20%20%20%20%20t%5foper%20oper%3b%0a%20%20%2
+0%20%20%20t%5flev09%20expr%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20
+go%5fauto%28oper%29%3b%0a%20%20%20%20%20%20%20%20go%5fauto%28expr%29%3b%0a%20%20
+%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5flev09%20expr%3b%0a%20%20%20%
+20vector%3ct%5fitem%3e%20arr%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%
+5fauto%28expr%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20
+%20%7d%0a%20%20%7d%0a%20%20t%5flev11%7b%0a%20%20%20%20t%5foper%7b%0a%20%20%20%20
+%20%20string%20value%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fa
+ny%5fstr%5ffrom%5fvec%28value%2csplit%28%22%5e%22%2c%22%2c%22%29%29%3b%0a%20%20%
+20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fitem%7b%0a%20%20%20%20%20%20t
+%5foper%20oper%3b%0a%20%20%20%20%20%20t%5flev10%20expr%3b%0a%20%20%20%20%20%20%7
+b%0a%20%20%20%20%20%20%20%20go%5fauto%28oper%29%3b%0a%20%20%20%20%20%20%20%20go%
+5fauto%28expr%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5f
+lev10%20expr%3b%0a%20%20%20%20vector%3ct%5fitem%3e%20arr%3b%0a%20%20%20%20%7b%0a
+%20%20%20%20%20%20M%2b%3dgo%5fauto%28expr%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5f
+auto%28arr%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5flev12%7b%0a%20%20%20%
+20t%5foper%7b%0a%20%20%20%20%20%20string%20value%3b%0a%20%20%20%20%20%20%7b%0a%2
+0%20%20%20%20%20%20%20go%5fany%5fstr%5ffrom%5fvec%28value%2csplit%28%22%7c%22%2c
+%22%2c%22%29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fi
+tem%7b%0a%20%20%20%20%20%20t%5foper%20oper%3b%0a%20%20%20%20%20%20t%5flev11%20ex
+pr%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fauto%28oper%29%3b%0
+a%20%20%20%20%20%20%20%20go%5fauto%28expr%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20
+%20%20%7d%0a%20%20%20%20t%5flev11%20expr%3b%0a%20%20%20%20vector%3ct%5fitem%3e%2
+0arr%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28expr%29%3b%0a%2
+0%20%20%20%20%20O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20
+%20t%5flev13%7b%0a%20%20%20%20t%5foper%7b%0a%20%20%20%20%20%20string%20value%3b%
+0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fany%5fstr%5ffrom%5fvec%28
+value%2csplit%28%22%26%26%22%2c%22%2c%22%29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%
+20%20%20%7d%0a%20%20%20%20t%5fitem%7b%0a%20%20%20%20%20%20t%5foper%20oper%3b%0a%
+20%20%20%20%20%20t%5flev12%20expr%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%2
+0%20%20go%5fauto%28oper%29%3b%0a%20%20%20%20%20%20%20%20go%5fauto%28expr%29%3b%0
+a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5flev12%20expr%3b%0a%20
+%20%20%20vector%3ct%5fitem%3e%20arr%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2
+b%3dgo%5fauto%28expr%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28arr%29%3b%0a%2
+0%20%20%20%7d%0a%20%20%7d%0a%20%20t%5flev14%7b%0a%20%20%20%20t%5foper%7b%0a%20%2
+0%20%20%20%20string%20value%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%2
+0go%5fany%5fstr%5ffrom%5fvec%28value%2csplit%28%22%7c%7c%22%2c%22%2c%22%29%29%3b
+%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fitem%7b%0a%20%20%20
+%20%20%20t%5foper%20oper%3b%0a%20%20%20%20%20%20t%5flev13%20expr%3b%0a%20%20%20%
+20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fauto%28oper%29%3b%0a%20%20%20%20%20%2
+0%20%20go%5fauto%28expr%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20
+%20%20t%5flev13%20expr%3b%0a%20%20%20%20vector%3ct%5fitem%3e%20arr%3b%0a%20%20%2
+0%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28expr%29%3b%0a%20%20%20%20%20%20O%
+2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fstring%7b%0
+a%20%20%20%20string%20value%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5
+fconst%28%22%5c%22%22%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fstr%3cvector%3cTAuto
+Ptr%3ci%5fstr%5fitem%3e%3e%3e%28value%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fcons
+t%28%22%5c%22%22%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fint%5fexpr%3d%3
+ei%5fexpr%7b%0a%20%20%20%20t%5fzero%3d%3ei%5fval%7b%0a%20%20%20%20%20%20%7b%0a%2
+0%20%20%20%20%20%20%20go%5fconst%28%220%22%29%3b%0a%20%20%20%20%20%20%7d%0a%20%2
+0%20%20%7d%0a%20%20%20%20t%5fnum%3d%3ei%5fval%7b%0a%20%20%20%20%20%20char%20firs
+t%3d%271%27%3b%0a%20%20%20%20%20%20string%20num%3b%0a%20%20%20%20%20%20%7b%0a%20
+%20%20%20%20%20%20%20M%2b%3dgo%5fany%5fchar%28first%2cgen%5fdips%28%2219%22%29%2
+9%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fany%28num%2cgen%5fdips%28%2209%22%29%
+29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20string%20value%3b%
+0a%20%20%20%20%7b%0a%20%20%20%20%20%20go%5fstr%3cTAutoPtr%3ci%5fval%3e%3e%28valu
+e%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5ftype%5fexpr%7b%0a%20%20%20%20t
+%5fparams%7b%0a%20%20%20%20%20%20string%20type%3b%0a%20%20%20%20%20%20t%5fint%5f
+expr%20count%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fconst%28%
+22%7b%22%29%3b%0a%20%20%20%20%20%20%20%20go%5fstr%3ct%5ftype%5fexpr%3e%28type%29
+%3b%0a%20%20%20%20%20%20%20%20go%5fconst%28%22%2c%22%29%3b%0a%20%20%20%20%20%20%
+20%20go%5fauto%28count%29%3b%0a%20%20%20%20%20%20%20%20go%5fconst%28%22%7d%22%29
+%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5felem%7b%0a%20%20
+%20%20%20%20t%5fname%20name%3b%0a%20%20%20%20%20%20TAutoPtr%3ct%5fparams%3e%20pa
+rams%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fauto%28nam
+e%29%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28params%29%3b%0a%20%20%20%20
+%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fitem%7b%0a%20%20%20%20%20%20t%5fse
+p%20sep0%3b%0a%20%20%20%20%20%20t%5fsep%20sep1%3b%0a%20%20%20%20%20%20t%5felem%2
+0body%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28se
+p0%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%3a%3a%22%29%3b%0a%20%
+20%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%20%20%20%20M%2b
+%3dgo%5fauto%28body%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%
+20t%5felem%20first%3b%0a%20%20%20%20vector%3ct%5fitem%3e%20arr%3b%0a%20%20%20%20
+%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28first%29%3b%0a%20%20%20%20%20%20O%2b%
+3dgo%5fauto%28arr%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fvar%5fstat%3d%
+3ei%5fstat%7b%0a%20%20%20%20t%5fvalue%7b%0a%20%20%20%20%20%20t%5fsep%20sep0%3b%0
+a%20%20%20%20%20%20t%5fsep%20sep1%3b%0a%20%20%20%20%20%20t%5flev14%20value%3b%0a
+%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a
+%20%20%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%3d%22%29%3b%0a%20%20%20%20%20%20
+%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fauto%2
+8value%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5ftype%5f
+impl%3d%3ei%5fimpl%7b%0a%20%20%20%20%20%20t%5ftype%5fexpr%20type%3b%0a%20%20%20%
+20%20%20t%5fsep%20sep0%3b%0a%20%20%20%20%20%20t%5fname%20name%3b%0a%20%20%20%20%
+20%20TAutoPtr%3ct%5fvalue%3e%20value%3b%0a%20%20%20%20%20%20t%5fsep%20sep1%3b%0a
+%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fauto%28type%29%3b%0a
+%20%20%20%20%20%20%20%20M%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20%20%20%20%20
+M%2b%3dgo%5fauto%28name%29%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28value
+%29%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%20
+%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fauto%5fimpl%3d%3ei%5fimpl%7b%0a%20%20
+%20%20%20%20t%5fsep%20sep0%3b%0a%20%20%20%20%20%20t%5fname%20name%3b%0a%20%20%20
+%20%20%20TAutoPtr%3ct%5fvalue%3e%20value%3b%0a%20%20%20%20%20%20t%5fsep%20sep1%3
+b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22auto%
+22%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20%
+20%20%20%20M%2b%3dgo%5fauto%28name%29%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fa
+uto%28value%29%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%
+20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fimpl%7b%0a%20%20%20%20%20%
+20TAutoPtr%3ci%5fimpl%3e%20impl%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%
+20%20go%5fauto%28impl%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%2
+0%20t%5fimpl%20body%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20go%5fauto%28body%29
+%3b%0a%20%20%20%20%20%20go%5fconst%28%22%3b%22%29%3b%0a%20%20%20%20%7d%0a%20%20%
+7d%0a%20%20t%5fsep%5fstat%3d%3ei%5fstat%7b%0a%20%20%20%20t%5fsep%20sep%3b%0a%20%
+20%20%20%7b%0a%20%20%20%20%20%20go%5fauto%28sep%29%3b%0a%20%20%20%20%7d%0a%20%20
+%7d%0a%20%20t%5fcommand%5fblock%7b%0a%20%20%20%20vector%3cTAutoPtr%3ci%5fstat%3e
+%3e%20arr%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%7b%22
+%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20%20%20M%2b
+%3dgo%5fconst%28%22%7d%22%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fblock%
+5fstat%3d%3ei%5fstat%7b%0a%20%20%20%20t%5fcommand%5fblock%20body%3b%0a%20%20%20%
+20%7b%0a%20%20%20%20%20%20go%5fauto%28body%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0
+a%20%20t%5fexpr%5fstat%3d%3ei%5fstat%7b%0a%20%20%20%20t%5flev14%20body%3b%0a%20%
+20%20%20%7b%0a%20%20%20%20%20%20go%5fauto%28body%29%3b%0a%20%20%20%20%20%20go%5f
+const%28%22%3b%22%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fchar%5fexpr%3d
+%3ei%5fexpr%7b%0a%20%20%20%20t%5fchar%5fitem%20body%3b%0a%20%20%20%20%7b%0a%20%2
+0%20%20%20%20go%5fauto%28body%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fbo
+ol%5fexpr%3d%3ei%5fexpr%7b%0a%20%20%20%20string%20value%3b%0a%20%20%20%20%7b%0a%
+20%20%20%20%20%20go%5fany%5fstr%5ffrom%5fvec%28value%2csplit%28%22true%2cfalse%2
+2%2c%22%2c%22%29%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fstring%5fexpr%3
+d%3ei%5fexpr%7b%0a%20%20%20%20t%5fstring%20body%3b%0a%20%20%20%20%7b%0a%20%20%20
+%20%20%20go%5fauto%28body%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5freal%5
+fexpr%3d%3ei%5fexpr%7b%0a%20%20%20%20t%5ffrac%7b%0a%20%20%20%20%20%20string%20ar
+r%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fconst%28%22%2e%22%29
+%3b%0a%20%20%20%20%20%20%20%20go%5fany%28arr%2cgen%5fdips%28%2209%22%29%29%3b%0a
+%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fsign%7b%0a%20%20%20%20
+%20%20char%20sign%3d%27%2b%27%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20
+%20go%5fany%5fchar%28sign%2c%22%2d%2b%22%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%
+20%20%7d%0a%20%20%20%20t%5fexp%7b%0a%20%20%20%20%20%20char%20e%3d%27e%27%3b%0a%2
+0%20%20%20%20%20TAutoPtr%3ct%5fsign%3e%20sign%3b%0a%20%20%20%20%20%20string%20ar
+r%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fany%5fchar%28
+e%2c%22eE%22%29%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28sign%29%3b%0a%20
+%20%20%20%20%20%20%20M%2b%3dgo%5fany%28arr%2cgen%5fdips%28%2209%22%29%29%3b%0a%2
+0%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fnum%3d%3ei%5fval%7b%0a%2
+0%20%20%20%20%20char%20first%3d%271%27%3b%0a%20%20%20%20%20%20string%20num%3b%0a
+%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fany%5fchar%28first%2
+cgen%5fdips%28%2219%22%29%29%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fany%28num%
+2cgen%5fdips%28%2209%22%29%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20
+%20%20%20t%5fzero%3d%3ei%5fval%7b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%2
+0%20go%5fconst%28%220%22%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%2
+0%20%20t%5fimpl%7b%0a%20%20%20%20%20%20TAutoPtr%3ci%5fval%3e%20val%3b%0a%20%20%2
+0%20%20%20TAutoPtr%3ct%5ffrac%3e%20frac%3b%0a%20%20%20%20%20%20TAutoPtr%3ct%5fex
+p%3e%20exp%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fauto
+%28val%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fauto%28frac%29%3b%0a%20%20%20
+%20%20%20%20%20O%2b%3dgo%5fauto%28exp%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%
+20%7d%0a%20%20%20%20string%20value%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b
+%3dgo%5fstr%3ct%5fimpl%3e%28value%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%
+5fvar%5fexpr%3d%3ei%5fexpr%7b%0a%20%20%20%20t%5felem%7b%0a%20%20%20%20%20%20t%5f
+sep%20sep0%3b%0a%20%20%20%20%20%20t%5flev14%20expr%3b%0a%20%20%20%20%20%20t%5fse
+p%20sep1%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fconst%
+28%22%5b%22%29%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%
+20%20%20%20%20%20%20M%2b%3dgo%5fauto%28expr%29%3b%0a%20%20%20%20%20%20%20%20O%2b
+%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%5d%2
+2%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fitem%7b%0a%2
+0%20%20%20%20%20t%5fname%20name%3b%0a%20%20%20%20%20%20vector%3ct%5felem%3e%20ar
+r%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fauto%28name%2
+9%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20%20%20
+%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fimpl%7b%0a%20%20%20%20%20%20vector%3ct%5
+fitem%3e%20arr%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fvec%28a
+rr%2c%22%2e%22%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5
+fimpl%20body%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20go%5fauto%28body%29%3b%0a%
+20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fblock%5fexpr%3d%3ei%5fexpr%7b%0a%20%20%20
+%20t%5flev14%20body%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20go%5fconst%28%22%28
+%22%29%3b%0a%20%20%20%20%20%20go%5fauto%28body%29%3b%0a%20%20%20%20%20%20go%5fco
+nst%28%22%29%22%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fcall%5fparam%7b%
+0a%20%20%20%20t%5fsep%20sep0%3b%0a%20%20%20%20t%5flev14%20body%3b%0a%20%20%20%20
+t%5fsep%20sep1%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep0%
+29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28body%29%3b%0a%20%20%20%20%20%20O%2b
+%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fcall%5fparam
+s%7b%0a%20%20%20%20t%5fsep%20sep%3b%0a%20%20%20%20vector%3ct%5fcall%5fparam%3e%2
+0arr%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%28%22%29%3
+b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep%29%3b%0a%20%20%20%20%20%20O%2b%3dgo
+%5fvec%28arr%2c%22%2c%22%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%29%22
+%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fcall%5fexpr%3d%3ei%5fexpr%7b%0a
+%20%20%20%20t%5fdot%3d%3ei%5fcall%7b%0a%20%20%20%20%20%20t%5fvar%5fexpr%3a%3at%5
+fimpl%20body%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fauto%28bo
+dy%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fcolon%3d%3e
+i%5fcall%7b%0a%20%20%20%20%20%20vector%3ct%5fname%3e%20arr%3b%0a%20%20%20%20%20%
+20%7b%0a%20%20%20%20%20%20%20%20go%5fbin%5foper%28arr%2c%22%3a%3a%22%29%3b%0a%20
+%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20TAutoPtr%3ci%5fcall%3e%20call
+%3b%0a%20%20%20%20t%5fsep%20sep%3b%0a%20%20%20%20t%5fcall%5fparams%20params%3b%0
+a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28call%29%3b%0a%20%20%20%2
+0%20%20O%2b%3dgo%5fauto%28sep%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28param
+s%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fparam%7b%0a%20%20%20%20t%5fsep
+%20sep0%3b%0a%20%20%20%20string%20type%3b%0a%20%20%20%20t%5fsep%20sep1%3b%0a%20%
+20%20%20t%5fname%20name%3b%0a%20%20%20%20t%5fsep%20sep2%3b%0a%20%20%20%20%7b%0a%
+20%20%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fs
+tr%3ct%5ftype%5fexpr%3e%28type%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28sep1
+%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28name%29%3b%0a%20%20%20%20%20%20O%2
+b%3dgo%5fauto%28sep2%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fparams%7b%0
+a%20%20%20%20vector%3ct%5fparam%3e%20arr%3b%0a%20%20%20%20t%5fsep%20sep%3b%0a%20
+%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%28%22%29%3b%0a%20%20%20
+%20%20%20O%2b%3dgo%5fvec%28arr%2c%22%2c%22%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5
+fauto%28sep%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%29%22%29%3b%0a%20%
+20%20%20%7d%0a%20%20%7d%0a%20%20t%5fset%5foper%7b%0a%20%20%20%20t%5fvar%5fexpr%3
+a%3at%5fimpl%20var%3b%0a%20%20%20%20string%20oper%3b%0a%20%20%20%20t%5flev14%20e
+xpr%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20go%5fauto%28var%29%3b%0a%20%20%20%2
+0%20%20go%5fany%5fstr%5ffrom%5fvec%28oper%2csplit%28%22%3d%2c%2b%3d%2c%2d%3d%2c%
+2a%3d%2c%2f%3d%2c%25%3d%2c%7c%3d%2c%26%3d%2c%5e%3d%2c%3c%3c%3d%2c%3e%3e%3d%22%2c
+%22%2c%22%29%29%3b%0a%20%20%20%20%20%20go%5fauto%28expr%29%3b%0a%20%20%20%20%7d%
+0a%20%20%7d%0a%20%20t%5fset%5foper%5fstat%3d%3ei%5fstat%7b%0a%20%20%20%20t%5fset
+%5foper%20body%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20go%5fauto%28body%29%3b%0
+a%20%20%20%20%20%20go%5fconst%28%22%3b%22%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a
+%20%20t%5ffunc%5fstat%3d%3ei%5fstat%7b%0a%20%20%20%20t%5fimpl%7b%0a%20%20%20%20%
+20%20string%20type%3b%0a%20%20%20%20%20%20t%5fsep%20sep0%3b%0a%20%20%20%20%20%20
+t%5fname%20name%3b%0a%20%20%20%20%20%20t%5fsep%20sep1%3b%0a%20%20%20%20%20%20t%5
+fparams%20params%3b%0a%20%20%20%20%20%20t%5fsep%20sep2%3b%0a%20%20%20%20%20%20t%
+5fcommand%5fblock%20body%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20M%
+2b%3dgo%5fstr%3ct%5ftype%5fexpr%3e%28type%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3
+dgo%5fauto%28sep0%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fauto%28name%29%3b%
+0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%20%20%20%
+20M%2b%3dgo%5fauto%28params%29%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28s
+ep2%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fauto%28body%29%3b%0a%20%20%20%20
+%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fimpl%20body%3b%0a%20%20%20%20%7b%0
+a%20%20%20%20%20%20go%5fauto%28body%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20
+t%5foper%5fstat%3d%3ei%5fstat%7b%0a%20%20%20%20t%5fname%20type%3b%0a%20%20%20%20
+t%5fsep%20sep0%3b%0a%20%20%20%20t%5fsep%20sep1%3b%0a%20%20%20%20string%20oper%3b
+%0a%20%20%20%20t%5fsep%20sep2%3b%0a%20%20%20%20t%5fparams%20params%3b%0a%20%20%2
+0%20t%5fsep%20sep3%3b%0a%20%20%20%20t%5fcommand%5fblock%20body%3b%0a%20%20%20%20
+%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28type%29%3b%0a%20%20%20%20%20%20M%2b%3
+dgo%5fauto%28sep0%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22operator%22%2
+9%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%20%20M%2b%
+3dgo%5fany%5fstr%5ffrom%5fvec%28oper%2csplit%28%22%3d%2c%2b%3d%2c%2d%3d%2c%2a%3d
+%2c%2f%3d%2c%25%3d%2c%7c%3d%2c%26%3d%2c%5e%3d%2c%3c%3c%3d%2c%3e%3e%3d%2c%7c%7c%2
+c%26%26%2c%7c%2c%5e%2c%26%2c%3d%3d%2c%21%3d%2c%3c%2c%3c%3d%2c%3e%2c%3e%3d%2c%3c%
+3c%2c%3e%3e%2c%2b%2c%2d%2c%2a%2c%2f%2c%25%2c%2b%2b%2c%2d%2d%2c%7e%2c%21%22%2c%22
+%2c%22%29%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep2%29%3b%0a%20%20%20%20
+%20%20M%2b%3dgo%5fauto%28params%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep
+3%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28body%29%3b%0a%20%20%20%20%7d%0a%2
+0%20%7d%0a%20%20t%5fret%5fstat%3d%3ei%5fstat%7b%0a%20%20%20%20t%5fsep%20sep0%3b%
+0a%20%20%20%20t%5flev14%20body%3b%0a%20%20%20%20t%5fsep%20sep1%3b%0a%20%20%20%20
+%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22return%22%29%3b%0a%20%20%20%20%20
+%20M%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28body%29%
+3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%20%20M%2b%3d
+go%5fconst%28%22%3b%22%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fnull%5fst
+at%3d%3ei%5fstat%7b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20go%5fconst%28%22%3b%22
+%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fpostfix%5foper%7b%0a%20%20%20%2
+0t%5fvar%5fexpr%3a%3at%5fimpl%20var%3b%0a%20%20%20%20string%20oper%3b%0a%20%20%2
+0%20%7b%0a%20%20%20%20%20%20go%5fauto%28var%29%3b%0a%20%20%20%20%20%20go%5fany%5
+fstr%5ffrom%5fvec%28oper%2csplit%28%22%2b%2b%2c%2d%2d%22%2c%22%2c%22%29%29%3b%0a
+%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fpostfix%5foper%5fstat%3d%3ei%5fstat%7b%0
+a%20%20%20%20t%5fpostfix%5foper%20body%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20
+go%5fauto%28body%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fbreak%5fstat%3d
+%3ei%5fstat%7b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20go%5fconst%28%22break%3b%22
+%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fcontinue%5fstat%3d%3ei%5fstat%7
+b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20go%5fconst%28%22continue%3b%22%29%3b%0a%
+20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5ffor%5fstat%3d%3ei%5fstat%7b%0a%20%20%20%2
+0t%5fset%3d%3ei%5fnext%7b%0a%20%20%20%20%20%20t%5fset%5foper%20body%3b%0a%20%20%
+20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fauto%28body%29%3b%0a%20%20%20%20%2
+0%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fpostfix%3d%3ei%5fnext%7b%0a%20%20%20
+%20%20%20t%5fpostfix%5foper%20body%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%
+20%20%20go%5fauto%28body%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%2
+0%20%20t%5fnext%7b%0a%20%20%20%20%20%20TAutoPtr%3ci%5fnext%3e%20body%3b%0a%20%20
+%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fauto%28body%29%3b%0a%20%20%20%20%
+20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fsep%20sep0%3b%0a%20%20%20%20t%5fsep
+%20sep1%3b%0a%20%20%20%20TAutoPtr%3ct%5fvar%5fstat%3a%3at%5fimpl%3e%20init%3b%0a
+%20%20%20%20t%5fsep%20sep2%3b%0a%20%20%20%20t%5fsep%20sep3%3b%0a%20%20%20%20TAut
+oPtr%3ct%5flev14%3e%20cond%3b%0a%20%20%20%20t%5fsep%20sep4%3b%0a%20%20%20%20t%5f
+sep%20sep5%3b%0a%20%20%20%20TAutoPtr%3ct%5fnext%3e%20next%3b%0a%20%20%20%20t%5fs
+ep%20sep6%3b%0a%20%20%20%20t%5fsep%20sep7%3b%0a%20%20%20%20TAutoPtr%3ci%5fstat%3
+e%20body%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22for%22%
+29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20%20%20M%2b
+%3dgo%5fconst%28%22%28%22%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3
+b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28init%29%3b%0a%20%20%20%20%20%20O%2b%3dg
+o%5fauto%28sep2%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%3b%22%29%3b%0a
+%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep3%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5f
+auto%28cond%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep4%29%3b%0a%20%20%20%
+20%20%20M%2b%3dgo%5fconst%28%22%3b%22%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto
+%28sep5%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28next%29%3b%0a%20%20%20%20%2
+0%20O%2b%3dgo%5fauto%28sep6%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%29
+%22%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep7%29%3b%0a%20%20%20%20%20%20
+M%2b%3dgo%5fauto%28body%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fif%5fsta
+t%3d%3ei%5fstat%7b%0a%20%20%20%20t%5felse%7b%0a%20%20%20%20%20%20t%5fsep%20sep0%
+3b%0a%20%20%20%20%20%20t%5fsep%20sep1%3b%0a%20%20%20%20%20%20TAutoPtr%3ci%5fstat
+%3e%20body%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto
+%28sep0%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22else%22%29%3b%0a%
+20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%20%20%20%20M
+%2b%3dgo%5fauto%28body%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%
+20%20t%5fsep%20sep0%3b%0a%20%20%20%20t%5fsep%20sep1%3b%0a%20%20%20%20t%5flev14%2
+0cond%3b%0a%20%20%20%20t%5fsep%20sep2%3b%0a%20%20%20%20t%5fsep%20sep3%3b%0a%20%2
+0%20%20TAutoPtr%3ci%5fstat%3e%20bef%3b%0a%20%20%20%20TAutoPtr%3ct%5felse%3e%20af
+t%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22if%22%29%3b%0a
+%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5f
+const%28%22%28%22%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%
+20%20%20%20%20M%2b%3dgo%5fauto%28cond%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto
+%28sep2%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%29%22%29%3b%0a%20%20%2
+0%20%20%20O%2b%3dgo%5fauto%28sep3%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28b
+ef%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28aft%29%3b%0a%20%20%20%20%7d%0a%2
+0%20%7d%0a%20%20t%5fstruct%7b%0a%20%20%20%20t%5ffield%7b%0a%20%20%20%20%20%20t%5
+fsep%20sep0%3b%0a%20%20%20%20%20%20t%5fvar%5fstat%3a%3at%5ftype%5fimpl%20body%3b
+%0a%20%20%20%20%20%20t%5fsep%20sep1%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20
+%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5faut
+o%28body%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%3b%22%29%3b%0a%
+20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%20%20%7d%0a%
+20%20%20%20%7d%0a%20%20%20%20t%5fmethod%7b%0a%20%20%20%20%20%20t%5fsep%20sep0%3b
+%0a%20%20%20%20%20%20t%5ffunc%5fstat%3a%3at%5fimpl%20body%3b%0a%20%20%20%20%20%2
+0t%5fsep%20sep1%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5
+fauto%28sep0%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fauto%28body%29%3b%0a%20
+%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%20%20%7d%0a%20
+%20%20%20%7d%0a%20%20%20%20t%5fsep%20sep0%3b%0a%20%20%20%20t%5fname%20name%3b%0a
+%20%20%20%20t%5fsep%20sep1%3b%0a%20%20%20%20vector%3ct%5fsep%5fstruct%3e%20arr%3
+b%0a%20%20%20%20vector%3ct%5ffield%3e%20fields%3b%0a%20%20%20%20vector%3ct%5fmet
+hod%3e%20methods%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%2
+2struct%22%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%2
+0%20%20M%2b%3dgo%5fauto%28name%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1
+%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fconst%28%22%7b%22%29%3b%0a%20%20%20%20%20
+%20O%2b%3dgo%5fauto%28arr%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28fields%29
+%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%28methods%29%3b%0a%20%20%20%20%20%20M%2
+b%3dgo%5fconst%28%22%7d%22%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5fsep%5
+fstruct%7b%0a%20%20%20%20t%5fsep%20sep0%3b%0a%20%20%20%20t%5fstruct%20body%3b%0a
+%20%20%20%20t%5fsep%20sep1%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%20O%2b%3dgo%5f
+auto%28sep0%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28body%29%3b%0a%20%20%20%
+20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20t%5f
+struct%5fstat%3d%3ei%5fstat%7b%0a%20%20%20%20t%5fstruct%20body%3b%0a%20%20%20%20
+%7b%0a%20%20%20%20%20%20go%5fauto%28body%29%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%
+20%20t%5ftemplate%5fstat%3d%3ei%5fstat%7b%0a%20%20%20%20t%5fparam%7b%0a%20%20%20
+%20%20%20t%5ftype%7b%0a%20%20%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20%20
+%20go%5fconst%28%22class%22%29%3b%0a%20%20%20%20%20%20%20%20%7d%0a%20%20%20%20%2
+0%20%7d%0a%20%20%20%20%20%20t%5fsep%20sep0%3b%0a%20%20%20%20%20%20t%5ftype%20typ
+e%3b%0a%20%20%20%20%20%20t%5fsep%20sep1%3b%0a%20%20%20%20%20%20t%5fname%20name%3
+b%0a%20%20%20%20%20%20t%5fsep%20sep2%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%2
+0%20%20%20O%2b%3dgo%5fauto%28sep0%29%3b%0a%20%20%20%20%20%20%20%20M%2b%3dgo%5fau
+to%28type%29%3b%0a%20%20%20%20%20%20%20%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20
+%20%20%20%20%20%20M%2b%3dgo%5fauto%28name%29%3b%0a%20%20%20%20%20%20%20%20O%2b%3
+dgo%5fauto%28sep2%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20
+t%5fparams%7b%0a%20%20%20%20%20%20vector%3ct%5fparam%3e%20arr%3b%0a%20%20%20%20%
+20%20%7b%0a%20%20%20%20%20%20%20%20go%5fconst%28%22%7b%22%29%3b%0a%20%20%20%20%2
+0%20%20%20go%5fvec%28arr%2c%22%2c%22%29%3b%0a%20%20%20%20%20%20%20%20go%5fconst%
+28%22%7d%22%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5ffu
+nc%5fbody%3d%3ei%5fbody%7b%0a%20%20%20%20%20%20t%5ffunc%5fstat%3a%3at%5fimpl%20b
+ody%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fauto%28body%29%3b%
+0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5foper%5fbody%3d%3ei%5
+fbody%7b%0a%20%20%20%20%20%20t%5foper%5fstat%20body%3b%0a%20%20%20%20%20%20%7b%0
+a%20%20%20%20%20%20%20%20go%5fauto%28body%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20
+%20%20%7d%0a%20%20%20%20t%5fstruct%5fbody%3d%3ei%5fbody%7b%0a%20%20%20%20%20%20t
+%5fstruct%20body%3b%0a%20%20%20%20%20%20%7b%0a%20%20%20%20%20%20%20%20go%5fauto%
+28body%29%3b%0a%20%20%20%20%20%20%7d%0a%20%20%20%20%7d%0a%20%20%20%20t%5fsep%20s
+ep0%3b%0a%20%20%20%20t%5fparams%20params%3b%0a%20%20%20%20t%5fsep%20sep1%3b%0a%2
+0%20%20%20TAutoPtr%3ci%5fbody%3e%20body%3b%0a%20%20%20%20%7b%0a%20%20%20%20%20%2
+0M%2b%3dgo%5fconst%28%22template%22%29%3b%0a%20%20%20%20%20%20O%2b%3dgo%5fauto%2
+8sep0%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28params%29%3b%0a%20%20%20%20%2
+0%20O%2b%3dgo%5fauto%28sep1%29%3b%0a%20%20%20%20%20%20M%2b%3dgo%5fauto%28body%29
+%3b%0a%20%20%20%20%7d%0a%20%20%7d%0a%20%20%7b%0a%20%20%20%20go%5fconst%28%22%22%
+29%3b%0a%20%20%7d%0a%7d
 */
