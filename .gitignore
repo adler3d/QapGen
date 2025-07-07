@@ -44,3 +44,8 @@
 /stable/QapGen/Debug
 /stable/CommonUnit.exe
 /stable/CommonUnit.obj
+/src/SimpleCalc/SimpleCalc/Debug
+/src/SimpleCalc/.vs/SimpleCalc/v15
+/src/SimpleCalc/Debug
+/src/SimpleCalc/Release/SimpleCalc.exe
+/src/SimpleCalc/SimpleCalc.obj
