@@ -692,6 +692,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           }
           auto cmd=p?field.cmdout:plexer?string(pc->qst?"O":"M")+"+=go_auto($sep"+IToS(i)+");":"M+=go_const("+pc->value+");";
           t_struct_cmd sc;
+          cerr<<cmd<<endl;
           if(L.name=="t_number")cerr<<"bef load_obj_full(sc,cmd); :"+L.name<<endl;
           auto res=load_obj_full(sc,cmd);
           if(L.name=="t_number")cerr<<"aft load_obj_full(sc,cmd); :"+L.name<<endl;
@@ -700,9 +701,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           }
           procmds.clear();
           cmd_id=i-1;
-          if(L.name=="t_number")cerr<<"bef Do(sc);; :"+L.name<<endl;
+          if(L.name=="t_number")cerr<<"bef Do(sc); :"+L.name<<endl;
           Do(sc);
-          if(L.name=="t_number")cerr<<"aft load_obj_full(sc,cmd); :"+L.name<<endl;
+          if(L.name=="t_number")cerr<<"aft Do(sc); :"+L.name<<endl;
           cmds.push_back(procmds);
         }
         buf=join(cmds,"\n");
