@@ -123,12 +123,8 @@ t_simple_stat_lex{
       "0"
     }
     t_num:i_val{
-      char first='1';
-      string num;
-      {
-        M+=go_any_char(first,gen_dips("19"));
-        O+=go_any(num,gen_dips("09"));
-      }
+      char first=any_char(gen_dips("19"));
+      string num=any(gen_dips("09"))?;
     }
     string value=str<TAutoPtr<i_val>>();
   }
@@ -210,28 +206,16 @@ t_simple_stat_lex{
       string arr=any(gen_dips("09"));
     }
     t_sign{
-      char sign='+';
-      {
-        go_any_char(sign,"-+");
-      }
+      char sign=any_char("-+");
     }
     t_exp{
-      char e='e';
-      TAutoPtr<t_sign> sign;
-      string arr;
-      {
-        M+=go_any_char(e,"eE");
-        O+=go_auto(sign);
-        M+=go_any(arr,gen_dips("09"));
-      }
+      char e=any_char("eE");
+      TAutoPtr<t_sign> sign?;
+      string arr=any(gen_dips("09"));
     }
     t_num:i_val{
-      char first='1';
-      string num;
-      {
-        M+=go_any_char(first,gen_dips("19"));
-        O+=go_any(num,gen_dips("09"));
-      }
+      char first=any_char(gen_dips("19"));
+      string num=any(gen_dips("09"))?;
     }
     t_zero:i_val{
       "0"

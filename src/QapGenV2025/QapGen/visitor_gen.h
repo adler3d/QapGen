@@ -1582,7 +1582,14 @@ struct t_class_def_fixer:
     return false;
   }
   void Do(t_body_semicolon&r)override{}
-  void Do(t_body_impl&r)override{if(cppcode_killer)r.c=nullptr;Do(r.nested);}
+  void Do(t_body_impl&r)override{
+    if(cppcode_killer){
+      if(lex2str(r.c).find("inline static const string value=\"")==string::npos){
+        r.c=nullptr;
+      }
+    }
+    Do(r.nested);
+  }
   void Do(t_target_semicolon&r)override{}
   void Do(t_target_sep&r)override{}
   void Do(t_target_struct::t_parent&r){if(r.arrow_or_colon.size())r.arrow_or_colon=":";}
