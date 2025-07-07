@@ -869,8 +869,10 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   void Do(t_target_using&r)override{if(!target_only)dev.add_sep_lex(r.s,r.lexer);}
   void Do(t_target_typedef&r)override{
     if(target_only)return;
+    cerr<<"typedef:"+dev.top.lexer.name<<endl;
     string t;
     QapAssert(save_obj(r.type,t));
+    cerr<<"typedef_after_save_obj:"+dev.top.lexer.name<<endl;
     dev.top.out+="typedef "+t+" "+r.name.value+";\n";
   }
   void Do(t_sep_field&r)override{}
