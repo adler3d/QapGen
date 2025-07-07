@@ -636,6 +636,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       t_out&out=c.out;auto&c=out;
       for(int iter=1;iter;iter--)
       {
+        if(L.name=="t_number")cerr<<"bef t_target_struct::t_body_impl::UberCast :"+L.name<<endl;
         {
           auto*pb=t_target_struct::t_body_impl::UberCast(r.body.get());
           if(!pb)continue;
@@ -647,6 +648,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
             to=ex.get();
           }
         }
+        if(L.name=="t_number")cerr<<"aft t_target_struct::t_body_impl::UberCast :"+L.name<<endl;
         //if(!r.body.fcc)break;
         //if(v.pcmds||v.pfs)QapAssert(bool(v.pcmds)!=bool(v.pfs));
         if(v.pcmds)
@@ -662,6 +664,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           int gg=1;
         }
       }
+      if(L.name=="t_number")cerr<<"aft for(int iter=1;iter;iter--) :"+L.name<<endl;
       auto*pcmds=&c.procmds;
       if(vqcnb_mode&&v.pfs){
         QapAssert(c.procmds.empty());
@@ -698,6 +701,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         }
         buf=join(cmds,"\n");
       }
+      if(L.name=="t_number")cerr<<"bef vector<string> pcs=split(*pcm... :"+L.name<<endl;
       vector<string> pcs=split(*pcmds,"\n");
       if(dev!="dev"){
         for(auto&ex:pcs){
@@ -710,6 +714,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       inp.add("SCOPE",s);
       inp.add("DEV",dev);
       body+=get_templ("GO_IMPL").eval(inp);
+      if(L.name=="t_number")cerr<<"aft body+=get_temp... :"+L.name<<endl;
     }
     if(L.name=="t_number")cerr<<"aft r.body&&!is_interface :"+L.name<<endl;
     if(!c.out.nested.empty())if(c.out.nested.size()>2)
