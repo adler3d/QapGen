@@ -29,6 +29,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - uses: ilammy/msvc-dev-cmd@v1
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
