@@ -251,8 +251,7 @@ public:
     return *this;
   }
   template<typename U>
-  UniquePoolPtr(UniquePoolPtr<U>&& other) noexcept
-    : ptr(nullptr), deleter(nullptr), id(0) {
+  UniquePoolPtr(UniquePoolPtr<U>&& other)noexcept:ptr(nullptr),deleter(nullptr){
     static_assert(std::is_convertible<U*, T*>::value, "Incompatible pointer types");
     deleter = other.deleter;
     #ifdef QAP_UPP_DEBUG
