@@ -895,13 +895,17 @@ bool i_dev::go_str(string&ref)
     {
       TYPE value;
       int pos=0;getPos(pos);
+      if(global_debug)cerr<<"bef go_str::go_auto"<<endl;
       bool ok=go_auto(value);
+      if(global_debug)cerr<<"aft go_str::go_auto"<<endl;
       if(!ok)return ok;
       int curpos=0;getPos(curpos);
       QapAssert(curpos>pos);
       setPos(pos);
       auto count=curpos-pos;
+      if(global_debug)cerr<<"bef go_str::go_blob"<<endl;
       ok=go_blob(ref,count);
+      if(global_debug)cerr<<"aft go_str::go_blob"<<endl;
       QapAssert(ok);
       return ok;
     }
@@ -931,6 +935,7 @@ bool i_dev::go_str(string&ref)
         ok=go_auto(tmp);
         if(global_debug)cerr<<"aft go_auto"<<endl;
         if(!ok)break;
+        if(global_debug)cerr<<"aft go_vec::break"<<endl;
         QapAssert(CheckTAutoPtrIsNotEmpty(tmp));
         arr.push_back(std::move(tmp));
       }

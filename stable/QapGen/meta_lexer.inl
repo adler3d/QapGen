@@ -5225,6 +5225,7 @@ struct t_cmd_param;
           ok=dev.go_auto(name);
           if(global_debug)cerr<<"aft t_impl::go_auto"<<endl;
           if(!ok)return ok;
+          if(global_debug)cerr<<"aft t_impl::ok"<<endl;
           return ok;
         }
       };
