@@ -4,7 +4,6 @@ t_parent_fullname_reslove_algo_test_20250701{
     //t_bar:t_parent_holder::i_base{}
   }
 }
-
 t_using_test_20250628{
   t_sep{" "}
   using " " as t_sep;
@@ -19,32 +18,26 @@ t_using_test_20250628{
   }
   t_foo foo;
 }
-
 t_number{
   string body=any(gen_dips("09"));
 }
-
 typedef array<char,2> ARRAY2char;
 typedef array<char,4> ARRAY4char;
-
-t_str_item_raw=>i_str_item{
+t_str_item_raw:i_str_item{
   string body=any(dip_inv("\"\\\n"));
 }
-
-t_str_item_hex=>i_str_item{
+t_str_item_hex:i_str_item{
   "\\x"
   ARRAY2char body=any_arr_char(gen_dips("09afAF"));
 }
-
-t_str_item_num=>i_str_item{
+t_str_item_num:i_str_item{
   "\\u"
   ARRAY2char body=any_arr_char(gen_dips("09"));
 }
-t_str_item_fix=>i_str_item{
+t_str_item_fix:i_str_item{
   "\\"
   char body=any_char("tfbrn\\\"\'"+gen_dips("07"));
 }
-
 t_str_item{
   t_impl{
     "\""
@@ -53,26 +46,21 @@ t_str_item{
   }
   string value=str<t_impl>();
 }
-
-t_char_item_raw=>i_char_item{
+t_char_item_raw:i_char_item{
   string body=any(dip_inv("'\\\n"));
 }
-
-t_char_item_hex=>i_char_item{
+t_char_item_hex:i_char_item{
   "\\x"
   ARRAY2char body=any_arr_char(gen_dips("09afAF"));
 }
-
-t_char_item_num=>i_char_item{
+t_char_item_num:i_char_item{
   "\\u"
   ARRAY4char body=any_arr_char(gen_dips("09"));
 }
-
-t_char_item_fix=>i_char_item{
+t_char_item_fix:i_char_item{
   "\\"
   char body=any_char("tfbrn\\\"\'"+gen_dips("07"));
 }
-
 t_char_item{
   t_impl{
     "'"
@@ -81,28 +69,23 @@ t_char_item{
   }
   string value=str<t_impl>();
 }
-
 t_sep_seq:i_sep{
   string body=any(" \t\r\n");
 }
-
 t_c_comment:i_sep{
   "/*"
   string body=end("*/");
 }
-
-t_cpp_comment=>i_sep{
+t_cpp_comment:i_sep{
   "//"
   string body=any(dip_inv("\n"))?;
 }
-
 t_sep{
   t_impl{
     vector<TAutoPtr<i_sep>> arr;
   }
   string value=str<t_impl>();
 }
-
 t_name{
   t_keyword{
     string value=any_str_from_vec(split("new,delete,default,consteval,false,true,nullptr,this,struct,class,for,if,while,do,const,constexpr,else,operator,auto,continue,break,return,goto,virtual,override,public,private,protected,friend,template,typedef,using,namespace,decltype",","));
@@ -116,29 +99,22 @@ t_name{
   }
   string value=str<t_impl_ex>();
 }
-
 t_str:i_simple_expr{
   t_str_item body;
 }
-
 t_char:i_simple_expr{
   t_char_item body;
 }
-
 t_num:i_simple_expr{
   t_number body;
 }
-
 t_id:i_simple_expr{
   t_name body;
 }
-
 t_sign:i_simple_expr{
   char body=any_char("~|&=<>!:?;,.+-*/%^");
 }
-
 t_cppcore{
-
 t_lev03{
   string oper=any_str_from_vec(split("+,-,!,~",","))?;
   TAutoPtr<i_expr> expr;
@@ -247,7 +223,6 @@ t_string{
   string value=str<vector<TAutoPtr<i_str_item>>>()?;
   "\""
 }
-
 t_int_expr:i_expr{
   t_zero:i_val{"0"}
   t_num:i_val{
@@ -256,7 +231,6 @@ t_int_expr:i_expr{
   }
   string value=str<TAutoPtr<i_val>>();
 }
-
 t_type_expr{
   t_params{
     "{"
@@ -278,19 +252,15 @@ t_type_expr{
   t_elem first;
   vector<t_item> arr?;
 }
-
 t_char_expr:i_expr{
   t_char_item body;
 }
-
 t_bool_expr:i_expr{
   string value=any_str_from_vec(split("true,false",","));
 }
-
 t_string_expr:i_expr{
   t_string body;
 }
-
 t_real_expr:i_expr{
   t_frac{
     "."
@@ -316,20 +286,17 @@ t_real_expr:i_expr{
   }
   string value=str<t_impl>();
 }
-
 t_call_param{
   t_sep sep0?;
   t_lev14 body;
   t_sep sep1?;
 }
-
 t_call_params{
   "("
   t_sep sep?;
   vector<t_call_param> arr=vec(",")?;
   ")"
 }
-
 t_varcall_expr:i_expr{
   t_sb_expr{
     "["
@@ -377,34 +344,24 @@ t_varcall_expr:i_expr{
   t_sep sep?;
   TAutoPtr<t_call_params> params?;
 }
-
 t_block_expr:i_expr{
   "("
   t_lev14 body;
   ")"
 }
-
 /*
 t_call_expr:i_expr{
   t_var_expr call;
   t_sep sep?;
   t_call_params params;
 }*/
-
 }
-
 using " " as t_sep;
-
 t_test20250618_atrr{
   t_foo{{}[::]}
   t_foo foo; [skip]
   t_sep sep; [optimize,"sep",("sep"),sep[x]]
-  {
-    go_auto(foo);
-    go_auto(sep);
-  }
 }
-
 //t_test20250620_dev{
 //  t_foo{{}}
 //  t_bar{
@@ -425,56 +382,47 @@ t_test20250618_atrr{
 //  }*/
 //}
 t_meta_lexer{
-
 t_name_code:i_code{
   string value=str<t_name::t_impl>();
 }
-
 t_num_code:i_code{
   t_number body;
 }
-
 t_str_seq{
   "\""
   vector<TAutoPtr<i_str_item>> arr?;
   "\""
   }
-
 t_sep_str_seq{
   " "
   t_str_seq body;
 }
-
 t_str_code:i_code{
   t_str_seq first;
   vector<t_sep_str_seq> arr?;
 }
-
 t_char_code:i_code{
   "'"
   TAutoPtr<i_char_item> body;
   "'"
 }
-
 t_sign_code:i_code{
   t_sign body;
 }
-
-t_name_code_with_sep=>i_code_with_sep{t_name_code body;t_sep sep?;}
-t_num_code_with_sep=>i_code_with_sep{t_num_code body;t_sep sep?;}
-t_str_code_with_sep=>i_code_with_sep{t_str_code body;t_sep sep?;}
-t_char_code_with_sep=>i_code_with_sep{t_char_code body;t_sep sep?;}
-t_sign_code_with_sep=>i_code_with_sep{t_sign_code body;t_sep sep?;}
-t_soft_brackets_code_with_sep=>i_code_with_sep{
+t_name_code_with_sep:i_code_with_sep{t_name_code body;t_sep sep?;}
+t_num_code_with_sep:i_code_with_sep{t_num_code body;t_sep sep?;}
+t_str_code_with_sep:i_code_with_sep{t_str_code body;t_sep sep?;}
+t_char_code_with_sep:i_code_with_sep{t_char_code body;t_sep sep?;}
+t_sign_code_with_sep:i_code_with_sep{t_sign_code body;t_sep sep?;}
+t_soft_brackets_code_with_sep:i_code_with_sep{
   "(" " "? vector<TAutoPtr<i_code_with_sep>> body?; ")" " "?
 }
-t_hard_brackets_code_with_sep=>i_code_with_sep{
+t_hard_brackets_code_with_sep:i_code_with_sep{
   "[" " "? vector<TAutoPtr<i_code_with_sep>> body?; "]" " "?
 }
-t_curly_brackets_code_with_sep=>i_code_with_sep{
+t_curly_brackets_code_with_sep:i_code_with_sep{
   "{" " "? vector<TAutoPtr<i_code_with_sep>> body?; "}" " "?
 }
-
 //real_source_data:
 /*
 t_name_code
@@ -487,7 +435,6 @@ t_hard_brackets_code
 t_curly_brackets_code
 @@@
 */
-
 //real_source_code:
 /*
 var mk=POST['data'].split("@@@")[1];
@@ -510,11 +457,9 @@ for(var i=0;i<arr.length;i++){
 }
 return out.join("\n");
 */
-
 t_code{
   vector<TAutoPtr<i_code>> arr;
 }
-
 t_soft_brackets_code:i_code{
   "("
   t_sep sep0?;
@@ -522,7 +467,6 @@ t_soft_brackets_code:i_code{
   t_sep sep1?;
   ")"
 }
-
 t_hard_brackets_code:i_code{
   "["
   t_sep sep0?;
@@ -530,7 +474,6 @@ t_hard_brackets_code:i_code{
   t_sep sep1?;
   "]"
 }
-
 t_curly_brackets_code:i_code{
   "{"
   t_sep sep0?;
@@ -538,109 +481,87 @@ t_curly_brackets_code:i_code{
   t_sep sep1?;
   "}"
 }
-
 t_semicolon{
   ";"
 }
-
 t_value_item{
   string body=str<TAutoPtr<t_cppcore::i_expr>>();
 }
-
 t_value{
   " "?
   "="
   string body=str<TAutoPtr<t_cppcore::i_expr>>();
 }
-
 t_type_scope{
   "::"
 }
-
 t_type_templ{
   TAutoPtr<i_type_templ> body;
 }
-
 t_type_item_string:i_type_item{
   t_str_item body;
 }
-
 t_type_item_char:i_type_item{
   t_char_item body;
 }
-
 t_type_item_number:i_type_item{
   t_number body;
 }
-
 t_type_item_type;
-
 t_scope_type_item{
   t_type_scope scope;
   TAutoPtr<t_type_item_type> body;
 }
-
 t_type_item_type:i_type_item {
   TAutoPtr<t_type_scope> scope?;
   t_name type;
   TAutoPtr<t_type_templ> param?;
   vector<t_scope_type_item> arr?;
 }
-
 t_type_expr2{
   TAutoPtr<t_type_scope> scope?;
   t_type_item_type body;
 }
-
 t_type_templ_param{
   TAutoPtr<i_type_item> body;
 }
-
 t_sep_type_templ_param{
   ","
   t_type_templ_param body;
 }
-
 t_type_templ_params{
   t_type_templ_param first;
   vector<t_sep_type_templ_param> arr?;
 }
-
 t_type_templ_angle:i_type_templ{
   "<"
   TAutoPtr<t_type_templ_params> params?;
   ">"
 }
-
 t_type_templ_soft:i_type_templ{
   "("
   TAutoPtr<t_type_templ_params> params?;
   ")"
 }
-
 t_struct_cmd_mode:i_struct_cmd_xxxx{
   char body=any_char("DMO");
   " "?
   "+="
   " "?
 }
-
 t_sep_value{
   " "?
   t_value_item value;
   " "?
 }
-
 t_attr{
   "["
   vector<t_sep_value> arr=vec(",")?;
   " "?
   "]"
 }
-
 t_sep_field:i_struct_field{" "?}
 t_semicolon_field:i_struct_field{TAutoPtr<t_semicolon> sc;}
-
 t_const_field:i_struct_field{
   t_qst{"?"}
   t_c_item:i_sc_item{t_char_item body;}
@@ -652,16 +573,15 @@ t_const_field:i_struct_field{
   TAutoPtr<t_semicolon> sc?;
   " "?
 }
-
 t_struct_field_value {
   " "?
   "=";
   " "?
   TAutoPtr<t_cppcore::t_varcall_expr> expr;
 }
-  
-t_qst{string s;{go_any(s,"*?");}}
-
+t_qst{
+    string s=any("*?");
+  }
 t_struct_field:i_struct_field{
   TAutoPtr<t_cppcore::i_expr> type;
   " "?
@@ -675,18 +595,15 @@ t_struct_field:i_struct_field{
   TAutoPtr<t_attr> attr?;
   " "?
 }
-
 t_templ_params{
   "<"
   string body=str<TAutoPtr<t_type_templ_params>>();
   ">"
 }
-
 t_cmd_param;
 t_cmd_params{
   vector<t_cmd_param> arr=vec(",");
 }
-
 t_cmd_param{
   t_impl{
     vector<TAutoPtr<i_cmd_param_expr>> arr=vec("+");
@@ -714,17 +631,14 @@ t_struct_cmd_anno:i_struct_cmd_xxxx{
   string mode=any_str_from_vec(split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));
   " "
 }
-
 t_struct_cmd_suffix:i_struct_cmd_so{
   char value=any_char("?!");
 }
-
 t_struct_cmd_optional:i_struct_cmd_so{
   "["
   string value=any_str_from_vec(split("optional,mandatory",","));
   "]"
 }
-
 t_struct_cmd_opt_v2:i_struct_cmd_so{
   ";"
   " "?
@@ -743,33 +657,26 @@ t_struct_cmd{
   " "?
   ";"
 }
-
 t_sep_struct_cmd{
   " "?
   t_struct_cmd body;
 }
-
 t_struct_cmds{
   "{"
   vector<t_sep_struct_cmd> arr?;
   " "?
   "}"
 }
-
 t_sep_struct_cmds{
   " "?
   t_struct_cmds body;
 }
-
-
 t_cpp_code_sep:i_cpp_code{
   t_sep sep;
 }
-
 t_cpp_code_main:i_cpp_code{
   TAutoPtr<i_code_with_sep> body;
 }
-
 t_cpp_code{
   t_bayan{"[::]"}
   t_fields:i_major{t_struct_field f;}
@@ -787,7 +694,6 @@ t_cpp_code{
   " "?
   TAutoPtr<i_bayan> bayan;
 }
-
 t_target_struct:i_target_item{
   t_keyword{string kw=any_str_from_vec(split("struct,class",","));" "?}
   t_body_semicolon:i_struct_impl{";"}
@@ -815,10 +721,8 @@ t_target_struct:i_target_item{
   " "?
   TAutoPtr<i_struct_impl> body;
 }
-
 t_target_semicolon:i_target_item{vector<t_semicolon> arr;}
 t_target_sep:i_target_item{t_sep sep;}
-
 t_target_using:i_target_item{
   t_str_ap:i_qa{
     "'"
@@ -840,7 +744,6 @@ t_target_using:i_target_item{
   " "?
   ";"
 }
-
 t_target_typedef:i_target_item{
   "typedef"
   " "
@@ -850,7 +753,6 @@ t_target_typedef:i_target_item{
   " "?
   ";"
 }
-
 t_target{
   vector<TAutoPtr<i_target_item>> arr;
 }
