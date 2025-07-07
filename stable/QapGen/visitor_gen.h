@@ -681,22 +681,28 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           if(plexer){
             int gg=1;
           }
+          if(L.name=="t_number")cerr<<"aft this->dev.get_sep_lex(pc->value); :"+L.name<<endl;
           if(p){
             field.cmdout.clear();
             field.as_cmd=true;
             cmd_id=i-1;
             Do(*p);// Do for Do
+            if(L.name=="t_number")cerr<<"aft Do for Do :"+L.name<<endl;
             field.as_cmd=false;
           }
           auto cmd=p?field.cmdout:plexer?string(pc->qst?"O":"M")+"+=go_auto($sep"+IToS(i)+");":"M+=go_const("+pc->value+");";
           t_struct_cmd sc;
+          if(L.name=="t_number")cerr<<"bef load_obj_full(sc,cmd); :"+L.name<<endl;
           auto res=load_obj_full(sc,cmd);
+          if(L.name=="t_number")cerr<<"aft load_obj_full(sc,cmd); :"+L.name<<endl;
           if(!res.ok){
             QapDebugMsg("t_struct_field::make_cmd return wrong code:\n"+res.msg);
           }
           procmds.clear();
           cmd_id=i-1;
+          if(L.name=="t_number")cerr<<"bef Do(sc);; :"+L.name<<endl;
           Do(sc);
+          if(L.name=="t_number")cerr<<"aft load_obj_full(sc,cmd); :"+L.name<<endl;
           cmds.push_back(procmds);
         }
         buf=join(cmds,"\n");
