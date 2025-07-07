@@ -90,7 +90,7 @@ public:
     for(auto&ex:arr){
       auto p=ex.find_first_not_of(' ');
       if(p==string::npos){ex.clear();continue;}
-      ex=ex.substr(std::min(p,2u));
+      ex=ex.substr(std::min(p,size_t(2u)));
     }
     auto out=join(arr,"\n");
     return out;
