@@ -857,7 +857,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     OL.fields=std::move(lexer_fields);
     OL.cmds=std::move(lexer_cmds);
     OL.childs=is_interface?at_end.back().childs:vector<string>{};
-    OL.farr={};
+    OL.farr;
     OL.is_interface=is_interface;
     lexers.push_back(std::move(OL));
     dev.pop();
