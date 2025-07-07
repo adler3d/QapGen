@@ -528,6 +528,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     string parent_info=!L.parent.empty()?"PARENT("+L.parent+")":"";
     string owner=dev.arr.size()?dev.arr.back().lexer.name:"";
     string owner_info=!owner.empty()?"OWNER("+owner+")":"";
+    cerr<<"lexer:"+L.name<<endl;
     DoGrab(r);
     dev.top.out+=out+"\n";
     interface_autogen();
@@ -1489,11 +1490,11 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     dtn.need_igrab=false;
     dtn.need_grab=true;
     Do(tar);
-    auto msc=clock.MS();std::cerr<<"{\"need_igrab done in \":"<<(msc-msi)<<"}"<<endl;
+    auto msc=clock.MS();std::cerr<<"{\"need_grab done in \":"<<(msc-msi)<<"}"<<endl;
     dtn.need_grab=false;
     target_only=false;
     interface_autogen();
-    auto msa=clock.MS();std::cerr<<"{\"need_grab done in \":"<<(msa-msc)<<"}"<<endl;
+    auto msa=clock.MS();std::cerr<<"{\"interface_autogen done in \":"<<(msa-msc)<<"}"<<endl;
     Do(tar);
     auto mst=clock.MS();std::cerr<<"{\"Do(tar) done in \":"<<(mst-msa)<<"}"<<endl;
     buildLexerTree();
