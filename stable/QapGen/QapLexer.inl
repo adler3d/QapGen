@@ -578,7 +578,8 @@ public:
     ptr->mandatory.ok=true;
     ptr->mandatory.scope=ptr;
     ptr->optional.ok=false;
-    ptr->optional.scope=ptr;
+    ptr->optional.scope=ptr;    
+    if(global_debug) std::cerr << "t_save_dev::push ptr=" << ptr << " stack.size=" << stack.size() << std::endl;
   }
   void pop(t_fallback*ptr)override{
     QapAssert(ptr);
@@ -587,6 +588,7 @@ public:
     stack.pop_back();
     if(ptr->ok)return;
     this->mem.resize(ptr->pos);
+    if(global_debug) std::cerr << "t_save_dev::pop ptr=" << ptr << " stack.size=" << stack.size() << std::endl;
   }
   void getPos(int&pos){pos=mem.size();}
   void setPos(int pos){QapAssert(mem.size()>=pos);mem.resize(pos);}
