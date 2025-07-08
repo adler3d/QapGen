@@ -125,7 +125,7 @@ public:
       if(global_debug)if(dev.isLoad()){
         auto r=dev.get_char_lt();
         cerr<<"r.ok="<<(r.ok?"true":"false")<<endl;
-        cerr<<CToS(r.c)<<endl;
+        cerr<<"r.c='"<<escape_cpp_string(CToS(r.c))<<"'"<<endl;
       }
       M+=dev.go_const("\n====>");
       if(!ok)return ok;
