@@ -124,7 +124,7 @@ public:
       if(global_debug)cerr<<"bef t_line::====>"<<endl;
       if(global_debug)if(dev.isLoad()){
         auto r=dev.get_char_lt();
-        cerr<<"r.ok="<<(r?"true":"false")<<endl;
+        cerr<<"r.ok="<<(r.ok?"true":"false")<<endl;
         cerr<<CToS(r.c)<<endl;
       }
       M+=dev.go_const("\n====>");
