@@ -190,6 +190,7 @@ public:
     ptr->optional.ok=false;
     ptr->optional.scope=ptr;
     maxpos=std::max(maxpos,pos);
+    cerr << "push: ptr=" << ptr << ", stack.size=" << stack.size() << endl;
   }
   void pop(t_fallback*ptr){
     maxpos_pop=std::max(maxpos_pop,pos);
@@ -197,6 +198,7 @@ public:
     QapAssert(!stack.empty());
     QapAssert(stack.back()==ptr);
     stack.pop_back();
+    cerr << "pop: ptr=" << ptr << ", stack.size=" << stack.size() << endl;
     if(stack.empty()){
       QapDebugMsg("Error: stack became empty after pop");
       return;
