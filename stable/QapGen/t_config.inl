@@ -122,7 +122,11 @@ public:
       if(global_debug)cerr<<"head='"<<escape_cpp_string(head)<<"'"<<endl;
       if(!ok)return ok;
       if(global_debug)cerr<<"bef t_line::====>"<<endl;
-      if(global_debug)if(dev.isLoad())cerr<<CToS(dev.get_char_lt())<<endl;
+      if(global_debug)if(dev.isLoad()){
+        auto r=dev.get_char_lt();
+        cerr<<"r.ok="<<(r?"true":"false")<<endl;
+        cerr<<CToS(r.c)<<endl;
+      }
       M+=dev.go_const("\n====>");
       if(!ok)return ok;
       if(global_debug)cerr<<"bef t_line::[arr]"<<endl;
