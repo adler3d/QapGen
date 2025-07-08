@@ -25,10 +25,14 @@ struct t_fallback{
   t_scope_tool mandatory;
   t_scope_tool optional;
   t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev),ok(mandatory.ok),ptr(ptr),pos(-1),err_count(0){
+    if(global_debug)cerr << "ctor t_fallback called bef dev.push"<<endl;
     if(ptr&&ptr!=load_dev_dummy_str)dev.push(this);
+    if(global_debug)cerr << "ctor t_fallback called aft dev.push"<<endl;
   }
  ~t_fallback(){
+   if(global_debug)cerr << "Destructor t_fallback called bef dev.pop"<<endl;
     if(ptr&&ptr!=load_dev_dummy_str)dev.pop(this);
+   if(global_debug)cerr << "Destructor t_fallback called aft dev.pop"<<endl;
     get_qap_fallback_counter()++;
   }
   void add_status(const t_rec&rec){
