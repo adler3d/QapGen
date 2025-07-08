@@ -158,11 +158,11 @@ class t_load_dev_dummy : public i_dev {
 public:
   void push(t_fallback* ptr) override {
     std::cerr << "t_load_dev_dummy::push called\n";
-    abort();
+    ThrowAndPrintStackTrace("Critical error: t_load_dev_dummy::push called");
   }
   void pop(t_fallback* ptr) override {
     std::cerr << "t_load_dev_dummy::pop called\n";
-    abort();
+    ThrowAndPrintStackTrace("Critical error: t_load_dev_dummy::pop called");
   }
 };
 i_dev&get_dummy_load_dev(){

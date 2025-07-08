@@ -31,6 +31,7 @@ size_t g_unique_pool_ptr_counter=0;
 #undef QapDebugMsg
 #define QapDebugMsg(MSG){cerr << "QapDebugMsg("+string(MSG)+")"<<__FILE__<<__LINE__<<__FUNCTION__<< endl;}
 bool global_debug=false;
+void ThrowAndPrintStackTrace(const std::string& message);
 #include "detail.inl"
 #include "t_error_tool.inl"
 #include "QapLexer.inl"
@@ -400,7 +401,7 @@ void printMapsJsonLike(
 
 #pragma comment(lib, "dbghelp.lib")
 
-void PrintStackTrace(CONTEXT* context) {
+void PrintStackTrace1(CONTEXT* context) {
     HANDLE process = GetCurrentProcess();
     HANDLE thread = GetCurrentThread();
 
@@ -466,8 +467,44 @@ void PrintStackTrace(CONTEXT* context) {
 
 LONG WINAPI ExceptionHandler(EXCEPTION_POINTERS* ExceptionInfo) {
     std::cerr << "Unhandled exception caught! Exception code: 0x" << std::hex << ExceptionInfo->ExceptionRecord->ExceptionCode << std::dec << "\n";
-    PrintStackTrace(ExceptionInfo->ContextRecord);
+    PrintStackTrace1(ExceptionInfo->ContextRecord);
     return EXCEPTION_EXECUTE_HANDLER;
+}
+
+void PrintStackTrace() {
+    const int maxFrames = 512;
+    void* stack[maxFrames];
+    USHORT frames = CaptureStackBackTrace(0, maxFrames, stack, nullptr);
+
+    HANDLE process = GetCurrentProcess();
+    SymInitialize(process, nullptr, TRUE);
+
+    std::cerr << "Stack trace at throw:\n";
+
+    for (USHORT i = 0; i < frames; ++i) {
+        DWORD64 address = (DWORD64)(stack[i]);
+
+        char symbolBuffer[sizeof(SYMBOL_INFO) + 256];
+        PSYMBOL_INFO symbol = (PSYMBOL_INFO)symbolBuffer;
+        symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+        symbol->MaxNameLen = 255;
+
+        DWORD64 displacement = 0;
+        if (SymFromAddr(process, address, &displacement, symbol)) {
+            std::cerr << frames - i - 1 << ": " << symbol->Name << " - 0x" 
+                      << std::hex << symbol->Address << std::dec << "\n";
+        } else {
+            std::cerr << frames - i - 1 << ": " << "Unknown function - 0x" 
+                      << std::hex << address << std::dec << "\n";
+        }
+    }
+
+    SymCleanup(process);
+}
+
+void ThrowAndPrintStackTrace(const std::string& message) {
+  PrintStackTrace();
+  throw std::runtime_error(message);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
@@ -492,7 +529,11 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   string no;if(argc>2)no.resize(wcslen(argv[2]));
   if(no.size())wcstombs(&no[0],argv[2],wcslen(argv[2])+1);
   //for(;;){
+  try {
     test_2025_06_10(fn,no.size()?true:false);
+  } catch (const std::exception& e) {
+    std::cerr << "Exception caught: " << e.what() << std::endl;
+  }
   //}
   #ifdef QAP_UPP_COUNTERS
   printMapsJsonLike(t2maxn,t2c);
