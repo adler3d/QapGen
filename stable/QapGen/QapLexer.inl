@@ -158,9 +158,11 @@ class t_load_dev_dummy : public i_dev {
 public:
   void push(t_fallback* ptr) override {
     std::cerr << "t_load_dev_dummy::push called\n";
+    abort();
   }
   void pop(t_fallback* ptr) override {
     std::cerr << "t_load_dev_dummy::pop called\n";
+    abort();
   }
 };
 i_dev&get_dummy_load_dev(){
@@ -198,7 +200,7 @@ public:
     ptr->optional.ok=false;
     ptr->optional.scope=ptr;
     maxpos=std::max(maxpos,pos);
-    cerr << "push: ptr=" << ptr << ", stack.size=" << stack.size() << endl;
+    if(global_debug)cerr << "push: ptr=" << ptr << ", stack.size=" << stack.size() << endl;
   }
   void pop(t_fallback*ptr){
     maxpos_pop=std::max(maxpos_pop,pos);
@@ -206,7 +208,7 @@ public:
     QapAssert(!stack.empty());
     QapAssert(stack.back()==ptr);
     stack.pop_back();
-    cerr << "pop: ptr=" << ptr << ", stack.size=" << stack.size() << endl;
+    if(global_debug)cerr << "pop: ptr=" << ptr << ", stack.size=" << stack.size() << endl;
     if(stack.empty()){
       QapDebugMsg("Error: stack became empty after pop");
       return;
