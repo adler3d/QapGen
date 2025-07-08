@@ -207,12 +207,12 @@ public:
     QapAssert(ptr);
     QapAssert(!stack.empty());
     QapAssert(stack.back()==ptr);
-    stack.pop_back();
-    if(global_debug)cerr << "pop: ptr=" << ptr << ", stack.size=" << stack.size() << endl;
     if(stack.empty()){
-      QapDebugMsg("Error: stack became empty after pop");
+      ThrowAndPrintStackTrace("Error: stack became empty after pop");
       return;
     }
+    stack.pop_back();
+    if(global_debug)cerr << "pop: ptr=" << ptr << ", stack.size=" << stack.size() << endl;
     t_fallback::t_rec status;
     bool skip=this->pos==ptr->pos;
     bool ok=ptr->ok;
