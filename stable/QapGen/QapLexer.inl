@@ -11,6 +11,9 @@ struct t_scope_tool{
 struct i_dev_base{
   virtual void push(t_fallback*ptr){QapDebugMsg("no way.");}
   virtual void pop(t_fallback*ptr){QapDebugMsg("no way.");}
+  ~i_dev_base(){
+    if(global_debug)cerr<<"~i_dev_base"<<endl;
+  }
 };
 
 static int&get_qap_fallback_counter(){static int counter=0;return counter;}
@@ -563,8 +566,11 @@ public:
   vector<t_fallback*> stack;
 public:
   t_save_dev(/*IEnvRTTI&Env,*/string&mem):/*Env(Env),*/mem(mem){}
+  ~t_save_dev(){
+    if(global_debug)cerr<<"~t_save_dev;"<<endl;
+  }
 public:
-  void push(t_fallback*ptr){
+  void push(t_fallback*ptr)override{
     QapAssert(ptr);
     for(int i=0;i<stack.size();i++)QapAssert(stack[i]!=ptr);
     stack.push_back(ptr);
@@ -574,7 +580,7 @@ public:
     ptr->optional.ok=false;
     ptr->optional.scope=ptr;
   }
-  void pop(t_fallback*ptr){
+  void pop(t_fallback*ptr)override{
     QapAssert(ptr);
     QapAssert(!stack.empty());
     QapAssert(stack.back()==ptr);
@@ -1422,8 +1428,11 @@ template<class TYPE>
 bool save_obj(/*IEnvRTTI&Env,*/TYPE&inp,string&data)
 {
   string mem;
+  if(global_debug)cerr<<"bef save_obj::t_save_dev"<<endl;
   t_save_dev dev(/*Env,*/mem);
+  if(global_debug)cerr<<"aft save_obj::t_save_dev"<<endl;
   bool ok=dev.go_auto(inp);
+  if(global_debug)cerr<<"aft save_obj::dev.go_auto(inp);"<<endl;
   //QapAssert(ok);
   if(ok)
   {
@@ -1450,6 +1459,7 @@ bool save_obj(/*IEnvRTTI&Env,*/TYPE&inp,string&data)
     #endif
   }
   data=std::move(mem);
+  if(global_debug)cerr<<"aft save_obj::data=std::move(mem);"<<endl;
   return ok;
 }
 
