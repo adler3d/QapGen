@@ -216,6 +216,10 @@ public:
       return;
     }
     stack.pop_back();
+    if(stack.empty()){
+      ThrowAndPrintStackTrace("Error: stack became empty after pop");
+      return;
+    }
     if(global_debug)cerr << "pop: ptr=" << ptr << ", stack.size=" << stack.size() << endl;
     t_fallback::t_rec status;
     bool skip=this->pos==ptr->pos;
