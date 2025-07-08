@@ -4,7 +4,7 @@
 //#include "QapMicro2/QapTools.h"
 typedef unsigned char uchar;
 size_t g_unique_pool_ptr_counter=0;
-
+string g_version="{\"version\":\"1.0\"}";
 #define QAP_USE_UNIQUE_POOL_PTR
 #define QAP_STD_DEBUG
 #ifdef QAP_STD_DEBUG
@@ -394,6 +394,7 @@ void printMapsJsonLike(
 
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
+  cerr<<g_version<<endl;
   #ifdef JSON_TEST
   test20250630_json_test();  return 0;
   #else// 655.864 ms for 2 251 060 באיע 3.4322 mb/s vs nodejs(10.42mb/sec)
@@ -424,6 +425,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 #else
 int main(int argc,char*argv[])
 {
+  cerr<<g_version<<endl;
   string fn;
   if(argc>1)fn=argv[1];
   test_2025_06_10(fn);
