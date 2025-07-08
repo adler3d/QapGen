@@ -17,9 +17,12 @@ public:
       auto&D=scope.mandatory;
       auto&M=scope.mandatory;
       auto&O=scope.optional;
+      if(global_debug)cerr<<"bef t_item::go_const"<<endl;
       D+=dev.go_const("\n");
       if(!ok)return ok;
+      if(global_debug)cerr<<"bef t_item::go_any"<<endl;
       D+=dev.go_any(type,gen_dips("azAZ09")+"_$@:");
+      if(global_debug)cerr<<"aft t_item::go_any"<<endl;
       if(!ok)return ok;
       return ok;
     }
@@ -42,10 +45,12 @@ public:
       auto&D=scope.mandatory;
       auto&M=scope.mandatory;
       auto&O=scope.optional;
+      if(global_debug)cerr<<"bef t_info::go_any"<<endl;
       D+=dev.go_any(type,gen_dips("azAZ09")+"_$@:");
       if(!ok)return ok;
       D+=dev.go_const("(");
       if(!ok)return ok;
+      if(global_debug)cerr<<"bef t_info::go_any09"<<endl;
       D+=dev.go_any(pos,gen_dips("09"));
       if(!ok)return ok;
       D+=dev.go_const(")");
@@ -72,17 +77,22 @@ public:
       auto&D=scope.mandatory;
       auto&M=scope.mandatory;
       auto&O=scope.optional;
+      if(global_debug)cerr<<"bef t_event::+["<<endl;
       D+=dev.go_const("\n+[");
       if(!ok)return ok;
+      if(global_debug)cerr<<"bef t_event::time"<<endl;
       D+=dev.go_any(time,gen_dips("09")+".: ");
       if(!ok)return ok;
       D+=dev.go_const("] ");
       if(!ok)return ok;
+      if(global_debug)cerr<<"bef t_event::go_auto(A)"<<endl;
       D+=dev.go_auto(A);
       if(!ok)return ok;
       D+=dev.go_const(" ");
       if(!ok)return ok;
+      if(global_debug)cerr<<"bef t_event::go_auto(B)"<<endl;
       D+=dev.go_auto(B);
+      if(global_debug)cerr<<"aft t_event::go_auto(B)"<<endl;
       if(!ok)return ok;
       return ok;
     }
@@ -106,18 +116,24 @@ public:
       auto&D=scope.mandatory;
       auto&M=scope.mandatory;
       auto&O=scope.optional;
+      if(global_debug)cerr<<"bef t_line::M+=dev.go_any(head,gen_dips"<<endl;
       M+=dev.go_any(head,gen_dips("azAZ09")+"_$@:");
       if(!ok)return ok;
+      if(global_debug)cerr<<"bef t_line::====>"<<endl;
       M+=dev.go_const("\n====>");
       if(!ok)return ok;
+      if(global_debug)cerr<<"bef t_line::[arr]"<<endl;
       M+=dev.go_const("\n[arr]");
       if(!ok)return ok;
+      if(global_debug)cerr<<"bef t_line::go_auto(arr)"<<endl;
       M+=dev.go_auto(arr);
       if(!ok)return ok;
+      if(global_debug)cerr<<"bef t_line::[events]"<<endl;
       M+=dev.go_const("\n[events]");
       if(!ok)return ok;
       O+=dev.go_auto(events);
       if(!ok)return ok;
+      if(global_debug)cerr<<"bef t_line::<===="<<endl;
       M+=dev.go_const("\n<====\n");
       if(!ok)return ok;
       return ok;
@@ -140,7 +156,9 @@ public:
       auto&D=scope.mandatory;
       auto&M=scope.mandatory;
       auto&O=scope.optional;
+      if(global_debug)cerr<<"bef t_doc::go_auto(lines)"<<endl;
       D+=dev.go_auto(lines);
+      if(global_debug)cerr<<"aft t_doc::go_auto(lines)"<<endl;
       if(!ok)return ok;
       return ok;
     }

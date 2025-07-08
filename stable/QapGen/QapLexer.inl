@@ -1154,7 +1154,7 @@ static bool go_for_item(
   bool(TYPE::*pFunc)(i_dev&)=&TYPE::go,
   typename std::enable_if<!detail::isTAutoPtr<TYPE>::value,void*>::type=nullptr
 ){
-  if(global_debug)cerr<<"aft go_for_item<"<<typeid(TYPE).name()<<">::(ref.*pFunc)(dev)"<<endl;
+  if(global_debug)cerr<<"bef go_for_item<"<<typeid(TYPE).name()<<">::(ref.*pFunc)(dev)"<<endl;
   return (ref.*pFunc)(dev);
 }
 
