@@ -110,7 +110,9 @@ public:
 public:
   template<class TYPE>
   bool go_auto(TYPE&ref){
+    if(global_debug)cerr<<"bef template<class TYPE>go_auto::go_for_item"<<endl;
     return go_for_item(*this,ref);
+    if(global_debug)cerr<<"aft template<class TYPE>go_auto::go_for_item"<<endl;
   }
 public:
   template<class TYPE>
@@ -1073,9 +1075,12 @@ static bool go_for_item(
     return ok;
   }
   TYPE tmp;
+  if(global_debug)cerr<<"bef go_for_item<TAutoPtr<T>>::tmp.go(dev)"<<endl;
   ok=tmp.go(dev);
+  if(global_debug)cerr<<"aft go_for_item<TAutoPtr<T>>::tmp.go(dev)"<<endl;
   if(!ok)return ok;
   ref=make_unique<TYPE>(std::move(tmp));
+  if(global_debug)cerr<<"aft go_for_item<TAutoPtr<T>>::make_unique"<<endl;
   //auto*p=ref.build<TYPE>(dev.getEnv());
   //*p=std::move(tmp);
   return ok;
@@ -1149,6 +1154,7 @@ static bool go_for_item(
   bool(TYPE::*pFunc)(i_dev&)=&TYPE::go,
   typename std::enable_if<!detail::isTAutoPtr<TYPE>::value,void*>::type=nullptr
 ){
+  if(global_debug)cerr<<"aft go_for_item<TYPE>::(ref.*pFunc)(dev)"<<endl;
   return (ref.*pFunc)(dev);
 }
 

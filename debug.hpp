@@ -1,7 +1,7 @@
 
-{"parse_ms":6.473}
-{"need_igrab done in ":0.043}
-{"need_grab done in ":0.009}
+{"parse_ms":10.1125}
+{"need_igrab done in ":0.1532}
+{"need_grab done in ":0.0294}
 lexer:i_str_item
 lexer_after Do(r.body):i_str_item
 lexer:i_char_item
@@ -10,7 +10,7 @@ lexer:i_sep
 lexer_after Do(r.body):i_sep
 lexer:i_simple_expr
 lexer_after Do(r.body):i_simple_expr
-{"interface_autogen done in ":0.325}
+{"interface_autogen done in ":0.6519}
 lexer:t_parent_fullname_reslove_algo_test_20250701
 lexer:t_other
 lexer_after Do(r.body):t_other
@@ -136,118 +136,4 @@ bef go_str::go_blob
 aft go_str::go_blob
 aft go_str<t_impl>
 t_expr_var::ok
-aft go_auto
-aft go_vec::break
-aft t_cmd_param::t_impl::go_vec+
-aft t_cmd_param::t_impl::ok
-aft go_str::go_auto
-bef go_str::go_blob
-aft go_str::go_blob
-aft t_cmd_param::go_str<t_impl>
-aft go_auto
-aft go_vec::break
-bef )
-bef go_str::go_auto
-aft go_str::go_auto
-bef cmdso
-bef go_str::go_auto
-aft go_str::go_auto
-bef go_str::go_auto
-aft go_str::go_auto
-bef ;
-bef mode
-bef func
-bef $sep2
-bef templ_params
-bef (
-bef params
-bef t_cmd_param::go_str<t_impl>
-bef t_cmd_param::t_impl::go_vec+
-bef go_auto
-bef go_str::go_auto
-aft go_str::go_auto
-bef go_str::go_blob
-aft go_str::go_blob
-aft t_expr_call::func
-bef go_str::go_auto
-bef self
-aft self
-bef go_str::go_auto
-aft go_str::go_auto
-bef go_str::go_blob
-aft go_str::go_blob
-aft t_impl::go_auto
-aft t_impl::ok
-aft go_str::go_auto
-bef go_str::go_blob
-aft go_str::go_blob
-aft go_str<t_impl>
-t_expr_var::ok
-aft go_auto
-aft go_vec::break
-aft t_cmd_param::t_impl::go_vec+
-aft t_cmd_param::t_impl::ok
-aft t_cmd_param::go_str<t_impl>
-bef t_cmd_param::go_str<t_impl>
-bef t_cmd_param::t_impl::go_vec+
-bef go_auto
-bef go_str::go_auto
-aft go_str::go_auto
-bef go_str::go_blob
-aft go_str::go_blob
-aft t_expr_call::func
-bef t_expr_call::params
-bef go_auto
-bef t_cmd_param::go_str<t_impl>
-bef go_str::go_auto
-bef t_cmd_param::t_impl::go_vec+
-bef go_auto
-bef go_str<t_str_seq>
-bef go_str::go_auto
-aft go_str::go_auto
-bef go_str::go_blob
-aft go_str::go_blob
-aft go_str<t_str_seq>
-aft go_auto
-aft go_vec::break
-aft t_cmd_param::t_impl::go_vec+
-aft t_cmd_param::t_impl::ok
-aft go_str::go_auto
-bef go_str::go_blob
-aft go_str::go_blob
-aft t_cmd_param::go_str<t_impl>
-aft go_auto
-aft go_vec::break
-aft t_expr_call::params
-aft t_expr_call::ok
-bef go_str::go_auto
-bef self
-aft self
-bef go_str::go_auto
-aft go_str::go_auto
-bef go_str::go_blob
-aft go_str::go_blob
-aft t_impl::go_auto
-aft t_impl::ok
-aft go_str::go_auto
-bef go_str::go_blob
-aft go_str::go_blob
-aft go_str<t_impl>
-t_expr_var::ok
-aft go_auto
-aft go_vec::break
-aft t_cmd_param::t_impl::go_vec+
-aft t_cmd_param::t_impl::ok
-aft t_cmd_param::go_str<t_impl>
-bef )
-bef cmdso
-bef ;
-aft load_obj_full(sc,cmd); :t_number
-bef Do(sc); :t_number
-aft Do(sc); :t_number
-bef vector<string> pcs=split(*pcm... :t_number
-aft body+=get_temp... :t_number
-aft r.body&&!is_interface :t_number
-bef need_attrs :t_number
-bef before_head+out+body :t_number
-typedef:
+##[error]The operation was canceled.
