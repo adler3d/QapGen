@@ -17,6 +17,13 @@ struct t_poly_tool:public t_config_2013{
     CrutchIO IO;
     if(global_debug)cerr<<"bef IO.LoadFile(fn);"<<endl;
     bool ok=IO.LoadFile(fn);
+    if(IO.mem.find("\r")!=string::npos){
+      if(IO.mem.find("\n")!=string::npos){
+        IO.mem=join(split(IO.mem,"\r"),"");
+      }else{
+        IO.mem=join(split(IO.mem,"\r"),"\n");
+      }
+    }
     if(global_debug)cerr<<"aft IO.LoadFile(fn);"<<endl;
     if(global_debug)cerr<<"IO.mem:"<<IO.mem<<endl;
     if(global_debug)cerr<<"aft IO.mem"<<endl;
