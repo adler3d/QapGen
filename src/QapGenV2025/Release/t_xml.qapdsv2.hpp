@@ -11,10 +11,10 @@ t_xml_scope{
     string body=end("-->");
   }
   t_text:i_node{
-    t_raw:i_elem{
+    t_raw{
       string text=any(dip_inv("<"));
     }
-    string text=str<vector<TAutoPtr<i_elem>>>();
+    string text=str<vector<TAutoPtr<t_raw>>>();
   }
   t_start:i_node{
     t_string:i_value{

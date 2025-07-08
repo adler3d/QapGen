@@ -1,0 +1,17 @@
+смотри у меня есть вот такая структура файлов:
+./src/QapGenV2025/
+./src/QapGenV2025/QapGen/
+./src/QapGenV2025/Release/
+./src/QapGenV2025/
+./src/SimpleCalc/SimpleCalc/
+./src/SimpleCalc/Release/
+./stable/
+./stable/QapGen/
+./stable/Release/
+
+мне надо скрипт который будет лежать в "./src/QapGenV2025/" и:
+  копировать все файлы из папки "./src/QapGenV2025/QapGen/" не рекурсивно, в папку "./stable/QapGen/"
+  копировать все файлы из папки "./src/QapGenV2025/" не рекурсивно, в папку "./stable/"
+
+сам скрипт на nodejs должен лежать в "./src/QapGenV2025/" и запускаться отутада же.
+помоги сделать такой скрипт.

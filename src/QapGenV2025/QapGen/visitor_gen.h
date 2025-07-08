@@ -1132,11 +1132,12 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           QapAssert(ptit2);
           if(ptit2->param){
             QapAssert(ptit2->type.value=="TAutoPtr");
-            auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit->param->body.get());
+            auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit2->param->body.get());
             QapAssert(ptta);
             QapAssert(ptta->params);
             QapAssert(ptta->params->first.body);
             auto*ptit3=t_type_item_type::UberCast(ptta->params->first.body.get());
+            if(ptit3->param)QapDebugMsg("unexpected param:"+lex2str(ptit3->param)+"\nin:"+cmd.templ_params);
             QapAssert(!ptit3->param);
             auto*pl=find_lexer_by_name_but_relative(ptit3->type.value,lexer);
             QapAssert(pl);
