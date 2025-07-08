@@ -14,7 +14,7 @@ struct i_dev_base{
 };
 
 static int&get_qap_fallback_counter(){static int counter=0;return counter;}
-
+inline static const char load_dev_dummy_str[]="---::t_load_dev_dummy::---";
 struct t_fallback{
   struct t_rec{bool E;bool ok;bool D;};
   i_dev_base&dev;
@@ -25,10 +25,10 @@ struct t_fallback{
   t_scope_tool mandatory;
   t_scope_tool optional;
   t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev),ok(mandatory.ok),ptr(ptr),pos(-1),err_count(0){
-    if(ptr)dev.push(this);
+    if(ptr&&ptr!=load_dev_dummy_str)dev.push(this);
   }
  ~t_fallback(){
-    if(ptr)dev.pop(this);
+    if(ptr&&ptr!=load_dev_dummy_str)dev.pop(this);
     get_qap_fallback_counter()++;
   }
   void add_status(const t_rec&rec){
@@ -179,7 +179,7 @@ public:
   t_fallback main;
   size_t maxpos_pop;
 public:
-  t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos),maxpos_pop(pos),main(get_dummy_load_dev(),"---::t_load_dev_dummy::---"){stack.push_back(&main);}
+  t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos),maxpos_pop(pos),main(get_dummy_load_dev(),load_dev_dummy_str){stack.push_back(&main);}
 public:
  ~t_load_dev(){
     //if(global_debug) {
