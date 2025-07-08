@@ -183,8 +183,8 @@ public:
 public:
  ~t_load_dev(){
     //if(global_debug) {
-      cerr << "Destructor t_load_dev called, pos=" << pos << ", maxpos=" << maxpos << ", stack.size()=" << stack.size() << endl;
-      for(auto* p : stack) {
+      if(global_debug)cerr << "Destructor t_load_dev called, pos=" << pos << ", maxpos=" << maxpos << ", stack.size()=" << stack.size() << endl;
+      if(global_debug)for(auto* p : stack) {
         cerr << " stack ptr: " << p << endl;
       }
     //}
