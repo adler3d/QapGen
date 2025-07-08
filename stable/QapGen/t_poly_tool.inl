@@ -15,17 +15,24 @@ struct t_poly_tool:public t_config_2013{
     first=false;
     clock.Stop();clock.Start();
     CrutchIO IO;
+    if(global_debug)cerr<<"bef IO.LoadFile(fn);"<<endl;
     bool ok=IO.LoadFile(fn);
+    if(global_debug)cerr<<"aft IO.LoadFile(fn);"<<endl;
+    if(global_debug)cerr<<"IO.mem:"<<IO.mem<<endl;
+    if(global_debug)cerr<<"aft IO.mem"<<endl;
     if(ok){t_doc tmp;doc=std::move(tmp);/*doc.lines.reserve(2048);*/}
+    if(global_debug)cerr<<"aft doc=std::move(tmp)"<<endl;
     if(!ok){
       IO.mem.clear();
       QapAssert(save_obj(/*Env,*/doc,IO.mem));
       IO.SaveFile(fn);
       return tool;
     }
+    if(global_debug)cerr<<"bef t_poly_tool::get::load_obj"<<endl;
     clock.Stop();clock.Start();
     QapAssert(load_obj(/*Env,*/doc,IO.mem));clock.Stop();clock.Start();
     real time=clock.MS();
+    if(global_debug)cerr<<"aft t_poly_tool::get::load_obj"<<endl;
     clock.Stop();clock.Start();
     //doc.lines.reserve(2048);
     return tool;
