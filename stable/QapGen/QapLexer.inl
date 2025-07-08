@@ -110,9 +110,9 @@ public:
 public:
   template<class TYPE>
   bool go_auto(TYPE&ref){
-    if(global_debug)cerr<<"bef template<class TYPE>go_auto::go_for_item"<<endl;
+    if(global_debug)cerr<<"bef template<class "<<typeid(TYPE).name()<<">go_auto::go_for_item"<<endl;
     return go_for_item(*this,ref);
-    if(global_debug)cerr<<"aft template<class TYPE>go_auto::go_for_item"<<endl;
+    if(global_debug)cerr<<"aft template<class "<<typeid(TYPE).name()<<">go_auto::go_for_item"<<endl;
   }
 public:
   template<class TYPE>
@@ -897,17 +897,17 @@ bool i_dev::go_str(string&ref)
     {
       TYPE value;
       int pos=0;getPos(pos);
-      if(global_debug)cerr<<"bef go_str::go_auto"<<endl;
+      if(global_debug)cerr<<"bef go_str<"<<typeid(TYPE).name()<<">::go_auto"<<endl;
       bool ok=go_auto(value);
-      if(global_debug)cerr<<"aft go_str::go_auto"<<endl;
+      if(global_debug)cerr<<"aft go_str<"<<typeid(TYPE).name()<<">::go_auto"<<endl;
       if(!ok)return ok;
       int curpos=0;getPos(curpos);
       QapAssert(curpos>pos);
       setPos(pos);
       auto count=curpos-pos;
-      if(global_debug)cerr<<"bef go_str::go_blob"<<endl;
+      if(global_debug)cerr<<"bef go_str<"<<typeid(TYPE).name()<<">::go_blob"<<endl;
       ok=go_blob(ref,count);
-      if(global_debug)cerr<<"aft go_str::go_blob"<<endl;
+      if(global_debug)cerr<<"aft go_str<"<<typeid(TYPE).name()<<">::go_blob"<<endl;
       QapAssert(ok);
       return ok;
     }
@@ -933,11 +933,11 @@ bool i_dev::go_str(string&ref)
         t_fallback subscope(*this,__FUNCTION__);
         bool&ok=subscope.ok;
         TYPE tmp;
-        if(global_debug)cerr<<"bef go_auto"<<endl;
+        if(global_debug)cerr<<"bef go_vec<"<<typeid(TYPE).name()<<">go_auto"<<endl;
         ok=go_auto(tmp);
-        if(global_debug)cerr<<"aft go_auto"<<endl;
+        if(global_debug)cerr<<"aft go_vec<"<<typeid(TYPE).name()<<">go_auto"<<endl;
         if(!ok)break;
-        if(global_debug)cerr<<"aft go_vec::break"<<endl;
+        if(global_debug)cerr<<"aft go_vec<"<<typeid(TYPE).name()<<">::break"<<endl;
         QapAssert(CheckTAutoPtrIsNotEmpty(tmp));
         arr.push_back(std::move(tmp));
       }
@@ -1075,12 +1075,12 @@ static bool go_for_item(
     return ok;
   }
   TYPE tmp;
-  if(global_debug)cerr<<"bef go_for_item<TAutoPtr<T>>::tmp.go(dev)"<<endl;
+  if(global_debug)cerr<<"bef go_for_item<TAutoPtr<"<<typeid(TYPE).name()<<">>::tmp.go(dev)"<<endl;
   ok=tmp.go(dev);
-  if(global_debug)cerr<<"aft go_for_item<TAutoPtr<T>>::tmp.go(dev)"<<endl;
+  if(global_debug)cerr<<"aft go_for_item<TAutoPtr<"<<typeid(TYPE).name()<<">>::tmp.go(dev)"<<endl;
   if(!ok)return ok;
   ref=make_unique<TYPE>(std::move(tmp));
-  if(global_debug)cerr<<"aft go_for_item<TAutoPtr<T>>::make_unique"<<endl;
+  if(global_debug)cerr<<"aft go_for_item<TAutoPtr<"<<typeid(TYPE).name()<<">>::make_unique"<<endl;
   //auto*p=ref.build<TYPE>(dev.getEnv());
   //*p=std::move(tmp);
   return ok;
@@ -1154,7 +1154,7 @@ static bool go_for_item(
   bool(TYPE::*pFunc)(i_dev&)=&TYPE::go,
   typename std::enable_if<!detail::isTAutoPtr<TYPE>::value,void*>::type=nullptr
 ){
-  if(global_debug)cerr<<"aft go_for_item<TYPE>::(ref.*pFunc)(dev)"<<endl;
+  if(global_debug)cerr<<"aft go_for_item<"<<typeid(TYPE).name()<<">::(ref.*pFunc)(dev)"<<endl;
   return (ref.*pFunc)(dev);
 }
 
