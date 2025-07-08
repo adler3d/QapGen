@@ -294,12 +294,17 @@ enum QapMsgBoxRetval{qmbrSkip,qmbrBreak,qmbrIgnore};
 inline int WinMessageBox(const string&caption,const string&text)
 {
   #ifdef _WIN32
+  #ifdef ADLER_GUI_DEBUG
   string full_text=text+"\n\n    [Skip]            [Break]            [Ignore]";
   const int nCode=MessageBoxA(NULL,full_text.c_str(),caption.c_str(),MB_CANCELTRYCONTINUE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL);
   QapMsgBoxRetval retval=qmbrSkip;
   if(IDCONTINUE==nCode)retval=qmbrIgnore;
   if(IDTRYAGAIN==nCode)retval=qmbrBreak;
   return retval;
+  #else
+  std::cerr << "WinMessageBox suppressed on non-interactive environment:\n" << caption << ":\n" << text << std::endl;
+  return qmbrBreak;
+  #endif
   #else
   #ifdef __EMSCRIPTEN__
   EM_ASM({alert(UTF8ToString($0)+"\n"+UTF8ToString($1));},int(caption.c_str()),int(text.c_str()));

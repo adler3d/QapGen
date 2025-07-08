@@ -28,12 +28,6 @@ size_t g_unique_pool_ptr_counter=0;
 #define TAutoPtr UniquePoolPtr
 #define make_unique make_unique_pool
 #endif
-#undef QapAssert
-#undef QapDebugMsg
-#define QapDebugMsg(MSG){cerr << "QapDebugMsg("+string(MSG)+")"<<__FILE__<<__LINE__<<__FUNCTION__<< endl;}
-#define QapAssert(COND){if(!(COND))cerr << #COND<<" "<<__FILE__<<__LINE__<<__FUNCTION__<< endl;}
-bool global_debug=false;
-void ThrowAndPrintStackTrace(const std::string& message);
 #include "detail.inl"
 #include "t_error_tool.inl"
 #include "QapLexer.inl"
@@ -397,121 +391,9 @@ void printMapsJsonLike(
 }
 #pragma comment(lib,"user32")
 #pragma comment(lib,"shell32.lib")
-#include <windows.h>
-#include <dbghelp.h>
-#include <iostream>
-
-#pragma comment(lib, "dbghelp.lib")
-
-void PrintStackTrace1(CONTEXT* context) {
-    HANDLE process = GetCurrentProcess();
-    HANDLE thread = GetCurrentThread();
-
-    SymInitialize(process, NULL, TRUE);
-
-    STACKFRAME64 stackFrame;
-    memset(&stackFrame, 0, sizeof(STACKFRAME64));
-
-#ifdef _M_IX86
-    DWORD machineType = IMAGE_FILE_MACHINE_I386;
-    stackFrame.AddrPC.Offset = context->Eip;
-    stackFrame.AddrPC.Mode = AddrModeFlat;
-    stackFrame.AddrFrame.Offset = context->Ebp;
-    stackFrame.AddrFrame.Mode = AddrModeFlat;
-    stackFrame.AddrStack.Offset = context->Esp;
-    stackFrame.AddrStack.Mode = AddrModeFlat;
-#elif _M_X64
-    DWORD machineType = IMAGE_FILE_MACHINE_AMD64;
-    stackFrame.AddrPC.Offset = context->Rip;
-    stackFrame.AddrPC.Mode = AddrModeFlat;
-    stackFrame.AddrFrame.Offset = context->Rsp;
-    stackFrame.AddrFrame.Mode = AddrModeFlat;
-    stackFrame.AddrStack.Offset = context->Rsp;
-    stackFrame.AddrStack.Mode = AddrModeFlat;
-#else
-#error "Platform not supported!"
-#endif
-
-    std::cerr << "Stack trace:\n";
-
-    for (int frameNum = 0; ; ++frameNum) {
-        BOOL result = StackWalk64(
-            machineType,
-            process,
-            thread,
-            &stackFrame,
-            context,
-            NULL,
-            SymFunctionTableAccess64,
-            SymGetModuleBase64,
-            NULL);
-
-        if (!result || stackFrame.AddrPC.Offset == 0)
-            break;
-
-        DWORD64 address = stackFrame.AddrPC.Offset;
-
-        char symbolBuffer[sizeof(SYMBOL_INFO) + 256];
-        PSYMBOL_INFO symbol = (PSYMBOL_INFO)symbolBuffer;
-        symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-        symbol->MaxNameLen = 255;
-
-        DWORD64 displacement = 0;
-        if (SymFromAddr(process, address, &displacement, symbol)) {
-            std::cerr << frameNum << ": " << symbol->Name << " - 0x" << std::hex << symbol->Address << std::dec << "\n";
-        } else {
-            std::cerr << frameNum << ": " << "Unknown function - 0x" << std::hex << address << std::dec << "\n";
-        }
-    }
-
-    SymCleanup(process);
-}
-
-LONG WINAPI ExceptionHandler(EXCEPTION_POINTERS* ExceptionInfo) {
-    std::cerr << "Unhandled exception caught! Exception code: 0x" << std::hex << ExceptionInfo->ExceptionRecord->ExceptionCode << std::dec << "\n";
-    PrintStackTrace1(ExceptionInfo->ContextRecord);
-    return EXCEPTION_EXECUTE_HANDLER;
-}
-
-void PrintStackTrace() {
-    const int maxFrames = 512;
-    void* stack[maxFrames];
-    USHORT frames = CaptureStackBackTrace(0, maxFrames, stack, nullptr);
-
-    HANDLE process = GetCurrentProcess();
-    SymInitialize(process, nullptr, TRUE);
-
-    std::cerr << "Stack trace at throw:\n";
-
-    for (USHORT i = 0; i < frames; ++i) {
-        DWORD64 address = (DWORD64)(stack[i]);
-
-        char symbolBuffer[sizeof(SYMBOL_INFO) + 256];
-        PSYMBOL_INFO symbol = (PSYMBOL_INFO)symbolBuffer;
-        symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-        symbol->MaxNameLen = 255;
-
-        DWORD64 displacement = 0;
-        if (SymFromAddr(process, address, &displacement, symbol)) {
-            std::cerr << frames - i - 1 << ": " << symbol->Name << " - 0x" 
-                      << std::hex << symbol->Address << std::dec << "\n";
-        } else {
-            std::cerr << frames - i - 1 << ": " << "Unknown function - 0x" 
-                      << std::hex << address << std::dec << "\n";
-        }
-    }
-
-    SymCleanup(process);
-}
-
-void ThrowAndPrintStackTrace(const std::string& message) {
-  PrintStackTrace();
-  throw std::runtime_error(message);
-}
 
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
-  SetUnhandledExceptionFilter(ExceptionHandler);
   #ifdef JSON_TEST
   test20250630_json_test();  return 0;
   #else// 655.864 ms for 2 251 060 באיע 3.4322 mb/s vs nodejs(10.42mb/sec)
@@ -531,11 +413,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   string no;if(argc>2)no.resize(wcslen(argv[2]));
   if(no.size())wcstombs(&no[0],argv[2],wcslen(argv[2])+1);
   //for(;;){
-  try {
     test_2025_06_10(fn,no.size()?true:false);
-  } catch (const std::exception& e) {
-    std::cerr << "Exception caught: " << e.what() << std::endl;
-  }
   //}
   #ifdef QAP_UPP_COUNTERS
   printMapsJsonLike(t2maxn,t2c);
@@ -544,13 +422,11 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   return 0;
 }
 #else
-void ThrowAndPrintStackTrace(const std::string& message) {QapDebugMsg(message);}
 int main(int argc,char*argv[])
 {
   string fn;
   if(argc>1)fn=argv[1];
   test_2025_06_10(fn);
-  cerr<<"\ndone!\n"<<endl;
   return 0;
 }
 #endif

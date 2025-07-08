@@ -15,7 +15,6 @@ struct t_poly_tool:public t_config_2013{
     first=false;
     clock.Stop();clock.Start();
     CrutchIO IO;
-    if(global_debug)cerr<<"bef IO.LoadFile(fn);"<<endl;
     bool ok=IO.LoadFile(fn);
     if(IO.mem.find("\r")!=string::npos){
       if(IO.mem.find("\n")!=string::npos){
@@ -24,27 +23,15 @@ struct t_poly_tool:public t_config_2013{
         IO.mem=join(split(IO.mem,"\r"),"\n");
       }
     }
-    if(global_debug)cerr<<"aft IO.LoadFile(fn);"<<endl;
-    if(global_debug)cerr<<"IO.mem:"<<IO.mem<<endl;
-    if(global_debug)cerr<<"aft IO.mem"<<endl;
     if(ok){t_doc tmp;doc=std::move(tmp);/*doc.lines.reserve(2048);*/}
-    if(global_debug)cerr<<"aft doc=std::move(tmp)"<<endl;
     if(!ok){
       IO.mem.clear();
-      if(global_debug)cerr<<"bef save_obj"<<endl;
-      QapAssert(save_obj(/*Env,*/doc,IO.mem));
-      if(global_debug)cerr<<"bef IO.SaveFile(fn);"<<endl;
+      if(doc.lines.size())QapAssert(save_obj(/*Env,*/doc,IO.mem));
       IO.SaveFile(fn);
-      if(global_debug)cerr<<"aft IO.SaveFile(fn);"<<endl;
       return tool;
     }
-    if(global_debug)cerr<<"bef t_poly_tool::get::load_obj"<<endl;
     clock.Stop();clock.Start();
-    if(global_debug)cerr<<"IO.mem.size()=="<<IO.mem.size()<<endl;
-    if(global_debug)cerr<<"IO.mem:"<<IO.mem<<endl;
-    if(!IO.mem.empty())QapAssert(load_obj(/*Env,*/doc,IO.mem));
-    if(global_debug)cerr<<"aft t_poly_tool::get::load_obj"<<endl;
-    clock.Stop();clock.Start();
+    if(IO.mem.size())QapAssert(load_obj(/*Env,*/doc,IO.mem));clock.Stop();clock.Start();
     real time=clock.MS();
     clock.Stop();clock.Start();
     //doc.lines.reserve(2048);
@@ -345,13 +332,10 @@ public:
       #endif
       auto&tool=t_poly_tool::get(/*Env*/);
       static vector<string> types;
-      if(global_debug)cerr<<"bef if(types.empty()&&plexs)"<<endl;
       if(types.empty()&&plexs){
         for(auto&ex:*plexs)types.push_back(ex.pname);
       }
-      if(global_debug)cerr<<"bef tool.get_base_arr(/*Env,*/strbasetype,out_arr,types);"<<endl;
       auto&arr=tool.get_base_arr(/*Env,*/strbasetype,out_arr,types);
-      if(global_debug)cerr<<"aft tool.get_base_arr(/*Env,*/strbasetype,out_arr,types);"<<endl;
       vector<t_out_rec> out;
       auto update_mass=[&](){
         for(int i=0;i<out.size();i++){
@@ -359,15 +343,12 @@ public:
           ex.mass=t_poly_tool::get_mass(arr,ex.info);
         }
       };
-      if(global_debug)cerr<<"bef for(int i=0;i<out_arr.size();i++);out_arr.n=="<<out_arr.size()<<endl;
       for(int i=0;i<out_arr.size();i++){
         auto&ex=out_arr[i];
         if(!ex.object)continue;
         out.push_back(std::move(ex));
       }
-      if(global_debug)cerr<<"bef update_mass"<<endl;
       update_mass();
-      if(global_debug)cerr<<"aft update_mass"<<endl;
       vector<int> idarr;idarr.resize(out.size());
       for(int i=0;i<out.size();i++){idarr[i]=i;}
       if(true)

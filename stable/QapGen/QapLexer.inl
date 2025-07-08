@@ -11,13 +11,10 @@ struct t_scope_tool{
 struct i_dev_base{
   virtual void push(t_fallback*ptr){QapDebugMsg("no way.");}
   virtual void pop(t_fallback*ptr){QapDebugMsg("no way.");}
-  ~i_dev_base(){
-    if(global_debug)cerr<<"~i_dev_base"<<endl;
-  }
 };
 
 static int&get_qap_fallback_counter(){static int counter=0;return counter;}
-inline static const char load_dev_dummy_str[]="---::t_load_dev_dummy::---";
+
 struct t_fallback{
   struct t_rec{bool E;bool ok;bool D;};
   i_dev_base&dev;
@@ -28,14 +25,10 @@ struct t_fallback{
   t_scope_tool mandatory;
   t_scope_tool optional;
   t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev),ok(mandatory.ok),ptr(ptr),pos(-1),err_count(0){
-    if(global_debug)cerr << "ctor t_fallback called bef dev.push"<<endl;
-    if(ptr&&ptr!=load_dev_dummy_str)dev.push(this);
-    if(global_debug)cerr << "ctor t_fallback called aft dev.push"<<endl;
+    if(ptr)dev.push(this);
   }
  ~t_fallback(){
-   if(global_debug)cerr << "Destructor t_fallback called bef dev.pop"<<endl;
-    if(ptr&&ptr!=load_dev_dummy_str)dev.pop(this);
-   if(global_debug)cerr << "Destructor t_fallback called aft dev.pop"<<endl;
+    if(ptr)dev.pop(this);
     get_qap_fallback_counter()++;
   }
   void add_status(const t_rec&rec){
@@ -117,9 +110,7 @@ public:
 public:
   template<class TYPE>
   bool go_auto(TYPE&ref){
-    if(global_debug)cerr<<"bef template<class "<<typeid(TYPE).name()<<">go_auto::go_for_item"<<endl;
     return go_for_item(*this,ref);
-    if(global_debug)cerr<<"aft template<class "<<typeid(TYPE).name()<<">go_auto::go_for_item"<<endl;
   }
 public:
   template<class TYPE>
@@ -161,21 +152,7 @@ public:
     return ok;
   }
 };
-class t_load_dev_dummy : public i_dev {
-public:
-  void push(t_fallback* ptr) override {
-    std::cerr << "t_load_dev_dummy::push called\n";
-    ThrowAndPrintStackTrace("Critical error: t_load_dev_dummy::push called");
-  }
-  void pop(t_fallback* ptr) override {
-    std::cerr << "t_load_dev_dummy::pop called\n";
-    ThrowAndPrintStackTrace("Critical error: t_load_dev_dummy::pop called");
-  }
-};
-i_dev&get_dummy_load_dev(){
-  static t_load_dev_dummy dev;
-  return dev;
-}
+
 class t_load_dev:public i_dev{
 public:
   //IEnvRTTI&Env;
@@ -186,16 +163,7 @@ public:
   t_fallback main;
   size_t maxpos_pop;
 public:
-  t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos),maxpos_pop(pos),main(get_dummy_load_dev(),load_dev_dummy_str){stack.push_back(&main);}
-public:
- ~t_load_dev(){
-    //if(global_debug) {
-      if(global_debug)cerr << "Destructor t_load_dev called, pos=" << pos << ", maxpos=" << maxpos << ", stack.size()=" << stack.size() << endl;
-      if(global_debug)for(auto* p : stack) {
-        cerr << " stack ptr: " << p << endl;
-      }
-    //}
-  }
+  t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos),maxpos_pop(pos),main(*(i_dev*)nullptr,nullptr){stack.push_back(&main);}
 public:
   void push(t_fallback*ptr){
     QapAssert(ptr);
@@ -207,23 +175,13 @@ public:
     ptr->optional.ok=false;
     ptr->optional.scope=ptr;
     maxpos=std::max(maxpos,pos);
-    if(global_debug)cerr << "push: ptr=" << ptr << ", stack.size=" << stack.size() << endl;
   }
   void pop(t_fallback*ptr){
     maxpos_pop=std::max(maxpos_pop,pos);
     QapAssert(ptr);
     QapAssert(!stack.empty());
     QapAssert(stack.back()==ptr);
-    if(stack.empty()){
-      ThrowAndPrintStackTrace("Error: stack became empty after pop");
-      return;
-    }
     stack.pop_back();
-    if(stack.empty()){
-      ThrowAndPrintStackTrace("Error: stack became empty after pop");
-      return;
-    }
-    if(global_debug)cerr << "pop: ptr=" << ptr << ", stack.size=" << stack.size() << endl;
     t_fallback::t_rec status;
     bool skip=this->pos==ptr->pos;
     bool ok=ptr->ok;
@@ -566,11 +524,8 @@ public:
   vector<t_fallback*> stack;
 public:
   t_save_dev(/*IEnvRTTI&Env,*/string&mem):/*Env(Env),*/mem(mem){}
-  ~t_save_dev(){
-    if(global_debug)cerr<<"~t_save_dev;"<<endl;
-  }
 public:
-  void push(t_fallback*ptr)override{
+  void push(t_fallback*ptr){
     QapAssert(ptr);
     for(int i=0;i<stack.size();i++)QapAssert(stack[i]!=ptr);
     stack.push_back(ptr);
@@ -578,17 +533,15 @@ public:
     ptr->mandatory.ok=true;
     ptr->mandatory.scope=ptr;
     ptr->optional.ok=false;
-    ptr->optional.scope=ptr;    
-    if(global_debug) std::cerr << "t_save_dev::push ptr=" << ptr << " stack.size=" << stack.size() << std::endl;
+    ptr->optional.scope=ptr;
   }
-  void pop(t_fallback*ptr)override{
+  void pop(t_fallback*ptr){
     QapAssert(ptr);
     QapAssert(!stack.empty());
     QapAssert(stack.back()==ptr);
     stack.pop_back();
     if(ptr->ok)return;
     this->mem.resize(ptr->pos);
-    if(global_debug) std::cerr << "t_save_dev::pop ptr=" << ptr << " stack.size=" << stack.size() << std::endl;
   }
   void getPos(int&pos){pos=mem.size();}
   void setPos(int pos){QapAssert(mem.size()>=pos);mem.resize(pos);}
@@ -942,17 +895,13 @@ bool i_dev::go_str(string&ref)
     {
       TYPE value;
       int pos=0;getPos(pos);
-      if(global_debug)cerr<<"bef go_str<"<<typeid(TYPE).name()<<">::go_auto"<<endl;
       bool ok=go_auto(value);
-      if(global_debug)cerr<<"aft go_str<"<<typeid(TYPE).name()<<">::go_auto"<<endl;
       if(!ok)return ok;
       int curpos=0;getPos(curpos);
       QapAssert(curpos>pos);
       setPos(pos);
       auto count=curpos-pos;
-      if(global_debug)cerr<<"bef go_str<"<<typeid(TYPE).name()<<">::go_blob"<<endl;
       ok=go_blob(ref,count);
-      if(global_debug)cerr<<"aft go_str<"<<typeid(TYPE).name()<<">::go_blob"<<endl;
       QapAssert(ok);
       return ok;
     }
@@ -978,11 +927,8 @@ bool i_dev::go_str(string&ref)
         t_fallback subscope(*this,__FUNCTION__);
         bool&ok=subscope.ok;
         TYPE tmp;
-        if(global_debug)cerr<<"bef go_vec<"<<typeid(TYPE).name()<<">go_auto"<<endl;
         ok=go_auto(tmp);
-        if(global_debug)cerr<<"aft go_vec<"<<typeid(TYPE).name()<<">go_auto"<<endl;
         if(!ok)break;
-        if(global_debug)cerr<<"aft go_vec<"<<typeid(TYPE).name()<<">::break"<<endl;
         QapAssert(CheckTAutoPtrIsNotEmpty(tmp));
         arr.push_back(std::move(tmp));
       }
@@ -1120,12 +1066,9 @@ static bool go_for_item(
     return ok;
   }
   TYPE tmp;
-  if(global_debug)cerr<<"bef go_for_item<TAutoPtr<"<<typeid(TYPE).name()<<">>::tmp.go(dev)"<<endl;
   ok=tmp.go(dev);
-  if(global_debug)cerr<<"aft go_for_item<TAutoPtr<"<<typeid(TYPE).name()<<">>::tmp.go(dev)"<<endl;
   if(!ok)return ok;
   ref=make_unique<TYPE>(std::move(tmp));
-  if(global_debug)cerr<<"aft go_for_item<TAutoPtr<"<<typeid(TYPE).name()<<">>::make_unique"<<endl;
   //auto*p=ref.build<TYPE>(dev.getEnv());
   //*p=std::move(tmp);
   return ok;
@@ -1199,7 +1142,6 @@ static bool go_for_item(
   bool(TYPE::*pFunc)(i_dev&)=&TYPE::go,
   typename std::enable_if<!detail::isTAutoPtr<TYPE>::value,void*>::type=nullptr
 ){
-  if(global_debug)cerr<<"bef go_for_item<"<<typeid(TYPE).name()<<">::(ref.*pFunc)(dev)"<<endl;
   return (ref.*pFunc)(dev);
 }
 
@@ -1353,43 +1295,30 @@ static string two_text_diff(const string&out,const string&data)
 template<class TYPE>
 bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
 {
-  out=std::move(TYPE{});
+  out={};
   t_load_dev dev(data);auto&ldev=dev;
-  if(global_debug)cerr<<"bef load_obj::go_auto(out)"<<endl;
   bool ok=dev.go_auto(out);
-  if(global_debug)cerr<<"aft load_obj::go_auto(out)"<<endl;
   if(ok)
   {
     #ifdef QAP_LOAD_OBJ_DEBUG
     string output;
     t_save_dev dev(output);
-    if(global_debug)cerr<<"bef load_obj::t_save_dev::go_auto(out)"<<endl;
     bool ret=dev.go_auto(out);
-    if(global_debug)cerr<<"aft load_obj::t_save_dev::go_auto(out)"<<endl;
     QapAssert(ok==ret);
     if(ok&&ret)if(output!=data)
     {
-      if(global_debug)cerr<<"aft load_obj::output!=data"<<endl;
       auto d=data;
       QapAssert(output.size()<=data.size());
-      if(global_debug)cerr<<"bef load_obj::d.resize(output.size());"<<endl;
       d.resize(output.size());
       if(d==output){
-        if(global_debug)cerr<<"bef load_obj::t_error_tool"<<endl;
         auto out2=t_error_tool::get_codefrag(data,ldev.maxpos);
-        if(global_debug)cerr<<"aft load_obj::t_error_tool"<<endl;
         QapDebugMsg(out2);
       }else{
-        if(global_debug)cerr<<"bef load_obj::QapDebugMsg"<<endl;
         QapDebugMsg(two_text_diff(output,data));
       }
     }
     #endif
-  }else{
-    if(global_debug)cerr<<"bef load_obj::fail::move"<<endl;
-    out=std::move(TYPE{});
-    if(global_debug)cerr<<"aft load_obj::fail::move"<<endl;
-  }
+  }else out={};
   if(!ok&&pmaxpos){
     *pmaxpos=Clamp<int>(dev.maxpos+1,1,data.size())-1;
   }
@@ -1430,11 +1359,8 @@ template<class TYPE>
 bool save_obj(/*IEnvRTTI&Env,*/TYPE&inp,string&data)
 {
   string mem;
-  if(global_debug)cerr<<"bef save_obj::t_save_dev"<<endl;
   t_save_dev dev(/*Env,*/mem);
-  if(global_debug)cerr<<"aft save_obj::t_save_dev"<<endl;
   bool ok=dev.go_auto(inp);
-  if(global_debug)cerr<<"aft save_obj::dev.go_auto(inp);"<<endl;
   //QapAssert(ok);
   if(ok)
   {
@@ -1461,7 +1387,6 @@ bool save_obj(/*IEnvRTTI&Env,*/TYPE&inp,string&data)
     #endif
   }
   data=std::move(mem);
-  if(global_debug)cerr<<"aft save_obj::data=std::move(mem);"<<endl;
   return ok;
 }
 

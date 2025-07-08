@@ -357,7 +357,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     vector<string> childs;
     vector<t_struct_field> farr;
     bool is_interface=false;
-    t_lexer()=default;
     t_lexer(const t_lexer&)=delete;
     t_lexer&operator=(const t_lexer&)=delete;
     t_lexer(t_lexer&&)=default;
@@ -529,12 +528,10 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     string parent_info=!L.parent.empty()?"PARENT("+L.parent+")":"";
     string owner=dev.arr.size()?dev.arr.back().lexer.name:"";
     string owner_info=!owner.empty()?"OWNER("+owner+")":"";
-    cerr<<"lexer:"+L.name<<endl;
     DoGrab(r);
     dev.top.out+=out+"\n";
     interface_autogen();
     Do(r.body);
-    cerr<<"lexer_after Do(r.body):"+L.name<<endl;
     out.clear();
     do{
       auto&arr=dev.top.nesteds.list;
@@ -575,8 +572,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     provars.clear();
     cmd_id=-1;
     if(v.pfs)Do(*v.pfs);
-    
-    if(L.name=="t_number")cerr<<"Do(*v.pfs) :"+L.name<<endl;
     auto&body=dev.top.out;
     {
       t_templ_sys_v02::t_inp inp;
@@ -603,7 +598,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       t_out out;
     };
     t_target_item_out c;
-    if(L.name=="t_number")cerr<<"bef r.body&&!is_interface :"+L.name<<endl;
     if(r.body&&!is_interface)for(int iter=1;iter;iter--)
     {
       bool value_or_qst_or_const_found=false;
@@ -637,7 +631,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       t_out&out=c.out;auto&c=out;
       for(int iter=1;iter;iter--)
       {
-        if(L.name=="t_number")cerr<<"bef t_target_struct::t_body_impl::UberCast :"+L.name<<endl;
         {
           auto*pb=t_target_struct::t_body_impl::UberCast(r.body.get());
           if(!pb)continue;
@@ -649,7 +642,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
             to=ex.get();
           }
         }
-        if(L.name=="t_number")cerr<<"aft t_target_struct::t_body_impl::UberCast :"+L.name<<endl;
         //if(!r.body.fcc)break;
         //if(v.pcmds||v.pfs)QapAssert(bool(v.pcmds)!=bool(v.pfs));
         if(v.pcmds)
@@ -665,7 +657,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           int gg=1;
         }
       }
-      if(L.name=="t_number")cerr<<"aft for(int iter=1;iter;iter--) :"+L.name<<endl;
       auto*pcmds=&c.procmds;
       if(vqcnb_mode&&v.pfs){
         QapAssert(c.procmds.empty());
@@ -682,36 +673,26 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           if(plexer){
             int gg=1;
           }
-          if(L.name=="t_number")cerr<<"aft this->dev.get_sep_lex(pc->value); :"+L.name<<endl;
           if(p){
             field.cmdout.clear();
             field.as_cmd=true;
             cmd_id=i-1;
             Do(*p);// Do for Do
-            if(L.name=="t_number")cerr<<"aft Do for Do :"+L.name<<endl;
             field.as_cmd=false;
           }
           auto cmd=p?field.cmdout:plexer?string(pc->qst?"O":"M")+"+=go_auto($sep"+IToS(i)+");":"M+=go_const("+pc->value+");";
           t_struct_cmd sc;
-          if(L.name=="t_number")cerr<<cmd<<endl;
-          if(L.name=="t_number")cerr<<"bef load_obj_full(sc,cmd); :"+L.name<<endl;
-          if(L.name=="t_number")global_debug=true;
           auto res=load_obj_full(sc,cmd);
-          if(L.name=="t_number")global_debug=false;
-          if(L.name=="t_number")cerr<<"aft load_obj_full(sc,cmd); :"+L.name<<endl;
           if(!res.ok){
             QapDebugMsg("t_struct_field::make_cmd return wrong code:\n"+res.msg);
           }
           procmds.clear();
           cmd_id=i-1;
-          if(L.name=="t_number")cerr<<"bef Do(sc); :"+L.name<<endl;
           Do(sc);
-          if(L.name=="t_number")cerr<<"aft Do(sc); :"+L.name<<endl;
           cmds.push_back(procmds);
         }
         buf=join(cmds,"\n");
       }
-      if(L.name=="t_number")cerr<<"bef vector<string> pcs=split(*pcm... :"+L.name<<endl;
       vector<string> pcs=split(*pcmds,"\n");
       if(dev!="dev"){
         for(auto&ex:pcs){
@@ -724,9 +705,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       inp.add("SCOPE",s);
       inp.add("DEV",dev);
       body+=get_templ("GO_IMPL").eval(inp);
-      if(L.name=="t_number")cerr<<"aft body+=get_temp... :"+L.name<<endl;
     }
-    if(L.name=="t_number")cerr<<"aft r.body&&!is_interface :"+L.name<<endl;
     if(!c.out.nested.empty())if(c.out.nested.size()>2)
     {
       auto iarr=get_iarr(c.out.nested);
@@ -742,7 +721,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       inp.add("DO_LIST",join(dolist,"\n"));
       body+=get_templ("NESTED_VISITOR").eval(inp);
     }
-    if(L.name=="t_number")cerr<<"bef need_attrs :"+L.name<<endl;
     if(bool need_attrs=true)for(int iter=1;iter;iter--){
       vector<string> oarr;
       if(!v.pfs)break;
@@ -824,7 +802,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     if(!c.out.cppcode.empty()){
       body+=c.out.cppcode;
     }
-    if(L.name=="t_number")cerr<<"bef before_head+out+body :"+L.name<<endl;
     body=std::move(before_head+out+body);
     body=drop_empty_lines(body);
     body+="\n};\n";
@@ -833,35 +810,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     string fullowner=get_fullpreowner();
     if(fullowner.size()){fullowner.pop_back();fullowner.pop_back();}
     string fullname=(fullowner.size()?fullowner+"::":"")+L.name;
-    /*
-      struct t_lexer{
-    string name;
-    string fullparent;
-    string fullname;
-    string fullowner;
-    vector<string> fields;
-    vector<string> cmds;
-    vector<string> childs;
-    vector<t_struct_field> farr;
-    bool is_interface=false;
-    t_lexer()=default;
-    t_lexer(const t_lexer&)=delete;
-    t_lexer&operator=(const t_lexer&)=delete;
-    t_lexer(t_lexer&&)=default;
-    t_lexer&operator=(t_lexer&&)=default;
-  };
-    */
-    t_lexer OL;
-    OL.name=L.name;
-    OL.fullparent=get_fullparent();
-    OL.fullname=fullname;
-    OL.fullowner=fullowner;
-    OL.fields=std::move(lexer_fields);
-    OL.cmds=std::move(lexer_cmds);
-    OL.childs=is_interface?at_end.back().childs:vector<string>{};
-    OL.farr;
-    OL.is_interface=is_interface;
-    lexers.push_back(std::move(OL));
+    lexers.push_back({L.name,get_fullparent(),fullname,fullowner,std::move(lexer_fields),std::move(lexer_cmds),is_interface?at_end.back().childs:vector<string>{},{},is_interface});
     dev.pop();
   }
   string get_fullpreowner(){
@@ -919,10 +868,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   void Do(t_target_using&r)override{if(!target_only)dev.add_sep_lex(r.s,r.lexer);}
   void Do(t_target_typedef&r)override{
     if(target_only)return;
-    cerr<<"typedef:"+dev.top.lexer.name<<endl;
     string t;
     QapAssert(save_obj(r.type,t));
-    cerr<<"typedef_after_save_obj:"+dev.top.lexer.name<<endl;
     dev.top.out+="typedef "+t+" "+r.name.value+";\n";
   }
   void Do(t_sep_field&r)override{}
