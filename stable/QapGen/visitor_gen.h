@@ -1,6 +1,7 @@
 //#include "StdAfx.h"
 
 struct t_meta_lexer;
+
 #include "meta_lexer.inl"
 #include "templ_lexer_v02.inl"
 
@@ -692,7 +693,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           }
           auto cmd=p?field.cmdout:plexer?string(pc->qst?"O":"M")+"+=go_auto($sep"+IToS(i)+");":"M+=go_const("+pc->value+");";
           t_struct_cmd sc;
-          cerr<<cmd<<endl;
+          if(L.name=="t_number")cerr<<cmd<<endl;
           if(L.name=="t_number")cerr<<"bef load_obj_full(sc,cmd); :"+L.name<<endl;
           if(L.name=="t_number")global_debug=true;
           auto res=load_obj_full(sc,cmd);

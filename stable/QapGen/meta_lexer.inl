@@ -5133,8 +5133,11 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
+        if(global_debug)cerr<<"bef t_cmd_param::t_impl::go_vec+"<<endl;
         ok=dev.go_vec(arr,"+");
+        if(global_debug)cerr<<"aft t_cmd_param::t_impl::go_vec+"<<endl;
         if(!ok)return ok;
+        if(global_debug)cerr<<"aft t_cmd_param::t_impl::ok"<<endl;
         return ok;
       }
     };
@@ -5156,13 +5159,17 @@ struct t_cmd_param;
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
         ok=dev.go_auto(func);
+        if(global_debug)cerr<<"aft t_expr_call::func"<<endl;
         if(!ok)return ok;
         ok=dev.go_const("(");
         if(!ok)return ok;
+        if(global_debug)cerr<<"bef t_expr_call::params"<<endl;
         ok=dev.go_auto(params);
+        if(global_debug)cerr<<"aft t_expr_call::params"<<endl;
         if(!ok)return ok;
         ok=dev.go_const(")");
         if(!ok)return ok;
+        if(global_debug)cerr<<"aft t_expr_call::ok"<<endl;
         return ok;
       }
     };
@@ -5182,7 +5189,9 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
+        if(global_debug)cerr<<"bef go_str<t_str_seq>"<<endl;
         ok=dev.go_str<t_str_seq>(body);
+        if(global_debug)cerr<<"aft go_str<t_str_seq>"<<endl;
         if(!ok)return ok;
         return ok;
       }
@@ -5250,7 +5259,9 @@ struct t_cmd_param;
         t_fallback $(dev,__FUNCTION__);
         auto&ok=$.ok;
         ok=dev.go_str<t_impl>(body);
+        if(global_debug)cerr<<"aft go_str<t_impl>"<<endl;
         if(!ok)return ok;
+        if(global_debug)cerr<<"t_expr_var::ok"<<endl;
         return ok;
       }
     public:
@@ -5274,7 +5285,9 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,__FUNCTION__);
       auto&ok=$.ok;
+      if(global_debug)cerr<<"bef t_cmd_param::go_str<t_impl>"<<endl;
       ok=dev.go_str<t_impl>(body);
+      if(global_debug)cerr<<"aft t_cmd_param::go_str<t_impl>"<<endl;
       if(!ok)return ok;
       return ok;
     }
