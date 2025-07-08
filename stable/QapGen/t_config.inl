@@ -118,8 +118,11 @@ public:
       auto&O=scope.optional;
       if(global_debug)cerr<<"bef t_line::M+=dev.go_any(head,gen_dips"<<endl;
       M+=dev.go_any(head,gen_dips("azAZ09")+"_$@:");
+      if(global_debug)cerr<<"aft t_line::M+=dev.go_any(head,gen_dips"<<endl;
+      if(global_debug)cerr<<"head='"<<escape_cpp_string(head)<<"'"<<endl;
       if(!ok)return ok;
       if(global_debug)cerr<<"bef t_line::====>"<<endl;
+      if(global_debug)if(dev.isLoad())cerr<<CToS(dev.get_char_lt())<<endl;
       M+=dev.go_const("\n====>");
       if(!ok)return ok;
       if(global_debug)cerr<<"bef t_line::[arr]"<<endl;
@@ -160,6 +163,7 @@ public:
       D+=dev.go_auto(lines);
       if(global_debug)cerr<<"aft t_doc::go_auto(lines)"<<endl;
       if(!ok)return ok;
+      if(global_debug)cerr<<"aft t_doc::ok"<<endl;
       return ok;
     }
   };

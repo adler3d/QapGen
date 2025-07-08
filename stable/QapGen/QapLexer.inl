@@ -1310,23 +1310,32 @@ bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
 {
   out={};
   t_load_dev dev(data);auto&ldev=dev;
+  if(global_debug)cerr<<"bef load_obj::go_auto(out)"<<endl;
   bool ok=dev.go_auto(out);
+  if(global_debug)cerr<<"aft load_obj::go_auto(out)"<<endl;
   if(ok)
   {
     #ifdef QAP_LOAD_OBJ_DEBUG
     string output;
     t_save_dev dev(output);
+    if(global_debug)cerr<<"bef load_obj::t_save_dev::go_auto(out)"<<endl;
     bool ret=dev.go_auto(out);
+    if(global_debug)cerr<<"aft load_obj::t_save_dev::go_auto(out)"<<endl;
     QapAssert(ok==ret);
     if(ok&&ret)if(output!=data)
     {
+      if(global_debug)cerr<<"aft load_obj::output!=data"<<endl;
       auto d=data;
       QapAssert(output.size()<=data.size());
+      if(global_debug)cerr<<"bef load_obj::d.resize(output.size());"<<endl;
       d.resize(output.size());
       if(d==output){
+        if(global_debug)cerr<<"bef load_obj::t_error_tool"<<endl;
         auto out2=t_error_tool::get_codefrag(data,ldev.maxpos);
+        if(global_debug)cerr<<"aft load_obj::t_error_tool"<<endl;
         QapDebugMsg(out2);
       }else{
+        if(global_debug)cerr<<"bef load_obj::QapDebugMsg"<<endl;
         QapDebugMsg(two_text_diff(output,data));
       }
     }
