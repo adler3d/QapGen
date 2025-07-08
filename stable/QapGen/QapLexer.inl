@@ -154,7 +154,15 @@ public:
     return ok;
   }
 };
-class t_load_dev_dummy:public i_dev{};
+class t_load_dev_dummy : public i_dev {
+public:
+  void push(t_fallback* ptr) override {
+    std::cerr << "t_load_dev_dummy::push called\n";
+  }
+  void pop(t_fallback* ptr) override {
+    std::cerr << "t_load_dev_dummy::pop called\n";
+  }
+};
 i_dev&get_dummy_load_dev(){
   static t_load_dev_dummy dev;
   return dev;
@@ -172,12 +180,12 @@ public:
   t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos),maxpos_pop(pos),main(get_dummy_load_dev(),"---::t_load_dev_dummy::---"){stack.push_back(&main);}
 public:
  ~t_load_dev(){
-    if(global_debug) {
+    //if(global_debug) {
       cerr << "Destructor t_load_dev called, pos=" << pos << ", maxpos=" << maxpos << ", stack.size()=" << stack.size() << endl;
       for(auto* p : stack) {
         cerr << " stack ptr: " << p << endl;
       }
-    }
+    //}
   }
 public:
   void push(t_fallback*ptr){

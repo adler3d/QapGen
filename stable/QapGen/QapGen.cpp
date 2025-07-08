@@ -29,7 +29,7 @@ size_t g_unique_pool_ptr_counter=0;
 #define make_unique make_unique_pool
 #endif
 #undef QapDebugMsg
-#define QapDebugMsg(MSG){cerr << "QapDebugMsg("+string(MSG)+")" << endl;}
+#define QapDebugMsg(MSG){cerr << "QapDebugMsg("+string(MSG)+")"<<__FILE__<<__LINE__<<__FUNCTION__<< endl;}
 bool global_debug=false;
 #include "detail.inl"
 #include "t_error_tool.inl"
