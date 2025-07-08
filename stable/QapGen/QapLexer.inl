@@ -154,7 +154,11 @@ public:
     return ok;
   }
 };
-
+class t_load_dev_dummy:public i_dev{};
+i_dev&get_dummy_load_dev(){
+  static t_load_dev_dummy dev;
+  return dev;
+}
 class t_load_dev:public i_dev{
 public:
   //IEnvRTTI&Env;
@@ -165,7 +169,16 @@ public:
   t_fallback main;
   size_t maxpos_pop;
 public:
-  t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos),maxpos_pop(pos),main(*(i_dev*)nullptr,nullptr){stack.push_back(&main);}
+  t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos),maxpos_pop(pos),main(get_dummy_load_dev(),"---::t_load_dev_dummy::---"){stack.push_back(&main);}
+public:
+ ~t_load_dev(){
+    if(global_debug) {
+      cerr << "Destructor t_load_dev called, pos=" << pos << ", maxpos=" << maxpos << ", stack.size()=" << stack.size() << endl;
+      for(auto* p : stack) {
+        cerr << " stack ptr: " << p << endl;
+      }
+    }
+  }
 public:
   void push(t_fallback*ptr){
     QapAssert(ptr);
@@ -184,6 +197,10 @@ public:
     QapAssert(!stack.empty());
     QapAssert(stack.back()==ptr);
     stack.pop_back();
+    if(stack.empty()){
+      QapDebugMsg("Error: stack became empty after pop");
+      return;
+    }
     t_fallback::t_rec status;
     bool skip=this->pos==ptr->pos;
     bool ok=ptr->ok;
