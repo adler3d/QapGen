@@ -542,6 +542,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   return 0;
 }
 #else
+void ThrowAndPrintStackTrace(const std::string& message) {QapDebugMsg(message);}
 int main(int argc,char*argv[])
 {
   string fn;

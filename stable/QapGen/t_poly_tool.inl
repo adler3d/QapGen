@@ -37,7 +37,7 @@ struct t_poly_tool:public t_config_2013{
     }
     if(global_debug)cerr<<"bef t_poly_tool::get::load_obj"<<endl;
     clock.Stop();clock.Start();
-    QapAssert(load_obj(/*Env,*/doc,IO.mem));
+    if(!IO.mem.empty())QapAssert(load_obj(/*Env,*/doc,IO.mem));
     if(global_debug)cerr<<"aft t_poly_tool::get::load_obj"<<endl;
     clock.Stop();clock.Start();
     real time=clock.MS();
