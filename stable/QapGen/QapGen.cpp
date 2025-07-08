@@ -31,7 +31,7 @@ size_t g_unique_pool_ptr_counter=0;
 #undef QapAssert
 #undef QapDebugMsg
 #define QapDebugMsg(MSG){cerr << "QapDebugMsg("+string(MSG)+")"<<__FILE__<<__LINE__<<__FUNCTION__<< endl;}
-#define QapAssert(COND){if(!COND)cerr << #COND<<" "<<__FILE__<<__LINE__<<__FUNCTION__<< << endl;}
+#define QapAssert(COND){if(!(COND))cerr << #COND<<" "<<__FILE__<<__LINE__<<__FUNCTION__<< endl;}
 bool global_debug=false;
 void ThrowAndPrintStackTrace(const std::string& message);
 #include "detail.inl"
