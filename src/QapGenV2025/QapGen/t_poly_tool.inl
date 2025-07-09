@@ -5,7 +5,7 @@ struct t_poly_tool:public t_config_2013{
   //};
   t_doc doc;
   static t_poly_tool&get(/*IEnvRTTI&Env*/){
-    static const string fn="config.cfg";
+    static const string fn=g_qap_poly_tool_config_path+"config.cfg";
     static t_poly_tool tool;
     static t_doc&doc=tool.doc;
     static QapClock clock;

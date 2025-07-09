@@ -1108,3 +1108,14 @@ std::string generate_gen_dips_code(const std::string&chars){
   return code;
 }
 
+string get_path(const string&fn){
+  string s=fn;
+  auto apos=s.rfind("/");
+  auto bpos=s.rfind("\\");
+  auto split_by=[&](const string&it){auto arr=split(s,it);arr.pop_back();s=join(arr,it)+it;};
+  if(apos==string::npos&&bpos==string::npos){return "";}else if(apos!=string::npos&&bpos!=string::npos){
+    if(apos>bpos)split_by("/");
+    if(bpos>apos)split_by("\\");
+  }else if(apos==string::npos){split_by("\\");}else split_by("/");
+  return s;
+}

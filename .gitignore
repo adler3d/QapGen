@@ -50,3 +50,5 @@
 /src/SimpleCalc/Release/SimpleCalc.exe
 /src/SimpleCalc/SimpleCalc.obj
 /stable/Release/QapGen.exe
+/src/QapGenV2025/habr_stat_anna/merged.json
+/src/QapGenV2025/habr_stat_anna/habr_hubs_stats_saas_yearly.json
