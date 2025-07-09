@@ -1,3 +1,5 @@
+set -o errexit
+set -o pipefail
 cd stable
 chmod +x build.sh
 ./build.sh
