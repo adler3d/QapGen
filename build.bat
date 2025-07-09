@@ -1,12 +1,11 @@
 setlocal enabledelayedexpansion
-rem ¬ключаем прерывание при ошибке
 set ERRORLEVEL=0
 cd stable
 if errorlevel 1 (
   echo err, stop working
   exit /b %errorlevel%
 )
-./build.bat
+call ./build.bat
 if errorlevel 1 (
   echo err, stop working
   exit /b %errorlevel%
@@ -16,7 +15,7 @@ if errorlevel 1 (
   echo err, stop working
   exit /b %errorlevel%
 )
-./build.bat
+call ./build.bat
 if errorlevel 1 (
   echo err, stop working
   exit /b %errorlevel%

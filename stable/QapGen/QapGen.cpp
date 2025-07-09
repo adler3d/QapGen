@@ -32,6 +32,8 @@ string g_version="{\"version\":\"1.0\"}";
 #include "t_error_tool.inl"
 #include "QapLexer.inl"
 #include "t_config.inl"
+string g_qap_poly_tool_config_path;
+string g_qap_poly_tool_config_path2;
 #include "t_poly_tool.inl"
 //typedef array<char,2> ARRAY2char;
 //typedef array<char,4> ARRAY4char;
@@ -391,10 +393,14 @@ void printMapsJsonLike(
 }
 #pragma comment(lib,"user32")
 #pragma comment(lib,"shell32.lib")
-
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
   cerr<<g_version<<endl;
+  int argc=0;
+  LPWSTR*argv=CommandLineToArgvW(GetCommandLineW(),&argc);
+  string path;path.resize(wcslen(argv[0]));
+  wcstombs(&path[0],argv[0],wcslen(argv[0])+1);
+  g_qap_poly_tool_config_path2=get_path(path);
   #ifdef JSON_TEST
   test20250630_json_test();  return 0;
   #else// 655.864 ms for 2 251 060 באיע 3.4322 mb/s vs nodejs(10.42mb/sec)
@@ -407,10 +413,11 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   //auto r=load_obj_full(json,"[1, 2, {\"a\":-10.5e2}]");
   //r.msg;
   UberCast_bench2();
-  int argc=0;
-  LPWSTR*argv=CommandLineToArgvW(GetCommandLineW(),&argc);
   string fn;if(argc>1)fn.resize(wcslen(argv[1]));
-  if(fn.size())wcstombs(&fn[0],argv[1],wcslen(argv[1])+1);
+  if(fn.size()){
+    wcstombs(&fn[0],argv[1],wcslen(argv[1])+1);
+    g_qap_poly_tool_config_path=get_path(fn);
+  }
   string no;if(argc>2)no.resize(wcslen(argv[2]));
   if(no.size())wcstombs(&no[0],argv[2],wcslen(argv[2])+1);
   //for(;;){
@@ -426,6 +433,8 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 int main(int argc,char*argv[])
 {
   cerr<<g_version<<endl;
+  string path;path=argv[1];
+  g_qap_poly_tool_config_path=get_path(path);
   string fn;
   if(argc>1)fn=argv[1];
   test_2025_06_10(fn);
