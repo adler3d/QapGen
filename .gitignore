@@ -52,3 +52,7 @@
 /stable/Release/QapGen.exe
 /src/QapGenV2025/habr_stat_anna/merged.json
 /src/QapGenV2025/habr_stat_anna/habr_hubs_stats_saas_yearly.json
+/src/QapGenV2025/habr_stat_anna/out.txt
+/src/QapGenV2025/Release/QapGen2.exe
+/src/QapGenV2025/habr_stat_anna/pegjs
+/src/QapGenV2025/habr_stat_anna/out_page_stats.json

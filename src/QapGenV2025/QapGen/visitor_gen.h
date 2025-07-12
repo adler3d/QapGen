@@ -973,10 +973,16 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     QapDebugMsg("can't find field '"+name+"' inside lexer '"+lexer.fullname+"'");
     return lexer.farr[0];
   }
-  string lexer2vecofchar(const t_lexer&lexer)const{
+  vector<string> lexers_stack_for_vecofchar;
+  string lexer2vecofchar(const t_lexer&lexer){
     if(lexer.is_interface){
       return polylexer2vecofchar(lexer);
     }
+    struct t_scope{vector<string>&arr;~t_scope(){arr.pop_back();}} scope{lexers_stack_for_vecofchar};
+    if(qap_find_str(lexers_stack_for_vecofchar,lexer.fullname).size()){
+      QapDebugMsg("reqursion detected! lexer: "+lexer.fullname);
+    }
+    lexers_stack_for_vecofchar.push_back(lexer.fullname);
     string out;
     for(auto&c:lexer.cmds){
       auto&fields=lexer.farr;
@@ -1071,13 +1077,18 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         if(!opt)return {false,true};
         return {true,false};
       };
-      if(fn=="go_auto"){
-        QapAssert(cmd.params.arr.size()==1);
+      if(fn=="go_auto"||fn=="go_vec"){
+        bool go_vec=fn=="go_vec";
+        if(go_vec){
+          int gg=1;
+        }
+        QapAssert(cmd.params.arr.size()==(fn=="go_vec"?2:1));
         auto&cpa0b=cmd.params.arr[0].body;
         auto&f=find_field(lexer,cpa0b);
         auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
         QapAssert(pvc);
         auto&v=pvc->var;
+        if(go_vec)QapAssert(v.name.value=="vector");
         if(v.name.value=="TAutoPtr"){
           auto r=for_autoptr(v,v.name.value);
           if(r.ret)return out;
@@ -1104,14 +1115,14 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         if(!opt)return out;
         continue;
       }
-      if(fn=="go_str"||fn=="go_vec"){
+      if(fn=="go_str"){
         QapAssert(cmd.params.arr.size()==1);
         auto&cpa0b=cmd.params.arr[0].body;
         auto&f=find_field(lexer,cpa0b);
         auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
         QapAssert(pvc);
         auto&v=pvc->var;
-        if(fn=="go_str"&&v.name.value!="string")QapDebugMsg("go_str support only string type of field");
+        if(v.name.value!="string")QapDebugMsg("go_str support only string type of field");
         QapAssert(cmd.templ_params.size());
         TAutoPtr<t_templ_params> tp;
         QapAssert(load_obj(tp,cmd.templ_params));
@@ -1280,7 +1291,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
     return out;
   }
-  string polylexer2vecofchar(const t_lexer&poly)const{
+  string polylexer2vecofchar(const t_lexer&poly){
     string out;
     for(auto&ex:poly.childs){
       auto*plexer=find_lexer_by_name_but_relative(ex,poly);

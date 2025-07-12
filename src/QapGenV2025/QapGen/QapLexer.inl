@@ -1295,7 +1295,7 @@ static string two_text_diff(const string&out,const string&data)
 template<class TYPE>
 bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
 {
-  out={};
+  out=std::move(TYPE{});
   t_load_dev dev(data);auto&ldev=dev;
   bool ok=dev.go_auto(out);
   if(ok)
@@ -1318,7 +1318,7 @@ bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
       }
     }
     #endif
-  }else out={};
+  }else out=std::move(TYPE{});
   if(!ok&&pmaxpos){
     *pmaxpos=Clamp<int>(dev.maxpos+1,1,data.size())-1;
   }

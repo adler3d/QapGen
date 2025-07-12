@@ -4,7 +4,7 @@
     <LocalDebuggerWorkingDirectory>$(SolutionDir)Release</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <ShowAllFiles>false</ShowAllFiles>
-    <LocalDebuggerCommandArguments>input.qapdsl.hpp test.json input.qapdsl.hpp</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>input.qapdsl.hpp</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)Release</LocalDebuggerWorkingDirectory>

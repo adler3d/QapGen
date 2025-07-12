@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const inputFile = path.resolve(__dirname, 'out/20250709/habr_hubs_stats_programming_weekly.json');//monthly
+const inputFile = path.resolve(__dirname, 'out/20250709/habr_hubs_stats_programming_monthly.json');//monthly
 const outputFile = path.resolve(__dirname, 'top_hubs_by_rating_filtered.json');
 
 const rawData = fs.readFileSync(inputFile, 'utf-8');
@@ -46,13 +46,9 @@ function calculateHubStats(data) {
   }
   return hubStats;
 }
-
-var tracet_hubs={cpp:1,c:1,programming:1,algorithms:1};
 // Считаем статистику по отфильтрованным хабам
 const hubStats = calculateHubStats(filteredHubsByCount);
-for(var k in tracet_hubs){
-  console.log(JSON.stringify(Object.values(hubStats).filter(e=>e.hub==k)));
-}
+
 // Создаём словарь avg_views по хабам
 const avgViewsByHub = {};
 for (const [hub, stats] of Object.entries(hubStats)) {
@@ -82,14 +78,16 @@ for (const [hub, articles] of Object.entries(filteredHubsByCount)) {
   //console.log(`${hub}: src ${articles.length}, after ${filteredData[hub].length}`);
 }
 let filteredHubStats = calculateHubStats(filteredData);
-for(var k in tracet_hubs){
-  console.log(JSON.stringify(Object.values(filteredHubStats).filter(e=>e.hub==k)));
-  console.log(hub2a[k]);
-}
 // Сортируем по avg_views по убыванию
 const sortedHubs = Object.values(filteredHubStats)
-  .filter(h => h.articles_count >= 0)
+  .filter(h => h.articles_count >= 4)
   .sort((a, b) => b.avg_views - a.avg_views);
+var c=fs.readFileSync("rel.json")+"";var rel=JSON.parse(c);
+var get_rel=h=>{
+  var arr=rel.filter(e=>e.hub==h);
+  if(arr.length)return arr[0].relevance;
+  return "unk";
+};
 // Выводим результаты
 console.log(`Rank | Hub                  | Avg Rating  | avg_views   | Views/Rating | Articles`);
 console.log('---------------------------------------------------------------------------------');
@@ -100,7 +98,7 @@ sortedHubs.slice(0, 46).forEach((hubInfo, idx) => {
     `${hubInfo.average_rating.toFixed(2).padEnd(11)} | ` +
     `${String(hubInfo.avg_views.toFixed(2)).padEnd(11)} | ` +
     `${hubInfo.views_per_rating.toFixed(2).padEnd(12)} | ` +
-    `${hubInfo.articles_count}`
+    `${hubInfo.articles_count}`+" rel:"+get_rel(hubInfo.hub)
   );
 });
 

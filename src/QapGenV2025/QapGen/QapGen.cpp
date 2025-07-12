@@ -39,6 +39,9 @@ string g_qap_poly_tool_config_path2;
 //typedef array<char,4> ARRAY4char;
 //#include "raw_cpp_lexem.inl"
 //#include "t_line_lexer.inl"
+namespace t_d7{
+//#include "t_d7_module.hpp"
+};
 //#define JSON_TEST
 #ifdef JSON_TEST
 #include "t_json.hpp"
@@ -354,7 +357,7 @@ void test20250630_json_test(){
   for(;;){
   TAutoPtr<t_json::i_value> v;
   QapClock clock;
-  load_obj_full(v,file_get_contents("test.json"));
+  auto r=load_obj_full(v,file_get_contents("test2.json"));
   cerr<<clock.MS()<<endl;
   }
 }
@@ -395,6 +398,9 @@ void printMapsJsonLike(
 #pragma comment(lib,"shell32.lib")
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
+  //t_d7::t_unit u;
+  //auto res=load_obj_full(u,file_get_contents("Basa.pas"));
+  //int gg=1;
   cerr<<g_version<<endl;
   int argc=0;
   LPWSTR*argv=CommandLineToArgvW(GetCommandLineW(),&argc);
