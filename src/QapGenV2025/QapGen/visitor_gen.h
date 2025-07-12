@@ -766,7 +766,20 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         inp.add("ADDLIST",join(viz_with_add(list),"\n"));
         inp.add("DO_LIST",join(viz_with_doo(list),"\n"));
         inp.add("COMMENT_DO_LIST",join(viz_with_cdo(list),"\n"));
-        before_head+=get_templ("VISITOR").eval(inp);
+        auto bh=get_templ("VISITOR").eval(inp);
+        auto lines=split(bh, "\n");
+        vector<string> filtered;
+        for(auto&line:lines){
+          auto tmp=line;
+          auto p=tmp.find_first_not_of(' ');
+          if(p==string::npos)continue;
+          tmp=tmp.substr(p);
+          if(tmp.size()<3||tmp.substr(0,3)!="//`"){
+            filtered.push_back(line);
+          }
+        }
+        bh=join(filtered,"\n");
+        before_head+=bh;
       }
       string body2;
       {
@@ -980,7 +993,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
     struct t_scope{vector<string>&arr;~t_scope(){arr.pop_back();}} scope{lexers_stack_for_vecofchar};
     if(qap_find_str(lexers_stack_for_vecofchar,lexer.fullname).size()){
-      QapDebugMsg("reqursion detected! lexer: "+lexer.fullname);
+      QapDebugMsg("recursion detected! lexer: "+lexer.fullname);
     }
     lexers_stack_for_vecofchar.push_back(lexer.fullname);
     string out;

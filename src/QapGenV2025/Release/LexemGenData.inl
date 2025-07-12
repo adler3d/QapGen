@@ -34,14 +34,14 @@ public:
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   };
-  // 10kk bench:     31.81 ns/call               59.41 ns/call
-  // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-  // Od   :          1678.17     vs              1610.70
-  // Debug:          4948.20     vs              4892.66
-  // compilation time:
-  // UC 32.21 // 4.61 sec //408%
-  // DC 28.73 // 1.13 sec
-  // empty 27.60 
+  //` 10kk bench:     31.81 ns/call               59.41 ns/call
+  //` O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
+  //` Od   :          1678.17     vs              1610.70
+  //` Debug:          4948.20     vs              4892.66
+  //` compilation time:
+  //` UC 32.21 // 4.61 sec //408%
+  //` DC 28.73 // 1.13 sec
+  //` empty 27.60 
   template<class TYPE>
   static TYPE*UberCast(^^^I_BASE^^^*p){
     if(!p)return nullptr;Is<TYPE,^^^I_BASE^^^_visitor> IS;p->Use(IS);return IS.ptr;

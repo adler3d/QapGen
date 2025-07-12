@@ -1,4 +1,4 @@
-// 3074.660600 ms
+// 4666.561700 ms
 //===>>===i_str_item_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -32,14 +32,6 @@ public:
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   };
-  // 10kk bench:     31.81 ns/call               59.41 ns/call
-  // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-  // Od   :          1678.17     vs              1610.70
-  // Debug:          4948.20     vs              4892.66
-  // compilation time:
-  // UC 32.21 // 4.61 sec //408%
-  // DC 28.73 // 1.13 sec
-  // empty 27.60 
   template<class TYPE>
   static TYPE*UberCast(i_str_item*p){
     if(!p)return nullptr;Is<TYPE,i_str_item_visitor> IS;p->Use(IS);return IS.ptr;
@@ -121,14 +113,6 @@ public:
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   };
-  // 10kk bench:     31.81 ns/call               59.41 ns/call
-  // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-  // Od   :          1678.17     vs              1610.70
-  // Debug:          4948.20     vs              4892.66
-  // compilation time:
-  // UC 32.21 // 4.61 sec //408%
-  // DC 28.73 // 1.13 sec
-  // empty 27.60 
   template<class TYPE>
   static TYPE*UberCast(i_char_item*p){
     if(!p)return nullptr;Is<TYPE,i_char_item_visitor> IS;p->Use(IS);return IS.ptr;
@@ -209,14 +193,6 @@ public:
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   };
-  // 10kk bench:     31.81 ns/call               59.41 ns/call
-  // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-  // Od   :          1678.17     vs              1610.70
-  // Debug:          4948.20     vs              4892.66
-  // compilation time:
-  // UC 32.21 // 4.61 sec //408%
-  // DC 28.73 // 1.13 sec
-  // empty 27.60 
   template<class TYPE>
   static TYPE*UberCast(i_sep*p){
     if(!p)return nullptr;Is<TYPE,i_sep_visitor> IS;p->Use(IS);return IS.ptr;
@@ -297,14 +273,6 @@ public:
     LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
     #undef ADD
   };
-  // 10kk bench:     31.81 ns/call               59.41 ns/call
-  // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-  // Od   :          1678.17     vs              1610.70
-  // Debug:          4948.20     vs              4892.66
-  // compilation time:
-  // UC 32.21 // 4.61 sec //408%
-  // DC 28.73 // 1.13 sec
-  // empty 27.60 
   template<class TYPE>
   static TYPE*UberCast(i_simple_expr*p){
     if(!p)return nullptr;Is<TYPE,i_simple_expr_visitor> IS;p->Use(IS);return IS.ptr;
@@ -1136,14 +1104,6 @@ struct t_cppcore{
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
     template<class TYPE>
     static TYPE*UberCast(i_expr*p){
       if(!p)return nullptr;Is<TYPE,i_expr_visitor> IS;p->Use(IS);return IS.ptr;
@@ -1967,14 +1927,6 @@ return(
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
-      // 10kk bench:     31.81 ns/call               59.41 ns/call
-      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-      // Od   :          1678.17     vs              1610.70
-      // Debug:          4948.20     vs              4892.66
-      // compilation time:
-      // UC 32.21 // 4.61 sec //408%
-      // DC 28.73 // 1.13 sec
-      // empty 27.60 
       template<class TYPE>
       static TYPE*UberCast(i_val*p){
         if(!p)return nullptr;Is<TYPE,i_val_visitor> IS;p->Use(IS);return IS.ptr;
@@ -2285,14 +2237,6 @@ return(
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
-      // 10kk bench:     31.81 ns/call               59.41 ns/call
-      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-      // Od   :          1678.17     vs              1610.70
-      // Debug:          4948.20     vs              4892.66
-      // compilation time:
-      // UC 32.21 // 4.61 sec //408%
-      // DC 28.73 // 1.13 sec
-      // empty 27.60 
       template<class TYPE>
       static TYPE*UberCast(i_val*p){
         if(!p)return nullptr;Is<TYPE,i_val_visitor> IS;p->Use(IS);return IS.ptr;
@@ -2578,14 +2522,6 @@ return(
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
-      // 10kk bench:     31.81 ns/call               59.41 ns/call
-      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-      // Od   :          1678.17     vs              1610.70
-      // Debug:          4948.20     vs              4892.66
-      // compilation time:
-      // UC 32.21 // 4.61 sec //408%
-      // DC 28.73 // 1.13 sec
-      // empty 27.60 
       template<class TYPE>
       static TYPE*UberCast(i_part*p){
         if(!p)return nullptr;Is<TYPE,i_part_visitor> IS;p->Use(IS);return IS.ptr;
@@ -3015,14 +2951,6 @@ struct t_meta_lexer{
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
     template<class TYPE>
     static TYPE*UberCast(i_code*p){
       if(!p)return nullptr;Is<TYPE,i_code_visitor> IS;p->Use(IS);return IS.ptr;
@@ -3117,14 +3045,6 @@ struct t_meta_lexer{
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
     template<class TYPE>
     static TYPE*UberCast(i_code_with_sep*p){
       if(!p)return nullptr;Is<TYPE,i_code_with_sep_visitor> IS;p->Use(IS);return IS.ptr;
@@ -3215,14 +3135,6 @@ struct t_meta_lexer{
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
     template<class TYPE>
     static TYPE*UberCast(i_type_item*p){
       if(!p)return nullptr;Is<TYPE,i_type_item_visitor> IS;p->Use(IS);return IS.ptr;
@@ -3303,14 +3215,6 @@ struct t_meta_lexer{
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
     template<class TYPE>
     static TYPE*UberCast(i_type_templ*p){
       if(!p)return nullptr;Is<TYPE,i_type_templ_visitor> IS;p->Use(IS);return IS.ptr;
@@ -3387,14 +3291,6 @@ struct t_meta_lexer{
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
     template<class TYPE>
     static TYPE*UberCast(i_struct_cmd_xxxx*p){
       if(!p)return nullptr;Is<TYPE,i_struct_cmd_xxxx_visitor> IS;p->Use(IS);return IS.ptr;
@@ -3473,14 +3369,6 @@ struct t_meta_lexer{
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
     template<class TYPE>
     static TYPE*UberCast(i_struct_field*p){
       if(!p)return nullptr;Is<TYPE,i_struct_field_visitor> IS;p->Use(IS);return IS.ptr;
@@ -3562,14 +3450,6 @@ struct t_meta_lexer{
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
     template<class TYPE>
     static TYPE*UberCast(i_struct_cmd_so*p){
       if(!p)return nullptr;Is<TYPE,i_struct_cmd_so_visitor> IS;p->Use(IS);return IS.ptr;
@@ -3648,14 +3528,6 @@ struct t_meta_lexer{
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
     template<class TYPE>
     static TYPE*UberCast(i_cpp_code*p){
       if(!p)return nullptr;Is<TYPE,i_cpp_code_visitor> IS;p->Use(IS);return IS.ptr;
@@ -3735,14 +3607,6 @@ struct t_meta_lexer{
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
     template<class TYPE>
     static TYPE*UberCast(i_target_item*p){
       if(!p)return nullptr;Is<TYPE,i_target_item_visitor> IS;p->Use(IS);return IS.ptr;
@@ -4758,14 +4622,6 @@ struct t_type_item_type;
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
-      // 10kk bench:     31.81 ns/call               59.41 ns/call
-      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-      // Od   :          1678.17     vs              1610.70
-      // Debug:          4948.20     vs              4892.66
-      // compilation time:
-      // UC 32.21 // 4.61 sec //408%
-      // DC 28.73 // 1.13 sec
-      // empty 27.60 
       template<class TYPE>
       static TYPE*UberCast(i_sc_item*p){
         if(!p)return nullptr;Is<TYPE,i_sc_item_visitor> IS;p->Use(IS);return IS.ptr;
@@ -5066,14 +4922,6 @@ struct t_cmd_param;
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
-      // 10kk bench:     31.81 ns/call               59.41 ns/call
-      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-      // Od   :          1678.17     vs              1610.70
-      // Debug:          4948.20     vs              4892.66
-      // compilation time:
-      // UC 32.21 // 4.61 sec //408%
-      // DC 28.73 // 1.13 sec
-      // empty 27.60 
       template<class TYPE>
       static TYPE*UberCast(i_cmd_param_expr*p){
         if(!p)return nullptr;Is<TYPE,i_cmd_param_expr_visitor> IS;p->Use(IS);return IS.ptr;
@@ -5553,14 +5401,6 @@ struct t_cmd_param;
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
-      // 10kk bench:     31.81 ns/call               59.41 ns/call
-      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-      // Od   :          1678.17     vs              1610.70
-      // Debug:          4948.20     vs              4892.66
-      // compilation time:
-      // UC 32.21 // 4.61 sec //408%
-      // DC 28.73 // 1.13 sec
-      // empty 27.60 
       template<class TYPE>
       static TYPE*UberCast(i_major*p){
         if(!p)return nullptr;Is<TYPE,i_major_visitor> IS;p->Use(IS);return IS.ptr;
@@ -5639,14 +5479,6 @@ struct t_cmd_param;
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
-      // 10kk bench:     31.81 ns/call               59.41 ns/call
-      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-      // Od   :          1678.17     vs              1610.70
-      // Debug:          4948.20     vs              4892.66
-      // compilation time:
-      // UC 32.21 // 4.61 sec //408%
-      // DC 28.73 // 1.13 sec
-      // empty 27.60 
       template<class TYPE>
       static TYPE*UberCast(i_bayan*p){
         if(!p)return nullptr;Is<TYPE,i_bayan_visitor> IS;p->Use(IS);return IS.ptr;
@@ -5915,14 +5747,6 @@ struct t_cmd_param;
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
-      // 10kk bench:     31.81 ns/call               59.41 ns/call
-      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-      // Od   :          1678.17     vs              1610.70
-      // Debug:          4948.20     vs              4892.66
-      // compilation time:
-      // UC 32.21 // 4.61 sec //408%
-      // DC 28.73 // 1.13 sec
-      // empty 27.60 
       template<class TYPE>
       static TYPE*UberCast(i_struct_impl*p){
         if(!p)return nullptr;Is<TYPE,i_struct_impl_visitor> IS;p->Use(IS);return IS.ptr;
@@ -6184,14 +6008,6 @@ struct t_cmd_param;
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
-      // 10kk bench:     31.81 ns/call               59.41 ns/call
-      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-      // Od   :          1678.17     vs              1610.70
-      // Debug:          4948.20     vs              4892.66
-      // compilation time:
-      // UC 32.21 // 4.61 sec //408%
-      // DC 28.73 // 1.13 sec
-      // empty 27.60 
       template<class TYPE>
       static TYPE*UberCast(i_qa*p){
         if(!p)return nullptr;Is<TYPE,i_qa_visitor> IS;p->Use(IS);return IS.ptr;
