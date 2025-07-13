@@ -986,25 +986,43 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     QapDebugMsg("can't find field '"+name+"' inside lexer '"+lexer.fullname+"'");
     return lexer.farr[0];
   }
-  vector<string> lexers_stack_for_vecofchar;
+  struct t_lexer_for_vecofcar{
+    string fn;
+    bool is_interface;
+    string field;
+  };
+  vector<t_lexer_for_vecofcar> lexers_stack_for_vecofchar;
   string lexer2vecofchar(const t_lexer&lexer){
+    struct t_scope{decltype(lexers_stack_for_vecofchar)&arr;~t_scope(){arr.pop_back();}} scope{lexers_stack_for_vecofchar};
+    lexers_stack_for_vecofchar.push_back({lexer.fullname,lexer.is_interface});
+    bool found=false;int i=lexers_stack_for_vecofchar.size();
+    for(auto&ex:lexers_stack_for_vecofchar){
+      i--;
+      if(!i)continue;
+      if(lexer.fullname==ex.fn)found=true;
+    }
+    if(found){
+      string s;auto&arr=lexers_stack_for_vecofchar;
+      for(auto&ex:arr){s+=ex.fn+(ex.is_interface?"":"::"+ex.field)+"\n";}
+      QapDebugMsg("recursion detected! lexer: "+lexer.fullname+"\n"+s);
+    }
     if(lexer.is_interface){
       return polylexer2vecofchar(lexer);
     }
-    struct t_scope{vector<string>&arr;~t_scope(){arr.pop_back();}} scope{lexers_stack_for_vecofchar};
-    if(qap_find_str(lexers_stack_for_vecofchar,lexer.fullname).size()){
-      QapDebugMsg("recursion detected! lexer: "+lexer.fullname);
-    }
-    lexers_stack_for_vecofchar.push_back(lexer.fullname);
     string out;
     for(auto&c:lexer.cmds){
       auto&fields=lexer.farr;
       t_struct_cmd cmd;
       QapAssert(load_obj(cmd,c));
       auto*p=t_struct_cmd_mode::UberCast(cmd.mode.get());
-      //QapAssert(p);
       bool opt=p?p->body=='O':false;
-      auto fn=cmd.func.value;
+      const auto&fn=cmd.func.value;
+      if(bool need_field_name_for_recursion_solving=fn!="go_const"){
+        QapAssert(cmd.params.arr.size()>=1);
+        auto&cpa0b=cmd.params.arr[0].body;
+        auto&f=find_field(lexer,cpa0b);
+        lexers_stack_for_vecofchar.back().field=f.name.value;
+      }
       if(fn=="go_const"){
         QapAssert(cmd.params.arr.size()==1);
         auto s=cmd.params.arr[0].body;
@@ -1060,6 +1078,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       typedef t_cppcore::t_varcall_expr::t_var t_var;
       auto tp2var=[](const auto&tp,t_var&out){
         auto*ptp=t_cppcore::t_varcall_expr::t_template_part::UberCast(tp.get());
+        QapAssert(ptp);
         string s;save_obj(ptp->expr,s);
         QapAssert(load_obj(out,s));
       };
@@ -1320,9 +1339,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     vector<string> types;
     vector<string> sc;
     bool mega_fast=true;
-    if(poly.name.find("i_type_templ")!=string::npos){
-      int gg=1;
-    }
     for(auto&ex:poly.childs){
       auto*plexer=find_lexer_by_name_but_relative(ex,poly);
       QapAssert(plexer);
@@ -1381,7 +1397,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     prepare_lexers_chached_fields();
     for(auto&lexer:lexers){
       if(!lexer.is_interface)continue;
-      out+=polylexer2fastimpl(lexer)+"\n";
+      out+=lexer2vecofchar(lexer)+"\n";
       int gg_lexer=1;
     }
     return out;
