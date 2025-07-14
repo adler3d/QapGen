@@ -1,4 +1,4 @@
-// 4666.561700 ms
+// 5275.470900 ms
 //===>>===i_str_item_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -336,7 +336,7 @@ struct t_parent_fullname_reslove_algo_test_20250701{
   //<<<<<+=====t_other
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_parent_fullname_reslove_algo_test_20250701::t_other");
       auto&ok=$.ok;
       return ok;
     }
@@ -354,7 +354,7 @@ ADDEND()
 //<<<<<+=====t_parent_fullname_reslove_algo_test_20250701
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_parent_fullname_reslove_algo_test_20250701");
     auto&ok=$.ok;
     return ok;
   }
@@ -371,9 +371,9 @@ struct t_using_test_20250628{
   //<<<<<+=====t_sep
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_using_test_20250628::t_sep");
       auto&ok=$.ok;
-      ok=dev.go_const(" ");
+      ok=dev.go_const(" ");if(!ok)dev.log_error(1,",\" \"");
       if(!ok)return ok;
       return ok;
     }
@@ -391,7 +391,7 @@ struct t_foo;
       //<<<<<+=====t_baz
       public:
         bool go(i_dev&dev){
-          t_fallback $(dev,__FUNCTION__);
+          t_fallback $(dev,"t_using_test_20250628::t_foo::t_bar::t_baz");
           auto&ok=$.ok;
           return ok;
         }
@@ -409,7 +409,7 @@ struct t_foo;
     //<<<<<+=====t_bar
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_using_test_20250628::t_foo::t_bar");
         auto&ok=$.ok;
         return ok;
       }
@@ -432,15 +432,15 @@ struct t_foo;
   //<<<<<+=====t_foo
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_using_test_20250628::t_foo");
       auto&ok=$.ok;
-      ok=dev.go_auto(b);
+      ok=dev.go_auto(b);if(!ok)dev.log_error(1,"t_bar,\"\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep1);
+      ok=dev.go_auto($sep1);if(!ok)dev.log_error(1,"t_sep,\" \"");
       if(!ok)return ok;
-      dev.go_auto(c);
-      dev.go_auto(d);
-      dev.go_auto($sep4);
+      {bool ok=dev.go_auto(c);if(!ok)dev.log_error(0,"t_bar,\"\"");}
+      {bool ok=dev.go_auto(d);if(!ok)dev.log_error(0,"t_bar,\"\"");}
+      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\" \"");}
       return ok;
     }
   public:
@@ -460,9 +460,9 @@ ADDEND()
 //<<<<<+=====t_using_test_20250628
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_using_test_20250628");
     auto&ok=$.ok;
-    ok=dev.go_auto(foo);
+    ok=dev.go_auto(foo);if(!ok)dev.log_error(1,"t_foo,\"\"");
     if(!ok)return ok;
     return ok;
   }
@@ -479,10 +479,10 @@ ADDEND()
 //<<<<<+=====t_number
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_number");
     auto&ok=$.ok;
     static const auto g_static_var_0=CharMask::fromStr(gen_dips("09"));
-    ok=dev.go_any(body,g_static_var_0);
+    ok=dev.go_any(body,g_static_var_0);if(!ok)dev.log_error(1,",\"0123456789\"");
     if(!ok)return ok;
     return ok;
   }
@@ -503,10 +503,10 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_str_item_raw");
     auto&ok=$.ok;
     static const auto g_static_var_0=CharMask::fromStr(dip_inv("\"\\\n"));
-    ok=dev.go_any(body,g_static_var_0);
+    ok=dev.go_any(body,g_static_var_0);if(!ok)dev.log_error(1,",gen_dips(\"\\x00\\t\\x0B!#[]\\xFF\")");
     if(!ok)return ok;
     return ok;
   }
@@ -525,12 +525,12 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_str_item_hex");
     auto&ok=$.ok;
-    ok=dev.go_const("\\x");
+    ok=dev.go_const("\\x");if(!ok)dev.log_error(1,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr(gen_dips("09afAF"));
-    ok=dev.go_any_arr_char(body,g_static_var_1);
+    ok=dev.go_any_arr_char(body,g_static_var_1);if(!ok)dev.log_error(1,",gen_dips(\"09AFaf\")");
     if(!ok)return ok;
     return ok;
   }
@@ -549,12 +549,12 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_str_item_num");
     auto&ok=$.ok;
-    ok=dev.go_const("\\u");
+    ok=dev.go_const("\\u");if(!ok)dev.log_error(1,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-    ok=dev.go_any_arr_char(body,g_static_var_1);
+    ok=dev.go_any_arr_char(body,g_static_var_1);if(!ok)dev.log_error(1,",\"0123456789\"");
     if(!ok)return ok;
     return ok;
   }
@@ -573,12 +573,12 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_str_item_fix");
     auto&ok=$.ok;
-    ok=dev.go_const("\\");
+    ok=dev.go_const("\\");if(!ok)dev.log_error(1,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr("tfbrn\\\"\'"+gen_dips("07"));
-    ok=dev.go_any_char(body,g_static_var_1);
+    ok=dev.go_any_char(body,g_static_var_1);if(!ok)dev.log_error(1,",gen_dips(\"07\")+\"\\\"'\\\\bfnrt\"");
     if(!ok)return ok;
     return ok;
   }
@@ -595,13 +595,13 @@ struct t_str_item{
   //<<<<<+=====t_impl
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_str_item::t_impl");
       auto&ok=$.ok;
-      ok=dev.go_const("\"");
+      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
       if(!ok)return ok;
-      ok=dev.go_auto(arr);
+      ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");
       if(!ok)return ok;
-      ok=dev.go_const("\"");
+      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -620,9 +620,9 @@ ADDEND()
 //<<<<<+=====t_str_item
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_str_item");
     auto&ok=$.ok;
-    ok=dev.go_str<t_impl>(value);
+    ok=dev.go_str<t_impl>(value);if(!ok)dev.log_error(1,"t_impl,\"\\\"\"");
     if(!ok)return ok;
     return ok;
   }
@@ -642,10 +642,10 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_char_item_raw");
     auto&ok=$.ok;
     static const auto g_static_var_0=CharMask::fromStr(dip_inv("'\\\n"));
-    ok=dev.go_any(body,g_static_var_0);
+    ok=dev.go_any(body,g_static_var_0);if(!ok)dev.log_error(1,",gen_dips(\"\\x00\\t\\x0B&([]\\xFF\")");
     if(!ok)return ok;
     return ok;
   }
@@ -664,12 +664,12 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_char_item_hex");
     auto&ok=$.ok;
-    ok=dev.go_const("\\x");
+    ok=dev.go_const("\\x");if(!ok)dev.log_error(1,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr(gen_dips("09afAF"));
-    ok=dev.go_any_arr_char(body,g_static_var_1);
+    ok=dev.go_any_arr_char(body,g_static_var_1);if(!ok)dev.log_error(1,",gen_dips(\"09AFaf\")");
     if(!ok)return ok;
     return ok;
   }
@@ -688,12 +688,12 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_char_item_num");
     auto&ok=$.ok;
-    ok=dev.go_const("\\u");
+    ok=dev.go_const("\\u");if(!ok)dev.log_error(1,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-    ok=dev.go_any_arr_char(body,g_static_var_1);
+    ok=dev.go_any_arr_char(body,g_static_var_1);if(!ok)dev.log_error(1,",\"0123456789\"");
     if(!ok)return ok;
     return ok;
   }
@@ -712,12 +712,12 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_char_item_fix");
     auto&ok=$.ok;
-    ok=dev.go_const("\\");
+    ok=dev.go_const("\\");if(!ok)dev.log_error(1,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr("tfbrn\\\"\'"+gen_dips("07"));
-    ok=dev.go_any_char(body,g_static_var_1);
+    ok=dev.go_any_char(body,g_static_var_1);if(!ok)dev.log_error(1,",gen_dips(\"07\")+\"\\\"'\\\\bfnrt\"");
     if(!ok)return ok;
     return ok;
   }
@@ -734,13 +734,13 @@ struct t_char_item{
   //<<<<<+=====t_impl
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_char_item::t_impl");
       auto&ok=$.ok;
-      ok=dev.go_const("'");
+      ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_char_item>,gen_dips(\"\\x00\\t\\x0B&(\\xFF\")");
       if(!ok)return ok;
-      ok=dev.go_const("'");
+      ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
       if(!ok)return ok;
       return ok;
     }
@@ -759,9 +759,9 @@ ADDEND()
 //<<<<<+=====t_char_item
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_char_item");
     auto&ok=$.ok;
-    ok=dev.go_str<t_impl>(value);
+    ok=dev.go_str<t_impl>(value);if(!ok)dev.log_error(1,"t_impl,\"'\"");
     if(!ok)return ok;
     return ok;
   }
@@ -781,10 +781,10 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_sep_seq");
     auto&ok=$.ok;
     static const auto g_static_var_0=CharMask::fromStr(" \t\r\n");
-    ok=dev.go_any(body,g_static_var_0);
+    ok=dev.go_any(body,g_static_var_0);if(!ok)dev.log_error(1,",\" \\t\\r\\n\"");
     if(!ok)return ok;
     return ok;
   }
@@ -803,11 +803,11 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_c_comment");
     auto&ok=$.ok;
-    ok=dev.go_const("/*");
+    ok=dev.go_const("/*");if(!ok)dev.log_error(1,",\"/\"");
     if(!ok)return ok;
-    ok=dev.go_end(body,"*/");
+    ok=dev.go_end(body,"*/");if(!ok)dev.log_error(1,",\"*\"");
     if(!ok)return ok;
     return ok;
   }
@@ -826,12 +826,12 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_cpp_comment");
     auto&ok=$.ok;
-    ok=dev.go_const("//");
+    ok=dev.go_const("//");if(!ok)dev.log_error(1,",\"/\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr(dip_inv("\n"));
-    dev.go_any(body,g_static_var_1);
+    {bool ok=dev.go_any(body,g_static_var_1);if(!ok)dev.log_error(0,",gen_dips(\"\\x00\\t\\x0B\\xFF\")");}
     return ok;
   }
 };
@@ -847,9 +847,9 @@ struct t_sep{
   //<<<<<+=====t_impl
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_sep::t_impl");
       auto&ok=$.ok;
-      ok=dev.go_auto(arr);
+      ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_sep>>,\"\\t\\n\\r /\"");
       if(!ok)return ok;
       return ok;
     }
@@ -868,9 +868,9 @@ ADDEND()
 //<<<<<+=====t_sep
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_sep");
     auto&ok=$.ok;
-    ok=dev.go_str<t_impl>(value);
+    ok=dev.go_str<t_impl>(value);if(!ok)dev.log_error(1,"t_impl,\"\\t\\n\\r /\"");
     if(!ok)return ok;
     return ok;
   }
@@ -888,10 +888,10 @@ struct t_name{
   //<<<<<+=====t_keyword
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_name::t_keyword");
       auto&ok=$.ok;
       static const auto g_static_var_0=QapStrFinder::fromArr(split("new,delete,default,consteval,false,true,nullptr,this,struct,class,for,if,while,do,const,constexpr,else,operator,auto,continue,break,return,goto,virtual,override,public,private,protected,friend,template,typedef,using,namespace,decltype",","));
-      ok=dev.go_any_str_from_vec(value,g_static_var_0);
+      ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",gen_dips(\"agnprw\")+\"i\"");
       if(!ok)return ok;
       return ok;
     }
@@ -908,13 +908,13 @@ struct t_name{
   //<<<<<+=====t_impl
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_name::t_impl");
       auto&ok=$.ok;
       static const auto g_static_var_0=CharMask::fromStr(gen_dips("azAZ")+"_$@");
-      ok=dev.go_any_char(A,g_static_var_0);
+      ok=dev.go_any_char(A,g_static_var_0);if(!ok)dev.log_error(1,",gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
       static const auto g_static_var_1=CharMask::fromStr(gen_dips("azAZ09")+"_$@");
-      dev.go_any(B,g_static_var_1);
+      {bool ok=dev.go_any(B,g_static_var_1);if(!ok)dev.log_error(0,",gen_dips(\"09@Zaz\")+\"$_\"");}
       return ok;
     }
   };
@@ -929,9 +929,9 @@ struct t_name{
   //<<<<<+=====t_impl_ex
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_name::t_impl_ex");
       auto&ok=$.ok;
-      ok=dev.go_minor<t_keyword>(impl);
+      ok=dev.go_minor<t_keyword>(impl);if(!ok)dev.log_error(1,"minor!t_impl,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -952,9 +952,9 @@ ADDEND()
 //<<<<<+=====t_name
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_name");
     auto&ok=$.ok;
-    ok=dev.go_str<t_impl_ex>(value);
+    ok=dev.go_str<t_impl_ex>(value);if(!ok)dev.log_error(1,"t_impl_ex,gen_dips(\"@Zaz\")+\"$_\"");
     if(!ok)return ok;
     return ok;
   }
@@ -974,9 +974,9 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_str");
     auto&ok=$.ok;
-    ok=dev.go_auto(body);
+    ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_str_item,\"\\\"\"");
     if(!ok)return ok;
     return ok;
   }
@@ -995,9 +995,9 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_char");
     auto&ok=$.ok;
-    ok=dev.go_auto(body);
+    ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_char_item,\"'\"");
     if(!ok)return ok;
     return ok;
   }
@@ -1016,9 +1016,9 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_num");
     auto&ok=$.ok;
-    ok=dev.go_auto(body);
+    ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_number,\"0123456789\"");
     if(!ok)return ok;
     return ok;
   }
@@ -1037,9 +1037,9 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_id");
     auto&ok=$.ok;
-    ok=dev.go_auto(body);
+    ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
     if(!ok)return ok;
     return ok;
   }
@@ -1058,10 +1058,10 @@ public:
   static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_sign");
     auto&ok=$.ok;
     static const auto g_static_var_0=CharMask::fromStr("~|&=<>!:?;,.+-*/%^");
-    ok=dev.go_any_char(body,g_static_var_0);
+    ok=dev.go_any_char(body,g_static_var_0);if(!ok)dev.log_error(1,",gen_dips(\"%&*/:?\")+\"!^|~\"");
     if(!ok)return ok;
     return ok;
   }
@@ -1170,11 +1170,11 @@ struct t_cppcore{
   //<<<<<+=====t_lev03
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_lev03");
       auto&ok=$.ok;
       static const auto g_static_var_0=QapStrFinder::fromArr(split("+,-,!,~",","));
-      dev.go_any_str_from_vec(oper,g_static_var_0);
-      ok=dev.go_auto(expr);
+      {bool ok=dev.go_any_str_from_vec(oper,g_static_var_0);if(!ok)dev.log_error(0,",\"+-!~\"");}
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"TAutoPtr<i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -1191,10 +1191,10 @@ struct t_cppcore{
     //<<<<<+=====t_oper
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev05::t_oper");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("*,/,%",","));
-        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"*/%\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1211,11 +1211,11 @@ struct t_cppcore{
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev05::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);
+        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"%*/\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);
+        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev03,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1236,11 +1236,11 @@ struct t_cppcore{
   //<<<<<+=====t_lev05
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_lev05");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev03,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"%*/\"");}
       return ok;
     }
   public:
@@ -1257,10 +1257,10 @@ struct t_cppcore{
     //<<<<<+=====t_oper
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev06::t_oper");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("+,-",","));
-        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"+-\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1277,11 +1277,11 @@ struct t_cppcore{
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev06::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);
+        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"+-\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);
+        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev05,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1302,11 +1302,11 @@ struct t_cppcore{
   //<<<<<+=====t_lev06
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_lev06");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev05,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"+-\"");}
       return ok;
     }
   public:
@@ -1323,10 +1323,10 @@ struct t_cppcore{
     //<<<<<+=====t_oper
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev07::t_oper");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("<<,>>",","));
-        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"<>\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1343,11 +1343,11 @@ struct t_cppcore{
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev07::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);
+        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"<>\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);
+        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev06,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1368,11 +1368,11 @@ struct t_cppcore{
   //<<<<<+=====t_lev07
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_lev07");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev06,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"<>\"");}
       return ok;
     }
   public:
@@ -1389,10 +1389,10 @@ struct t_cppcore{
     //<<<<<+=====t_oper
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev08::t_oper");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("<,<=,>,>=",","));
-        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"<<>>\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1409,11 +1409,11 @@ struct t_cppcore{
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev08::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);
+        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"<>\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);
+        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev07,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1434,11 +1434,11 @@ struct t_cppcore{
   //<<<<<+=====t_lev08
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_lev08");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev07,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"<>\"");}
       return ok;
     }
   public:
@@ -1455,10 +1455,10 @@ struct t_cppcore{
     //<<<<<+=====t_oper
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev09::t_oper");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("==,!=",","));
-        ok=dev.go_any_str_from_vec(value,g_static_var_0);
+        ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"=!\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1475,11 +1475,11 @@ struct t_cppcore{
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev09::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);
+        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"!=\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);
+        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev08,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1500,11 +1500,11 @@ struct t_cppcore{
   //<<<<<+=====t_lev09
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_lev09");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev08,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"!=\"");}
       return ok;
     }
   public:
@@ -1520,9 +1520,9 @@ struct t_cppcore{
     //<<<<<+=====t_oper
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev10::t_oper");
         auto&ok=$.ok;
-        ok=dev.go_const("&");
+        ok=dev.go_const("&");if(!ok)dev.log_error(1,",\"&\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1540,11 +1540,11 @@ struct t_cppcore{
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev10::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);
+        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"&\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);
+        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev09,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1565,11 +1565,11 @@ struct t_cppcore{
   //<<<<<+=====t_lev10
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_lev10");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev09,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"&\"");}
       return ok;
     }
   public:
@@ -1585,9 +1585,9 @@ struct t_cppcore{
     //<<<<<+=====t_oper
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev11::t_oper");
         auto&ok=$.ok;
-        ok=dev.go_const("^");
+        ok=dev.go_const("^");if(!ok)dev.log_error(1,",\"^\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1605,11 +1605,11 @@ struct t_cppcore{
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev11::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);
+        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"^\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);
+        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev10,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1630,11 +1630,11 @@ struct t_cppcore{
   //<<<<<+=====t_lev11
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_lev11");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev10,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"^\"");}
       return ok;
     }
   public:
@@ -1650,9 +1650,9 @@ struct t_cppcore{
     //<<<<<+=====t_oper
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev12::t_oper");
         auto&ok=$.ok;
-        ok=dev.go_const("|");
+        ok=dev.go_const("|");if(!ok)dev.log_error(1,",\"|\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1670,11 +1670,11 @@ struct t_cppcore{
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev12::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);
+        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"|\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);
+        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev11,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1695,11 +1695,11 @@ struct t_cppcore{
   //<<<<<+=====t_lev12
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_lev12");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev11,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"|\"");}
       return ok;
     }
   public:
@@ -1715,9 +1715,9 @@ struct t_cppcore{
     //<<<<<+=====t_oper
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev13::t_oper");
         auto&ok=$.ok;
-        ok=dev.go_const("&&");
+        ok=dev.go_const("&&");if(!ok)dev.log_error(1,",\"&\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1735,11 +1735,11 @@ struct t_cppcore{
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev13::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);
+        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"&\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);
+        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev12,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1760,11 +1760,11 @@ struct t_cppcore{
   //<<<<<+=====t_lev13
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_lev13");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev12,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"&\"");}
       return ok;
     }
   public:
@@ -1780,9 +1780,9 @@ struct t_cppcore{
     //<<<<<+=====t_oper
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev14::t_oper");
         auto&ok=$.ok;
-        ok=dev.go_const("||");
+        ok=dev.go_const("||");if(!ok)dev.log_error(1,",\"|\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1800,11 +1800,11 @@ struct t_cppcore{
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_lev14::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);
+        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"|\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);
+        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev13,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1825,11 +1825,11 @@ struct t_cppcore{
   //<<<<<+=====t_lev14
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_lev14");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev13,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"|\"");}
       return ok;
     }
   public:
@@ -1884,12 +1884,12 @@ return(
   //<<<<<+=====t_string
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_string");
       auto&ok=$.ok;
-      ok=dev.go_const("\"");
+      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
       if(!ok)return ok;
-      dev.go_str<vector<TAutoPtr<i_str_item>>>(value);
-      ok=dev.go_const("\"");
+      {bool ok=dev.go_str<vector<TAutoPtr<i_str_item>>>(value);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");}
+      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -1984,9 +1984,9 @@ return(
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_int_expr::t_zero");
         auto&ok=$.ok;
-        ok=dev.go_const("0");
+        ok=dev.go_const("0");if(!ok)dev.log_error(1,",\"0\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2006,13 +2006,13 @@ return(
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_int_expr::t_num");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr(gen_dips("19"));
-        ok=dev.go_any_char(first,g_static_var_0);
+        ok=dev.go_any_char(first,g_static_var_0);if(!ok)dev.log_error(1,",\"123456789\"");
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-        dev.go_any(num,g_static_var_1);
+        {bool ok=dev.go_any(num,g_static_var_1);if(!ok)dev.log_error(0,",\"0123456789\"");}
         return ok;
       }
     };
@@ -2034,9 +2034,9 @@ return(
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_int_expr");
       auto&ok=$.ok;
-      ok=dev.go_str<TAutoPtr<i_val>>(value);
+      ok=dev.go_str<TAutoPtr<i_val>>(value);if(!ok)dev.log_error(1,"TAutoPtr<i_val>,\"0123456789\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2055,17 +2055,17 @@ return(
     //<<<<<+=====t_params
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_type_expr::t_params");
         auto&ok=$.ok;
-        ok=dev.go_const("{");
+        ok=dev.go_const("{");if(!ok)dev.log_error(1,",\"{\"");
         if(!ok)return ok;
-        ok=dev.go_str<t_type_expr>(type);
+        ok=dev.go_str<t_type_expr>(type);if(!ok)dev.log_error(1,"t_type_expr,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
-        ok=dev.go_const(",");
+        ok=dev.go_const(",");if(!ok)dev.log_error(1,",\",\"");
         if(!ok)return ok;
-        ok=dev.go_auto(count);
+        ok=dev.go_auto(count);if(!ok)dev.log_error(1,"t_int_expr,\"0123456789\"");
         if(!ok)return ok;
-        ok=dev.go_const("}");
+        ok=dev.go_const("}");if(!ok)dev.log_error(1,",\"}\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2082,11 +2082,11 @@ return(
     //<<<<<+=====t_elem
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_type_expr::t_elem");
         auto&ok=$.ok;
-        ok=dev.go_auto(name);
+        ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
-        dev.go_auto(params);
+        {bool ok=dev.go_auto(params);if(!ok)dev.log_error(0,"TAutoPtr<t_params>,\"{\"");}
         return ok;
       }
     };
@@ -2103,13 +2103,13 @@ return(
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_type_expr::t_item");
         auto&ok=$.ok;
-        dev.go_auto(sep0);
-        ok=dev.go_const("::");
+        {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        ok=dev.go_const("::");if(!ok)dev.log_error(1,",\":\"");
         if(!ok)return ok;
-        dev.go_auto(sep1);
-        ok=dev.go_auto(body);
+        {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_elem,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2131,11 +2131,11 @@ return(
   //<<<<<+=====t_type_expr
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_type_expr");
       auto&ok=$.ok;
-      ok=dev.go_auto(first);
+      ok=dev.go_auto(first);if(!ok)dev.log_error(1,"t_elem,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"\\t\\n\\r /:\"");}
       return ok;
     }
   public:
@@ -2154,9 +2154,9 @@ return(
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_char_expr");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_char_item,\"'\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2175,10 +2175,10 @@ return(
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_bool_expr");
       auto&ok=$.ok;
       static const auto g_static_var_0=QapStrFinder::fromArr(split("true,false",","));
-      ok=dev.go_any_str_from_vec(value,g_static_var_0);
+      ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"ft\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2197,9 +2197,9 @@ return(
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_string_expr");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_string,\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2292,12 +2292,12 @@ return(
     //<<<<<+=====t_frac
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_real_expr::t_frac");
         auto&ok=$.ok;
-        ok=dev.go_const(".");
+        ok=dev.go_const(".");if(!ok)dev.log_error(1,",\".\"");
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-        ok=dev.go_any(arr,g_static_var_1);
+        ok=dev.go_any(arr,g_static_var_1);if(!ok)dev.log_error(1,",\"0123456789\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2313,10 +2313,10 @@ return(
     //<<<<<+=====t_sign
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_real_expr::t_sign");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr("-+");
-        ok=dev.go_any_char(sign,g_static_var_0);
+        ok=dev.go_any_char(sign,g_static_var_0);if(!ok)dev.log_error(1,",\"-+\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2334,14 +2334,14 @@ return(
     //<<<<<+=====t_exp
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_real_expr::t_exp");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr("eE");
-        ok=dev.go_any_char(e,g_static_var_0);
+        ok=dev.go_any_char(e,g_static_var_0);if(!ok)dev.log_error(1,",\"eE\"");
         if(!ok)return ok;
-        dev.go_auto(sign);
+        {bool ok=dev.go_auto(sign);if(!ok)dev.log_error(0,"TAutoPtr<t_sign>,\"+-\"");}
         static const auto g_static_var_2=CharMask::fromStr(gen_dips("09"));
-        ok=dev.go_any(arr,g_static_var_2);
+        ok=dev.go_any(arr,g_static_var_2);if(!ok)dev.log_error(1,",\"0123456789\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2361,13 +2361,13 @@ return(
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_real_expr::t_num");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr(gen_dips("19"));
-        ok=dev.go_any_char(first,g_static_var_0);
+        ok=dev.go_any_char(first,g_static_var_0);if(!ok)dev.log_error(1,",\"123456789\"");
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-        dev.go_any(num,g_static_var_1);
+        {bool ok=dev.go_any(num,g_static_var_1);if(!ok)dev.log_error(0,",\"0123456789\"");}
         return ok;
       }
     };
@@ -2384,9 +2384,9 @@ return(
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_real_expr::t_zero");
         auto&ok=$.ok;
-        ok=dev.go_const("0");
+        ok=dev.go_const("0");if(!ok)dev.log_error(1,",\"0\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2404,13 +2404,13 @@ return(
     //<<<<<+=====t_impl
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_real_expr::t_impl");
         auto&ok=$.ok;
-        ok=dev.go_auto(val);
+        ok=dev.go_auto(val);if(!ok)dev.log_error(1,"TAutoPtr<i_val>,\"0123456789\"");
         if(!ok)return ok;
-        ok=dev.go_auto(frac);
+        ok=dev.go_auto(frac);if(!ok)dev.log_error(1,"TAutoPtr<t_frac>,\".\"");
         if(!ok)return ok;
-        dev.go_auto(exp);
+        {bool ok=dev.go_auto(exp);if(!ok)dev.log_error(0,"TAutoPtr<t_exp>,\"Ee\"");}
         return ok;
       }
     };
@@ -2436,9 +2436,9 @@ return(
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_real_expr");
       auto&ok=$.ok;
-      ok=dev.go_str<t_impl>(value);
+      ok=dev.go_str<t_impl>(value);if(!ok)dev.log_error(1,"t_impl,\"0123456789\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2457,12 +2457,12 @@ return(
   //<<<<<+=====t_call_param
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_call_param");
       auto&ok=$.ok;
-      dev.go_auto(sep0);
-      ok=dev.go_auto(body);
+      {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_lev14,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      dev.go_auto(sep1);
+      {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -2478,13 +2478,13 @@ return(
   //<<<<<+=====t_call_params
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_call_params");
       auto&ok=$.ok;
-      ok=dev.go_const("(");
+      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
       if(!ok)return ok;
-      dev.go_auto(sep);
-      dev.go_vec(arr,",");
-      ok=dev.go_const(")");
+      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_vec(arr,",");if(!ok)dev.log_error(0,"vector<t_call_param>,gen_dips(\"\\t\\n \\\"'(/9@Zaz\")+\"\\r$+-_~\"");}
+      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2579,15 +2579,15 @@ return(
     //<<<<<+=====t_sb_expr
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_varcall_expr::t_sb_expr");
         auto&ok=$.ok;
-        ok=dev.go_const("[");
+        ok=dev.go_const("[");if(!ok)dev.log_error(1,",\"[\"");
         if(!ok)return ok;
-        dev.go_auto(sep0);
-        ok=dev.go_auto(expr);
+        {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev14,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
-        dev.go_auto(sep1);
-        ok=dev.go_const("]");
+        {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        ok=dev.go_const("]");if(!ok)dev.log_error(1,",\"]\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2606,13 +2606,13 @@ return(
       //<<<<<+=====t_elem
       public:
         bool go(i_dev&dev){
-          t_fallback $(dev,__FUNCTION__);
+          t_fallback $(dev,"t_cppcore::t_varcall_expr::t_dd_part::t_elem");
           auto&ok=$.ok;
-          dev.go_auto(sep0);
-          ok=dev.go_const("::");
+          {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+          ok=dev.go_const("::");if(!ok)dev.log_error(1,",\":\"");
           if(!ok)return ok;
-          dev.go_auto(sep1);
-          ok=dev.go_auto(name);
+          {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+          ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
           if(!ok)return ok;
           return ok;
         }
@@ -2634,9 +2634,9 @@ return(
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_varcall_expr::t_dd_part");
         auto&ok=$.ok;
-        ok=dev.go_auto(arr);
+        ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<t_elem>,\"\\t\\n\\r /:\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2659,17 +2659,17 @@ return(
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_varcall_expr::t_template_part");
         auto&ok=$.ok;
-        ok=dev.go_const("<");
+        ok=dev.go_const("<");if(!ok)dev.log_error(1,",\"<\"");
         if(!ok)return ok;
-        dev.go_auto(sep0);
-        ok=dev.go_vec(expr,",");
+        {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        ok=dev.go_vec(expr,",");if(!ok)dev.log_error(1,"vector<t_lev14>,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
-        dev.go_auto(sep1);
-        ok=dev.go_const(">");
+        {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        ok=dev.go_const(">");if(!ok)dev.log_error(1,",\">\"");
         if(!ok)return ok;
-        dev.go_auto(ddp);
+        {bool ok=dev.go_auto(ddp);if(!ok)dev.log_error(0,"TAutoPtr<t_dd_part>,\"\\t\\n\\r /:\"");}
         return ok;
       }
     };
@@ -2685,10 +2685,10 @@ return(
     //<<<<<+=====t_arr
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_varcall_expr::t_arr");
         auto&ok=$.ok;
-        dev.go_auto(sep);
-        ok=dev.go_auto(arr);
+        {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<t_sb_expr>,\"[\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2707,15 +2707,15 @@ return(
     //<<<<<+=====t_item
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_varcall_expr::t_item");
         auto&ok=$.ok;
-        dev.go_auto(sepB);
-        ok=dev.go_const(".");
+        {bool ok=dev.go_auto(sepB);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        ok=dev.go_const(".");if(!ok)dev.log_error(1,",\".\"");
         if(!ok)return ok;
-        dev.go_auto(sep0);
-        ok=dev.go_auto(name);
+        {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
-        dev.go_auto(arr);
+        {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"t_arr,\"\\t\\n\\r /[\"");}
         return ok;
       }
     };
@@ -2734,14 +2734,14 @@ return(
     //<<<<<+=====t_var
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_cppcore::t_varcall_expr::t_var");
         auto&ok=$.ok;
-        ok=dev.go_auto(name);
+        ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
-        dev.go_auto(sep0);
-        dev.go_auto(tp);
-        dev.go_auto(arr);
-        dev.go_auto(items);
+        {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        {bool ok=dev.go_auto(tp);if(!ok)dev.log_error(0,"TAutoPtr<i_part>,\"\\t\\n\\r /:<\"");}
+        {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"TAutoPtr<t_arr>,\"\\t\\n\\r /[\"");}
+        {bool ok=dev.go_auto(items);if(!ok)dev.log_error(0,"vector<t_item>,\"\\t\\n\\r ./\"");}
         return ok;
       }
     };
@@ -2769,12 +2769,12 @@ return(
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_varcall_expr");
       auto&ok=$.ok;
-      ok=dev.go_auto(var);
+      ok=dev.go_auto(var);if(!ok)dev.log_error(1,"t_var,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      dev.go_auto(sep);
-      dev.go_auto(params);
+      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(params);if(!ok)dev.log_error(0,"TAutoPtr<t_call_params>,\"(\"");}
       return ok;
     }
   public:
@@ -2793,13 +2793,13 @@ return(
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_cppcore::t_block_expr");
       auto&ok=$.ok;
-      ok=dev.go_const("(");
+      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_lev14,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      ok=dev.go_const(")");
+      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2844,7 +2844,7 @@ ADDEND()
 //<<<<<+=====t_cppcore
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_cppcore");
     auto&ok=$.ok;
     return ok;
   }
@@ -2861,7 +2861,7 @@ struct t_test20250618_atrr{
   //<<<<<+=====t_foo
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_test20250618_atrr::t_foo");
       auto&ok=$.ok;
       return ok;
     }
@@ -2881,11 +2881,11 @@ ADDEND()
 //<<<<<+=====t_test20250618_atrr
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_test20250618_atrr");
     auto&ok=$.ok;
-    ok=dev.go_auto(foo);
+    ok=dev.go_auto(foo);if(!ok)dev.log_error(1,"t_foo,\"\"");
     if(!ok)return ok;
-    ok=dev.go_auto(sep);
+    ok=dev.go_auto(sep);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
     if(!ok)return ok;
     return ok;
   }
@@ -3671,9 +3671,9 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_name_code");
       auto&ok=$.ok;
-      ok=dev.go_str<t_name::t_impl>(value);
+      ok=dev.go_str<t_name::t_impl>(value);if(!ok)dev.log_error(1,"t_name::t_impl,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3692,9 +3692,9 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_num_code");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_number,\"0123456789\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3710,12 +3710,12 @@ struct t_meta_lexer{
   //<<<<<+=====t_str_seq
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_str_seq");
       auto&ok=$.ok;
-      ok=dev.go_const("\"");
+      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
-      ok=dev.go_const("\"");
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");}
+      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3732,11 +3732,11 @@ struct t_meta_lexer{
   //<<<<<+=====t_sep_str_seq
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_sep_str_seq");
       auto&ok=$.ok;
-      ok=dev.go_auto($sep0);
+      ok=dev.go_auto($sep0);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_str_seq,\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3756,11 +3756,11 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_str_code");
       auto&ok=$.ok;
-      ok=dev.go_auto(first);
+      ok=dev.go_auto(first);if(!ok)dev.log_error(1,"t_str_seq,\"\\\"\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_sep_str_seq>,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3778,13 +3778,13 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_char_code");
       auto&ok=$.ok;
-      ok=dev.go_const("'");
+      ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_char_item>,gen_dips(\"\\x00\\t\\x0B&(\\xFF\")");
       if(!ok)return ok;
-      ok=dev.go_const("'");
+      ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3803,9 +3803,9 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_sign_code");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_sign,gen_dips(\"%&*/:?\")+\"!^|~\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3825,11 +3825,11 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_name_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_name_code,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      dev.go_auto(sep);
+      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3848,11 +3848,11 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_num_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_num_code,\"0123456789\"");
       if(!ok)return ok;
-      dev.go_auto(sep);
+      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3871,11 +3871,11 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_str_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_str_code,\"\\\"\"");
       if(!ok)return ok;
-      dev.go_auto(sep);
+      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3894,11 +3894,11 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_char_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_char_code,\"'\"");
       if(!ok)return ok;
-      dev.go_auto(sep);
+      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3917,11 +3917,11 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_sign_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_sign_code,gen_dips(\"%&*/:?\")+\"!^|~\"");
       if(!ok)return ok;
-      dev.go_auto(sep);
+      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3941,15 +3941,15 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_soft_brackets_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_const("(");
+      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
-      dev.go_auto(body);
-      ok=dev.go_const(")");
+      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_code_with_sep>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
       if(!ok)return ok;
-      dev.go_auto($sep4);
+      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3969,15 +3969,15 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_hard_brackets_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_const("[");
+      ok=dev.go_const("[");if(!ok)dev.log_error(1,",\"[\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
-      dev.go_auto(body);
-      ok=dev.go_const("]");
+      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_code_with_sep>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      ok=dev.go_const("]");if(!ok)dev.log_error(1,",\"]\"");
       if(!ok)return ok;
-      dev.go_auto($sep4);
+      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3997,15 +3997,15 @@ struct t_meta_lexer{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_curly_brackets_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_const("{");
+      ok=dev.go_const("{");if(!ok)dev.log_error(1,",\"{\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
-      dev.go_auto(body);
-      ok=dev.go_const("}");
+      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_code_with_sep>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      ok=dev.go_const("}");if(!ok)dev.log_error(1,",\"}\"");
       if(!ok)return ok;
-      dev.go_auto($sep4);
+      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -4054,9 +4054,9 @@ return out.join("\n");
   //<<<<<+=====t_code
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_code");
       auto&ok=$.ok;
-      ok=dev.go_auto(arr);
+      ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_code>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4077,14 +4077,14 @@ return out.join("\n");
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_soft_brackets_code");
       auto&ok=$.ok;
-      ok=dev.go_const("(");
+      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
       if(!ok)return ok;
-      dev.go_auto(sep0);
-      dev.go_auto(body);
-      dev.go_auto(sep1);
-      ok=dev.go_const(")");
+      {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"TAutoPtr<t_code>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4105,14 +4105,14 @@ return out.join("\n");
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_hard_brackets_code");
       auto&ok=$.ok;
-      ok=dev.go_const("[");
+      ok=dev.go_const("[");if(!ok)dev.log_error(1,",\"[\"");
       if(!ok)return ok;
-      dev.go_auto(sep0);
-      dev.go_auto(body);
-      dev.go_auto(sep1);
-      ok=dev.go_const("]");
+      {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"TAutoPtr<t_code>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const("]");if(!ok)dev.log_error(1,",\"]\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4133,14 +4133,14 @@ return out.join("\n");
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_curly_brackets_code");
       auto&ok=$.ok;
-      ok=dev.go_const("{");
+      ok=dev.go_const("{");if(!ok)dev.log_error(1,",\"{\"");
       if(!ok)return ok;
-      dev.go_auto(sep0);
-      dev.go_auto(body);
-      dev.go_auto(sep1);
-      ok=dev.go_const("}");
+      {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"TAutoPtr<t_code>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const("}");if(!ok)dev.log_error(1,",\"}\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4155,9 +4155,9 @@ return out.join("\n");
   //<<<<<+=====t_semicolon
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_semicolon");
       auto&ok=$.ok;
-      ok=dev.go_const(";");
+      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4173,9 +4173,9 @@ return out.join("\n");
   //<<<<<+=====t_value_item
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_value_item");
       auto&ok=$.ok;
-      ok=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);
+      ok=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);if(!ok)dev.log_error(1,"TAutoPtr<t_cppcore::i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4192,12 +4192,12 @@ return out.join("\n");
   //<<<<<+=====t_value
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_value");
       auto&ok=$.ok;
-      dev.go_auto($sep0);
-      ok=dev.go_const("=");
+      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const("=");if(!ok)dev.log_error(1,",\"=\"");
       if(!ok)return ok;
-      ok=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);
+      ok=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);if(!ok)dev.log_error(1,"TAutoPtr<t_cppcore::i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4212,9 +4212,9 @@ return out.join("\n");
   //<<<<<+=====t_type_scope
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_type_scope");
       auto&ok=$.ok;
-      ok=dev.go_const("::");
+      ok=dev.go_const("::");if(!ok)dev.log_error(1,",\":\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4230,9 +4230,9 @@ return out.join("\n");
   //<<<<<+=====t_type_templ
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_type_templ");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_type_templ>,\"(<\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4251,9 +4251,9 @@ return out.join("\n");
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_type_item_string");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_str_item,\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4272,9 +4272,9 @@ return out.join("\n");
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_type_item_char");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_char_item,\"'\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4293,9 +4293,9 @@ return out.join("\n");
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_type_item_number");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_number,\"0123456789\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4313,11 +4313,11 @@ struct t_type_item_type;
   //<<<<<+=====t_scope_type_item
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_scope_type_item");
       auto&ok=$.ok;
-      ok=dev.go_auto(scope);
+      ok=dev.go_auto(scope);if(!ok)dev.log_error(1,"t_type_scope,\":\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<t_type_item_type>,gen_dips(\"@Zaz\")+\"$:_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4339,13 +4339,13 @@ struct t_type_item_type;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_type_item_type");
       auto&ok=$.ok;
-      dev.go_auto(scope);
-      ok=dev.go_auto(type);
+      {bool ok=dev.go_auto(scope);if(!ok)dev.log_error(0,"TAutoPtr<t_type_scope>,\":\"");}
+      ok=dev.go_auto(type);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      dev.go_auto(param);
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(param);if(!ok)dev.log_error(0,"TAutoPtr<t_type_templ>,\"(<\"");}
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_scope_type_item>,\":\"");}
       return ok;
     }
   };
@@ -4361,10 +4361,10 @@ struct t_type_item_type;
   //<<<<<+=====t_type_expr2
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_type_expr2");
       auto&ok=$.ok;
-      dev.go_auto(scope);
-      ok=dev.go_auto(body);
+      {bool ok=dev.go_auto(scope);if(!ok)dev.log_error(0,"TAutoPtr<t_type_scope>,\":\"");}
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_type_item_type,gen_dips(\"@Zaz\")+\"$:_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4380,9 +4380,9 @@ struct t_type_item_type;
   //<<<<<+=====t_type_templ_param
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_type_templ_param");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_type_item>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4398,11 +4398,11 @@ struct t_type_item_type;
   //<<<<<+=====t_sep_type_templ_param
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_sep_type_templ_param");
       auto&ok=$.ok;
-      ok=dev.go_const(",");
+      ok=dev.go_const(",");if(!ok)dev.log_error(1,",\",\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_type_templ_param,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4419,11 +4419,11 @@ struct t_type_item_type;
   //<<<<<+=====t_type_templ_params
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_type_templ_params");
       auto&ok=$.ok;
-      ok=dev.go_auto(first);
+      ok=dev.go_auto(first);if(!ok)dev.log_error(1,"t_type_templ_param,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_sep_type_templ_param>,\",\"");}
       return ok;
     }
   };
@@ -4441,12 +4441,12 @@ struct t_type_item_type;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_type_templ_angle");
       auto&ok=$.ok;
-      ok=dev.go_const("<");
+      ok=dev.go_const("<");if(!ok)dev.log_error(1,",\"<\"");
       if(!ok)return ok;
-      dev.go_auto(params);
-      ok=dev.go_const(">");
+      {bool ok=dev.go_auto(params);if(!ok)dev.log_error(0,"TAutoPtr<t_type_templ_params>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");}
+      ok=dev.go_const(">");if(!ok)dev.log_error(1,",\">\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4465,12 +4465,12 @@ struct t_type_item_type;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_type_templ_soft");
       auto&ok=$.ok;
-      ok=dev.go_const("(");
+      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
       if(!ok)return ok;
-      dev.go_auto(params);
-      ok=dev.go_const(")");
+      {bool ok=dev.go_auto(params);if(!ok)dev.log_error(0,"TAutoPtr<t_type_templ_params>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");}
+      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4491,15 +4491,15 @@ struct t_type_item_type;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_struct_cmd_mode");
       auto&ok=$.ok;
       static const auto g_static_var_0=CharMask::fromStr("DMO");
-      ok=dev.go_any_char(body,g_static_var_0);
+      ok=dev.go_any_char(body,g_static_var_0);if(!ok)dev.log_error(1,",\"DMO\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
-      ok=dev.go_const("+=");
+      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const("+=");if(!ok)dev.log_error(1,",\"+\"");
       if(!ok)return ok;
-      dev.go_auto($sep3);
+      {bool ok=dev.go_auto($sep3);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -4516,12 +4516,12 @@ struct t_type_item_type;
   //<<<<<+=====t_sep_value
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_sep_value");
       auto&ok=$.ok;
-      dev.go_auto($sep0);
-      ok=dev.go_auto(value);
+      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_auto(value);if(!ok)dev.log_error(1,"t_value_item,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
-      dev.go_auto($sep2);
+      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -4537,13 +4537,13 @@ struct t_type_item_type;
   //<<<<<+=====t_attr
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_attr");
       auto&ok=$.ok;
-      ok=dev.go_const("[");
+      ok=dev.go_const("[");if(!ok)dev.log_error(1,",\"[\"");
       if(!ok)return ok;
-      dev.go_vec(arr,",");
-      dev.go_auto($sep2);
-      ok=dev.go_const("]");
+      {bool ok=dev.go_vec(arr,",");if(!ok)dev.log_error(0,"vector<t_sep_value>,gen_dips(\"\\t\\n'(/9@Zaz\")+\"\\r \\\"$_\"");}
+      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const("]");if(!ok)dev.log_error(1,",\"]\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4562,9 +4562,9 @@ struct t_type_item_type;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_sep_field");
       auto&ok=$.ok;
-      dev.go_auto($sep0);
+      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -4582,9 +4582,9 @@ struct t_type_item_type;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_semicolon_field");
       auto&ok=$.ok;
-      ok=dev.go_auto(sc);
+      ok=dev.go_auto(sc);if(!ok)dev.log_error(1,"TAutoPtr<t_semicolon>,\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4676,9 +4676,9 @@ struct t_type_item_type;
     //<<<<<+=====t_qst
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_const_field::t_qst");
         auto&ok=$.ok;
-        ok=dev.go_const("?");
+        ok=dev.go_const("?");if(!ok)dev.log_error(1,",\"?\"");
         if(!ok)return ok;
         return ok;
       }
@@ -4697,9 +4697,9 @@ struct t_type_item_type;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_const_field::t_c_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(body);
+        ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_char_item,\"'\"");
         if(!ok)return ok;
         return ok;
       }
@@ -4718,9 +4718,9 @@ struct t_type_item_type;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_const_field::t_s_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(body);
+        ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_str_item,\"\\\"\"");
         if(!ok)return ok;
         return ok;
       }
@@ -4749,15 +4749,15 @@ struct t_type_item_type;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_const_field");
       auto&ok=$.ok;
-      ok=dev.go_str<TAutoPtr<i_sc_item>>(value);
+      ok=dev.go_str<TAutoPtr<i_sc_item>>(value);if(!ok)dev.log_error(1,"TAutoPtr<i_sc_item>,\"\\\"'\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
-      dev.go_auto(qst);
-      dev.go_auto($sep3);
-      dev.go_auto(sc);
-      dev.go_auto($sep5);
+      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(qst);if(!ok)dev.log_error(0,"TAutoPtr<t_qst>,\"?\"");}
+      {bool ok=dev.go_auto($sep3);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(sc);if(!ok)dev.log_error(0,"TAutoPtr<t_semicolon>,\";\"");}
+      {bool ok=dev.go_auto($sep5);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   public:
@@ -4775,13 +4775,13 @@ struct t_type_item_type;
   //<<<<<+=====t_struct_field_value
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_struct_field_value");
       auto&ok=$.ok;
-      dev.go_auto($sep0);
-      ok=dev.go_const("=");
+      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const("=");if(!ok)dev.log_error(1,",\"=\"");
       if(!ok)return ok;
-      dev.go_auto($sep2);
-      ok=dev.go_auto(expr);
+      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"TAutoPtr<t_cppcore::t_varcall_expr>,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4797,10 +4797,10 @@ struct t_type_item_type;
   //<<<<<+=====t_qst
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_qst");
       auto&ok=$.ok;
       static const auto g_static_var_0=CharMask::fromStr("*?");
-      ok=dev.go_any(s,g_static_var_0);
+      ok=dev.go_any(s,g_static_var_0);if(!ok)dev.log_error(1,",\"*?\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4828,22 +4828,22 @@ struct t_type_item_type;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_struct_field");
       auto&ok=$.ok;
-      ok=dev.go_auto(type);
+      ok=dev.go_auto(type);if(!ok)dev.log_error(1,"TAutoPtr<t_cppcore::i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
-      ok=dev.go_auto(name);
+      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      dev.go_auto(value);
-      dev.go_auto($sep4);
-      dev.go_auto(qst);
-      dev.go_auto($sep6);
-      ok=dev.go_const(";");
+      {bool ok=dev.go_auto(value);if(!ok)dev.log_error(0,"TAutoPtr<t_struct_field_value>,\"\\t\\n\\r /=\"");}
+      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(qst);if(!ok)dev.log_error(0,"TAutoPtr<t_qst>,\"*?\"");}
+      {bool ok=dev.go_auto($sep6);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
       if(!ok)return ok;
-      dev.go_auto($sep8);
-      dev.go_auto(attr);
-      dev.go_auto($sep10);
+      {bool ok=dev.go_auto($sep8);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(attr);if(!ok)dev.log_error(0,"TAutoPtr<t_attr>,\"[\"");}
+      {bool ok=dev.go_auto($sep10);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -4858,13 +4858,13 @@ struct t_type_item_type;
   //<<<<<+=====t_templ_params
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_templ_params");
       auto&ok=$.ok;
-      ok=dev.go_const("<");
+      ok=dev.go_const("<");if(!ok)dev.log_error(1,",\"<\"");
       if(!ok)return ok;
-      ok=dev.go_str<TAutoPtr<t_type_templ_params>>(body);
+      ok=dev.go_str<TAutoPtr<t_type_templ_params>>(body);if(!ok)dev.log_error(1,"TAutoPtr<t_type_templ_params>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
       if(!ok)return ok;
-      ok=dev.go_const(">");
+      ok=dev.go_const(">");if(!ok)dev.log_error(1,",\">\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4881,9 +4881,9 @@ struct t_cmd_param;
   //<<<<<+=====t_cmd_params
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_cmd_params");
       auto&ok=$.ok;
-      ok=dev.go_vec(arr,",");
+      ok=dev.go_vec(arr,",");if(!ok)dev.log_error(1,"vector<t_cmd_param>,gen_dips(\"@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4979,9 +4979,9 @@ struct t_cmd_param;
     //<<<<<+=====t_impl
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_impl");
         auto&ok=$.ok;
-        ok=dev.go_vec(arr,"+");
+        ok=dev.go_vec(arr,"+");if(!ok)dev.log_error(1,"vector<TAutoPtr<i_cmd_param_expr>>,gen_dips(\"@Zaz\")+\"\\\"$_\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5001,15 +5001,15 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_expr_call");
         auto&ok=$.ok;
-        ok=dev.go_auto(func);
+        ok=dev.go_auto(func);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
-        ok=dev.go_const("(");
+        ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
         if(!ok)return ok;
-        ok=dev.go_auto(params);
+        ok=dev.go_auto(params);if(!ok)dev.log_error(1,"TAutoPtr<t_cmd_params>,gen_dips(\"@Zaz\")+\"\\\"$_\"");
         if(!ok)return ok;
-        ok=dev.go_const(")");
+        ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5028,9 +5028,9 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_expr_str");
         auto&ok=$.ok;
-        ok=dev.go_str<t_str_seq>(body);
+        ok=dev.go_str<t_str_seq>(body);if(!ok)dev.log_error(1,"t_str_seq,\"\\\"\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5046,9 +5046,9 @@ struct t_cmd_param;
       //<<<<<+=====t_this
       public:
         bool go(i_dev&dev){
-          t_fallback $(dev,__FUNCTION__);
+          t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_expr_var::t_this");
           auto&ok=$.ok;
-          ok=dev.go_const("this->");
+          ok=dev.go_const("this->");if(!ok)dev.log_error(1,",\"t\"");
           if(!ok)return ok;
           return ok;
         }
@@ -5065,10 +5065,10 @@ struct t_cmd_param;
       //<<<<<+=====t_impl
       public:
         bool go(i_dev&dev){
-          t_fallback $(dev,__FUNCTION__);
+          t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_expr_var::t_impl");
           auto&ok=$.ok;
-          dev.go_auto(self);
-          ok=dev.go_auto(name);
+          {bool ok=dev.go_auto(self);if(!ok)dev.log_error(0,"TAutoPtr<t_this>,\"t\"");}
+          ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
           if(!ok)return ok;
           return ok;
         }
@@ -5091,9 +5091,9 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_expr_var");
         auto&ok=$.ok;
-        ok=dev.go_str<t_impl>(body);
+        ok=dev.go_str<t_impl>(body);if(!ok)dev.log_error(1,"t_impl,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5116,9 +5116,9 @@ struct t_cmd_param;
   //<<<<<+=====t_cmd_param
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_cmd_param");
       auto&ok=$.ok;
-      ok=dev.go_str<t_impl>(body);
+      ok=dev.go_str<t_impl>(body);if(!ok)dev.log_error(1,"t_impl,gen_dips(\"@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5139,12 +5139,12 @@ struct t_cmd_param;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_struct_cmd_anno");
       auto&ok=$.ok;
       static const auto g_static_var_0=QapStrFinder::fromArr(split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));
-      ok=dev.go_any_str_from_vec(mode,g_static_var_0);
+      ok=dev.go_any_str_from_vec(mode,g_static_var_0);if(!ok)dev.log_error(1,",\"@@@@@@@@@@mo\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep1);
+      ok=dev.go_auto($sep1);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5163,10 +5163,10 @@ struct t_cmd_param;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_struct_cmd_suffix");
       auto&ok=$.ok;
       static const auto g_static_var_0=CharMask::fromStr("?!");
-      ok=dev.go_any_char(value,g_static_var_0);
+      ok=dev.go_any_char(value,g_static_var_0);if(!ok)dev.log_error(1,",\"?!\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5185,14 +5185,14 @@ struct t_cmd_param;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_struct_cmd_optional");
       auto&ok=$.ok;
-      ok=dev.go_const("[");
+      ok=dev.go_const("[");if(!ok)dev.log_error(1,",\"[\"");
       if(!ok)return ok;
       static const auto g_static_var_1=QapStrFinder::fromArr(split("optional,mandatory",","));
-      ok=dev.go_any_str_from_vec(value,g_static_var_1);
+      ok=dev.go_any_str_from_vec(value,g_static_var_1);if(!ok)dev.log_error(1,",\"om\"");
       if(!ok)return ok;
-      ok=dev.go_const("]");
+      ok=dev.go_const("]");if(!ok)dev.log_error(1,",\"]\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5212,13 +5212,13 @@ struct t_cmd_param;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_struct_cmd_opt_v2");
       auto&ok=$.ok;
-      ok=dev.go_const(";");
+      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
+      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
       static const auto g_static_var_2=QapStrFinder::fromArr(split("optional,mandatory",","));
-      ok=dev.go_any_str_from_vec(value,g_static_var_2);
+      ok=dev.go_any_str_from_vec(value,g_static_var_2);if(!ok)dev.log_error(1,",\"om\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5241,23 +5241,23 @@ struct t_cmd_param;
   //<<<<<+=====t_struct_cmd
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_struct_cmd");
       auto&ok=$.ok;
-      dev.go_auto(mode);
-      ok=dev.go_auto(func);
+      {bool ok=dev.go_auto(mode);if(!ok)dev.log_error(0,"TAutoPtr<i_struct_cmd_xxxx>,\"@DMOmo\"");}
+      ok=dev.go_auto(func);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      dev.go_auto($sep2);
-      dev.go_str<TAutoPtr<t_templ_params>>(templ_params);
-      ok=dev.go_const("(");
+      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_str<TAutoPtr<t_templ_params>>(templ_params);if(!ok)dev.log_error(0,"TAutoPtr<t_templ_params>,\"<\"");}
+      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
       if(!ok)return ok;
-      ok=dev.go_auto(params);
+      ok=dev.go_auto(params);if(!ok)dev.log_error(1,"t_cmd_params,gen_dips(\"@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
-      ok=dev.go_const(")");
+      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
       if(!ok)return ok;
-      dev.go_auto($sep7);
-      dev.go_auto(cmdso);
-      dev.go_auto($sep9);
-      ok=dev.go_const(";");
+      {bool ok=dev.go_auto($sep7);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(cmdso);if(!ok)dev.log_error(0,"TAutoPtr<i_struct_cmd_so>,\"!;?[\"");}
+      {bool ok=dev.go_auto($sep9);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5274,10 +5274,10 @@ struct t_cmd_param;
   //<<<<<+=====t_sep_struct_cmd
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_sep_struct_cmd");
       auto&ok=$.ok;
-      dev.go_auto($sep0);
-      ok=dev.go_auto(body);
+      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_struct_cmd,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5294,13 +5294,13 @@ struct t_cmd_param;
   //<<<<<+=====t_struct_cmds
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_struct_cmds");
       auto&ok=$.ok;
-      ok=dev.go_const("{");
+      ok=dev.go_const("{");if(!ok)dev.log_error(1,",\"{\"");
       if(!ok)return ok;
-      dev.go_auto(arr);
-      dev.go_auto($sep2);
-      ok=dev.go_const("}");
+      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_sep_struct_cmd>,gen_dips(\"\\t\\n@Zaz\")+\"\\r $/_\"");}
+      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const("}");if(!ok)dev.log_error(1,",\"}\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5317,10 +5317,10 @@ struct t_cmd_param;
   //<<<<<+=====t_sep_struct_cmds
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_sep_struct_cmds");
       auto&ok=$.ok;
-      dev.go_auto($sep0);
-      ok=dev.go_auto(body);
+      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_struct_cmds,\"{\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5339,9 +5339,9 @@ struct t_cmd_param;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_cpp_code_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(sep);
+      ok=dev.go_auto(sep);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5360,9 +5360,9 @@ struct t_cmd_param;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_cpp_code_main");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_code_with_sep>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5533,9 +5533,9 @@ struct t_cmd_param;
     //<<<<<+=====t_bayan
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_bayan");
         auto&ok=$.ok;
-        ok=dev.go_const("[::]");
+        ok=dev.go_const("[::]");if(!ok)dev.log_error(1,",\"[\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5554,9 +5554,9 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_fields");
         auto&ok=$.ok;
-        ok=dev.go_auto(f);
+        ok=dev.go_auto(f);if(!ok)dev.log_error(1,"t_struct_field,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5575,9 +5575,9 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_cmds");
         auto&ok=$.ok;
-        ok=dev.go_auto(c);
+        ok=dev.go_auto(c);if(!ok)dev.log_error(1,"t_struct_cmds,\"{\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5596,9 +5596,9 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_atr");
         auto&ok=$.ok;
-        ok=dev.go_auto(attr);
+        ok=dev.go_auto(attr);if(!ok)dev.log_error(1,"TAutoPtr<t_attr>,\"[\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5614,9 +5614,9 @@ struct t_cmd_param;
     //<<<<<+=====t_eater
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_eater");
         auto&ok=$.ok;
-        ok=dev.go_auto(arr);
+        ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_cpp_code>>,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5636,11 +5636,11 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_with_bayan");
         auto&ok=$.ok;
-        ok=dev.go_auto(bayan);
+        ok=dev.go_auto(bayan);if(!ok)dev.log_error(1,"t_bayan,\"[\"");
         if(!ok)return ok;
-        dev.go_auto(eater);
+        {bool ok=dev.go_auto(eater);if(!ok)dev.log_error(0,"t_eater,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");}
         return ok;
       }
     };
@@ -5655,9 +5655,9 @@ struct t_cmd_param;
     //<<<<<+=====t_minor_eater
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_minor_eater");
         auto&ok=$.ok;
-        ok=dev.go_minor<TAutoPtr<i_major>>(eater);
+        ok=dev.go_minor<TAutoPtr<i_major>>(eater);if(!ok)dev.log_error(1,"minor!t_eater,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5676,9 +5676,9 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_without_bayan");
         auto&ok=$.ok;
-        ok=dev.go_minor<t_with_bayan>(eater);
+        ok=dev.go_minor<t_with_bayan>(eater);if(!ok)dev.log_error(1,"minor!t_minor_eater,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5705,10 +5705,10 @@ struct t_cmd_param;
   //<<<<<+=====t_cpp_code
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_cpp_code");
       auto&ok=$.ok;
-      dev.go_auto($sep0);
-      ok=dev.go_auto(bayan);
+      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_auto(bayan);if(!ok)dev.log_error(1,"TAutoPtr<i_bayan>,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5803,12 +5803,12 @@ struct t_cmd_param;
     //<<<<<+=====t_keyword
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_target_struct::t_keyword");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("struct,class",","));
-        ok=dev.go_any_str_from_vec(kw,g_static_var_0);
+        ok=dev.go_any_str_from_vec(kw,g_static_var_0);if(!ok)dev.log_error(1,",\"sc\"");
         if(!ok)return ok;
-        dev.go_auto($sep1);
+        {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
         return ok;
       }
     };
@@ -5825,9 +5825,9 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_target_struct::t_body_semicolon");
         auto&ok=$.ok;
-        ok=dev.go_const(";");
+        ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5853,19 +5853,19 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_target_struct::t_body_impl");
         auto&ok=$.ok;
-        ok=dev.go_const("{");
+        ok=dev.go_const("{");if(!ok)dev.log_error(1,",\"{\"");
         if(!ok)return ok;
-        dev.go_auto(nested);
-        dev.go_auto($sep2);
-        dev.go_auto(arr);
-        dev.go_auto($sep4);
-        dev.go_auto(cmds);
-        dev.go_auto($sep6);
-        dev.go_auto(c);
-        dev.go_auto($sep8);
-        ok=dev.go_const("}");
+        {bool ok=dev.go_auto(nested);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_target_item>>,gen_dips(\"\\t\\n@Zaz\")+\"\\r $/;_\"");}
+        {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_struct_field>>,gen_dips(\"\\t\\n'(/9@Zaz\")+\"\\r \\\"$;_\"");}
+        {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        {bool ok=dev.go_auto(cmds);if(!ok)dev.log_error(0,"TAutoPtr<t_struct_cmds>,\"{\"");}
+        {bool ok=dev.go_auto($sep6);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        {bool ok=dev.go_auto(c);if(!ok)dev.log_error(0,"TAutoPtr<t_cpp_code>,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");}
+        {bool ok=dev.go_auto($sep8);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        ok=dev.go_const("}");if(!ok)dev.log_error(1,",\"}\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5883,13 +5883,13 @@ struct t_cmd_param;
     //<<<<<+=====t_parent
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_target_struct::t_parent");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("=>,:",","));
-        ok=dev.go_any_str_from_vec(arrow_or_colon,g_static_var_0);
+        ok=dev.go_any_str_from_vec(arrow_or_colon,g_static_var_0);if(!ok)dev.log_error(1,",\"=:\"");
         if(!ok)return ok;
-        dev.go_auto($sep1);
-        ok=dev.go_auto(parent);
+        {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        ok=dev.go_auto(parent);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5919,15 +5919,15 @@ struct t_cmd_param;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_target_struct");
       auto&ok=$.ok;
-      dev.go_auto(kw);
-      ok=dev.go_auto(name);
+      {bool ok=dev.go_auto(kw);if(!ok)dev.log_error(0,"TAutoPtr<t_keyword>,\"cs\"");}
+      ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      dev.go_auto($sep2);
-      dev.go_auto(parent);
-      dev.go_auto($sep4);
-      ok=dev.go_auto(body);
+      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      {bool ok=dev.go_auto(parent);if(!ok)dev.log_error(0,"TAutoPtr<t_parent>,\":=\"");}
+      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_struct_impl>,\";{\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5947,9 +5947,9 @@ struct t_cmd_param;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_target_semicolon");
       auto&ok=$.ok;
-      ok=dev.go_auto(arr);
+      ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<t_semicolon>,\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5968,9 +5968,9 @@ struct t_cmd_param;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_target_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(sep);
+      ok=dev.go_auto(sep);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
       return ok;
     }
@@ -6066,13 +6066,13 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_target_using::t_str_ap");
         auto&ok=$.ok;
-        ok=dev.go_const("'");
+        ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
         if(!ok)return ok;
-        ok=dev.go_str<TAutoPtr<i_char_item>>(body);
+        ok=dev.go_str<TAutoPtr<i_char_item>>(body);if(!ok)dev.log_error(1,"TAutoPtr<i_char_item>,gen_dips(\"\\x00\\t\\x0B&(\\xFF\")");
         if(!ok)return ok;
-        ok=dev.go_const("'");
+        ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
         if(!ok)return ok;
         return ok;
       }
@@ -6091,13 +6091,13 @@ struct t_cmd_param;
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_meta_lexer::t_target_using::t_str_qu");
         auto&ok=$.ok;
-        ok=dev.go_const("\"");
+        ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
         if(!ok)return ok;
-        ok=dev.go_str<vector<TAutoPtr<i_str_item>>>(body);
+        ok=dev.go_str<vector<TAutoPtr<i_str_item>>>(body);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");
         if(!ok)return ok;
-        ok=dev.go_const("\"");
+        ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
         if(!ok)return ok;
         return ok;
       }
@@ -6125,24 +6125,24 @@ struct t_cmd_param;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_target_using");
       auto&ok=$.ok;
-      ok=dev.go_const("using");
+      ok=dev.go_const("using");if(!ok)dev.log_error(1,",\"u\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep1);
+      ok=dev.go_auto($sep1);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
-      ok=dev.go_str<TAutoPtr<i_qa>>(s);
+      ok=dev.go_str<TAutoPtr<i_qa>>(s);if(!ok)dev.log_error(1,"TAutoPtr<i_qa>,\"\\\"'\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep3);
+      ok=dev.go_auto($sep3);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
-      ok=dev.go_const("as");
+      ok=dev.go_const("as");if(!ok)dev.log_error(1,",\"a\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep5);
+      ok=dev.go_auto($sep5);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
-      ok=dev.go_str<t_name>(lexer);
+      ok=dev.go_str<t_name>(lexer);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      dev.go_auto($sep7);
-      ok=dev.go_const(";");
+      {bool ok=dev.go_auto($sep7);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -6166,19 +6166,19 @@ struct t_cmd_param;
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_target_typedef");
       auto&ok=$.ok;
-      ok=dev.go_const("typedef");
+      ok=dev.go_const("typedef");if(!ok)dev.log_error(1,",\"t\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep1);
+      ok=dev.go_auto($sep1);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
-      ok=dev.go_auto(type);
+      ok=dev.go_auto(type);if(!ok)dev.log_error(1,"t_cppcore::t_varcall_expr::t_var,\"\"");
       if(!ok)return ok;
-      dev.go_auto($sep3);
-      ok=dev.go_auto(name);
+      {bool ok=dev.go_auto($sep3);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      dev.go_auto($sep5);
-      ok=dev.go_const(";");
+      {bool ok=dev.go_auto($sep5);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -6194,9 +6194,9 @@ struct t_cmd_param;
   //<<<<<+=====t_target
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_meta_lexer::t_target");
       auto&ok=$.ok;
-      ok=dev.go_auto(arr);
+      ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_target_item>>,gen_dips(\"\\t\\n@Zaz\")+\"\\r $/;_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -6277,13 +6277,42 @@ ADDEND()
 //<<<<<+=====t_meta_lexer
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_meta_lexer");
     auto&ok=$.ok;
     return ok;
   }
 public:
 };
 //
+ 	 !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ
+ 	 !"#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ
+	
+ /
+!"$%&'*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ^_abcdefghijklmnopqrstuvwxyz|~
+"$'(0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz
+0123456789
+0123456789
+	
+ /:<
+!"$%&'(*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[^_abcdefghijklmnopqrstuvwxyz{|~
+!"$%&'(*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[^_abcdefghijklmnopqrstuvwxyz{|~
+"$'0123456789:@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz
+(<
+@DMOmo
+	
+ "$'(/0123456789;@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz
+!;?[
+	
+ !"$%&'(*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[^_abcdefghijklmnopqrstuvwxyz{|~
+	
+ $/;@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz
+"'
+"$@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz
+"$'(0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ[_abcdefghijklmnopqrstuvwxyz{
+	
+ !"$%&'(*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[^_abcdefghijklmnopqrstuvwxyz{|~
+;{
+"'
 void i_str_item::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}

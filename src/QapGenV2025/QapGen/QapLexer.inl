@@ -22,6 +22,12 @@ struct t_fallback{
   size_t pos;
   const char*const ptr;
   int err_count;
+  struct t_err{
+    int M=0;
+    int maxpos=0;
+    const char*pmsg=nullptr;
+  };
+  vector<t_err> errs;
   t_scope_tool mandatory;
   t_scope_tool optional;
   t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev),ok(mandatory.ok),ptr(ptr),pos(-1),err_count(0){
@@ -44,6 +50,8 @@ struct t_save_dev;
 class i_dev:public i_dev_base{
 public:
   //virtual IEnvRTTI&getEnv(){QapDebugMsg("no way.");return *(IEnvRTTI*)nullptr;}
+public:
+  virtual void log_error(int M,const char*perr){QapDebugMsg("no way.");}
 public:
   virtual void setPos(int pos){QapDebugMsg("no way.");}
   virtual void getPos(int&pos){QapDebugMsg("no way.");}
@@ -199,6 +207,16 @@ public:
   }
   void setPos(int pos){this->pos=pos;}
   void getPos(int&pos){pos=this->pos;}
+public:
+  string err_msg;
+  void log_error(int M,const char*perr)override{
+    if(M)stack.back()->errs.clear();
+    string lexer_name=stack.back()->ptr;
+    //string err=perr;
+    //auto v=split(err,",");
+    //string rule=v[0];QapPopFront(v);
+    //string expr=join(v,",");
+  }
 public:
   //IEnvRTTI&getEnv(){return Env;}
 public:
@@ -545,7 +563,10 @@ public:
   }
   void getPos(int&pos){pos=mem.size();}
   void setPos(int pos){QapAssert(mem.size()>=pos);mem.resize(pos);}
-
+public:
+  void log_error(int M,const char*perr)override{
+    // no need at all
+  }
 public:
   //IEnvRTTI&getEnv(){return Env;}
 public:

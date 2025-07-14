@@ -1,7 +1,7 @@
 //#include "StdAfx.h"
 
 struct t_meta_lexer;
-
+#include <unordered_map>
 #include "meta_lexer.inl"
 #include "templ_lexer_v02.inl"
 
@@ -365,12 +365,14 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   vector<t_lexer> lexers;
   vector<string> lexer_fields;
   vector<string> lexer_cmds;
-  bool cmds_grab=true;
+  bool only_cmds_grab=false;
   void Do(t_struct_cmd&r){
-    if(cmds_grab){
+    if(bool need_cmds_grab=true)
+    {
       string cmdstr;
       save_obj(r,cmdstr);
       lexer_cmds.push_back(cmdstr);
+      if(only_cmds_grab)return;
     }
     cmd_id++;
     char m='D';//r.cmdso?r.cmdso->get_mode():'D';
@@ -491,6 +493,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   }
   int fields_counter=0;
   string provars,procmds;
+  bool only_lexers_grab=false;
   void Do(t_target_struct&r)override{
     if(!t_target_struct::t_body_impl::UberCast(r.body.get())){
       QapAssert(t_target_struct::t_body_semicolon::UberCast(r.body.get()));
@@ -520,8 +523,26 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     target_item_counter++;
     //L.sep=r.sep0.value;
     if(is_interface!=interfaces_only)return;
+    struct t_scope{t_ic_dev_v2&dev;~t_scope(){dev.pop();}} scope{dev};
     dev.push();
     dev.top.lexer=def_info;
+    string fullowner=get_fullpreowner();
+    if(fullowner.size()){fullowner.pop_back();fullowner.pop_back();}
+    string fullname=(fullowner.size()?fullowner+"::":"")+L.name;
+    if(only_lexers_grab)
+    {
+      //only_cmds_grab=true;
+      Do(r.body);
+      //only_cmds_grab=false;
+      for(int i=int(lexers.size())-1;i>=0;i--){
+        auto&ex=lexers[i];
+        if(ex.fullname!=fullname)continue;
+        QapDebugMsg("lexer redefinition: "+fullname);
+        break;
+      }
+      lexers.push_back({L.name,"",fullname,fullowner,std::move(lexer_fields),std::move(lexer_cmds),{},{},is_interface});
+    }
+    if(only_lexers_grab)return;
     string out;string&out2=out;string before_head;
     dev.top.out+=L.sep+"\n";
     out+="struct "+L.name+(L.parent.empty()?"":":public "+L.parent)+"{\n";
@@ -700,10 +721,63 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           auto a=split(ex,"dev");a[1]=a[0]+dev+a[1];QapPopFront(a);ex=join(a,"dev");
         }
       }
+      if(pass_with_log_err_gen||pass2_with_log_err_gen){
+        auto*pL=findLexerByFullName(fullname);
+        QapAssert(pL);
+        auto&lexer=*pL;
+        lexer.fields=std::move(lexer_fields);
+        if(!pass2_with_log_err_gen){prepare_lexer_farr(lexer);return;}
+        int id=-1;
+        for(auto&line:pcs){
+          auto td=line.find(dev+".");
+          auto tsb=line.find('(');
+          if(td==string::npos||tsb==string::npos||tsb<td)continue;
+          auto t=line.find_first_not_of(" ");
+          if(t==string::npos)continue;
+          id++;
+          auto&lrcmd=lexer.cmds[id];
+          auto rcmd=line.substr(t);
+          bool opt=rcmd[0]!='o';
+          rcmd=!opt?rcmd.substr(lenof("ok=")+dev.size()):rcmd.substr(dev.size()+1);
+          auto r=lexercmd2vecofchar(lexer,lrcmd,false);
+          if(true)
+          {
+            string code=generate_gen_dips_code(r.out,true);
+            string q="if(!ok)dev.log_error("+string(opt?"0":"1")+",\""+r.ftfn+","+escape_cpp_string(code,true)+"\");";
+            line=opt?line.substr(0,t)+"{bool ok="+dev+"."+rcmd+q+"}":(line+q);
+          }else{
+            //auto voc=cpa0b;
+            //string q="if(!ok)dev.log_error(\","+escape_cpp_string(voc,true)+"\");";
+            //line=line.substr(0,t)+(opt?"{bool ok="+line+q+"}":(line+q));
+          }
+          //t_struct_cmd cmd;
+          //QapAssert(load_obj(cmd,rcmd));
+          //const auto&fn=cmd.func.value;
+          //QapAssert(cmd.params.arr.size()>=1);
+          //auto&cpa0b=cmd.params.arr[0].body;
+          //if(fn!="go_const"){
+          //  auto&f=find_field(lexer,cpa0b);
+          //  auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
+          //  auto type=pvc->var.name.value;
+          //  auto*pftl=find_lexer_by_name_but_relative(type,lexer);
+          //  QapAssert(pftl);
+          //  auto ftfn=pftl->fullname;
+          //  auto&voc=lexer2vecofchar_v2(*pftl);
+          //  string code=generate_gen_dips_code(voc);
+          //  string q="if(!ok)dev.log_error(\""+ftfn+","+escape_cpp_string(code,true)+"\");";
+          //  line=opt?"{bool ok="+line+q+"}":(line+q);
+          //}else{
+          //  auto voc=cpa0b;
+          //  string q="if(!ok)dev.log_error(\","+escape_cpp_string(voc,true)+"\");";
+          //  line=line.substr(0,t)+(opt?"{bool ok="+line+q+"}":(line+q));
+          //}
+        }
+      }
       t_templ_sys_v02::t_inp inp;
       inp.add("PROCMDS",join(pcs,"\n"));
       inp.add("SCOPE",s);
       inp.add("DEV",dev);
+      inp.add("LEXER_FULL_NAME",escape_cpp_string(fullname));
       body+=get_templ("GO_IMPL").eval(inp);
     }
     if(!c.out.nested.empty())if(c.out.nested.size()>2)
@@ -746,13 +820,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       auto&pcarr=dev.arr.back().nesteds.pcarr;
       vector<string> list;
       for(auto&ex:pcarr){
-        //def_info={};
-        //def_only=true;
-        //Do(ex->def);
-        //def_only=false;
-        //if(ex.name.value=="t_var_expr"){
-        //  int gg=1;
-        //}
         if(!ex->parent||ex->parent->parent.value!=L.name)continue;
         list.push_back(ex->name.value);
       }
@@ -796,9 +863,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         inp.add("NAME",L.name);
         inp.add("LIST",list);
         body2+=drop_empty_lines(get_templ("GO_BASE").eval(inp));
-        vector<string> full_owner;
-        for(auto&ex:dev.arr)if(ex.lexer.name.size())full_owner.push_back(ex.lexer.name);
-        t_at_end ae={join(full_owner,"::"),L.name,qist,arr};
+        //vector<string> full_owner;
+        //for(auto&ex:dev.arr)if(ex.lexer.name.size())full_owner.push_back(ex.lexer.name);
+        t_at_end ae={fullowner,L.name,qist,arr};
         at_end.push_back(ae);
       }
       if(is_interface){
@@ -820,11 +887,23 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     body+="\n};\n";
     body=drop_empty_lines(body);
     dev.arr.back().out+=move_block("\n"+body+"\n",owner.empty()?"":"  ");
-    string fullowner=get_fullpreowner();
-    if(fullowner.size()){fullowner.pop_back();fullowner.pop_back();}
-    string fullname=(fullowner.size()?fullowner+"::":"")+L.name;
-    lexers.push_back({L.name,get_fullparent(),fullname,fullowner,std::move(lexer_fields),std::move(lexer_cmds),is_interface?at_end.back().childs:vector<string>{},{},is_interface});
-    dev.pop();
+    bool found=false;
+    for(int i=int(lexers.size())-1;i>=0;i--){
+      auto&ex=lexers[i];
+      if(ex.fullname!=fullname)continue;
+      if(is_interface)ex.childs=at_end.back().childs;
+      ex.fullparent=get_fullparent();
+      ex.fields=std::move(lexer_fields);
+      ex.cmds=std::move(lexer_cmds);
+      found=true;
+      break;
+    }
+    if(interfaces_only&&target_only&&!pass_with_log_err_gen){
+      QapAssert(!found);
+      lexers.push_back({L.name,get_fullparent(),fullname,fullowner,std::move(lexer_fields),std::move(lexer_cmds),is_interface?at_end.back().childs:vector<string>{},{},is_interface});
+    }else QapAssert(found);
+    //lexers.push_back({L.name,get_fullparent(),fullname,fullowner,std::move(lexer_fields),std::move(lexer_cmds),is_interface?at_end.back().childs:vector<string>{},{},is_interface});
+    //dev.pop();
   }
   string get_fullpreowner(){
     string fullname;
@@ -836,9 +915,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   }
   string get_fullparent(){
     auto&dtl=dev.top.lexer;
-    if(dtl.name=="t_soft_brackets_code_with_sep"){
-      int gg=1;
-    }
     if(dtl.parent.empty())return {};
     auto&iarr=dev.arr.back().iarr;
     bool found=false;
@@ -848,25 +924,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     if(!found)QapDebugMsg("lexer parent not found for "+dtl.name+":"+dtl.parent);
     auto fpo=get_fullpreowner();
     return fpo+dtl.parent;
-    /*
-    for(auto i=long long int(dev.arr.size())-1;i>=0;i--){
-      auto&ex=dev.arr[i];
-      string*pit=nullptr;
-      for(auto&it:ex.carr){
-        if(it!=dtl.parent)continue;
-        pit=&it;
-        break;
-      }
-      if(ex.lexer.name==dtl.parent)pit=&ex.lexer.name;
-      if(!pit)continue;
-      string fullname;
-      for(long long int j=0;j<dev.arr.size()&&j!=i;j++){
-        auto&ex=dev.arr[j].lexer.name;
-        if(!ex.empty())fullname+=ex+"::";
-      }
-      fullname+=*pit;
-      return fullname;
-    }*/
     return {};
   }
   vector<TAutoPtr<t_target_struct>> ibuf;
@@ -878,7 +935,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     if(dtn.need_igrab||dtn.need_grab)return;
     if(!target_only)dev.top.out+=r.sep.value;
   }
-  void Do(t_target_using&r)override{if(!target_only)dev.add_sep_lex(r.s,r.lexer);}
+  void Do(t_target_using&r)override{if(!target_only&&!only_lexers_grab)dev.add_sep_lex(r.s,r.lexer);}
   void Do(t_target_typedef&r)override{
     if(target_only)return;
     string t;
@@ -899,14 +956,17 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   template<class TYPE>
   void Do(TAutoPtr<TYPE>&r){if(r)Do(*r.get());}
   real parse_ms=0;
+  void prepare_lexer_farr(t_lexer&L){
+    L.farr.reserve(L.fields.size());L.farr.clear();
+    for(int i=0;i<L.fields.size();i++){
+      auto&ex=L.fields[i];
+      auto&b=qap_add_back(L.farr);
+      QapAssert(load_obj(b,ex));
+    }
+  }
   void prepare_lexers_chached_fields(){
     for(auto&L:lexers){
-      L.farr.reserve(L.fields.size());
-      for(int i=0;i<L.fields.size();i++){
-        auto&ex=L.fields[i];
-        auto&b=qap_add_back(L.farr);
-        QapAssert(load_obj(b,ex));
-      }
+      prepare_lexer_farr(L);
     }
   }
   void collect_expected_chars(const t_cmd_param&param,string&out,bool vecofstr=false)const{
@@ -1011,326 +1071,398 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
     string out;
     for(auto&c:lexer.cmds){
-      auto&fields=lexer.farr;
-      t_struct_cmd cmd;
-      QapAssert(load_obj(cmd,c));
-      auto*p=t_struct_cmd_mode::UberCast(cmd.mode.get());
-      bool opt=p?p->body=='O':false;
-      const auto&fn=cmd.func.value;
-      if(bool need_field_name_for_recursion_solving=fn!="go_const"){
-        QapAssert(cmd.params.arr.size()>=1);
-        auto&cpa0b=cmd.params.arr[0].body;
-        auto&f=find_field(lexer,cpa0b);
-        lexers_stack_for_vecofchar.back().field=f.name.value;
-      }
-      if(fn=="go_const"){
-        QapAssert(cmd.params.arr.size()==1);
-        auto s=cmd.params.arr[0].body;
-        QapAssert(s.size()>2);
-        //TAutoPtr<vector<i_str_item>> si;//load_obj(si,s);
-        auto bs=BinString::fullCppStr2RawStr(s);
-        out.push_back(bs[0]);
-        QapAssert(!opt);
-        return out;
+      if(lexer.name=="t_block_expr"){
         int gg=1;
       }
-      auto bad_type_checker=[](auto&lex,const string&type){
-        string s=lex2str(*lex.get());
-        return s.substr(0,type.size())==type;
-      };
-      if(fn=="go_any"||fn=="go_any_char"){
-        QapAssert(cmd.params.arr.size()==2);
-        auto&cpa0b=cmd.params.arr[0].body;
-        auto&f=find_field(lexer,cpa0b);
-        if(fn=="go_any")QapAssert(bad_type_checker(f.type,"string"));
-        if(fn=="go_any_char")QapAssert(bad_type_checker(f.type,"char"));
-        auto p0=cmd.params.arr[0].body;
-        auto p1=cmd.params.arr[1].body;// выражение типа gen_dips("09")+"str"+"other_str"
-        t_cmd_param p1p;
-        QapAssert(load_obj(p1p,p1));
-        collect_expected_chars(p1p,out);
-        if(opt)continue;
-        return out;
+      auto r=lexercmd2vecofchar(lexer,c);
+      if(lexer.name=="t_block_expr"){
+        int gg=1;
       }
-      if(fn=="go_any_str_from_vec"){
-        QapAssert(cmd.params.arr.size()==2);
-        auto&cpa0b=cmd.params.arr[0].body;
-        auto&f=find_field(lexer,cpa0b);
-        QapAssert(bad_type_checker(f.type,"string"));
-        auto p0=cmd.params.arr[0].body;
-        auto p1=cmd.params.arr[1].body;// выражение типа split("0,9",",")
-        t_cmd_param p1p;
-        QapAssert(load_obj(p1p,p1));
-        collect_expected_chars(p1p,out,true);
-        if(opt)continue;
-        return out;
+      out+=r.out;
+      if(r.con)continue;
+      if(r.ret)return out;
+    }
+    return out;
+  }
+  struct LC2VOCR{
+    string out;
+    string ftfn;
+    string fn;
+    bool con=false;
+    bool ret=false;
+  };
+  unordered_map<string,LC2VOCR> LC2VOC;
+  LC2VOCR lexercmd2vecofchar(const t_lexer&lexer,const string&c,bool need_vsfvocfupd=true){
+    string lexer_with_field=lexer.fullname+"::"+c;
+    auto it=LC2VOC.find(lexer_with_field);
+    if(it!=LC2VOC.end())return it->second;
+    struct t_scope{
+      decltype(LC2VOC)&LC2VOC;
+      string&LWF;
+      LC2VOCR result;
+      ~t_scope(){result.out=make_unique_voc(result.out);LC2VOC[LWF]=result;}
+    } scope{LC2VOC,lexer_with_field};
+    auto&result=scope.result;
+    auto&out=result.out;
+    //auto&fields=lexer.farr;
+    t_struct_cmd cmd;
+    QapAssert(load_obj(cmd,c));
+    auto*p=t_struct_cmd_mode::UberCast(cmd.mode.get());
+    bool opt=p?p->body=='O':false;
+    const auto&fn=cmd.func.value;
+    result.fn=fn;
+    if(bool need_field_name_for_recursion_solving=fn!="go_const"&&need_vsfvocfupd){
+      QapAssert(cmd.params.arr.size()>=1);
+      auto&cpa0b=cmd.params.arr[0].body;
+      auto&f=find_field(lexer,cpa0b);
+      lexers_stack_for_vecofchar.back().field=f.name.value;
+    }
+    if(fn=="go_const"){
+      QapAssert(cmd.params.arr.size()==1);
+      auto s=cmd.params.arr[0].body;
+      QapAssert(s.size()>2);
+      //TAutoPtr<vector<i_str_item>> si;//load_obj(si,s);
+      auto bs=BinString::fullCppStr2RawStr(s);
+      out.push_back(bs[0]);
+      QapAssert(!opt);
+      result.ret=true;
+      return result;
+      int gg=1;
+    }
+    auto bad_type_checker=[](auto&lex,const string&type){
+      string s=lex2str(*lex.get());
+      return s.substr(0,type.size())==type;
+    };
+    if(fn=="go_any"||fn=="go_any_char"||fn=="go_any_arr_char"){
+      QapAssert(cmd.params.arr.size()==2);
+      auto&cpa0b=cmd.params.arr[0].body;
+      auto&f=find_field(lexer,cpa0b);
+      if(fn=="go_any")QapAssert(bad_type_checker(f.type,"string"));
+      if(fn=="go_any_char")QapAssert(bad_type_checker(f.type,"char"));
+      auto p0=cmd.params.arr[0].body;
+      auto p1=cmd.params.arr[1].body;// выражение типа gen_dips("09")+"str"+"other_str"
+      t_cmd_param p1p;
+      QapAssert(load_obj(p1p,p1));
+      collect_expected_chars(p1p,out);
+      if(opt){result.con=opt;return result;}
+      result.ret=true;
+      return result;
+    }
+    if(fn=="go_any_str_from_vec"){
+      QapAssert(cmd.params.arr.size()==2);
+      auto&cpa0b=cmd.params.arr[0].body;
+      auto&f=find_field(lexer,cpa0b);
+      QapAssert(bad_type_checker(f.type,"string"));
+      auto p0=cmd.params.arr[0].body;
+      auto p1=cmd.params.arr[1].body;// выражение типа split("0,9",",")
+      t_cmd_param p1p;
+      QapAssert(load_obj(p1p,p1));
+      collect_expected_chars(p1p,out,true);
+      if(opt){result.con=opt;return result;}
+      result.ret=true;
+      return result;
+    }
+    if(fn=="go_end"){
+      QapAssert(cmd.params.arr.size()==2);
+      auto&cpa0b=cmd.params.arr[0].body;
+      //auto&f=find_field(lexer,cpa0b);
+      auto p0=cmd.params.arr[0].body;
+      auto p1=cmd.params.arr[1].body;
+      auto p1s=BinString::fullCppStr2RawStr(p1);
+      if(p1s.size()==1)QapDebugMsg("use go_any(dip_inv("+p1+")) instead of go_end("+p1+")");
+      //QapDebugMsg("go_end with str - under construction");
+      out=p1s.substr(0,1);
+      if(opt){result.con=opt;return result;}
+      result.ret=true;
+      return result;
+    }
+    typedef t_cppcore::t_varcall_expr::t_var t_var;
+    auto tp2var=[](const auto&tp,t_var&out){
+      auto*ptp=t_cppcore::t_varcall_expr::t_template_part::UberCast(tp.get());
+      QapAssert(ptp);
+      string s;save_obj(ptp->expr,s);
+      QapAssert(load_obj(out,s));
+    };
+    struct t_for_autoptr_r{
+      bool con=false;
+      bool ret=false;
+    };
+    auto for_autoptr=[&](const t_var&var,const string&tpn)->t_for_autoptr_r{
+      if(tpn!="TAutoPtr")return {};
+      t_var inner_param;
+      tp2var(var.tp,inner_param);
+      auto inner_pn=inner_param.name.value;
+      vector<string> ftn;
+      if(inner_param.tp){
+        auto*p=t_cppcore::t_varcall_expr::t_dd_part::UberCast(inner_param.tp.get());
+        QapAssert(p);
+        auto&arr=p->arr;
+        for(auto&ex:arr){
+          ftn.push_back(ex.name.value);
+        }
       }
-      if(fn=="go_end"){
-        QapAssert(cmd.params.arr.size()==1);
-        auto&cpa0b=cmd.params.arr[0].body;
-        auto&f=find_field(lexer,cpa0b);
-        auto p0=cmd.params.arr[0].body;
-        auto p1=cmd.params.arr[1].body;
-        auto p1s=BinString::fullCppStr2RawStr(p1);
-        if(p1s.size()==1)QapDebugMsg("use go_any(dip_inv("+p1+")) instead of go_end("+p1+")");
-        QapDebugMsg("go_end with str - under construction");
+      string ln=inner_pn+(ftn.size()?"::":"")+join(ftn,"::");
+      auto*pl_inner=find_lexer_by_name_but_relative(ln,lexer);
+      QapAssert(pl_inner);
+      auto nested_chars=lexer2vecofchar_v2(*pl_inner);
+      QapAssert(!nested_chars.empty());
+      out+=nested_chars;
+      if(!opt)return {false,true};
+      return {true,false};
+    };
+    auto vcev2str=[](t_cppcore::t_varcall_expr::t_var&var){
+      string out;
+      var.sep0.value.clear();
+      save_obj(var,out);
+      return out;
+    };
+    if(fn=="go_auto"||fn=="go_vec"){
+      bool go_vec=fn=="go_vec";
+      QapAssert(cmd.params.arr.size()==(fn=="go_vec"?2:1));
+      auto&cpa0b=cmd.params.arr[0].body;
+      auto&f=find_field(lexer,cpa0b);
+      auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
+      QapAssert(pvc);
+      auto&v=pvc->var;
+      result.ftfn=vcev2str(v);
+      if(go_vec)QapAssert(v.name.value=="vector");
+      if(v.name.value=="TAutoPtr"){
+        auto r=for_autoptr(v,v.name.value);
+        result.ret=r.ret;
+        if(r.ret)return result;
+        result.con=r.con;
+        return result;
       }
-      typedef t_cppcore::t_varcall_expr::t_var t_var;
-      auto tp2var=[](const auto&tp,t_var&out){
-        auto*ptp=t_cppcore::t_varcall_expr::t_template_part::UberCast(tp.get());
-        QapAssert(ptp);
-        string s;save_obj(ptp->expr,s);
-        QapAssert(load_obj(out,s));
-      };
-      struct t_for_autoptr_r{
+      if(v.name.value=="vector"){
+        QapAssert(v.tp);
+        t_var template_param;
+        tp2var(v.tp,template_param);
+        auto tpn=template_param.name.value;
+        QapAssert(tpn!="vector");
+        auto r=for_autoptr(template_param,tpn);
+        result.ret=r.ret;
+        if(r.ret)return result;
+        result.con=r.con;
+        if(result.con)return result;
+        auto*pl=find_lexer_by_name_but_relative(tpn,lexer);
+        QapAssert(pl);
+        out+=lexer2vecofchar_v2(*pl);
+        if(!opt){result.ret=true;return result;}
+        result.con=true;
+        return result;
+      }
+      auto*pl=find_lexer_by_name_but_relative(v.name.value,lexer);
+      QapAssert(pl);
+      out+=lexer2vecofchar_v2(*pl);
+      if(!opt){result.ret=true;return result;}
+      result.con=true;
+      return result;
+    }
+    if(fn=="go_str"){
+      if("t_value_item"==lexer.name){
+        int gg=1;
+      }
+      QapAssert(cmd.params.arr.size()==1);
+      auto&cpa0b=cmd.params.arr[0].body;
+      auto&f=find_field(lexer,cpa0b);
+      auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
+      QapAssert(pvc);
+      auto&v=pvc->var;
+      if(v.name.value!="string")QapDebugMsg("go_str support only string type of field");
+      QapAssert(cmd.templ_params.size());
+      TAutoPtr<t_templ_params> tp;
+      QapAssert(load_obj(tp,cmd.templ_params));
+      QapAssert(tp->body.size());
+      TAutoPtr<t_type_templ_params> ttp;
+      QapAssert(load_obj(ttp,tp->body));
+      QapAssert(ttp);
+      QapAssert(ttp->first.body);
+      auto*ptit=t_meta_lexer::t_type_item_type::UberCast(ttp->first.body.get());
+      QapAssert(ptit);
+      result.ftfn=lex2str(*ptit);
+      if(ptit->type.value=="vector"||ptit->type.value=="TAutoPtr"){
+        QapAssert(ptit->param);
+        auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit->param->body.get());
+        QapAssert(ptta);
+        QapAssert(ptta->params);
+        QapAssert(ptta->params->first.body);
+        auto*ptit2=t_type_item_type::UberCast(ptta->params->first.body.get());
+        QapAssert(ptit2);
+        if(ptit2->param){
+          QapAssert(ptit2->type.value=="TAutoPtr");
+          auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit2->param->body.get());
+          QapAssert(ptta);
+          QapAssert(ptta->params);
+          QapAssert(ptta->params->first.body);
+          auto*ptit3=t_type_item_type::UberCast(ptta->params->first.body.get());
+          if(ptit3->param)QapDebugMsg("unexpected param:"+lex2str(ptit3->param)+"\nin:"+cmd.templ_params);
+          QapAssert(!ptit3->param);
+          auto*pl=find_lexer_by_name_but_relative(ptit3->type.value,lexer);
+          QapAssert(pl);
+          out+=lexer2vecofchar_v2(*pl);
+          if(opt){result.con=true;return result;}
+          result.ret=true;
+          return result;
+        }
+        auto ptit2_tfn=ptit2->type.value+lex2str(ptit2->arr);
+        auto*pl=find_lexer_by_name_but_relative(ptit2_tfn,lexer);
+        QapAssert(pl);
+        out+=lexer2vecofchar_v2(*pl);
+        if(opt){result.con=true;return result;}
+        result.ret=true;
+        return result;
+      }
+      QapAssert(!ptit->param);
+      auto*pl=find_lexer_by_name_but_relative(ptit->type.value,lexer);
+      QapAssert(pl);
+      out+=lexer2vecofchar_v2(*pl);
+      if(opt){result.con=true;return result;}
+      result.ret=true;
+      return result;
+    }
+    if(fn=="go_minor"){
+      QapAssert(cmd.params.arr.size()==1);
+      auto&cpa0b=cmd.params.arr[0].body;
+      auto&f=find_field(lexer,cpa0b);
+      auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
+      QapAssert(pvc);
+      auto&v=pvc->var;
+      result.ftfn="minor!"+vcev2str(v);
+      if(v.name.value=="string")QapDebugMsg("go_diff dont support string type of field");
+      struct t_for_autoptr_r2{
         bool con=false;
         bool ret=false;
+        bool pass()const{return !con&&!ret;}
+        string out;
       };
-      auto for_autoptr=[&](const t_var&var,const string&tpn)->t_for_autoptr_r{
+      auto for_autoptr2=[&](const t_var&var,const string&tpn)->t_for_autoptr_r2{
         if(tpn!="TAutoPtr")return {};
         t_var inner_param;
         tp2var(var.tp,inner_param);
         auto inner_pn=inner_param.name.value;
-        vector<string> ftn;
-        if(inner_param.tp){
-          auto*p=t_cppcore::t_varcall_expr::t_dd_part::UberCast(inner_param.tp.get());
-          QapAssert(p);
-          auto&arr=p->arr;
-          for(auto&ex:arr){
-            ftn.push_back(ex.name.value);
-          }
-        }
-        string ln=inner_pn+(ftn.size()?"::":"")+join(ftn,"::");
-        auto*pl_inner=find_lexer_by_name_but_relative(ln,lexer);
+        auto*pl_inner=find_lexer_by_name_but_relative(inner_pn,lexer);
         QapAssert(pl_inner);
-        auto nested_chars=lexer2vecofchar(*pl_inner);
+        auto nested_chars=lexer2vecofchar_v2(*pl_inner);
         QapAssert(!nested_chars.empty());
-        out+=nested_chars;
-        if(!opt)return {false,true};
-        return {true,false};
+        if(!opt)return {false,true,nested_chars};
+        return {true,false,nested_chars};
       };
-      if(fn=="go_auto"||fn=="go_vec"){
-        bool go_vec=fn=="go_vec";
-        if(go_vec){
-          int gg=1;
-        }
-        QapAssert(cmd.params.arr.size()==(fn=="go_vec"?2:1));
-        auto&cpa0b=cmd.params.arr[0].body;
-        auto&f=find_field(lexer,cpa0b);
-        auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
-        QapAssert(pvc);
-        auto&v=pvc->var;
-        if(go_vec)QapAssert(v.name.value=="vector");
-        if(v.name.value=="TAutoPtr"){
-          auto r=for_autoptr(v,v.name.value);
-          if(r.ret)return out;
-          if(r.con)continue;
-        }
-        if(v.name.value=="vector"){
-          QapAssert(v.tp);
-          t_var template_param;
-          tp2var(v.tp,template_param);
-          auto tpn=template_param.name.value;
-          QapAssert(tpn!="vector");
-          auto r=for_autoptr(template_param,tpn);
-          if(r.ret)return out;
-          if(r.con)continue;
+      string our;bool template_lexer=false;
+      if(v.name.value=="TAutoPtr"){
+        auto r=for_autoptr2(v,v.name.value);
+        our+=r.out;
+        template_lexer=true;
+        //if(r.ret)return out;
+        //if(r.con)continue;
+      }
+      if(v.name.value=="vector"){
+        template_lexer=true;
+        QapAssert(v.tp);
+        t_var template_param;
+        tp2var(v.tp,template_param);
+        auto tpn=template_param.name.value;
+        QapAssert(tpn!="vector");
+        auto r=for_autoptr2(template_param,tpn);
+        our+=r.out;
+        if(r.pass()){
           auto*pl=find_lexer_by_name_but_relative(tpn,lexer);
           QapAssert(pl);
-          out+=lexer2vecofchar(*pl);
-          if(!opt)return out;
-          continue;
+          our+=lexer2vecofchar_v2(*pl);
+          //if(!opt)return out;
+          //continue;
         }
+      }
+      if(!template_lexer){
         auto*pl=find_lexer_by_name_but_relative(v.name.value,lexer);
         QapAssert(pl);
-        out+=lexer2vecofchar(*pl);
-        if(!opt)return out;
-        continue;
+        our+=lexer2vecofchar_v2(*pl);
       }
-      if(fn=="go_str"){
-        QapAssert(cmd.params.arr.size()==1);
-        auto&cpa0b=cmd.params.arr[0].body;
-        auto&f=find_field(lexer,cpa0b);
-        auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
-        QapAssert(pvc);
-        auto&v=pvc->var;
-        if(v.name.value!="string")QapDebugMsg("go_str support only string type of field");
-        QapAssert(cmd.templ_params.size());
-        TAutoPtr<t_templ_params> tp;
-        QapAssert(load_obj(tp,cmd.templ_params));
-        QapAssert(tp->body.size());
-        TAutoPtr<t_type_templ_params> ttp;
-        QapAssert(load_obj(ttp,tp->body));
-        QapAssert(ttp);
-        QapAssert(ttp->first.body);
-        auto*ptit=t_meta_lexer::t_type_item_type::UberCast(ttp->first.body.get());
-        QapAssert(ptit);
-        if(ptit->type.value=="vector"||ptit->type.value=="TAutoPtr"){
-          QapAssert(ptit->param);
+      out+=our;
+      if(opt){result.con=true;return result;}
+      result.ret=true;
+      return result;
+      // unreachable code now because of wrong hi-level semantic logic. minus is not acceptable in most complex cases
+      auto minus=[](const string&our,const string&major){
+        auto m=CharMask::fromStr(our,true);
+        auto e=CharMask::fromStr(major,true);
+        string out;
+        for(size_t i=0;i<256;i++)if(!e.mask[i]&&m.mask[i])out.push_back(static_cast<char>(i));
+        return out;
+      };
+      string major;
+      //---
+      QapAssert(cmd.templ_params.size());
+      TAutoPtr<t_templ_params> tp;
+      QapAssert(load_obj(tp,cmd.templ_params));
+      QapAssert(tp->body.size());
+      TAutoPtr<t_type_templ_params> ttp;
+      QapAssert(load_obj(ttp,tp->body));
+      QapAssert(ttp);
+      QapAssert(ttp->first.body);
+      auto*ptit=t_meta_lexer::t_type_item_type::UberCast(ttp->first.body.get());
+      QapAssert(ptit);
+      if(ptit->type.value=="vector"||ptit->type.value=="TAutoPtr"){
+        QapAssert(ptit->param);
+        auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit->param->body.get());
+        QapAssert(ptta);
+        QapAssert(ptta->params);
+        QapAssert(ptta->params->first.body);
+        auto*ptit2=t_type_item_type::UberCast(ptta->params->first.body.get());
+        QapAssert(ptit2);
+        if(ptit2->param){
+          QapAssert(ptit2->type.value=="TAutoPtr");
           auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit->param->body.get());
           QapAssert(ptta);
           QapAssert(ptta->params);
           QapAssert(ptta->params->first.body);
-          auto*ptit2=t_type_item_type::UberCast(ptta->params->first.body.get());
-          QapAssert(ptit2);
-          if(ptit2->param){
-            QapAssert(ptit2->type.value=="TAutoPtr");
-            auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit2->param->body.get());
-            QapAssert(ptta);
-            QapAssert(ptta->params);
-            QapAssert(ptta->params->first.body);
-            auto*ptit3=t_type_item_type::UberCast(ptta->params->first.body.get());
-            if(ptit3->param)QapDebugMsg("unexpected param:"+lex2str(ptit3->param)+"\nin:"+cmd.templ_params);
-            QapAssert(!ptit3->param);
-            auto*pl=find_lexer_by_name_but_relative(ptit3->type.value,lexer);
-            QapAssert(pl);
-            out+=lexer2vecofchar(*pl);
-            if(opt)continue;
-            return out;
-          }
-          auto*pl=find_lexer_by_name_but_relative(ptit2->type.value,lexer);
+          auto*ptit3=t_type_item_type::UberCast(ptta->params->first.body.get());
+          QapAssert(!ptit3->param);
+          auto*pl=find_lexer_by_name_but_relative(ptit3->type.value,lexer);
           QapAssert(pl);
-          out+=lexer2vecofchar(*pl);
-          if(opt)continue;
-          return out;
-        }
-        QapAssert(!ptit->param);
-        auto*pl=find_lexer_by_name_but_relative(ptit->type.value,lexer);
-        QapAssert(pl);
-        out+=lexer2vecofchar(*pl);
-        if(opt)continue;
-        return out;
-      }
-      if(fn=="go_minor"){
-        QapAssert(cmd.params.arr.size()==1);
-        auto&cpa0b=cmd.params.arr[0].body;
-        auto&f=find_field(lexer,cpa0b);
-        auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
-        QapAssert(pvc);
-        auto&v=pvc->var;
-        if(v.name.value=="string")QapDebugMsg("go_diff dont support string type of field");
-        struct t_for_autoptr_r2{
-          bool con=false;
-          bool ret=false;
-          bool pass()const{return !con&&!ret;}
-          string out;
-        };
-        auto for_autoptr2=[&](const t_var&var,const string&tpn)->t_for_autoptr_r2{
-          if(tpn!="TAutoPtr")return {};
-          t_var inner_param;
-          tp2var(var.tp,inner_param);
-          auto inner_pn=inner_param.name.value;
-          auto*pl_inner=find_lexer_by_name_but_relative(inner_pn,lexer);
-          QapAssert(pl_inner);
-          auto nested_chars=lexer2vecofchar(*pl_inner);
-          QapAssert(!nested_chars.empty());
-          if(!opt)return {false,true,nested_chars};
-          return {true,false,nested_chars};
-        };
-        string our;bool template_lexer=false;
-        if(v.name.value=="TAutoPtr"){
-          auto r=for_autoptr2(v,v.name.value);
-          our+=r.out;
-          template_lexer=true;
-          //if(r.ret)return out;
-          //if(r.con)continue;
-        }
-        if(v.name.value=="vector"){
-          template_lexer=true;
-          QapAssert(v.tp);
-          t_var template_param;
-          tp2var(v.tp,template_param);
-          auto tpn=template_param.name.value;
-          QapAssert(tpn!="vector");
-          auto r=for_autoptr2(template_param,tpn);
-          our+=r.out;
-          if(r.pass()){
-            auto*pl=find_lexer_by_name_but_relative(tpn,lexer);
-            QapAssert(pl);
-            our+=lexer2vecofchar(*pl);
-            //if(!opt)return out;
-            //continue;
-          }
-        }
-        if(!template_lexer){
-          auto*pl=find_lexer_by_name_but_relative(v.name.value,lexer);
-          QapAssert(pl);
-          our+=lexer2vecofchar(*pl);
-        }
-        out+=our;
-        if(opt)continue;
-        return out;
-        // unreachable code now because of wrong hi-level semantic logic. minus is not acceptable in most complex cases
-        auto minus=[](const string&our,const string&major){
-          auto m=CharMask::fromStr(our,true);
-          auto e=CharMask::fromStr(major,true);
-          string out;
-          for(size_t i=0;i<256;i++)if(!e.mask[i]&&m.mask[i])out.push_back(static_cast<char>(i));
-          return out;
-        };
-        string major;
-        //---
-        QapAssert(cmd.templ_params.size());
-        TAutoPtr<t_templ_params> tp;
-        QapAssert(load_obj(tp,cmd.templ_params));
-        QapAssert(tp->body.size());
-        TAutoPtr<t_type_templ_params> ttp;
-        QapAssert(load_obj(ttp,tp->body));
-        QapAssert(ttp);
-        QapAssert(ttp->first.body);
-        auto*ptit=t_meta_lexer::t_type_item_type::UberCast(ttp->first.body.get());
-        QapAssert(ptit);
-        if(ptit->type.value=="vector"||ptit->type.value=="TAutoPtr"){
-          QapAssert(ptit->param);
-          auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit->param->body.get());
-          QapAssert(ptta);
-          QapAssert(ptta->params);
-          QapAssert(ptta->params->first.body);
-          auto*ptit2=t_type_item_type::UberCast(ptta->params->first.body.get());
-          QapAssert(ptit2);
-          if(ptit2->param){
-            QapAssert(ptit2->type.value=="TAutoPtr");
-            auto*ptta=t_meta_lexer::t_type_templ_angle::UberCast(ptit->param->body.get());
-            QapAssert(ptta);
-            QapAssert(ptta->params);
-            QapAssert(ptta->params->first.body);
-            auto*ptit3=t_type_item_type::UberCast(ptta->params->first.body.get());
-            QapAssert(!ptit3->param);
-            auto*pl=find_lexer_by_name_but_relative(ptit3->type.value,lexer);
-            QapAssert(pl);
-            major+=lexer2vecofchar(*pl);
-            out+=minus(our,major);
-            if(opt)continue;
-            return out;
-          }
-          auto*pl=find_lexer_by_name_but_relative(ptit2->type.value,lexer);
-          QapAssert(pl);
-          major+=lexer2vecofchar(*pl);
+          major+=lexer2vecofchar_v2(*pl);
           out+=minus(our,major);
-          if(opt)continue;
-          return out;
+          if(opt){result.con=true;return result;}
+          result.ret=true;
+          return result;
         }
-        QapAssert(!ptit->param);
-        auto*pl=find_lexer_by_name_but_relative(ptit->type.value,lexer);
+        auto*pl=find_lexer_by_name_but_relative(ptit2->type.value,lexer);
         QapAssert(pl);
-        major+=lexer2vecofchar(*pl);
+        major+=lexer2vecofchar_v2(*pl);
         out+=minus(our,major);
-        if(opt)continue;
-        return out;
+        if(opt){result.con=true;return result;}
+        result.ret=true;
+        return result;
       }
-      QapDebugMsg("unsupported go_* method: "+fn);
-      int gg_cmds=1;
+      QapAssert(!ptit->param);
+      auto*pl=find_lexer_by_name_but_relative(ptit->type.value,lexer);
+      QapAssert(pl);
+      major+=lexer2vecofchar_v2(*pl);
+      out+=minus(our,major);
+      if(opt){result.con=true;return result;}
+      result.ret=true;
+      return result;
     }
-    return out;
+    QapDebugMsg("unsupported go_* method: "+fn);
+    int gg_cmds=1;
+    return result;
   }
   string polylexer2vecofchar(const t_lexer&poly){
     string out;
     for(auto&ex:poly.childs){
       auto*plexer=find_lexer_by_name_but_relative(ex,poly);
       QapAssert(plexer);
-      out+=lexer2vecofchar(*plexer);
+      out+=lexer2vecofchar_v2(*plexer);
     }
     return out;
+  }
+  unordered_map<string,string> LFN2VOC;
+  const string&lexer2vecofchar_v2(const t_lexer&L){
+    auto it=LFN2VOC.find(L.fullname);
+    if(it!=LFN2VOC.end())return it->second;
+    string voc=lexer2vecofchar(L);
+    auto&ex=LFN2VOC[L.fullname];
+    ex=std::move(make_unique_voc(voc));
+    return ex;
   }
   string polylexer2fastimpl(const t_lexer&poly){
     string out;
@@ -1342,12 +1474,13 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     for(auto&ex:poly.childs){
       auto*plexer=find_lexer_by_name_but_relative(ex,poly);
       QapAssert(plexer);
-      string voc=lexer2vecofchar(*plexer);
-      auto m=CharMask::fromStr(voc,true);
+      string voc=lexer2vecofchar_v2(*plexer);
+      auto&u=voc;
+      /*auto m=CharMask::fromStr(voc,true);
       string u;
       for(size_t i=0;i<256;i++){
         if(m.mask[i])u.push_back((char)i);
-      }
+      }*/
       std::string code=generate_gen_dips_code(u);
       lines.push_back("    F("+plexer->name+","+code+")");
       if(code[0]=='"'&&code.back()=='"'){
@@ -1397,7 +1530,12 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     prepare_lexers_chached_fields();
     for(auto&lexer:lexers){
       if(!lexer.is_interface)continue;
-      out+=lexer2vecofchar(lexer)+"\n";
+      out+=lexer2vecofchar_v2(lexer)+"\n";
+      int gg_lexer=1;
+    }
+    for(auto&lexer:lexers){
+      if(!lexer.is_interface)continue;
+      out+=polylexer2fastimpl(lexer)+"\n";
       int gg_lexer=1;
     }
     return out;
@@ -1451,7 +1589,10 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
     return nullptr;
   }
-
+  t_lexer*findLexerByFullName(const std::string&fn){
+    for(auto&n:lexers_nodes)if(n.lexer->fullname==fn)return n.lexer;
+    return nullptr;
+  }
   const t_lexer_node* findLexerByNameRelative(const std::string& name, const t_lexer& from) const {
     // 1. Найти корневой узел для from.name
     const t_lexer_node* fromNode = nullptr;
@@ -1514,6 +1655,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     QapAssert(pl);
     return pl->lexer;
   }
+  bool pass_with_log_err_gen=false;
+  bool pass2_with_log_err_gen=false;
   string main(const string&data,bool dontoptimize){
     init();
     t_target tar;QapClock clock;
@@ -1534,15 +1677,31 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     dtn.need_grab=false;
     target_only=false;
     interface_autogen();
+    auto interface_out=dev.top.out;
     auto msa=clock.MS();std::cerr<<"{\"interface_autogen done in \":"<<(msa-msc)<<"}"<<endl;
+    only_lexers_grab=true;
     Do(tar);
-    auto mst=clock.MS();std::cerr<<"{\"Do(tar) done in \":"<<(mst-msa)<<"}"<<endl;
+    only_lexers_grab=false;
+    auto msl=clock.MS();std::cerr<<"{\"lexers_grab done in \":"<<(msl-msa)<<"}"<<endl;
+    Do(tar);
+    auto mst=clock.MS();std::cerr<<"{\"Do(tar) done in \":"<<(mst-msl)<<"}"<<endl;
     buildLexerTree();
     auto msb=clock.MS();std::cerr<<"{\"buildLexerTree done in \":"<<(msb-mst)<<"}"<<endl;
-    //lexer_lookup_test();
+    pass_with_log_err_gen=true;
+    dev.top.out=interface_out;dev.top.sep_lexs.clear();
+    Do(tar);
+    pass_with_log_err_gen=false;
+    auto msg=clock.MS();std::cerr<<"{\"pass_with_log_err_gen done in \":"<<(msg-msb)<<"}"<<endl;
+    pass_with_log_err_gen=true;
+    pass2_with_log_err_gen=true;
+    dev.top.out=interface_out;dev.top.sep_lexs.clear();
+    Do(tar);
+    pass2_with_log_err_gen=false;
+    pass_with_log_err_gen=false;
+    auto msg2=clock.MS();std::cerr<<"{\"pass2_with_log_err_gen done in \":"<<(msg2-msg)<<"}"<<endl;
     dev.top.out+="\n";
     if(bool polygen=!dontoptimize){dev.top.out+=poly_gen();}else dev.top.out+=get_at_end();
-    auto msp=clock.MS();std::cerr<<"{\"poly_end done in \":"<<(msp-msb)<<"}"<<endl;
+    auto msp=clock.MS();std::cerr<<"{\"poly_end done in \":"<<(msp-msg2)<<"}"<<endl;
     vector<i_target_item*> tarr;
     for(auto&ex:tar.arr)tarr.push_back(ex.get());
     auto listoftypes=get_list_of_types(tarr);
@@ -1585,7 +1744,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
   }
   bool interfaces_only=false;
+  vector<int> target_only_stack;
   void DoGrab(t_target_struct&r){
+    target_only_stack.push_back(target_only);
     target_only=true;
     dev.top.nesteds.need_igrab=true;
     Do(r.body);
@@ -1593,7 +1754,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     dev.top.nesteds.need_grab=true;
     Do(r.body);
     dev.top.nesteds.need_grab=false;
-    target_only=false;
+    target_only=target_only_stack.back();
+    target_only_stack.pop_back();
   }
 };
 

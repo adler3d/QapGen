@@ -81,7 +81,7 @@ public:
 ----------------------------------------------------------------
 public:
   bool go(i_dev&^^^DEV^^^){
-    t_fallback ^^^SCOPE^^^(^^^DEV^^^,__FUNCTION__);
+    t_fallback ^^^SCOPE^^^(^^^DEV^^^,^^^LEXER_FULL_NAME^^^);
     auto&ok=^^^SCOPE^^^.ok;
 ^^^PROCMDS^^^    return ok;
   }

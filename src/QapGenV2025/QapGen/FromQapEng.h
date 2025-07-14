@@ -1081,20 +1081,28 @@ std::string escape_char(char c,bool str=true) {
   }
 }
 
-std::string generate_gen_dips_code(const std::string&chars){
-  if (chars.empty()) return "\"\"";
+string make_unique_voc(const string&voc){
+  auto m=CharMask::fromStr(voc,true);
+  string u;
+  for(size_t i=0;i<256;i++){
+    if(m.mask[i])u.push_back((char)i);
+  }
+  return std::move(u);
+}
+
+std::string generate_gen_dips_code(const std::string&chars,bool need_sort=false){
+  if(chars.empty())return "\"\"";
   if(chars.size()==1)return "\""+escape_char(chars[0])+"\"";
   if(chars.size()<16){
     std::string escaped;
     for(char c:chars){escaped+=escape_char(c);}
     return "\""+escaped+"\"";
   }
-  std::string sorted_chars = chars;
+  string sorted_chars=need_sort?make_unique_voc(chars):chars;
+  if(!need_sort&&sorted_chars!=chars)QapNoWay();
   auto r=build_ranges_string(sorted_chars);
   auto r2=(gen_dips(r.ranges)+r.singles);
-  auto m=CharMask::fromStr(r2,true);
-  string u;
-  for(size_t i=0;i<256;i++)if(m.mask[i])u.push_back((char)i);
+  string u=make_unique_voc(r2);
   QapAssert(sorted_chars==u);
   string out,so;
   for(auto&ex:r.ranges)out+=escape_char(ex);//CppString::toCode((uchar&)ex);

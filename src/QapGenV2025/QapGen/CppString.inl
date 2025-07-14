@@ -117,7 +117,7 @@ public:
     return mask.mask[uc];
   }
 };
-std::string escape_cpp_string(const std::string& input) {
+std::string escape_cpp_string(const std::string& input,bool raw=false) {
   std::string escaped_string;
   for (char c : input) {
     switch (c) {
@@ -144,7 +144,7 @@ std::string escape_cpp_string(const std::string& input) {
         break;
     }
   }
-  return "\""+escaped_string+"\"";
+  return raw?escaped_string:("\""+escaped_string+"\"");
 }
 string drop_empty_lines(const string&s){
   auto lines=split(s,"\n");
