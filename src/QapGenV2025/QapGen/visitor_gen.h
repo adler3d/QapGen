@@ -1099,7 +1099,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     auto it=LC2VOC.find(lexer_with_field);
     if(it!=LC2VOC.end())return it->second;
     struct t_scope{
-      decltype(LC2VOC)&LC2VOC;
+      unordered_map<string,LC2VOCR>&LC2VOC;
       string&LWF;
       LC2VOCR result;
       ~t_scope(){result.out=make_unique_voc(result.out);LC2VOC[LWF]=result;}
