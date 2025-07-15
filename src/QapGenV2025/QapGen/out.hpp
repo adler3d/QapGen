@@ -1,4 +1,76 @@
-// 5275.470900 ms
+// 6679.362900 ms
+//===>>===xiface_visitor
+#define DEF_PRO_BLANK()
+#define LIST(ADDBEG,ADD,ADDEND)\
+ADDBEG()\
+  ADD(t_using_test_20250628)\
+ADDEND()
+class xiface;
+#define ADD(TYPE)class TYPE;
+LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+#undef ADD
+class xiface_visitor{
+public:
+public:
+  #define ADD(TYPE)virtual void Do(TYPE&r)=0;
+  LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+  #undef ADD
+public:
+  #define ADD(U)//typedef ::U U;
+  LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+  #undef ADD
+public:
+  #ifdef QAP_FAST_UBERCAST
+  template<class TYPE,class Visitor>
+  struct Is:public Visitor{
+    TYPE*ptr{};
+  public:
+    #define ADD(U)void Do(U&r){ptr=std::is_same<U,TYPE>::value?(TYPE*)&r:nullptr;}
+    LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
+    #undef ADD
+  };
+  template<class TYPE>
+  static TYPE*UberCast(xiface*p){
+    if(!p)return nullptr;Is<TYPE,xiface_visitor> IS;p->Use(IS);return IS.ptr;
+  }
+  #else
+  template<class TYPE>
+  static TYPE*UberCast(xiface*p){return dynamic_cast<TYPE*>(p);}
+  #endif
+};
+//struct t_visitor:public xiface_visitor{
+//  void Do(t_using_test_20250628&r){}
+//};
+#undef LIST
+#undef DEF_PRO_BLANK
+//===<<===xiface_visitor
+struct xiface{
+#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(xiface)
+#define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
+ADDBEG()\
+ADDEND()
+//=====+>>>>>xiface
+#include "QapGenStructNoTemplate.inl"
+//<<<<<+=====xiface
+public:
+  typedef xiface_visitor i_visitor;
+  virtual void Use(i_visitor&A){QapDebugMsg("no way.");/*A.Do(*this);*/}
+  virtual ~xiface()=default;
+public:
+  virtual bool go(i_dev&dev){QapDebugMsg("no way.");return false;};
+  struct t_poly_impl:public t_poly_tool::go_poly<SelfClass>
+  {
+    #include "QapLexPolyBeg.inl"
+    void load();/*
+    {
+      F(t_using_test_20250628);
+      (void)count;(void)first_id;(void)out_arr;(void)this;
+      main();
+      return scope.ok;
+    }*/
+    #include "QapLexPolyEndNoTemplate.inl"
+  };
+};
 //===>>===i_str_item_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -326,7 +398,6 @@ public:
 struct t_parent_fullname_reslove_algo_test_20250701{
   //t_parent_holder{t_foo:i_base{}}
   struct t_other{
-      //t_bar:t_parent_holder::i_base{}
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_other)OWNER(t_parent_fullname_reslove_algo_test_20250701)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
@@ -338,6 +409,8 @@ struct t_parent_fullname_reslove_algo_test_20250701{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_parent_fullname_reslove_algo_test_20250701::t_other");
       auto&ok=$.ok;
+      $(1);ok=dev.go_const(" ");$(1,ok,",\" \"");
+      if(!ok)return ok;
       return ok;
     }
   };
@@ -356,11 +429,13 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_parent_fullname_reslove_algo_test_20250701");
     auto&ok=$.ok;
+    $(1);ok=dev.go_const("P");$(1,ok,",\"P\"");
+    if(!ok)return ok;
     return ok;
   }
 public:
 };
-struct t_using_test_20250628{
+struct t_using_test_20250628:public xiface{
   struct t_sep{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_sep)OWNER(t_using_test_20250628)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
@@ -373,7 +448,7 @@ struct t_using_test_20250628{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_using_test_20250628::t_sep");
       auto&ok=$.ok;
-      ok=dev.go_const(" ");if(!ok)dev.log_error(1,",\" \"");
+      $(1);ok=dev.go_const(" ");$(1,ok,",\" \"");
       if(!ok)return ok;
       return ok;
     }
@@ -385,6 +460,7 @@ struct t_foo;
       #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_baz)OWNER(t_bar)
       #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
       ADDBEG()\
+      ADDVAR(string,s,DEF,$,$)\
       ADDEND()
       //=====+>>>>>t_baz
       #include "QapGenStructNoTemplate.inl"
@@ -393,6 +469,9 @@ struct t_foo;
         bool go(i_dev&dev){
           t_fallback $(dev,"t_using_test_20250628::t_foo::t_bar::t_baz");
           auto&ok=$.ok;
+          static const auto g_static_var_0=CharMask::fromStr("xyz");
+          $(1);ok=dev.go_any(s,g_static_var_0);$(1,ok,",\"xyz\"");
+          if(!ok)return ok;
           return ok;
         }
       };
@@ -411,6 +490,8 @@ struct t_foo;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_using_test_20250628::t_foo::t_bar");
         auto&ok=$.ok;
+        $(1);ok=dev.go_const("uv");$(1,ok,",\"u\"");
+        if(!ok)return ok;
         return ok;
       }
     };
@@ -434,13 +515,13 @@ struct t_foo;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_using_test_20250628::t_foo");
       auto&ok=$.ok;
-      ok=dev.go_auto(b);if(!ok)dev.log_error(1,"t_bar,\"\"");
+      $(1);ok=dev.go_auto(b);$(1,ok,"t_bar,\"u\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep1);if(!ok)dev.log_error(1,"t_sep,\" \"");
+      $(1);ok=dev.go_auto($sep1);$(1,ok,"t_sep,\" \"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(c);if(!ok)dev.log_error(0,"t_bar,\"\"");}
-      {bool ok=dev.go_auto(d);if(!ok)dev.log_error(0,"t_bar,\"\"");}
-      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\" \"");}
+      $(0);{bool ok=dev.go_auto(c);$(0,ok,"t_bar,\"u\"");}
+      $(0);{bool ok=dev.go_auto(d);$(0,ok,"t_bar,\"u\"");}
+      $(0);{bool ok=dev.go_auto($sep4);$(0,ok,"t_sep,\" \"");}
       return ok;
     }
   public:
@@ -450,7 +531,7 @@ struct t_foo;
   F(t_sep)\
   F(t_foo)\
   /*</DEF_PRO_NESTED>*/
-#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_using_test_20250628)
+#define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_using_test_20250628)PARENT(xiface)
 #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
 ADDBEG()\
 ADDVAR(t_foo,foo,DEF,$,$)\
@@ -459,10 +540,13 @@ ADDEND()
 #include "QapGenStructNoTemplate.inl"
 //<<<<<+=====t_using_test_20250628
 public:
+  void Use(i_visitor&A){A.Do(*this);}
+  static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
+public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_using_test_20250628");
     auto&ok=$.ok;
-    ok=dev.go_auto(foo);if(!ok)dev.log_error(1,"t_foo,\"\"");
+    $(1);ok=dev.go_auto(foo);$(1,ok,"t_foo,\"u\"");
     if(!ok)return ok;
     return ok;
   }
@@ -482,7 +566,7 @@ public:
     t_fallback $(dev,"t_number");
     auto&ok=$.ok;
     static const auto g_static_var_0=CharMask::fromStr(gen_dips("09"));
-    ok=dev.go_any(body,g_static_var_0);if(!ok)dev.log_error(1,",\"0123456789\"");
+    $(1);ok=dev.go_any(body,g_static_var_0);$(1,ok,",\"0123456789\"");
     if(!ok)return ok;
     return ok;
   }
@@ -506,7 +590,7 @@ public:
     t_fallback $(dev,"t_str_item_raw");
     auto&ok=$.ok;
     static const auto g_static_var_0=CharMask::fromStr(dip_inv("\"\\\n"));
-    ok=dev.go_any(body,g_static_var_0);if(!ok)dev.log_error(1,",gen_dips(\"\\x00\\t\\x0B!#[]\\xFF\")");
+    $(1);ok=dev.go_any(body,g_static_var_0);$(1,ok,",gen_dips(\"\\x00\\t\\x0B!#[]\\xFF\")");
     if(!ok)return ok;
     return ok;
   }
@@ -527,10 +611,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_str_item_hex");
     auto&ok=$.ok;
-    ok=dev.go_const("\\x");if(!ok)dev.log_error(1,",\"\\\\\"");
+    $(1);ok=dev.go_const("\\x");$(1,ok,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr(gen_dips("09afAF"));
-    ok=dev.go_any_arr_char(body,g_static_var_1);if(!ok)dev.log_error(1,",gen_dips(\"09AFaf\")");
+    $(1);ok=dev.go_any_arr_char(body,g_static_var_1);$(1,ok,",gen_dips(\"09AFaf\")");
     if(!ok)return ok;
     return ok;
   }
@@ -551,10 +635,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_str_item_num");
     auto&ok=$.ok;
-    ok=dev.go_const("\\u");if(!ok)dev.log_error(1,",\"\\\\\"");
+    $(1);ok=dev.go_const("\\u");$(1,ok,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-    ok=dev.go_any_arr_char(body,g_static_var_1);if(!ok)dev.log_error(1,",\"0123456789\"");
+    $(1);ok=dev.go_any_arr_char(body,g_static_var_1);$(1,ok,",\"0123456789\"");
     if(!ok)return ok;
     return ok;
   }
@@ -575,10 +659,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_str_item_fix");
     auto&ok=$.ok;
-    ok=dev.go_const("\\");if(!ok)dev.log_error(1,",\"\\\\\"");
+    $(1);ok=dev.go_const("\\");$(1,ok,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr("tfbrn\\\"\'"+gen_dips("07"));
-    ok=dev.go_any_char(body,g_static_var_1);if(!ok)dev.log_error(1,",gen_dips(\"07\")+\"\\\"'\\\\bfnrt\"");
+    $(1);ok=dev.go_any_char(body,g_static_var_1);$(1,ok,",gen_dips(\"07\")+\"\\\"'\\\\bfnrt\"");
     if(!ok)return ok;
     return ok;
   }
@@ -597,11 +681,11 @@ struct t_str_item{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_str_item::t_impl");
       auto&ok=$.ok;
-      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
+      $(1);ok=dev.go_const("\"");$(1,ok,",\"\\\"\"");
       if(!ok)return ok;
-      ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");
+      $(1);ok=dev.go_auto(arr);$(1,ok,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");
       if(!ok)return ok;
-      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
+      $(1);ok=dev.go_const("\"");$(1,ok,",\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -622,7 +706,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_str_item");
     auto&ok=$.ok;
-    ok=dev.go_str<t_impl>(value);if(!ok)dev.log_error(1,"t_impl,\"\\\"\"");
+    $(1);ok=dev.go_str<t_impl>(value);$(1,ok,"t_impl,\"\\\"\"");
     if(!ok)return ok;
     return ok;
   }
@@ -645,7 +729,7 @@ public:
     t_fallback $(dev,"t_char_item_raw");
     auto&ok=$.ok;
     static const auto g_static_var_0=CharMask::fromStr(dip_inv("'\\\n"));
-    ok=dev.go_any(body,g_static_var_0);if(!ok)dev.log_error(1,",gen_dips(\"\\x00\\t\\x0B&([]\\xFF\")");
+    $(1);ok=dev.go_any(body,g_static_var_0);$(1,ok,",gen_dips(\"\\x00\\t\\x0B&([]\\xFF\")");
     if(!ok)return ok;
     return ok;
   }
@@ -666,10 +750,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_char_item_hex");
     auto&ok=$.ok;
-    ok=dev.go_const("\\x");if(!ok)dev.log_error(1,",\"\\\\\"");
+    $(1);ok=dev.go_const("\\x");$(1,ok,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr(gen_dips("09afAF"));
-    ok=dev.go_any_arr_char(body,g_static_var_1);if(!ok)dev.log_error(1,",gen_dips(\"09AFaf\")");
+    $(1);ok=dev.go_any_arr_char(body,g_static_var_1);$(1,ok,",gen_dips(\"09AFaf\")");
     if(!ok)return ok;
     return ok;
   }
@@ -690,10 +774,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_char_item_num");
     auto&ok=$.ok;
-    ok=dev.go_const("\\u");if(!ok)dev.log_error(1,",\"\\\\\"");
+    $(1);ok=dev.go_const("\\u");$(1,ok,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-    ok=dev.go_any_arr_char(body,g_static_var_1);if(!ok)dev.log_error(1,",\"0123456789\"");
+    $(1);ok=dev.go_any_arr_char(body,g_static_var_1);$(1,ok,",\"0123456789\"");
     if(!ok)return ok;
     return ok;
   }
@@ -714,10 +798,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_char_item_fix");
     auto&ok=$.ok;
-    ok=dev.go_const("\\");if(!ok)dev.log_error(1,",\"\\\\\"");
+    $(1);ok=dev.go_const("\\");$(1,ok,",\"\\\\\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr("tfbrn\\\"\'"+gen_dips("07"));
-    ok=dev.go_any_char(body,g_static_var_1);if(!ok)dev.log_error(1,",gen_dips(\"07\")+\"\\\"'\\\\bfnrt\"");
+    $(1);ok=dev.go_any_char(body,g_static_var_1);$(1,ok,",gen_dips(\"07\")+\"\\\"'\\\\bfnrt\"");
     if(!ok)return ok;
     return ok;
   }
@@ -736,11 +820,11 @@ struct t_char_item{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_char_item::t_impl");
       auto&ok=$.ok;
-      ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
+      $(1);ok=dev.go_const("'");$(1,ok,",\"'\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_char_item>,gen_dips(\"\\x00\\t\\x0B&(\\xFF\")");
+      $(1);ok=dev.go_auto(body);$(1,ok,"TAutoPtr<i_char_item>,gen_dips(\"\\x00\\t\\x0B&(\\xFF\")");
       if(!ok)return ok;
-      ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
+      $(1);ok=dev.go_const("'");$(1,ok,",\"'\"");
       if(!ok)return ok;
       return ok;
     }
@@ -761,7 +845,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_char_item");
     auto&ok=$.ok;
-    ok=dev.go_str<t_impl>(value);if(!ok)dev.log_error(1,"t_impl,\"'\"");
+    $(1);ok=dev.go_str<t_impl>(value);$(1,ok,"t_impl,\"'\"");
     if(!ok)return ok;
     return ok;
   }
@@ -784,7 +868,7 @@ public:
     t_fallback $(dev,"t_sep_seq");
     auto&ok=$.ok;
     static const auto g_static_var_0=CharMask::fromStr(" \t\r\n");
-    ok=dev.go_any(body,g_static_var_0);if(!ok)dev.log_error(1,",\" \\t\\r\\n\"");
+    $(1);ok=dev.go_any(body,g_static_var_0);$(1,ok,",\" \\t\\r\\n\"");
     if(!ok)return ok;
     return ok;
   }
@@ -805,9 +889,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_c_comment");
     auto&ok=$.ok;
-    ok=dev.go_const("/*");if(!ok)dev.log_error(1,",\"/\"");
+    $(1);ok=dev.go_const("/*");$(1,ok,",\"/\"");
     if(!ok)return ok;
-    ok=dev.go_end(body,"*/");if(!ok)dev.log_error(1,",\"*\"");
+    $(1);ok=dev.go_end(body,"*/");$(1,ok,",\"*\"");
     if(!ok)return ok;
     return ok;
   }
@@ -828,10 +912,10 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_cpp_comment");
     auto&ok=$.ok;
-    ok=dev.go_const("//");if(!ok)dev.log_error(1,",\"/\"");
+    $(1);ok=dev.go_const("//");$(1,ok,",\"/\"");
     if(!ok)return ok;
     static const auto g_static_var_1=CharMask::fromStr(dip_inv("\n"));
-    {bool ok=dev.go_any(body,g_static_var_1);if(!ok)dev.log_error(0,",gen_dips(\"\\x00\\t\\x0B\\xFF\")");}
+    $(0);{bool ok=dev.go_any(body,g_static_var_1);$(0,ok,",gen_dips(\"\\x00\\t\\x0B\\xFF\")");}
     return ok;
   }
 };
@@ -849,7 +933,7 @@ struct t_sep{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_sep::t_impl");
       auto&ok=$.ok;
-      ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_sep>>,\"\\t\\n\\r /\"");
+      $(1);ok=dev.go_auto(arr);$(1,ok,"vector<TAutoPtr<i_sep>>,\"\\t\\n\\r /\"");
       if(!ok)return ok;
       return ok;
     }
@@ -870,7 +954,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_sep");
     auto&ok=$.ok;
-    ok=dev.go_str<t_impl>(value);if(!ok)dev.log_error(1,"t_impl,\"\\t\\n\\r /\"");
+    $(1);ok=dev.go_str<t_impl>(value);$(1,ok,"t_impl,\"\\t\\n\\r /\"");
     if(!ok)return ok;
     return ok;
   }
@@ -891,7 +975,7 @@ struct t_name{
       t_fallback $(dev,"t_name::t_keyword");
       auto&ok=$.ok;
       static const auto g_static_var_0=QapStrFinder::fromArr(split("new,delete,default,consteval,false,true,nullptr,this,struct,class,for,if,while,do,const,constexpr,else,operator,auto,continue,break,return,goto,virtual,override,public,private,protected,friend,template,typedef,using,namespace,decltype",","));
-      ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",gen_dips(\"agnprw\")+\"i\"");
+      $(1);ok=dev.go_any_str_from_vec(value,g_static_var_0);$(1,ok,",gen_dips(\"agnprw\")+\"i\"");
       if(!ok)return ok;
       return ok;
     }
@@ -911,10 +995,10 @@ struct t_name{
       t_fallback $(dev,"t_name::t_impl");
       auto&ok=$.ok;
       static const auto g_static_var_0=CharMask::fromStr(gen_dips("azAZ")+"_$@");
-      ok=dev.go_any_char(A,g_static_var_0);if(!ok)dev.log_error(1,",gen_dips(\"@Zaz\")+\"$_\"");
+      $(1);ok=dev.go_any_char(A,g_static_var_0);$(1,ok,",gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
       static const auto g_static_var_1=CharMask::fromStr(gen_dips("azAZ09")+"_$@");
-      {bool ok=dev.go_any(B,g_static_var_1);if(!ok)dev.log_error(0,",gen_dips(\"09@Zaz\")+\"$_\"");}
+      $(0);{bool ok=dev.go_any(B,g_static_var_1);$(0,ok,",gen_dips(\"09@Zaz\")+\"$_\"");}
       return ok;
     }
   };
@@ -931,7 +1015,7 @@ struct t_name{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_name::t_impl_ex");
       auto&ok=$.ok;
-      ok=dev.go_minor<t_keyword>(impl);if(!ok)dev.log_error(1,"minor!t_impl,gen_dips(\"@Zaz\")+\"$_\"");
+      $(1);ok=dev.go_diff<t_keyword>(impl);$(1,ok,"minor!t_impl,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -954,7 +1038,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_name");
     auto&ok=$.ok;
-    ok=dev.go_str<t_impl_ex>(value);if(!ok)dev.log_error(1,"t_impl_ex,gen_dips(\"@Zaz\")+\"$_\"");
+    $(1);ok=dev.go_str<t_impl_ex>(value);$(1,ok,"t_impl_ex,gen_dips(\"@Zaz\")+\"$_\"");
     if(!ok)return ok;
     return ok;
   }
@@ -976,7 +1060,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_str");
     auto&ok=$.ok;
-    ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_str_item,\"\\\"\"");
+    $(1);ok=dev.go_auto(body);$(1,ok,"t_str_item,\"\\\"\"");
     if(!ok)return ok;
     return ok;
   }
@@ -997,7 +1081,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_char");
     auto&ok=$.ok;
-    ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_char_item,\"'\"");
+    $(1);ok=dev.go_auto(body);$(1,ok,"t_char_item,\"'\"");
     if(!ok)return ok;
     return ok;
   }
@@ -1018,7 +1102,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_num");
     auto&ok=$.ok;
-    ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_number,\"0123456789\"");
+    $(1);ok=dev.go_auto(body);$(1,ok,"t_number,\"0123456789\"");
     if(!ok)return ok;
     return ok;
   }
@@ -1039,7 +1123,7 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_id");
     auto&ok=$.ok;
-    ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+    $(1);ok=dev.go_auto(body);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
     if(!ok)return ok;
     return ok;
   }
@@ -1061,7 +1145,7 @@ public:
     t_fallback $(dev,"t_sign");
     auto&ok=$.ok;
     static const auto g_static_var_0=CharMask::fromStr("~|&=<>!:?;,.+-*/%^");
-    ok=dev.go_any_char(body,g_static_var_0);if(!ok)dev.log_error(1,",gen_dips(\"%&*/:?\")+\"!^|~\"");
+    $(1);ok=dev.go_any_char(body,g_static_var_0);$(1,ok,",gen_dips(\"%&*/:?\")+\"!^|~\"");
     if(!ok)return ok;
     return ok;
   }
@@ -1173,8 +1257,8 @@ struct t_cppcore{
       t_fallback $(dev,"t_cppcore::t_lev03");
       auto&ok=$.ok;
       static const auto g_static_var_0=QapStrFinder::fromArr(split("+,-,!,~",","));
-      {bool ok=dev.go_any_str_from_vec(oper,g_static_var_0);if(!ok)dev.log_error(0,",\"+-!~\"");}
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"TAutoPtr<i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
+      $(0);{bool ok=dev.go_any_str_from_vec(oper,g_static_var_0);$(0,ok,",\"+-!~\"");}
+      $(1);ok=dev.go_auto(expr);$(1,ok,"TAutoPtr<i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -1194,7 +1278,7 @@ struct t_cppcore{
         t_fallback $(dev,"t_cppcore::t_lev05::t_oper");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("*,/,%",","));
-        ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"*/%\"");
+        $(1);ok=dev.go_any_str_from_vec(value,g_static_var_0);$(1,ok,",\"*/%\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1213,9 +1297,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev05::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"%*/\"");
+        $(1);ok=dev.go_auto(oper);$(1,ok,"t_oper,\"%*/\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev03,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev03,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1238,9 +1322,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_lev05");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev03,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev03,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"%*/\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_item>,\"%*/\"");}
       return ok;
     }
   public:
@@ -1260,7 +1344,7 @@ struct t_cppcore{
         t_fallback $(dev,"t_cppcore::t_lev06::t_oper");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("+,-",","));
-        ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"+-\"");
+        $(1);ok=dev.go_any_str_from_vec(value,g_static_var_0);$(1,ok,",\"+-\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1279,9 +1363,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev06::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"+-\"");
+        $(1);ok=dev.go_auto(oper);$(1,ok,"t_oper,\"+-\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev05,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev05,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1304,9 +1388,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_lev06");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev05,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev05,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"+-\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_item>,\"+-\"");}
       return ok;
     }
   public:
@@ -1326,7 +1410,7 @@ struct t_cppcore{
         t_fallback $(dev,"t_cppcore::t_lev07::t_oper");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("<<,>>",","));
-        ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"<>\"");
+        $(1);ok=dev.go_any_str_from_vec(value,g_static_var_0);$(1,ok,",\"<>\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1345,9 +1429,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev07::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"<>\"");
+        $(1);ok=dev.go_auto(oper);$(1,ok,"t_oper,\"<>\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev06,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev06,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1370,9 +1454,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_lev07");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev06,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev06,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"<>\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_item>,\"<>\"");}
       return ok;
     }
   public:
@@ -1392,7 +1476,7 @@ struct t_cppcore{
         t_fallback $(dev,"t_cppcore::t_lev08::t_oper");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("<,<=,>,>=",","));
-        ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"<<>>\"");
+        $(1);ok=dev.go_any_str_from_vec(value,g_static_var_0);$(1,ok,",\"<<>>\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1411,9 +1495,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev08::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"<>\"");
+        $(1);ok=dev.go_auto(oper);$(1,ok,"t_oper,\"<>\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev07,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev07,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1436,9 +1520,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_lev08");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev07,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev07,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"<>\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_item>,\"<>\"");}
       return ok;
     }
   public:
@@ -1458,7 +1542,7 @@ struct t_cppcore{
         t_fallback $(dev,"t_cppcore::t_lev09::t_oper");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("==,!=",","));
-        ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"=!\"");
+        $(1);ok=dev.go_any_str_from_vec(value,g_static_var_0);$(1,ok,",\"=!\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1477,9 +1561,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev09::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"!=\"");
+        $(1);ok=dev.go_auto(oper);$(1,ok,"t_oper,\"!=\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev08,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev08,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1502,9 +1586,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_lev09");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev08,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev08,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"!=\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_item>,\"!=\"");}
       return ok;
     }
   public:
@@ -1522,7 +1606,7 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev10::t_oper");
         auto&ok=$.ok;
-        ok=dev.go_const("&");if(!ok)dev.log_error(1,",\"&\"");
+        $(1);ok=dev.go_const("&");$(1,ok,",\"&\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1542,9 +1626,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev10::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"&\"");
+        $(1);ok=dev.go_auto(oper);$(1,ok,"t_oper,\"&\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev09,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev09,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1567,9 +1651,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_lev10");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev09,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev09,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"&\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_item>,\"&\"");}
       return ok;
     }
   public:
@@ -1587,7 +1671,7 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev11::t_oper");
         auto&ok=$.ok;
-        ok=dev.go_const("^");if(!ok)dev.log_error(1,",\"^\"");
+        $(1);ok=dev.go_const("^");$(1,ok,",\"^\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1607,9 +1691,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev11::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"^\"");
+        $(1);ok=dev.go_auto(oper);$(1,ok,"t_oper,\"^\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev10,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev10,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1632,9 +1716,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_lev11");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev10,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev10,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"^\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_item>,\"^\"");}
       return ok;
     }
   public:
@@ -1652,7 +1736,7 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev12::t_oper");
         auto&ok=$.ok;
-        ok=dev.go_const("|");if(!ok)dev.log_error(1,",\"|\"");
+        $(1);ok=dev.go_const("|");$(1,ok,",\"|\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1672,9 +1756,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev12::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"|\"");
+        $(1);ok=dev.go_auto(oper);$(1,ok,"t_oper,\"|\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev11,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev11,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1697,9 +1781,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_lev12");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev11,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev11,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"|\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_item>,\"|\"");}
       return ok;
     }
   public:
@@ -1717,7 +1801,7 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev13::t_oper");
         auto&ok=$.ok;
-        ok=dev.go_const("&&");if(!ok)dev.log_error(1,",\"&\"");
+        $(1);ok=dev.go_const("&&");$(1,ok,",\"&\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1737,9 +1821,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev13::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"&\"");
+        $(1);ok=dev.go_auto(oper);$(1,ok,"t_oper,\"&\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev12,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev12,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1762,9 +1846,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_lev13");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev12,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev12,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"&\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_item>,\"&\"");}
       return ok;
     }
   public:
@@ -1782,7 +1866,7 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev14::t_oper");
         auto&ok=$.ok;
-        ok=dev.go_const("||");if(!ok)dev.log_error(1,",\"|\"");
+        $(1);ok=dev.go_const("||");$(1,ok,",\"|\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1802,9 +1886,9 @@ struct t_cppcore{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_lev14::t_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(oper);if(!ok)dev.log_error(1,"t_oper,\"|\"");
+        $(1);ok=dev.go_auto(oper);$(1,ok,"t_oper,\"|\"");
         if(!ok)return ok;
-        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev13,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev13,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -1827,9 +1911,9 @@ struct t_cppcore{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_lev14");
       auto&ok=$.ok;
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev13,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev13,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"|\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_item>,\"|\"");}
       return ok;
     }
   public:
@@ -1886,10 +1970,10 @@ return(
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_string");
       auto&ok=$.ok;
-      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
+      $(1);ok=dev.go_const("\"");$(1,ok,",\"\\\"\"");
       if(!ok)return ok;
-      {bool ok=dev.go_str<vector<TAutoPtr<i_str_item>>>(value);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");}
-      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
+      $(0);{bool ok=dev.go_str<vector<TAutoPtr<i_str_item>>>(value);$(0,ok,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");}
+      $(1);ok=dev.go_const("\"");$(1,ok,",\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -1986,7 +2070,7 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_int_expr::t_zero");
         auto&ok=$.ok;
-        ok=dev.go_const("0");if(!ok)dev.log_error(1,",\"0\"");
+        $(1);ok=dev.go_const("0");$(1,ok,",\"0\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2009,10 +2093,10 @@ return(
         t_fallback $(dev,"t_cppcore::t_int_expr::t_num");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr(gen_dips("19"));
-        ok=dev.go_any_char(first,g_static_var_0);if(!ok)dev.log_error(1,",\"123456789\"");
+        $(1);ok=dev.go_any_char(first,g_static_var_0);$(1,ok,",\"123456789\"");
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-        {bool ok=dev.go_any(num,g_static_var_1);if(!ok)dev.log_error(0,",\"0123456789\"");}
+        $(0);{bool ok=dev.go_any(num,g_static_var_1);$(0,ok,",\"0123456789\"");}
         return ok;
       }
     };
@@ -2036,7 +2120,7 @@ return(
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_int_expr");
       auto&ok=$.ok;
-      ok=dev.go_str<TAutoPtr<i_val>>(value);if(!ok)dev.log_error(1,"TAutoPtr<i_val>,\"0123456789\"");
+      $(1);ok=dev.go_str<TAutoPtr<i_val>>(value);$(1,ok,"TAutoPtr<i_val>,\"0123456789\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2057,15 +2141,15 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_type_expr::t_params");
         auto&ok=$.ok;
-        ok=dev.go_const("{");if(!ok)dev.log_error(1,",\"{\"");
+        $(1);ok=dev.go_const("{");$(1,ok,",\"{\"");
         if(!ok)return ok;
-        ok=dev.go_str<t_type_expr>(type);if(!ok)dev.log_error(1,"t_type_expr,gen_dips(\"@Zaz\")+\"$_\"");
+        $(1);ok=dev.go_str<t_type_expr>(type);$(1,ok,"t_type_expr,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
-        ok=dev.go_const(",");if(!ok)dev.log_error(1,",\",\"");
+        $(1);ok=dev.go_const(",");$(1,ok,",\",\"");
         if(!ok)return ok;
-        ok=dev.go_auto(count);if(!ok)dev.log_error(1,"t_int_expr,\"0123456789\"");
+        $(1);ok=dev.go_auto(count);$(1,ok,"t_int_expr,\"0123456789\"");
         if(!ok)return ok;
-        ok=dev.go_const("}");if(!ok)dev.log_error(1,",\"}\"");
+        $(1);ok=dev.go_const("}");$(1,ok,",\"}\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2084,9 +2168,9 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_type_expr::t_elem");
         auto&ok=$.ok;
-        ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+        $(1);ok=dev.go_auto(name);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(params);if(!ok)dev.log_error(0,"TAutoPtr<t_params>,\"{\"");}
+        $(0);{bool ok=dev.go_auto(params);$(0,ok,"TAutoPtr<t_params>,\"{\"");}
         return ok;
       }
     };
@@ -2105,11 +2189,11 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_type_expr::t_item");
         auto&ok=$.ok;
-        {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        ok=dev.go_const("::");if(!ok)dev.log_error(1,",\":\"");
+        $(0);{bool ok=dev.go_auto(sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(1);ok=dev.go_const("::");$(1,ok,",\":\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_elem,gen_dips(\"@Zaz\")+\"$_\"");
+        $(0);{bool ok=dev.go_auto(sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(1);ok=dev.go_auto(body);$(1,ok,"t_elem,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2133,9 +2217,9 @@ return(
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_type_expr");
       auto&ok=$.ok;
-      ok=dev.go_auto(first);if(!ok)dev.log_error(1,"t_elem,gen_dips(\"@Zaz\")+\"$_\"");
+      $(1);ok=dev.go_auto(first);$(1,ok,"t_elem,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_item>,\"\\t\\n\\r /:\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_item>,\"\\t\\n\\r /:\"");}
       return ok;
     }
   public:
@@ -2156,7 +2240,7 @@ return(
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_char_expr");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_char_item,\"'\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_char_item,\"'\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2178,7 +2262,7 @@ return(
       t_fallback $(dev,"t_cppcore::t_bool_expr");
       auto&ok=$.ok;
       static const auto g_static_var_0=QapStrFinder::fromArr(split("true,false",","));
-      ok=dev.go_any_str_from_vec(value,g_static_var_0);if(!ok)dev.log_error(1,",\"ft\"");
+      $(1);ok=dev.go_any_str_from_vec(value,g_static_var_0);$(1,ok,",\"ft\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2199,7 +2283,7 @@ return(
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_string_expr");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_string,\"\\\"\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_string,\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2294,10 +2378,10 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_real_expr::t_frac");
         auto&ok=$.ok;
-        ok=dev.go_const(".");if(!ok)dev.log_error(1,",\".\"");
+        $(1);ok=dev.go_const(".");$(1,ok,",\".\"");
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-        ok=dev.go_any(arr,g_static_var_1);if(!ok)dev.log_error(1,",\"0123456789\"");
+        $(1);ok=dev.go_any(arr,g_static_var_1);$(1,ok,",\"0123456789\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2316,7 +2400,7 @@ return(
         t_fallback $(dev,"t_cppcore::t_real_expr::t_sign");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr("-+");
-        ok=dev.go_any_char(sign,g_static_var_0);if(!ok)dev.log_error(1,",\"-+\"");
+        $(1);ok=dev.go_any_char(sign,g_static_var_0);$(1,ok,",\"-+\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2337,11 +2421,11 @@ return(
         t_fallback $(dev,"t_cppcore::t_real_expr::t_exp");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr("eE");
-        ok=dev.go_any_char(e,g_static_var_0);if(!ok)dev.log_error(1,",\"eE\"");
+        $(1);ok=dev.go_any_char(e,g_static_var_0);$(1,ok,",\"eE\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(sign);if(!ok)dev.log_error(0,"TAutoPtr<t_sign>,\"+-\"");}
+        $(0);{bool ok=dev.go_auto(sign);$(0,ok,"TAutoPtr<t_sign>,\"+-\"");}
         static const auto g_static_var_2=CharMask::fromStr(gen_dips("09"));
-        ok=dev.go_any(arr,g_static_var_2);if(!ok)dev.log_error(1,",\"0123456789\"");
+        $(1);ok=dev.go_any(arr,g_static_var_2);$(1,ok,",\"0123456789\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2364,10 +2448,10 @@ return(
         t_fallback $(dev,"t_cppcore::t_real_expr::t_num");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr(gen_dips("19"));
-        ok=dev.go_any_char(first,g_static_var_0);if(!ok)dev.log_error(1,",\"123456789\"");
+        $(1);ok=dev.go_any_char(first,g_static_var_0);$(1,ok,",\"123456789\"");
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-        {bool ok=dev.go_any(num,g_static_var_1);if(!ok)dev.log_error(0,",\"0123456789\"");}
+        $(0);{bool ok=dev.go_any(num,g_static_var_1);$(0,ok,",\"0123456789\"");}
         return ok;
       }
     };
@@ -2386,7 +2470,7 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_real_expr::t_zero");
         auto&ok=$.ok;
-        ok=dev.go_const("0");if(!ok)dev.log_error(1,",\"0\"");
+        $(1);ok=dev.go_const("0");$(1,ok,",\"0\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2406,11 +2490,11 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_real_expr::t_impl");
         auto&ok=$.ok;
-        ok=dev.go_auto(val);if(!ok)dev.log_error(1,"TAutoPtr<i_val>,\"0123456789\"");
+        $(1);ok=dev.go_auto(val);$(1,ok,"TAutoPtr<i_val>,\"0123456789\"");
         if(!ok)return ok;
-        ok=dev.go_auto(frac);if(!ok)dev.log_error(1,"TAutoPtr<t_frac>,\".\"");
+        $(1);ok=dev.go_auto(frac);$(1,ok,"TAutoPtr<t_frac>,\".\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(exp);if(!ok)dev.log_error(0,"TAutoPtr<t_exp>,\"Ee\"");}
+        $(0);{bool ok=dev.go_auto(exp);$(0,ok,"TAutoPtr<t_exp>,\"Ee\"");}
         return ok;
       }
     };
@@ -2438,7 +2522,7 @@ return(
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_real_expr");
       auto&ok=$.ok;
-      ok=dev.go_str<t_impl>(value);if(!ok)dev.log_error(1,"t_impl,\"0123456789\"");
+      $(1);ok=dev.go_str<t_impl>(value);$(1,ok,"t_impl,\"0123456789\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2459,10 +2543,10 @@ return(
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_call_param");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_lev14,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(0);{bool ok=dev.go_auto(sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_lev14,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -2480,11 +2564,11 @@ return(
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_call_params");
       auto&ok=$.ok;
-      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
+      $(1);ok=dev.go_const("(");$(1,ok,",\"(\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_vec(arr,",");if(!ok)dev.log_error(0,"vector<t_call_param>,gen_dips(\"\\t\\n \\\"'(/9@Zaz\")+\"\\r$+-_~\"");}
-      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
+      $(0);{bool ok=dev.go_auto(sep);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_vec(arr,",");$(0,ok,"vector<t_call_param>,gen_dips(\"\\t\\n \\\"'(/9@Zaz\")+\"\\r$+-_~\"");}
+      $(1);ok=dev.go_const(")");$(1,ok,",\")\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2581,13 +2665,13 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_varcall_expr::t_sb_expr");
         auto&ok=$.ok;
-        ok=dev.go_const("[");if(!ok)dev.log_error(1,",\"[\"");
+        $(1);ok=dev.go_const("[");$(1,ok,",\"[\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"t_lev14,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(0);{bool ok=dev.go_auto(sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(1);ok=dev.go_auto(expr);$(1,ok,"t_lev14,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        ok=dev.go_const("]");if(!ok)dev.log_error(1,",\"]\"");
+        $(0);{bool ok=dev.go_auto(sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(1);ok=dev.go_const("]");$(1,ok,",\"]\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2608,11 +2692,11 @@ return(
         bool go(i_dev&dev){
           t_fallback $(dev,"t_cppcore::t_varcall_expr::t_dd_part::t_elem");
           auto&ok=$.ok;
-          {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-          ok=dev.go_const("::");if(!ok)dev.log_error(1,",\":\"");
+          $(0);{bool ok=dev.go_auto(sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+          $(1);ok=dev.go_const("::");$(1,ok,",\":\"");
           if(!ok)return ok;
-          {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-          ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+          $(0);{bool ok=dev.go_auto(sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+          $(1);ok=dev.go_auto(name);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
           if(!ok)return ok;
           return ok;
         }
@@ -2636,7 +2720,7 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_varcall_expr::t_dd_part");
         auto&ok=$.ok;
-        ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<t_elem>,\"\\t\\n\\r /:\"");
+        $(1);ok=dev.go_auto(arr);$(1,ok,"vector<t_elem>,\"\\t\\n\\r /:\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2661,15 +2745,15 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_varcall_expr::t_template_part");
         auto&ok=$.ok;
-        ok=dev.go_const("<");if(!ok)dev.log_error(1,",\"<\"");
+        $(1);ok=dev.go_const("<");$(1,ok,",\"<\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        ok=dev.go_vec(expr,",");if(!ok)dev.log_error(1,"vector<t_lev14>,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+        $(0);{bool ok=dev.go_auto(sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(1);ok=dev.go_vec(expr,",");$(1,ok,"vector<t_lev14>,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        ok=dev.go_const(">");if(!ok)dev.log_error(1,",\">\"");
+        $(0);{bool ok=dev.go_auto(sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(1);ok=dev.go_const(">");$(1,ok,",\">\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(ddp);if(!ok)dev.log_error(0,"TAutoPtr<t_dd_part>,\"\\t\\n\\r /:\"");}
+        $(0);{bool ok=dev.go_auto(ddp);$(0,ok,"TAutoPtr<t_dd_part>,\"\\t\\n\\r /:\"");}
         return ok;
       }
     };
@@ -2687,8 +2771,8 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_varcall_expr::t_arr");
         auto&ok=$.ok;
-        {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<t_sb_expr>,\"[\"");
+        $(0);{bool ok=dev.go_auto(sep);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(1);ok=dev.go_auto(arr);$(1,ok,"vector<t_sb_expr>,\"[\"");
         if(!ok)return ok;
         return ok;
       }
@@ -2709,13 +2793,13 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_varcall_expr::t_item");
         auto&ok=$.ok;
-        {bool ok=dev.go_auto(sepB);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        ok=dev.go_const(".");if(!ok)dev.log_error(1,",\".\"");
+        $(0);{bool ok=dev.go_auto(sepB);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(1);ok=dev.go_const(".");$(1,ok,",\".\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+        $(0);{bool ok=dev.go_auto(sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(1);ok=dev.go_auto(name);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"t_arr,\"\\t\\n\\r /[\"");}
+        $(0);{bool ok=dev.go_auto(arr);$(0,ok,"t_arr,\"\\t\\n\\r /[\"");}
         return ok;
       }
     };
@@ -2736,12 +2820,12 @@ return(
       bool go(i_dev&dev){
         t_fallback $(dev,"t_cppcore::t_varcall_expr::t_var");
         auto&ok=$.ok;
-        ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+        $(1);ok=dev.go_auto(name);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        {bool ok=dev.go_auto(tp);if(!ok)dev.log_error(0,"TAutoPtr<i_part>,\"\\t\\n\\r /:<\"");}
-        {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"TAutoPtr<t_arr>,\"\\t\\n\\r /[\"");}
-        {bool ok=dev.go_auto(items);if(!ok)dev.log_error(0,"vector<t_item>,\"\\t\\n\\r ./\"");}
+        $(0);{bool ok=dev.go_auto(sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(0);{bool ok=dev.go_auto(tp);$(0,ok,"TAutoPtr<i_part>,\"\\t\\n\\r /:<\"");}
+        $(0);{bool ok=dev.go_auto(arr);$(0,ok,"TAutoPtr<t_arr>,\"\\t\\n\\r /[\"");}
+        $(0);{bool ok=dev.go_auto(items);$(0,ok,"vector<t_item>,\"\\t\\n\\r ./\"");}
         return ok;
       }
     };
@@ -2771,10 +2855,10 @@ return(
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_varcall_expr");
       auto&ok=$.ok;
-      ok=dev.go_auto(var);if(!ok)dev.log_error(1,"t_var,gen_dips(\"@Zaz\")+\"$_\"");
+      $(1);ok=dev.go_auto(var);$(1,ok,"t_var,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(params);if(!ok)dev.log_error(0,"TAutoPtr<t_call_params>,\"(\"");}
+      $(0);{bool ok=dev.go_auto(sep);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(params);$(0,ok,"TAutoPtr<t_call_params>,\"(\"");}
       return ok;
     }
   public:
@@ -2795,11 +2879,11 @@ return(
     bool go(i_dev&dev){
       t_fallback $(dev,"t_cppcore::t_block_expr");
       auto&ok=$.ok;
-      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
+      $(1);ok=dev.go_const("(");$(1,ok,",\"(\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_lev14,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_lev14,gen_dips(\"!\\\"'(09@Zaz\")+\"$+-_~\"");
       if(!ok)return ok;
-      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
+      $(1);ok=dev.go_const(")");$(1,ok,",\")\"");
       if(!ok)return ok;
       return ok;
     }
@@ -2863,8 +2947,11 @@ struct t_test20250618_atrr{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_test20250618_atrr::t_foo");
       auto&ok=$.ok;
+      $(1);ok=dev.go_const("G");$(1,ok,",\"G\"");
+      if(!ok)return ok;
       return ok;
     }
+    int i=0;
   };
 #define DEF_PRO_NESTED(F)\
   /*<DEF_PRO_NESTED>*/\
@@ -2883,9 +2970,9 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_test20250618_atrr");
     auto&ok=$.ok;
-    ok=dev.go_auto(foo);if(!ok)dev.log_error(1,"t_foo,\"\"");
+    $(1);ok=dev.go_auto(foo);$(1,ok,"t_foo,\"G\"");
     if(!ok)return ok;
-    ok=dev.go_auto(sep);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
+    $(1);ok=dev.go_auto(sep);$(1,ok,"t_sep,\"\\t\\n\\r /\"");
     if(!ok)return ok;
     return ok;
   }
@@ -3673,7 +3760,7 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_name_code");
       auto&ok=$.ok;
-      ok=dev.go_str<t_name::t_impl>(value);if(!ok)dev.log_error(1,"t_name::t_impl,gen_dips(\"@Zaz\")+\"$_\"");
+      $(1);ok=dev.go_str<t_name::t_impl>(value);$(1,ok,"t_name::t_impl,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3694,7 +3781,7 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_num_code");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_number,\"0123456789\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_number,\"0123456789\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3712,10 +3799,10 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_str_seq");
       auto&ok=$.ok;
-      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
+      $(1);ok=dev.go_const("\"");$(1,ok,",\"\\\"\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");}
-      ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");}
+      $(1);ok=dev.go_const("\"");$(1,ok,",\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3734,9 +3821,9 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_sep_str_seq");
       auto&ok=$.ok;
-      ok=dev.go_auto($sep0);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
+      $(1);ok=dev.go_auto($sep0);$(1,ok,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_str_seq,\"\\\"\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_str_seq,\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3758,9 +3845,9 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_str_code");
       auto&ok=$.ok;
-      ok=dev.go_auto(first);if(!ok)dev.log_error(1,"t_str_seq,\"\\\"\"");
+      $(1);ok=dev.go_auto(first);$(1,ok,"t_str_seq,\"\\\"\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_sep_str_seq>,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_sep_str_seq>,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3780,11 +3867,11 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_char_code");
       auto&ok=$.ok;
-      ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
+      $(1);ok=dev.go_const("'");$(1,ok,",\"'\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_char_item>,gen_dips(\"\\x00\\t\\x0B&(\\xFF\")");
+      $(1);ok=dev.go_auto(body);$(1,ok,"TAutoPtr<i_char_item>,gen_dips(\"\\x00\\t\\x0B&(\\xFF\")");
       if(!ok)return ok;
-      ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
+      $(1);ok=dev.go_const("'");$(1,ok,",\"'\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3805,7 +3892,7 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_sign_code");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_sign,gen_dips(\"%&*/:?\")+\"!^|~\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_sign,gen_dips(\"%&*/:?\")+\"!^|~\"");
       if(!ok)return ok;
       return ok;
     }
@@ -3827,9 +3914,9 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_name_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_name_code,gen_dips(\"@Zaz\")+\"$_\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_name_code,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(sep);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3850,9 +3937,9 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_num_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_num_code,\"0123456789\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_num_code,\"0123456789\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(sep);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3873,9 +3960,9 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_str_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_str_code,\"\\\"\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_str_code,\"\\\"\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(sep);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3896,9 +3983,9 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_char_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_char_code,\"'\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_char_code,\"'\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(sep);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3919,9 +4006,9 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_sign_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_sign_code,gen_dips(\"%&*/:?\")+\"!^|~\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_sign_code,gen_dips(\"%&*/:?\")+\"!^|~\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(sep);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(sep);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3943,13 +4030,13 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_soft_brackets_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
+      $(1);ok=dev.go_const("(");$(1,ok,",\"(\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_code_with_sep>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
-      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
+      $(0);{bool ok=dev.go_auto($sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(body);$(0,ok,"vector<TAutoPtr<i_code_with_sep>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      $(1);ok=dev.go_const(")");$(1,ok,",\")\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto($sep4);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3971,13 +4058,13 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_hard_brackets_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_const("[");if(!ok)dev.log_error(1,",\"[\"");
+      $(1);ok=dev.go_const("[");$(1,ok,",\"[\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_code_with_sep>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
-      ok=dev.go_const("]");if(!ok)dev.log_error(1,",\"]\"");
+      $(0);{bool ok=dev.go_auto($sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(body);$(0,ok,"vector<TAutoPtr<i_code_with_sep>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      $(1);ok=dev.go_const("]");$(1,ok,",\"]\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto($sep4);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -3999,13 +4086,13 @@ struct t_meta_lexer{
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_curly_brackets_code_with_sep");
       auto&ok=$.ok;
-      ok=dev.go_const("{");if(!ok)dev.log_error(1,",\"{\"");
+      $(1);ok=dev.go_const("{");$(1,ok,",\"{\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_code_with_sep>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
-      ok=dev.go_const("}");if(!ok)dev.log_error(1,",\"}\"");
+      $(0);{bool ok=dev.go_auto($sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(body);$(0,ok,"vector<TAutoPtr<i_code_with_sep>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      $(1);ok=dev.go_const("}");$(1,ok,",\"}\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto($sep4);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -4056,7 +4143,7 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_code");
       auto&ok=$.ok;
-      ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_code>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");
+      $(1);ok=dev.go_auto(arr);$(1,ok,"vector<TAutoPtr<i_code>>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4079,12 +4166,12 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_soft_brackets_code");
       auto&ok=$.ok;
-      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
+      $(1);ok=dev.go_const("(");$(1,ok,",\"(\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"TAutoPtr<t_code>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
-      {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
+      $(0);{bool ok=dev.go_auto(sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(body);$(0,ok,"TAutoPtr<t_code>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      $(0);{bool ok=dev.go_auto(sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const(")");$(1,ok,",\")\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4107,12 +4194,12 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_hard_brackets_code");
       auto&ok=$.ok;
-      ok=dev.go_const("[");if(!ok)dev.log_error(1,",\"[\"");
+      $(1);ok=dev.go_const("[");$(1,ok,",\"[\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"TAutoPtr<t_code>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
-      {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const("]");if(!ok)dev.log_error(1,",\"]\"");
+      $(0);{bool ok=dev.go_auto(sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(body);$(0,ok,"TAutoPtr<t_code>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      $(0);{bool ok=dev.go_auto(sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const("]");$(1,ok,",\"]\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4135,12 +4222,12 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_curly_brackets_code");
       auto&ok=$.ok;
-      ok=dev.go_const("{");if(!ok)dev.log_error(1,",\"{\"");
+      $(1);ok=dev.go_const("{");$(1,ok,",\"{\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(body);if(!ok)dev.log_error(0,"TAutoPtr<t_code>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
-      {bool ok=dev.go_auto(sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const("}");if(!ok)dev.log_error(1,",\"}\"");
+      $(0);{bool ok=dev.go_auto(sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(body);$(0,ok,"TAutoPtr<t_code>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");}
+      $(0);{bool ok=dev.go_auto(sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const("}");$(1,ok,",\"}\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4157,7 +4244,7 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_semicolon");
       auto&ok=$.ok;
-      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
+      $(1);ok=dev.go_const(";");$(1,ok,",\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4175,7 +4262,7 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_value_item");
       auto&ok=$.ok;
-      ok=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);if(!ok)dev.log_error(1,"TAutoPtr<t_cppcore::i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
+      $(1);ok=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);$(1,ok,"TAutoPtr<t_cppcore::i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4194,10 +4281,10 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_value");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const("=");if(!ok)dev.log_error(1,",\"=\"");
+      $(0);{bool ok=dev.go_auto($sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const("=");$(1,ok,",\"=\"");
       if(!ok)return ok;
-      ok=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);if(!ok)dev.log_error(1,"TAutoPtr<t_cppcore::i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
+      $(1);ok=dev.go_str<TAutoPtr<t_cppcore::i_expr>>(body);$(1,ok,"TAutoPtr<t_cppcore::i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4214,7 +4301,7 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_type_scope");
       auto&ok=$.ok;
-      ok=dev.go_const("::");if(!ok)dev.log_error(1,",\":\"");
+      $(1);ok=dev.go_const("::");$(1,ok,",\":\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4232,7 +4319,7 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_type_templ");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_type_templ>,\"(<\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"TAutoPtr<i_type_templ>,\"(<\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4253,7 +4340,7 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_type_item_string");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_str_item,\"\\\"\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_str_item,\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4274,7 +4361,7 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_type_item_char");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_char_item,\"'\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_char_item,\"'\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4295,7 +4382,7 @@ return out.join("\n");
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_type_item_number");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_number,\"0123456789\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_number,\"0123456789\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4315,9 +4402,9 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_scope_type_item");
       auto&ok=$.ok;
-      ok=dev.go_auto(scope);if(!ok)dev.log_error(1,"t_type_scope,\":\"");
+      $(1);ok=dev.go_auto(scope);$(1,ok,"t_type_scope,\":\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<t_type_item_type>,gen_dips(\"@Zaz\")+\"$:_\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"TAutoPtr<t_type_item_type>,gen_dips(\"@Zaz\")+\"$:_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4341,11 +4428,11 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_type_item_type");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto(scope);if(!ok)dev.log_error(0,"TAutoPtr<t_type_scope>,\":\"");}
-      ok=dev.go_auto(type);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+      $(0);{bool ok=dev.go_auto(scope);$(0,ok,"TAutoPtr<t_type_scope>,\":\"");}
+      $(1);ok=dev.go_auto(type);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(param);if(!ok)dev.log_error(0,"TAutoPtr<t_type_templ>,\"(<\"");}
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_scope_type_item>,\":\"");}
+      $(0);{bool ok=dev.go_auto(param);$(0,ok,"TAutoPtr<t_type_templ>,\"(<\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_scope_type_item>,\":\"");}
       return ok;
     }
   };
@@ -4363,8 +4450,8 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_type_expr2");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto(scope);if(!ok)dev.log_error(0,"TAutoPtr<t_type_scope>,\":\"");}
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_type_item_type,gen_dips(\"@Zaz\")+\"$:_\"");
+      $(0);{bool ok=dev.go_auto(scope);$(0,ok,"TAutoPtr<t_type_scope>,\":\"");}
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_type_item_type,gen_dips(\"@Zaz\")+\"$:_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4382,7 +4469,7 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_type_templ_param");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_type_item>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"TAutoPtr<i_type_item>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4400,9 +4487,9 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_sep_type_templ_param");
       auto&ok=$.ok;
-      ok=dev.go_const(",");if(!ok)dev.log_error(1,",\",\"");
+      $(1);ok=dev.go_const(",");$(1,ok,",\",\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_type_templ_param,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_type_templ_param,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4421,9 +4508,9 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_type_templ_params");
       auto&ok=$.ok;
-      ok=dev.go_auto(first);if(!ok)dev.log_error(1,"t_type_templ_param,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
+      $(1);ok=dev.go_auto(first);$(1,ok,"t_type_templ_param,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_sep_type_templ_param>,\",\"");}
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_sep_type_templ_param>,\",\"");}
       return ok;
     }
   };
@@ -4443,10 +4530,10 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_type_templ_angle");
       auto&ok=$.ok;
-      ok=dev.go_const("<");if(!ok)dev.log_error(1,",\"<\"");
+      $(1);ok=dev.go_const("<");$(1,ok,",\"<\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(params);if(!ok)dev.log_error(0,"TAutoPtr<t_type_templ_params>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");}
-      ok=dev.go_const(">");if(!ok)dev.log_error(1,",\">\"");
+      $(0);{bool ok=dev.go_auto(params);$(0,ok,"TAutoPtr<t_type_templ_params>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");}
+      $(1);ok=dev.go_const(">");$(1,ok,",\">\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4467,10 +4554,10 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_type_templ_soft");
       auto&ok=$.ok;
-      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
+      $(1);ok=dev.go_const("(");$(1,ok,",\"(\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(params);if(!ok)dev.log_error(0,"TAutoPtr<t_type_templ_params>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");}
-      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
+      $(0);{bool ok=dev.go_auto(params);$(0,ok,"TAutoPtr<t_type_templ_params>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");}
+      $(1);ok=dev.go_const(")");$(1,ok,",\")\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4494,12 +4581,12 @@ struct t_type_item_type;
       t_fallback $(dev,"t_meta_lexer::t_struct_cmd_mode");
       auto&ok=$.ok;
       static const auto g_static_var_0=CharMask::fromStr("DMO");
-      ok=dev.go_any_char(body,g_static_var_0);if(!ok)dev.log_error(1,",\"DMO\"");
+      $(1);ok=dev.go_any_char(body,g_static_var_0);$(1,ok,",\"DMO\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const("+=");if(!ok)dev.log_error(1,",\"+\"");
+      $(0);{bool ok=dev.go_auto($sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const("+=");$(1,ok,",\"+\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep3);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto($sep3);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -4518,10 +4605,10 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_sep_value");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_auto(value);if(!ok)dev.log_error(1,"t_value_item,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
+      $(0);{bool ok=dev.go_auto($sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_auto(value);$(1,ok,"t_value_item,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto($sep2);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -4539,11 +4626,11 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_attr");
       auto&ok=$.ok;
-      ok=dev.go_const("[");if(!ok)dev.log_error(1,",\"[\"");
+      $(1);ok=dev.go_const("[");$(1,ok,",\"[\"");
       if(!ok)return ok;
-      {bool ok=dev.go_vec(arr,",");if(!ok)dev.log_error(0,"vector<t_sep_value>,gen_dips(\"\\t\\n'(/9@Zaz\")+\"\\r \\\"$_\"");}
-      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const("]");if(!ok)dev.log_error(1,",\"]\"");
+      $(0);{bool ok=dev.go_vec(arr,",");$(0,ok,"vector<t_sep_value>,gen_dips(\"\\t\\n'(/9@Zaz\")+\"\\r \\\"$_\"");}
+      $(0);{bool ok=dev.go_auto($sep2);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const("]");$(1,ok,",\"]\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4564,7 +4651,7 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_sep_field");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto($sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -4584,7 +4671,7 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_semicolon_field");
       auto&ok=$.ok;
-      ok=dev.go_auto(sc);if(!ok)dev.log_error(1,"TAutoPtr<t_semicolon>,\";\"");
+      $(1);ok=dev.go_auto(sc);$(1,ok,"TAutoPtr<t_semicolon>,\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4678,7 +4765,7 @@ struct t_type_item_type;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_const_field::t_qst");
         auto&ok=$.ok;
-        ok=dev.go_const("?");if(!ok)dev.log_error(1,",\"?\"");
+        $(1);ok=dev.go_const("?");$(1,ok,",\"?\"");
         if(!ok)return ok;
         return ok;
       }
@@ -4699,7 +4786,7 @@ struct t_type_item_type;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_const_field::t_c_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_char_item,\"'\"");
+        $(1);ok=dev.go_auto(body);$(1,ok,"t_char_item,\"'\"");
         if(!ok)return ok;
         return ok;
       }
@@ -4720,7 +4807,7 @@ struct t_type_item_type;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_const_field::t_s_item");
         auto&ok=$.ok;
-        ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_str_item,\"\\\"\"");
+        $(1);ok=dev.go_auto(body);$(1,ok,"t_str_item,\"\\\"\"");
         if(!ok)return ok;
         return ok;
       }
@@ -4751,13 +4838,13 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_const_field");
       auto&ok=$.ok;
-      ok=dev.go_str<TAutoPtr<i_sc_item>>(value);if(!ok)dev.log_error(1,"TAutoPtr<i_sc_item>,\"\\\"'\"");
+      $(1);ok=dev.go_str<TAutoPtr<i_sc_item>>(value);$(1,ok,"TAutoPtr<i_sc_item>,\"\\\"'\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(qst);if(!ok)dev.log_error(0,"TAutoPtr<t_qst>,\"?\"");}
-      {bool ok=dev.go_auto($sep3);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(sc);if(!ok)dev.log_error(0,"TAutoPtr<t_semicolon>,\";\"");}
-      {bool ok=dev.go_auto($sep5);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto($sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(qst);$(0,ok,"TAutoPtr<t_qst>,\"?\"");}
+      $(0);{bool ok=dev.go_auto($sep3);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(sc);$(0,ok,"TAutoPtr<t_semicolon>,\";\"");}
+      $(0);{bool ok=dev.go_auto($sep5);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   public:
@@ -4777,11 +4864,11 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_struct_field_value");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const("=");if(!ok)dev.log_error(1,",\"=\"");
+      $(0);{bool ok=dev.go_auto($sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const("=");$(1,ok,",\"=\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_auto(expr);if(!ok)dev.log_error(1,"TAutoPtr<t_cppcore::t_varcall_expr>,gen_dips(\"@Zaz\")+\"$_\"");
+      $(0);{bool ok=dev.go_auto($sep2);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_auto(expr);$(1,ok,"TAutoPtr<t_cppcore::t_varcall_expr>,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4800,7 +4887,7 @@ struct t_type_item_type;
       t_fallback $(dev,"t_meta_lexer::t_qst");
       auto&ok=$.ok;
       static const auto g_static_var_0=CharMask::fromStr("*?");
-      ok=dev.go_any(s,g_static_var_0);if(!ok)dev.log_error(1,",\"*?\"");
+      $(1);ok=dev.go_any(s,g_static_var_0);$(1,ok,",\"*?\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4830,20 +4917,20 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_struct_field");
       auto&ok=$.ok;
-      ok=dev.go_auto(type);if(!ok)dev.log_error(1,"TAutoPtr<t_cppcore::i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
+      $(1);ok=dev.go_auto(type);$(1,ok,"TAutoPtr<t_cppcore::i_expr>,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+      $(0);{bool ok=dev.go_auto($sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_auto(name);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(value);if(!ok)dev.log_error(0,"TAutoPtr<t_struct_field_value>,\"\\t\\n\\r /=\"");}
-      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(qst);if(!ok)dev.log_error(0,"TAutoPtr<t_qst>,\"*?\"");}
-      {bool ok=dev.go_auto($sep6);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
+      $(0);{bool ok=dev.go_auto(value);$(0,ok,"TAutoPtr<t_struct_field_value>,\"\\t\\n\\r /=\"");}
+      $(0);{bool ok=dev.go_auto($sep4);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(qst);$(0,ok,"TAutoPtr<t_qst>,\"*?\"");}
+      $(0);{bool ok=dev.go_auto($sep6);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const(";");$(1,ok,",\";\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep8);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(attr);if(!ok)dev.log_error(0,"TAutoPtr<t_attr>,\"[\"");}
-      {bool ok=dev.go_auto($sep10);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto($sep8);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(attr);$(0,ok,"TAutoPtr<t_attr>,\"[\"");}
+      $(0);{bool ok=dev.go_auto($sep10);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       return ok;
     }
   };
@@ -4860,11 +4947,11 @@ struct t_type_item_type;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_templ_params");
       auto&ok=$.ok;
-      ok=dev.go_const("<");if(!ok)dev.log_error(1,",\"<\"");
+      $(1);ok=dev.go_const("<");$(1,ok,",\"<\"");
       if(!ok)return ok;
-      ok=dev.go_str<TAutoPtr<t_type_templ_params>>(body);if(!ok)dev.log_error(1,"TAutoPtr<t_type_templ_params>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
+      $(1);ok=dev.go_str<TAutoPtr<t_type_templ_params>>(body);$(1,ok,"TAutoPtr<t_type_templ_params>,gen_dips(\"0:@Zaz\")+\"\\\"$'_\"");
       if(!ok)return ok;
-      ok=dev.go_const(">");if(!ok)dev.log_error(1,",\">\"");
+      $(1);ok=dev.go_const(">");$(1,ok,",\">\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4883,7 +4970,7 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_cmd_params");
       auto&ok=$.ok;
-      ok=dev.go_vec(arr,",");if(!ok)dev.log_error(1,"vector<t_cmd_param>,gen_dips(\"@Zaz\")+\"\\\"$_\"");
+      $(1);ok=dev.go_vec(arr,",");$(1,ok,"vector<t_cmd_param>,gen_dips(\"@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -4981,7 +5068,7 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_impl");
         auto&ok=$.ok;
-        ok=dev.go_vec(arr,"+");if(!ok)dev.log_error(1,"vector<TAutoPtr<i_cmd_param_expr>>,gen_dips(\"@Zaz\")+\"\\\"$_\"");
+        $(1);ok=dev.go_vec(arr,"+");$(1,ok,"vector<TAutoPtr<i_cmd_param_expr>>,gen_dips(\"@Zaz\")+\"\\\"$_\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5003,13 +5090,13 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_expr_call");
         auto&ok=$.ok;
-        ok=dev.go_auto(func);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+        $(1);ok=dev.go_auto(func);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
-        ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
+        $(1);ok=dev.go_const("(");$(1,ok,",\"(\"");
         if(!ok)return ok;
-        ok=dev.go_auto(params);if(!ok)dev.log_error(1,"TAutoPtr<t_cmd_params>,gen_dips(\"@Zaz\")+\"\\\"$_\"");
+        $(1);ok=dev.go_auto(params);$(1,ok,"TAutoPtr<t_cmd_params>,gen_dips(\"@Zaz\")+\"\\\"$_\"");
         if(!ok)return ok;
-        ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
+        $(1);ok=dev.go_const(")");$(1,ok,",\")\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5030,7 +5117,7 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_expr_str");
         auto&ok=$.ok;
-        ok=dev.go_str<t_str_seq>(body);if(!ok)dev.log_error(1,"t_str_seq,\"\\\"\"");
+        $(1);ok=dev.go_str<t_str_seq>(body);$(1,ok,"t_str_seq,\"\\\"\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5048,7 +5135,7 @@ struct t_cmd_param;
         bool go(i_dev&dev){
           t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_expr_var::t_this");
           auto&ok=$.ok;
-          ok=dev.go_const("this->");if(!ok)dev.log_error(1,",\"t\"");
+          $(1);ok=dev.go_const("this->");$(1,ok,",\"t\"");
           if(!ok)return ok;
           return ok;
         }
@@ -5067,8 +5154,8 @@ struct t_cmd_param;
         bool go(i_dev&dev){
           t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_expr_var::t_impl");
           auto&ok=$.ok;
-          {bool ok=dev.go_auto(self);if(!ok)dev.log_error(0,"TAutoPtr<t_this>,\"t\"");}
-          ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+          $(0);{bool ok=dev.go_auto(self);$(0,ok,"TAutoPtr<t_this>,\"t\"");}
+          $(1);ok=dev.go_auto(name);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
           if(!ok)return ok;
           return ok;
         }
@@ -5093,7 +5180,7 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cmd_param::t_expr_var");
         auto&ok=$.ok;
-        ok=dev.go_str<t_impl>(body);if(!ok)dev.log_error(1,"t_impl,gen_dips(\"@Zaz\")+\"$_\"");
+        $(1);ok=dev.go_str<t_impl>(body);$(1,ok,"t_impl,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5118,7 +5205,7 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_cmd_param");
       auto&ok=$.ok;
-      ok=dev.go_str<t_impl>(body);if(!ok)dev.log_error(1,"t_impl,gen_dips(\"@Zaz\")+\"\\\"$_\"");
+      $(1);ok=dev.go_str<t_impl>(body);$(1,ok,"t_impl,gen_dips(\"@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5142,9 +5229,9 @@ struct t_cmd_param;
       t_fallback $(dev,"t_meta_lexer::t_struct_cmd_anno");
       auto&ok=$.ok;
       static const auto g_static_var_0=QapStrFinder::fromArr(split("@mandatory,@optional,@mand,@opti,@man,@opt,@ma,@op,@m,@o,m,o",","));
-      ok=dev.go_any_str_from_vec(mode,g_static_var_0);if(!ok)dev.log_error(1,",\"@@@@@@@@@@mo\"");
+      $(1);ok=dev.go_any_str_from_vec(mode,g_static_var_0);$(1,ok,",\"@@@@@@@@@@mo\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep1);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
+      $(1);ok=dev.go_auto($sep1);$(1,ok,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5166,7 +5253,7 @@ struct t_cmd_param;
       t_fallback $(dev,"t_meta_lexer::t_struct_cmd_suffix");
       auto&ok=$.ok;
       static const auto g_static_var_0=CharMask::fromStr("?!");
-      ok=dev.go_any_char(value,g_static_var_0);if(!ok)dev.log_error(1,",\"?!\"");
+      $(1);ok=dev.go_any_char(value,g_static_var_0);$(1,ok,",\"?!\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5187,12 +5274,12 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_struct_cmd_optional");
       auto&ok=$.ok;
-      ok=dev.go_const("[");if(!ok)dev.log_error(1,",\"[\"");
+      $(1);ok=dev.go_const("[");$(1,ok,",\"[\"");
       if(!ok)return ok;
       static const auto g_static_var_1=QapStrFinder::fromArr(split("optional,mandatory",","));
-      ok=dev.go_any_str_from_vec(value,g_static_var_1);if(!ok)dev.log_error(1,",\"om\"");
+      $(1);ok=dev.go_any_str_from_vec(value,g_static_var_1);$(1,ok,",\"om\"");
       if(!ok)return ok;
-      ok=dev.go_const("]");if(!ok)dev.log_error(1,",\"]\"");
+      $(1);ok=dev.go_const("]");$(1,ok,",\"]\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5214,11 +5301,11 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_struct_cmd_opt_v2");
       auto&ok=$.ok;
-      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
+      $(1);ok=dev.go_const(";");$(1,ok,",\";\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto($sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
       static const auto g_static_var_2=QapStrFinder::fromArr(split("optional,mandatory",","));
-      ok=dev.go_any_str_from_vec(value,g_static_var_2);if(!ok)dev.log_error(1,",\"om\"");
+      $(1);ok=dev.go_any_str_from_vec(value,g_static_var_2);$(1,ok,",\"om\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5243,21 +5330,21 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_struct_cmd");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto(mode);if(!ok)dev.log_error(0,"TAutoPtr<i_struct_cmd_xxxx>,\"@DMOmo\"");}
-      ok=dev.go_auto(func);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+      $(0);{bool ok=dev.go_auto(mode);$(0,ok,"TAutoPtr<i_struct_cmd_xxxx>,\"@DMOmo\"");}
+      $(1);ok=dev.go_auto(func);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_str<TAutoPtr<t_templ_params>>(templ_params);if(!ok)dev.log_error(0,"TAutoPtr<t_templ_params>,\"<\"");}
-      ok=dev.go_const("(");if(!ok)dev.log_error(1,",\"(\"");
+      $(0);{bool ok=dev.go_auto($sep2);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_str<TAutoPtr<t_templ_params>>(templ_params);$(0,ok,"TAutoPtr<t_templ_params>,\"<\"");}
+      $(1);ok=dev.go_const("(");$(1,ok,",\"(\"");
       if(!ok)return ok;
-      ok=dev.go_auto(params);if(!ok)dev.log_error(1,"t_cmd_params,gen_dips(\"@Zaz\")+\"\\\"$_\"");
+      $(1);ok=dev.go_auto(params);$(1,ok,"t_cmd_params,gen_dips(\"@Zaz\")+\"\\\"$_\"");
       if(!ok)return ok;
-      ok=dev.go_const(")");if(!ok)dev.log_error(1,",\")\"");
+      $(1);ok=dev.go_const(")");$(1,ok,",\")\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep7);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(cmdso);if(!ok)dev.log_error(0,"TAutoPtr<i_struct_cmd_so>,\"!;?[\"");}
-      {bool ok=dev.go_auto($sep9);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
+      $(0);{bool ok=dev.go_auto($sep7);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(cmdso);$(0,ok,"TAutoPtr<i_struct_cmd_so>,\"!;?[\"");}
+      $(0);{bool ok=dev.go_auto($sep9);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const(";");$(1,ok,",\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5276,8 +5363,8 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_sep_struct_cmd");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_struct_cmd,gen_dips(\"@Zaz\")+\"$_\"");
+      $(0);{bool ok=dev.go_auto($sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_struct_cmd,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5296,11 +5383,11 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_struct_cmds");
       auto&ok=$.ok;
-      ok=dev.go_const("{");if(!ok)dev.log_error(1,",\"{\"");
+      $(1);ok=dev.go_const("{");$(1,ok,",\"{\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<t_sep_struct_cmd>,gen_dips(\"\\t\\n@Zaz\")+\"\\r $/_\"");}
-      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const("}");if(!ok)dev.log_error(1,",\"}\"");
+      $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<t_sep_struct_cmd>,gen_dips(\"\\t\\n@Zaz\")+\"\\r $/_\"");}
+      $(0);{bool ok=dev.go_auto($sep2);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const("}");$(1,ok,",\"}\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5319,8 +5406,8 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_sep_struct_cmds");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"t_struct_cmds,\"{\"");
+      $(0);{bool ok=dev.go_auto($sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_auto(body);$(1,ok,"t_struct_cmds,\"{\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5341,7 +5428,7 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_cpp_code_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(sep);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
+      $(1);ok=dev.go_auto(sep);$(1,ok,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5362,7 +5449,7 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_cpp_code_main");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_code_with_sep>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");
+      $(1);ok=dev.go_auto(body);$(1,ok,"TAutoPtr<i_code_with_sep>,gen_dips(\"!\\\"$(*[^_a|\")+\"~\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5535,7 +5622,7 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_bayan");
         auto&ok=$.ok;
-        ok=dev.go_const("[::]");if(!ok)dev.log_error(1,",\"[\"");
+        $(1);ok=dev.go_const("[::]");$(1,ok,",\"[\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5556,7 +5643,7 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_fields");
         auto&ok=$.ok;
-        ok=dev.go_auto(f);if(!ok)dev.log_error(1,"t_struct_field,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
+        $(1);ok=dev.go_auto(f);$(1,ok,"t_struct_field,gen_dips(\"'(09@Zaz\")+\"\\\"$_\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5577,7 +5664,7 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_cmds");
         auto&ok=$.ok;
-        ok=dev.go_auto(c);if(!ok)dev.log_error(1,"t_struct_cmds,\"{\"");
+        $(1);ok=dev.go_auto(c);$(1,ok,"t_struct_cmds,\"{\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5598,7 +5685,7 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_atr");
         auto&ok=$.ok;
-        ok=dev.go_auto(attr);if(!ok)dev.log_error(1,"TAutoPtr<t_attr>,\"[\"");
+        $(1);ok=dev.go_auto(attr);$(1,ok,"TAutoPtr<t_attr>,\"[\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5616,7 +5703,7 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_eater");
         auto&ok=$.ok;
-        ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_cpp_code>>,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
+        $(1);ok=dev.go_auto(arr);$(1,ok,"vector<TAutoPtr<i_cpp_code>>,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5638,9 +5725,9 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_with_bayan");
         auto&ok=$.ok;
-        ok=dev.go_auto(bayan);if(!ok)dev.log_error(1,"t_bayan,\"[\"");
+        $(1);ok=dev.go_auto(bayan);$(1,ok,"t_bayan,\"[\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(eater);if(!ok)dev.log_error(0,"t_eater,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");}
+        $(0);{bool ok=dev.go_auto(eater);$(0,ok,"t_eater,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");}
         return ok;
       }
     };
@@ -5657,7 +5744,7 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_minor_eater");
         auto&ok=$.ok;
-        ok=dev.go_minor<TAutoPtr<i_major>>(eater);if(!ok)dev.log_error(1,"minor!t_eater,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
+        $(1);ok=dev.go_minor<TAutoPtr<i_major>>(eater);$(1,ok,"minor!t_eater,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5678,7 +5765,7 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_cpp_code::t_without_bayan");
         auto&ok=$.ok;
-        ok=dev.go_minor<t_with_bayan>(eater);if(!ok)dev.log_error(1,"minor!t_minor_eater,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
+        $(1);ok=dev.go_minor<t_with_bayan>(eater);$(1,ok,"minor!t_minor_eater,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5707,8 +5794,8 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_cpp_code");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto($sep0);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_auto(bayan);if(!ok)dev.log_error(1,"TAutoPtr<i_bayan>,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
+      $(0);{bool ok=dev.go_auto($sep0);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_auto(bayan);$(1,ok,"TAutoPtr<i_bayan>,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5806,9 +5893,9 @@ struct t_cmd_param;
         t_fallback $(dev,"t_meta_lexer::t_target_struct::t_keyword");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("struct,class",","));
-        ok=dev.go_any_str_from_vec(kw,g_static_var_0);if(!ok)dev.log_error(1,",\"sc\"");
+        $(1);ok=dev.go_any_str_from_vec(kw,g_static_var_0);$(1,ok,",\"sc\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
+        $(0);{bool ok=dev.go_auto($sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
         return ok;
       }
     };
@@ -5827,7 +5914,7 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_target_struct::t_body_semicolon");
         auto&ok=$.ok;
-        ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
+        $(1);ok=dev.go_const(";");$(1,ok,",\";\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5855,17 +5942,17 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_target_struct::t_body_impl");
         auto&ok=$.ok;
-        ok=dev.go_const("{");if(!ok)dev.log_error(1,",\"{\"");
+        $(1);ok=dev.go_const("{");$(1,ok,",\"{\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto(nested);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_target_item>>,gen_dips(\"\\t\\n@Zaz\")+\"\\r $/;_\"");}
-        {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        {bool ok=dev.go_auto(arr);if(!ok)dev.log_error(0,"vector<TAutoPtr<i_struct_field>>,gen_dips(\"\\t\\n'(/9@Zaz\")+\"\\r \\\"$;_\"");}
-        {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        {bool ok=dev.go_auto(cmds);if(!ok)dev.log_error(0,"TAutoPtr<t_struct_cmds>,\"{\"");}
-        {bool ok=dev.go_auto($sep6);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        {bool ok=dev.go_auto(c);if(!ok)dev.log_error(0,"TAutoPtr<t_cpp_code>,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");}
-        {bool ok=dev.go_auto($sep8);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        ok=dev.go_const("}");if(!ok)dev.log_error(1,",\"}\"");
+        $(0);{bool ok=dev.go_auto(nested);$(0,ok,"vector<TAutoPtr<i_target_item>>,gen_dips(\"\\t\\n@Zaz\")+\"\\r $/;_\"");}
+        $(0);{bool ok=dev.go_auto($sep2);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(0);{bool ok=dev.go_auto(arr);$(0,ok,"vector<TAutoPtr<i_struct_field>>,gen_dips(\"\\t\\n'(/9@Zaz\")+\"\\r \\\"$;_\"");}
+        $(0);{bool ok=dev.go_auto($sep4);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(0);{bool ok=dev.go_auto(cmds);$(0,ok,"TAutoPtr<t_struct_cmds>,\"{\"");}
+        $(0);{bool ok=dev.go_auto($sep6);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(0);{bool ok=dev.go_auto(c);$(0,ok,"TAutoPtr<t_cpp_code>,gen_dips(\"\\t\\n \\\"$(*[^_a|\")+\"\\r~\"");}
+        $(0);{bool ok=dev.go_auto($sep8);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(1);ok=dev.go_const("}");$(1,ok,",\"}\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5886,10 +5973,10 @@ struct t_cmd_param;
         t_fallback $(dev,"t_meta_lexer::t_target_struct::t_parent");
         auto&ok=$.ok;
         static const auto g_static_var_0=QapStrFinder::fromArr(split("=>,:",","));
-        ok=dev.go_any_str_from_vec(arrow_or_colon,g_static_var_0);if(!ok)dev.log_error(1,",\"=:\"");
+        $(1);ok=dev.go_any_str_from_vec(arrow_or_colon,g_static_var_0);$(1,ok,",\"=:\"");
         if(!ok)return ok;
-        {bool ok=dev.go_auto($sep1);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-        ok=dev.go_auto(parent);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+        $(0);{bool ok=dev.go_auto($sep1);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+        $(1);ok=dev.go_auto(parent);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
         if(!ok)return ok;
         return ok;
       }
@@ -5921,13 +6008,13 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_target_struct");
       auto&ok=$.ok;
-      {bool ok=dev.go_auto(kw);if(!ok)dev.log_error(0,"TAutoPtr<t_keyword>,\"cs\"");}
-      ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+      $(0);{bool ok=dev.go_auto(kw);$(0,ok,"TAutoPtr<t_keyword>,\"cs\"");}
+      $(1);ok=dev.go_auto(name);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep2);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      {bool ok=dev.go_auto(parent);if(!ok)dev.log_error(0,"TAutoPtr<t_parent>,\":=\"");}
-      {bool ok=dev.go_auto($sep4);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_auto(body);if(!ok)dev.log_error(1,"TAutoPtr<i_struct_impl>,\";{\"");
+      $(0);{bool ok=dev.go_auto($sep2);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(0);{bool ok=dev.go_auto(parent);$(0,ok,"TAutoPtr<t_parent>,\":=\"");}
+      $(0);{bool ok=dev.go_auto($sep4);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_auto(body);$(1,ok,"TAutoPtr<i_struct_impl>,\";{\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5949,7 +6036,7 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_target_semicolon");
       auto&ok=$.ok;
-      ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<t_semicolon>,\";\"");
+      $(1);ok=dev.go_auto(arr);$(1,ok,"vector<t_semicolon>,\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -5970,7 +6057,7 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_target_sep");
       auto&ok=$.ok;
-      ok=dev.go_auto(sep);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
+      $(1);ok=dev.go_auto(sep);$(1,ok,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
       return ok;
     }
@@ -6068,11 +6155,11 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_target_using::t_str_ap");
         auto&ok=$.ok;
-        ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
+        $(1);ok=dev.go_const("'");$(1,ok,",\"'\"");
         if(!ok)return ok;
-        ok=dev.go_str<TAutoPtr<i_char_item>>(body);if(!ok)dev.log_error(1,"TAutoPtr<i_char_item>,gen_dips(\"\\x00\\t\\x0B&(\\xFF\")");
+        $(1);ok=dev.go_str<TAutoPtr<i_char_item>>(body);$(1,ok,"TAutoPtr<i_char_item>,gen_dips(\"\\x00\\t\\x0B&(\\xFF\")");
         if(!ok)return ok;
-        ok=dev.go_const("'");if(!ok)dev.log_error(1,",\"'\"");
+        $(1);ok=dev.go_const("'");$(1,ok,",\"'\"");
         if(!ok)return ok;
         return ok;
       }
@@ -6093,11 +6180,11 @@ struct t_cmd_param;
       bool go(i_dev&dev){
         t_fallback $(dev,"t_meta_lexer::t_target_using::t_str_qu");
         auto&ok=$.ok;
-        ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
+        $(1);ok=dev.go_const("\"");$(1,ok,",\"\\\"\"");
         if(!ok)return ok;
-        ok=dev.go_str<vector<TAutoPtr<i_str_item>>>(body);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");
+        $(1);ok=dev.go_str<vector<TAutoPtr<i_str_item>>>(body);$(1,ok,"vector<TAutoPtr<i_str_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");
         if(!ok)return ok;
-        ok=dev.go_const("\"");if(!ok)dev.log_error(1,",\"\\\"\"");
+        $(1);ok=dev.go_const("\"");$(1,ok,",\"\\\"\"");
         if(!ok)return ok;
         return ok;
       }
@@ -6127,22 +6214,22 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_target_using");
       auto&ok=$.ok;
-      ok=dev.go_const("using");if(!ok)dev.log_error(1,",\"u\"");
+      $(1);ok=dev.go_const("using");$(1,ok,",\"u\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep1);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
+      $(1);ok=dev.go_auto($sep1);$(1,ok,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
-      ok=dev.go_str<TAutoPtr<i_qa>>(s);if(!ok)dev.log_error(1,"TAutoPtr<i_qa>,\"\\\"'\"");
+      $(1);ok=dev.go_str<TAutoPtr<i_qa>>(s);$(1,ok,"TAutoPtr<i_qa>,\"\\\"'\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep3);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
+      $(1);ok=dev.go_auto($sep3);$(1,ok,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
-      ok=dev.go_const("as");if(!ok)dev.log_error(1,",\"a\"");
+      $(1);ok=dev.go_const("as");$(1,ok,",\"a\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep5);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
+      $(1);ok=dev.go_auto($sep5);$(1,ok,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
-      ok=dev.go_str<t_name>(lexer);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+      $(1);ok=dev.go_str<t_name>(lexer);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep7);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
+      $(0);{bool ok=dev.go_auto($sep7);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const(";");$(1,ok,",\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -6168,17 +6255,17 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_target_typedef");
       auto&ok=$.ok;
-      ok=dev.go_const("typedef");if(!ok)dev.log_error(1,",\"t\"");
+      $(1);ok=dev.go_const("typedef");$(1,ok,",\"t\"");
       if(!ok)return ok;
-      ok=dev.go_auto($sep1);if(!ok)dev.log_error(1,"t_sep,\"\\t\\n\\r /\"");
+      $(1);ok=dev.go_auto($sep1);$(1,ok,"t_sep,\"\\t\\n\\r /\"");
       if(!ok)return ok;
-      ok=dev.go_auto(type);if(!ok)dev.log_error(1,"t_cppcore::t_varcall_expr::t_var,\"\"");
+      $(1);ok=dev.go_auto(type);$(1,ok,"t_cppcore::t_varcall_expr::t_var,\"\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep3);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_auto(name);if(!ok)dev.log_error(1,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
+      $(0);{bool ok=dev.go_auto($sep3);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_auto(name);$(1,ok,"t_name,gen_dips(\"@Zaz\")+\"$_\"");
       if(!ok)return ok;
-      {bool ok=dev.go_auto($sep5);if(!ok)dev.log_error(0,"t_sep,\"\\t\\n\\r /\"");}
-      ok=dev.go_const(";");if(!ok)dev.log_error(1,",\";\"");
+      $(0);{bool ok=dev.go_auto($sep5);$(0,ok,"t_sep,\"\\t\\n\\r /\"");}
+      $(1);ok=dev.go_const(";");$(1,ok,",\";\"");
       if(!ok)return ok;
       return ok;
     }
@@ -6196,7 +6283,7 @@ struct t_cmd_param;
     bool go(i_dev&dev){
       t_fallback $(dev,"t_meta_lexer::t_target");
       auto&ok=$.ok;
-      ok=dev.go_auto(arr);if(!ok)dev.log_error(1,"vector<TAutoPtr<i_target_item>>,gen_dips(\"\\t\\n@Zaz\")+\"\\r $/;_\"");
+      $(1);ok=dev.go_auto(arr);$(1,ok,"vector<TAutoPtr<i_target_item>>,gen_dips(\"\\t\\n@Zaz\")+\"\\r $/;_\"");
       if(!ok)return ok;
       return ok;
     }
@@ -6279,40 +6366,24 @@ public:
   bool go(i_dev&dev){
     t_fallback $(dev,"t_meta_lexer");
     auto&ok=$.ok;
+    $(1);ok=dev.go_const("end");$(1,ok,",\"e\"");
+    if(!ok)return ok;
     return ok;
   }
 public:
 };
 //
- 	 !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ
- 	 !"#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ
-	
- /
-!"$%&'*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ^_abcdefghijklmnopqrstuvwxyz|~
-"$'(0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz
-0123456789
-0123456789
-	
- /:<
-!"$%&'(*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[^_abcdefghijklmnopqrstuvwxyz{|~
-!"$%&'(*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[^_abcdefghijklmnopqrstuvwxyz{|~
-"$'0123456789:@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz
-(<
-@DMOmo
-	
- "$'(/0123456789;@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz
-!;?[
-	
- !"$%&'(*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[^_abcdefghijklmnopqrstuvwxyz{|~
-	
- $/;@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz
-"'
-"$@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz
-"$'(0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ[_abcdefghijklmnopqrstuvwxyz{
-	
- !"$%&'(*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[^_abcdefghijklmnopqrstuvwxyz{|~
-;{
-"'
+void xiface::t_poly_impl::load()
+{
+  i_dev::t_result r=dev.get_char_lt();
+  if(!r.ok){scope.ok=false;return;}
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
+  switch(r.c){
+    case 'u':F(t_using_test_20250628);
+    default:{scope.ok=false;return;}
+  }
+  #undef F
+}
 void i_str_item::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
@@ -6665,340 +6736,341 @@ return decodeURIComponent(POST['data'].split("\n").join(""));
 //data:
 t%5fparent%5ffullname%5freslove%5falgo%5ftest%5f20250701%7b%0a%20%20%2f%2ft%5fpa
 rent%5fholder%7bt%5ffoo%3ai%5fbase%7b%7d%7d%0a%20%20t%5fother%7b%0a%20%20%20%20%
-2f%2ft%5fbar%3at%5fparent%5fholder%3a%3ai%5fbase%7b%7d%0a%20%20%7d%0a%7d%0at%5fu
-sing%5ftest%5f20250628%7b%0a%20%20t%5fsep%7b%22%20%22%7d%0a%20%20using%20%22%20%
-22%20as%20t%5fsep%3b%0a%20%20t%5ffoo%3b%0a%20%20t%5ffoo%7b%0a%20%20%20%20t%5fbar
-%7bt%5fbaz%7b%7d%7d%0a%20%20%20%20t%5fbar%20b%3b%0a%20%20%20%20%22%20%22%0a%20%2
-0%20%20t%5fbar%20c%3f%3b%0a%20%20%20%20t%5fbar%20d%3f%3b%0a%20%20%20%20%22%20%22
-%3f%0a%20%20%7d%0a%20%20t%5ffoo%20foo%3b%0a%7d%0at%5fnumber%7b%0a%20%20string%20
-body%3dany%28gen%5fdips%28%2209%22%29%29%3b%0a%7d%0atypedef%20array%3cchar%2c2%3
-e%20ARRAY2char%3b%0atypedef%20array%3cchar%2c4%3e%20ARRAY4char%3b%0at%5fstr%5fit
-em%5fraw%3ai%5fstr%5fitem%7b%0a%20%20string%20body%3dany%28dip%5finv%28%22%5c%22
-%5c%5c%5cn%22%29%29%3b%0a%7d%0at%5fstr%5fitem%5fhex%3ai%5fstr%5fitem%7b%0a%20%20
-%22%5c%5cx%22%0a%20%20ARRAY2char%20body%3dany%5farr%5fchar%28gen%5fdips%28%2209a
-fAF%22%29%29%3b%0a%7d%0at%5fstr%5fitem%5fnum%3ai%5fstr%5fitem%7b%0a%20%20%22%5c%
-5cu%22%0a%20%20ARRAY2char%20body%3dany%5farr%5fchar%28gen%5fdips%28%2209%22%29%2
-9%3b%0a%7d%0at%5fstr%5fitem%5ffix%3ai%5fstr%5fitem%7b%0a%20%20%22%5c%5c%22%0a%20
-%20char%20body%3dany%5fchar%28%22tfbrn%5c%5c%5c%22%5c%27%22%2bgen%5fdips%28%2207
-%22%29%29%3b%0a%7d%0at%5fstr%5fitem%7b%0a%20%20t%5fimpl%7b%0a%20%20%20%20%22%5c%
-22%22%0a%20%20%20%20vector%3cTAutoPtr%3ci%5fstr%5fitem%3e%3e%20arr%3b%0a%20%20%2
-0%20%22%5c%22%22%0a%20%20%7d%0a%20%20string%20value%3dstr%3ct%5fimpl%3e%28%29%3b
-%0a%7d%0at%5fchar%5fitem%5fraw%3ai%5fchar%5fitem%7b%0a%20%20string%20body%3dany%
-28dip%5finv%28%22%27%5c%5c%5cn%22%29%29%3b%0a%7d%0at%5fchar%5fitem%5fhex%3ai%5fc
-har%5fitem%7b%0a%20%20%22%5c%5cx%22%0a%20%20ARRAY2char%20body%3dany%5farr%5fchar
-%28gen%5fdips%28%2209afAF%22%29%29%3b%0a%7d%0at%5fchar%5fitem%5fnum%3ai%5fchar%5
-fitem%7b%0a%20%20%22%5c%5cu%22%0a%20%20ARRAY4char%20body%3dany%5farr%5fchar%28ge
-n%5fdips%28%2209%22%29%29%3b%0a%7d%0at%5fchar%5fitem%5ffix%3ai%5fchar%5fitem%7b%
-0a%20%20%22%5c%5c%22%0a%20%20char%20body%3dany%5fchar%28%22tfbrn%5c%5c%5c%22%5c%
-27%22%2bgen%5fdips%28%2207%22%29%29%3b%0a%7d%0at%5fchar%5fitem%7b%0a%20%20t%5fim
-pl%7b%0a%20%20%20%20%22%27%22%0a%20%20%20%20TAutoPtr%3ci%5fchar%5fitem%3e%20body
-%3b%0a%20%20%20%20%22%27%22%0a%20%20%7d%0a%20%20string%20value%3dstr%3ct%5fimpl%
-3e%28%29%3b%0a%7d%0at%5fsep%5fseq%3ai%5fsep%7b%0a%20%20string%20body%3dany%28%22
-%20%5ct%5cr%5cn%22%29%3b%0a%7d%0at%5fc%5fcomment%3ai%5fsep%7b%0a%20%20%22%2f%2a%
-22%0a%20%20string%20body%3dend%28%22%2a%2f%22%29%3b%0a%7d%0at%5fcpp%5fcomment%3a
-i%5fsep%7b%0a%20%20%22%2f%2f%22%0a%20%20string%20body%3dany%28dip%5finv%28%22%5c
-n%22%29%29%3f%3b%0a%7d%0at%5fsep%7b%0a%20%20t%5fimpl%7b%0a%20%20%20%20vector%3cT
-AutoPtr%3ci%5fsep%3e%3e%20arr%3b%0a%20%20%7d%0a%20%20string%20value%3dstr%3ct%5f
-impl%3e%28%29%3b%0a%7d%0at%5fname%7b%0a%20%20t%5fkeyword%7b%0a%20%20%20%20string
-%20value%3dany%5fstr%5ffrom%5fvec%28split%28%22new%2cdelete%2cdefault%2cconsteva
-l%2cfalse%2ctrue%2cnullptr%2cthis%2cstruct%2cclass%2cfor%2cif%2cwhile%2cdo%2ccon
-st%2cconstexpr%2celse%2coperator%2cauto%2ccontinue%2cbreak%2creturn%2cgoto%2cvir
-tual%2coverride%2cpublic%2cprivate%2cprotected%2cfriend%2ctemplate%2ctypedef%2cu
-sing%2cnamespace%2cdecltype%22%2c%22%2c%22%29%29%3b%0a%20%20%7d%0a%20%20t%5fimpl
-%7b%0a%20%20%20%20char%20A%3dany%5fchar%28gen%5fdips%28%22azAZ%22%29%2b%22%5f%24
-%40%22%29%3b%0a%20%20%20%20string%20B%3dany%28gen%5fdips%28%22azAZ09%22%29%2b%22
-%5f%24%40%22%29%3f%3b%0a%20%20%7d%0a%20%20t%5fimpl%5fex%7b%0a%20%20%20%20t%5fimp
-l%20impl%3dminor%3ct%5fkeyword%3e%28%29%3b%0a%20%20%7d%0a%20%20string%20value%3d
-str%3ct%5fimpl%5fex%3e%28%29%3b%0a%7d%0at%5fstr%3ai%5fsimple%5fexpr%7b%0a%20%20t
-%5fstr%5fitem%20body%3b%0a%7d%0at%5fchar%3ai%5fsimple%5fexpr%7b%0a%20%20t%5fchar
-%5fitem%20body%3b%0a%7d%0at%5fnum%3ai%5fsimple%5fexpr%7b%0a%20%20t%5fnumber%20bo
-dy%3b%0a%7d%0at%5fid%3ai%5fsimple%5fexpr%7b%0a%20%20t%5fname%20body%3b%0a%7d%0at
-%5fsign%3ai%5fsimple%5fexpr%7b%0a%20%20char%20body%3dany%5fchar%28%22%7e%7c%26%3
-d%3c%3e%21%3a%3f%3b%2c%2e%2b%2d%2a%2f%25%5e%22%29%3b%0a%7d%0at%5fcppcore%7b%0at%
-5flev03%7b%0a%20%20string%20oper%3dany%5fstr%5ffrom%5fvec%28split%28%22%2b%2c%2d
-%2c%21%2c%7e%22%2c%22%2c%22%29%29%3f%3b%0a%20%20TAutoPtr%3ci%5fexpr%3e%20expr%3b
-%0a%7d%0at%5flev05%7b%0a%20%20t%5foper%7bstring%20value%3dany%5fstr%5ffrom%5fvec
-%28split%28%22%2a%2c%2f%2c%25%22%2c%22%2c%22%29%29%3b%7d%0a%20%20t%5fitem%7bt%5f
-oper%20oper%3bt%5flev03%20expr%3b%7d%0a%20%20t%5flev03%20expr%3b%0a%20%20vector%
-3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev06%7b%0a%20%20t%5foper%7bstring%20value
-%3dany%5fstr%5ffrom%5fvec%28split%28%22%2b%2c%2d%22%2c%22%2c%22%29%29%3b%7d%0a%2
-0%20t%5fitem%7bt%5foper%20oper%3bt%5flev05%20expr%3b%7d%0a%20%20t%5flev05%20expr
-%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev07%7b%0a%20%20t%5fop
-er%7bstring%20value%3dany%5fstr%5ffrom%5fvec%28split%28%22%3c%3c%2c%3e%3e%22%2c%
-22%2c%22%29%29%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3bt%5flev06%20expr%3b%7d
-%0a%20%20t%5flev06%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%
-5flev08%7b%0a%20%20t%5foper%7bstring%20value%3dany%5fstr%5ffrom%5fvec%28split%28
-%22%3c%2c%3c%3d%2c%3e%2c%3e%3d%22%2c%22%2c%22%29%29%3b%7d%0a%20%20t%5fitem%7bt%5
-foper%20oper%3bt%5flev07%20expr%3b%7d%0a%20%20t%5flev07%20expr%3b%0a%20%20vector
-%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev09%7b%0a%20%20t%5foper%7bstring%20valu
-e%3dany%5fstr%5ffrom%5fvec%28split%28%22%3d%3d%2c%21%3d%22%2c%22%2c%22%29%29%3b%
-7d%0a%20%20t%5fitem%7bt%5foper%20oper%3bt%5flev08%20expr%3b%7d%0a%20%20t%5flev08
-%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev10%7b%0a%20%2
-0t%5foper%7b%22%26%22%20inline%20static%20const%20string%20value%3d%22%26%22%3b%
-7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20t%5flev09%20expr%3b%7d%0a%20%20t%5fle
-v09%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev11%7b%0a%2
-0%20t%5foper%7b%22%5e%22%20inline%20static%20const%20string%20value%3d%22%5e%22%
-3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20t%5flev10%20expr%3b%7d%0a%20%20t%5
-flev10%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev12%7b%0
-a%20%20t%5foper%7b%22%7c%22%20inline%20static%20const%20string%20value%3d%22%7c%
-22%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20t%5flev11%20expr%3b%7d%0a%20%20
-t%5flev11%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev13%7
-b%0a%20%20t%5foper%7b%22%26%26%22%20inline%20static%20const%20string%20value%3d%
-22%26%26%22%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20t%5flev12%20expr%3b%7d
-%0a%20%20t%5flev12%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%
-5flev14%7b%0a%20%20t%5foper%7b%22%7c%7c%22%20inline%20static%20const%20string%20
-value%3d%22%7c%7c%22%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20t%5flev13%20e
-xpr%3b%7d%0a%20%20t%5flev13%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0
-a%7d%0a%2f%2a%0avar%20pad2%3dnum%3d%3e%28num%3c10%3f%220%22%2bnum%3a%22%22%2bnum
-%29%3b%0areturn%28%0a%60%2b%2c%2d%2c%21%2c%7e%0a%2a%2c%2f%2c%25%0a%2b%2c%2d%0a%3
-c%3c%2c%3e%3e%0a%3c%2c%3c%3d%2c%3e%2c%3e%3d%0a%3d%3d%2c%21%3d%0a%26%0a%5e%0a%7c%
-0a%26%26%0a%7c%7c%60%2esplit%28%22%5cr%22%29%2ejoin%28%22%22%29%2esplit%28%22%5c
-n%22%29%2emap%28%28ops%2ci%29%3d%3e%7b%0a%20%20var%20e%3d%22t%5flev%22%2bpad2%28
-i%3d%3d1%3f3%3ai%2b3%29%3b%0a%20%20var%20n%3d%22t%5flev%22%2bpad2%28i%2b4%29%3b%
-0a%20%20if%28%21i%29%7b%0a%20%20%20%20return%20%60t%5flev03%7b%0a%20%20string%20
-oper%3dany%5fstr%5ffrom%5fvec%28split%28%60%2bJSON%2estringify%28ops%29%2b%60%2c
-%22%2c%22%29%29%3f%3b%0a%20%20TAutoPtr%3ci%5fexpr%3e%20expr%3b%0a%7d%60%3b%0a%20
-%20%7d%0a%20%20var%20oa%3dops%2esplit%28%22%2c%22%29%3b%0a%20%20if%28oa%2elength
-%3d%3d1%29%7b%0a%20%20%20%20return%20n%2b%60%7b%0a%20%20t%5foper%7b%22%60%2boa%5
-b0%5d%2b%60%22%20inline%20static%20const%20string%20value%3d%22%60%2boa%5b0%5d%2
-b%60%22%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20%60%2be%2b%60%20expr%3b%7d
-%0a%20%20%60%2be%2b%60%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%
-60%3b%0a%20%20%7d%0a%20%20return%20n%2b%60%7b%0a%20%20t%5foper%7bstring%20value%
-3dany%5fstr%5ffrom%5fvec%28split%28%22%60%2bops%2b%60%22%2c%22%2c%22%29%29%3b%7d
-%0a%20%20t%5fitem%7bt%5foper%20oper%3b%60%2be%2b%60%20expr%3b%7d%0a%20%20%60%2be
-%2b%60%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%60%3b%0a%7d%29%2
-ejoin%28%22%5cn%22%29%29%3b%0a%2a%2f%0at%5fstring%7b%0a%20%20%22%5c%22%22%0a%20%
-20string%20value%3dstr%3cvector%3cTAutoPtr%3ci%5fstr%5fitem%3e%3e%3e%28%29%3f%3b
-%0a%20%20%22%5c%22%22%0a%7d%0at%5fint%5fexpr%3ai%5fexpr%7b%0a%20%20t%5fzero%3ai%
-5fval%7b%220%22%7d%0a%20%20t%5fnum%3ai%5fval%7b%0a%20%20%20%20char%20first%3dany
-%5fchar%28gen%5fdips%28%2219%22%29%29%3b%0a%20%20%20%20string%20num%3dany%28gen%
-5fdips%28%2209%22%29%29%3f%3b%0a%20%20%7d%0a%20%20string%20value%3dstr%3cTAutoPt
-r%3ci%5fval%3e%3e%28%29%3b%0a%7d%0at%5ftype%5fexpr%7b%0a%20%20t%5fparams%7b%0a%2
-0%20%20%20%22%7b%22%0a%20%20%20%20string%20type%3dstr%3ct%5ftype%5fexpr%3e%28%29
-%3b%0a%20%20%20%20%22%2c%22%0a%20%20%20%20t%5fint%5fexpr%20count%3b%0a%20%20%20%
-20%22%7d%22%0a%20%20%7d%0a%20%20t%5felem%7b%0a%20%20%20%20t%5fname%20name%3b%0a%
-20%20%20%20TAutoPtr%3ct%5fparams%3e%20params%3f%3b%0a%20%20%7d%0a%20%20t%5fitem%
-7b%0a%20%20%20%20t%5fsep%20sep0%3f%3b%0a%20%20%20%20%22%3a%3a%22%0a%20%20%20%20t
-%5fsep%20sep1%3f%3b%0a%20%20%20%20t%5felem%20body%3b%0a%20%20%7d%0a%20%20t%5fele
-m%20first%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5fchar%5fexpr%3a
-i%5fexpr%7b%0a%20%20t%5fchar%5fitem%20body%3b%0a%7d%0at%5fbool%5fexpr%3ai%5fexpr
-%7b%0a%20%20string%20value%3dany%5fstr%5ffrom%5fvec%28split%28%22true%2cfalse%22
-%2c%22%2c%22%29%29%3b%0a%7d%0at%5fstring%5fexpr%3ai%5fexpr%7b%0a%20%20t%5fstring
-%20body%3b%0a%7d%0at%5freal%5fexpr%3ai%5fexpr%7b%0a%20%20t%5ffrac%7b%0a%20%20%20
-%20%22%2e%22%0a%20%20%20%20string%20arr%3dany%28gen%5fdips%28%2209%22%29%29%3b%0
-a%20%20%7d%0a%20%20t%5fsign%7b%0a%20%20%20%20char%20sign%3dany%5fchar%28%22%2d%2
-b%22%29%3b%0a%20%20%7d%0a%20%20t%5fexp%7b%0a%20%20%20%20char%20e%3dany%5fchar%28
-%22eE%22%29%3b%0a%20%20%20%20TAutoPtr%3ct%5fsign%3e%20sign%3f%3b%0a%20%20%20%20s
-tring%20arr%3dany%28gen%5fdips%28%2209%22%29%29%3b%0a%20%20%7d%0a%20%20t%5fnum%3
-ai%5fval%7b%0a%20%20%20%20char%20first%3dany%5fchar%28gen%5fdips%28%2219%22%29%2
-9%3b%0a%20%20%20%20string%20num%3dany%28gen%5fdips%28%2209%22%29%29%3f%3b%0a%20%
-20%7d%0a%20%20t%5fzero%3ai%5fval%7b%220%22%7d%0a%20%20t%5fimpl%7b%0a%20%20%20%20
-TAutoPtr%3ci%5fval%3e%20val%3b%0a%20%20%20%20TAutoPtr%3ct%5ffrac%3e%20frac%3b%0a
-%20%20%20%20TAutoPtr%3ct%5fexp%3e%20exp%3f%3b%0a%20%20%7d%0a%20%20string%20value
-%3dstr%3ct%5fimpl%3e%28%29%3b%0a%7d%0at%5fcall%5fparam%7b%0a%20%20t%5fsep%20sep0
-%3f%3b%0a%20%20t%5flev14%20body%3b%0a%20%20t%5fsep%20sep1%3f%3b%0a%7d%0at%5fcall
-%5fparams%7b%0a%20%20%22%28%22%0a%20%20t%5fsep%20sep%3f%3b%0a%20%20vector%3ct%5f
-call%5fparam%3e%20arr%3dvec%28%22%2c%22%29%3f%3b%0a%20%20%22%29%22%0a%7d%0at%5fv
-arcall%5fexpr%3ai%5fexpr%7b%0a%20%20t%5fsb%5fexpr%7b%0a%20%20%20%20%22%5b%22%0a%
-20%20%20%20t%5fsep%20sep0%3f%3b%0a%20%20%20%20t%5flev14%20expr%3b%0a%20%20%20%20
-t%5fsep%20sep1%3f%3b%0a%20%20%20%20%22%5d%22%0a%20%20%7d%0a%20%20t%5fdd%5fpart%3
-ai%5fpart%7b%0a%20%20%20%20t%5felem%7b%0a%20%20%20%20%20%20t%5fsep%20sep0%3f%3b%
-0a%20%20%20%20%20%20%22%3a%3a%22%0a%20%20%20%20%20%20t%5fsep%20sep1%3f%3b%0a%20%
-20%20%20%20%20t%5fname%20name%3b%0a%20%20%20%20%7d%0a%20%20%20%20vector%3ct%5fel
-em%3e%20arr%3b%0a%20%20%7d%0a%20%20t%5ftemplate%5fpart%3ai%5fpart%7b%0a%20%20%20
-%20%22%3c%22%0a%20%20%20%20t%5fsep%20sep0%3f%3b%0a%20%20%20%20vector%3ct%5flev14
-%3e%20expr%3dvec%28%22%2c%22%29%3b%0a%20%20%20%20t%5fsep%20sep1%3f%3b%0a%20%20%2
-0%20%22%3e%22%0a%20%20%20%20TAutoPtr%3ct%5fdd%5fpart%3e%20ddp%3f%3b%0a%20%20%7d%
-0a%20%20t%5farr%7b%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%20%20%20vector%3ct%5f
-sb%5fexpr%3e%20arr%3b%0a%20%20%7d%0a%20%20t%5fitem%7b%0a%20%20%20%20t%5fsep%20se
-pB%3f%3b%0a%20%20%20%20%22%2e%22%0a%20%20%20%20t%5fsep%20sep0%3f%3b%0a%20%20%20%
-20t%5fname%20name%3b%0a%20%20%20%20t%5farr%20arr%3f%3b%0a%20%20%7d%0a%20%20t%5fv
-ar%7b%0a%20%20%20%20t%5fname%20name%3b%0a%20%20%20%20t%5fsep%20sep0%3f%3b%0a%20%
-20%20%20TAutoPtr%3ci%5fpart%3e%20tp%3f%3b%0a%20%20%20%20TAutoPtr%3ct%5farr%3e%20
-arr%3f%3b%0a%20%20%20%20vector%3ct%5fitem%3e%20items%3f%3b%0a%20%20%7d%0a%20%20t
-%5fvar%20var%3b%0a%20%20t%5fsep%20sep%3f%3b%0a%20%20TAutoPtr%3ct%5fcall%5fparams
-%3e%20params%3f%3b%0a%7d%0at%5fblock%5fexpr%3ai%5fexpr%7b%0a%20%20%22%28%22%0a%2
-0%20t%5flev14%20body%3b%0a%20%20%22%29%22%0a%7d%0a%2f%2a%0at%5fcall%5fexpr%3ai%5
-fexpr%7b%0a%20%20t%5fvar%5fexpr%20call%3b%0a%20%20t%5fsep%20sep%3f%3b%0a%20%20t%
-5fcall%5fparams%20params%3b%0a%7d%2a%2f%0a%7d%0ausing%20%22%20%22%20as%20t%5fsep
-%3b%0at%5ftest20250618%5fatrr%7b%0a%20%20t%5ffoo%7b%7b%7d%5b%3a%3a%5d%7d%0a%20%2
-0t%5ffoo%20foo%3b%20%5bskip%5d%0a%20%20t%5fsep%20sep%3b%20%5boptimize%2c%22sep%2
-2%2c%28%22sep%22%29%2csep%5bx%5d%5d%0a%7d%0a%2f%2ft%5ftest20250620%5fdev%7b%0a%2
-f%2f%20%20t%5ffoo%7b%7b%7d%7d%0a%2f%2f%20%20t%5fbar%7b%0a%2f%2f%20%20%20%20%22mo
-re%20tests%22%0a%2f%2f%20%20%20%20%22test%22%0a%2f%2f%20%20%20%20t%5fsep%20sep%3
-b%0a%2f%2f%20%20%20%20%22another%20test%22%20%2f%2a%20yes%20%60%20%22%3b%22%20%2
-a%2f%20%3b%0a%2f%2f%20%20%20%20t%5ffoo%20foo%3f%3b%0a%2f%2f%20%20%20%20%22nope%2
-2%3b%0a%2f%2f%20%20%7d%0a%2f%2f%20%20string%20dev%3dany%28%22%3b%3f%27%2d%3e%3d%
-3c%60%28%29%2f%5c%5c%2b%22%29%3f%3b%0a%2f%2f%20%20t%5ffoo%20%24dev0%3b%0a%2f%2f%
-20%20t%5fbar%20%24dev1%3b%0a%2f%2f%20%20%2f%2a%7b%0a%2f%2f%20%20%20%20go%5fany%2
-8dev%2c%22%3b%3f%27%2d%3e%3d%3c%60%28%29%2f%5c%5c%2b%22%29%3b%0a%2f%2f%20%20%20%
-20go%5fauto%28%24dev0%29%3b%0a%2f%2f%20%20%20%20go%5fauto%28%24dev1%29%3b%0a%2f%
-2f%20%20%7d%2a%2f%0a%2f%2f%7d%0at%5fmeta%5flexer%7b%0at%5fname%5fcode%3ai%5fcode
-%7b%0a%20%20string%20value%3dstr%3ct%5fname%3a%3at%5fimpl%3e%28%29%3b%0a%7d%0at%
-5fnum%5fcode%3ai%5fcode%7b%0a%20%20t%5fnumber%20body%3b%0a%7d%0at%5fstr%5fseq%7b
-%0a%20%20%22%5c%22%22%0a%20%20vector%3cTAutoPtr%3ci%5fstr%5fitem%3e%3e%20arr%3f%
-3b%0a%20%20%22%5c%22%22%0a%20%20%7d%0at%5fsep%5fstr%5fseq%7b%0a%20%20%22%20%22%0
-a%20%20t%5fstr%5fseq%20body%3b%0a%7d%0at%5fstr%5fcode%3ai%5fcode%7b%0a%20%20t%5f
-str%5fseq%20first%3b%0a%20%20vector%3ct%5fsep%5fstr%5fseq%3e%20arr%3f%3b%0a%7d%0
-at%5fchar%5fcode%3ai%5fcode%7b%0a%20%20%22%27%22%0a%20%20TAutoPtr%3ci%5fchar%5fi
-tem%3e%20body%3b%0a%20%20%22%27%22%0a%7d%0at%5fsign%5fcode%3ai%5fcode%7b%0a%20%2
-0t%5fsign%20body%3b%0a%7d%0at%5fname%5fcode%5fwith%5fsep%3ai%5fcode%5fwith%5fsep
-%7bt%5fname%5fcode%20body%3bt%5fsep%20sep%3f%3b%7d%0at%5fnum%5fcode%5fwith%5fsep
-%3ai%5fcode%5fwith%5fsep%7bt%5fnum%5fcode%20body%3bt%5fsep%20sep%3f%3b%7d%0at%5f
-str%5fcode%5fwith%5fsep%3ai%5fcode%5fwith%5fsep%7bt%5fstr%5fcode%20body%3bt%5fse
-p%20sep%3f%3b%7d%0at%5fchar%5fcode%5fwith%5fsep%3ai%5fcode%5fwith%5fsep%7bt%5fch
-ar%5fcode%20body%3bt%5fsep%20sep%3f%3b%7d%0at%5fsign%5fcode%5fwith%5fsep%3ai%5fc
-ode%5fwith%5fsep%7bt%5fsign%5fcode%20body%3bt%5fsep%20sep%3f%3b%7d%0at%5fsoft%5f
-brackets%5fcode%5fwith%5fsep%3ai%5fcode%5fwith%5fsep%7b%0a%20%20%22%28%22%20%22%
-20%22%3f%20vector%3cTAutoPtr%3ci%5fcode%5fwith%5fsep%3e%3e%20body%3f%3b%20%22%29
-%22%20%22%20%22%3f%0a%7d%0at%5fhard%5fbrackets%5fcode%5fwith%5fsep%3ai%5fcode%5f
-with%5fsep%7b%0a%20%20%22%5b%22%20%22%20%22%3f%20vector%3cTAutoPtr%3ci%5fcode%5f
-with%5fsep%3e%3e%20body%3f%3b%20%22%5d%22%20%22%20%22%3f%0a%7d%0at%5fcurly%5fbra
-ckets%5fcode%5fwith%5fsep%3ai%5fcode%5fwith%5fsep%7b%0a%20%20%22%7b%22%20%22%20%
-22%3f%20vector%3cTAutoPtr%3ci%5fcode%5fwith%5fsep%3e%3e%20body%3f%3b%20%22%7d%22
-%20%22%20%22%3f%0a%7d%0a%2f%2freal%5fsource%5fdata%3a%0a%2f%2a%0at%5fname%5fcode
-%0at%5fnum%5fcode%0at%5fstr%5fcode%0at%5fchar%5fcode%0at%5fsign%5fcode%0at%5fsof
-t%5fbrackets%5fcode%0at%5fhard%5fbrackets%5fcode%0at%5fcurly%5fbrackets%5fcode%0
-a%40%40%40%0a%2a%2f%0a%2f%2freal%5fsource%5fcode%3a%0a%2f%2a%0avar%20mk%3dPOST%5
-b%27data%27%5d%2esplit%28%22%40%40%40%22%29%5b1%5d%3b%0avar%20gen%3dfunction%28l
-ex%2cmk%29%7b%0a%20%20if%28lex%2eincludes%28%22brackets%22%29%29%7b%0a%20%20%20%
-20var%20json%3dJSON%2estringify%3b%0a%20%20%20%20var%20m%3d%7bsoft%3a%5b%22%28%2
-2%2c%22%29%22%5d%2chard%3a%5b%22%5b%22%2c%22%5d%22%5d%2ccurly%3a%5b%22%7b%22%2c%
-22%7d%22%5d%7d%0a%20%20%20%20for%28var%20k%20in%20m%29if%28lex%2eincludes%28k%29
-%29return%20%5b%0a%20%20%20%20%20%20lex%2b%22%5fwith%5fsep%3ai%5fcode%5fwith%5fs
-ep%7b%22%2c%0a%20%20%20%20%20%20%22%20%20%22%2bjson%28m%5bk%5d%5b0%5d%29%2b%27%2
-0%22%20%22%3f%20vector%3cTAutoPtr%3ci%5fcode%5fwith%5fsep%3e%3e%20body%3f%3b%20%
-27%2bjson%28m%5bk%5d%5b1%5d%29%2b%27%20%22%20%22%3f%27%2c%0a%20%20%20%20%20%20%2
-2%7d%22%0a%20%20%20%20%5d%2ejoin%28%22%5cn%22%29%3b%0a%20%20%7d%0a%20%20return%2
-0lex%2b%22%5fwith%5fsep%3ai%5fcode%5fwith%5fsep%7b%22%2blex%2b%22%20body%3bt%5fs
-ep%20sep%3f%3b%7d%22%3b%0a%7d%0avar%20out%3d%5b%5d%3b%0avar%20arr%3dPOST%5b%27da
-ta%27%5d%2esplit%28%22%5cn%40%40%40%22%29%5b0%5d%2esplit%28%22%5cr%22%29%2ejoin%
-28%22%22%29%2esplit%28%22%5cn%22%29%3b%0afor%28var%20i%3d0%3bi%3carr%2elength%3b
-i%2b%2b%29%7b%0a%20%20out%2epush%28gen%28arr%5bi%5d%2cmk%29%29%3b%0a%7d%0areturn
-%20out%2ejoin%28%22%5cn%22%29%3b%0a%2a%2f%0at%5fcode%7b%0a%20%20vector%3cTAutoPt
-r%3ci%5fcode%3e%3e%20arr%3b%0a%7d%0at%5fsoft%5fbrackets%5fcode%3ai%5fcode%7b%0a%
-20%20%22%28%22%0a%20%20t%5fsep%20sep0%3f%3b%0a%20%20TAutoPtr%3ct%5fcode%3e%20bod
-y%3f%3b%0a%20%20t%5fsep%20sep1%3f%3b%0a%20%20%22%29%22%0a%7d%0at%5fhard%5fbracke
-ts%5fcode%3ai%5fcode%7b%0a%20%20%22%5b%22%0a%20%20t%5fsep%20sep0%3f%3b%0a%20%20T
-AutoPtr%3ct%5fcode%3e%20body%3f%3b%0a%20%20t%5fsep%20sep1%3f%3b%0a%20%20%22%5d%2
-2%0a%7d%0at%5fcurly%5fbrackets%5fcode%3ai%5fcode%7b%0a%20%20%22%7b%22%0a%20%20t%
-5fsep%20sep0%3f%3b%0a%20%20TAutoPtr%3ct%5fcode%3e%20body%3f%3b%0a%20%20t%5fsep%2
-0sep1%3f%3b%0a%20%20%22%7d%22%0a%7d%0at%5fsemicolon%7b%0a%20%20%22%3b%22%0a%7d%0
-at%5fvalue%5fitem%7b%0a%20%20string%20body%3dstr%3cTAutoPtr%3ct%5fcppcore%3a%3ai
-%5fexpr%3e%3e%28%29%3b%0a%7d%0at%5fvalue%7b%0a%20%20%22%20%22%3f%0a%20%20%22%3d%
-22%0a%20%20string%20body%3dstr%3cTAutoPtr%3ct%5fcppcore%3a%3ai%5fexpr%3e%3e%28%2
-9%3b%0a%7d%0at%5ftype%5fscope%7b%0a%20%20%22%3a%3a%22%0a%7d%0at%5ftype%5ftempl%7
-b%0a%20%20TAutoPtr%3ci%5ftype%5ftempl%3e%20body%3b%0a%7d%0at%5ftype%5fitem%5fstr
-ing%3ai%5ftype%5fitem%7b%0a%20%20t%5fstr%5fitem%20body%3b%0a%7d%0at%5ftype%5fite
-m%5fchar%3ai%5ftype%5fitem%7b%0a%20%20t%5fchar%5fitem%20body%3b%0a%7d%0at%5ftype
-%5fitem%5fnumber%3ai%5ftype%5fitem%7b%0a%20%20t%5fnumber%20body%3b%0a%7d%0at%5ft
-ype%5fitem%5ftype%3b%0at%5fscope%5ftype%5fitem%7b%0a%20%20t%5ftype%5fscope%20sco
-pe%3b%0a%20%20TAutoPtr%3ct%5ftype%5fitem%5ftype%3e%20body%3b%0a%7d%0at%5ftype%5f
-item%5ftype%3ai%5ftype%5fitem%20%7b%0a%20%20TAutoPtr%3ct%5ftype%5fscope%3e%20sco
-pe%3f%3b%0a%20%20t%5fname%20type%3b%0a%20%20TAutoPtr%3ct%5ftype%5ftempl%3e%20par
-am%3f%3b%0a%20%20vector%3ct%5fscope%5ftype%5fitem%3e%20arr%3f%3b%0a%7d%0at%5ftyp
-e%5fexpr2%7b%0a%20%20TAutoPtr%3ct%5ftype%5fscope%3e%20scope%3f%3b%0a%20%20t%5fty
-pe%5fitem%5ftype%20body%3b%0a%7d%0at%5ftype%5ftempl%5fparam%7b%0a%20%20TAutoPtr%
-3ci%5ftype%5fitem%3e%20body%3b%0a%7d%0at%5fsep%5ftype%5ftempl%5fparam%7b%0a%20%2
-0%22%2c%22%0a%20%20t%5ftype%5ftempl%5fparam%20body%3b%0a%7d%0at%5ftype%5ftempl%5
-fparams%7b%0a%20%20t%5ftype%5ftempl%5fparam%20first%3b%0a%20%20vector%3ct%5fsep%
-5ftype%5ftempl%5fparam%3e%20arr%3f%3b%0a%7d%0at%5ftype%5ftempl%5fangle%3ai%5ftyp
-e%5ftempl%7b%0a%20%20%22%3c%22%0a%20%20TAutoPtr%3ct%5ftype%5ftempl%5fparams%3e%2
-0params%3f%3b%0a%20%20%22%3e%22%0a%7d%0at%5ftype%5ftempl%5fsoft%3ai%5ftype%5ftem
-pl%7b%0a%20%20%22%28%22%0a%20%20TAutoPtr%3ct%5ftype%5ftempl%5fparams%3e%20params
-%3f%3b%0a%20%20%22%29%22%0a%7d%0at%5fstruct%5fcmd%5fmode%3ai%5fstruct%5fcmd%5fxx
-xx%7b%0a%20%20char%20body%3dany%5fchar%28%22DMO%22%29%3b%0a%20%20%22%20%22%3f%0a
-%20%20%22%2b%3d%22%0a%20%20%22%20%22%3f%0a%7d%0at%5fsep%5fvalue%7b%0a%20%20%22%2
-0%22%3f%0a%20%20t%5fvalue%5fitem%20value%3b%0a%20%20%22%20%22%3f%0a%7d%0at%5fatt
-r%7b%0a%20%20%22%5b%22%0a%20%20vector%3ct%5fsep%5fvalue%3e%20arr%3dvec%28%22%2c%
-22%29%3f%3b%0a%20%20%22%20%22%3f%0a%20%20%22%5d%22%0a%7d%0at%5fsep%5ffield%3ai%5
-fstruct%5ffield%7b%22%20%22%3f%7d%0at%5fsemicolon%5ffield%3ai%5fstruct%5ffield%7
-bTAutoPtr%3ct%5fsemicolon%3e%20sc%3b%7d%0at%5fconst%5ffield%3ai%5fstruct%5ffield
-%7b%0a%20%20t%5fqst%7b%22%3f%22%7d%0a%20%20t%5fc%5fitem%3ai%5fsc%5fitem%7bt%5fch
-ar%5fitem%20body%3b%7d%0a%20%20t%5fs%5fitem%3ai%5fsc%5fitem%7bt%5fstr%5fitem%20b
-ody%3b%7d%0a%20%20string%20value%3dstr%3cTAutoPtr%3ci%5fsc%5fitem%3e%3e%28%29%3b
-%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ct%5fqst%3e%20qst%3f%3b%0a%20%20%22%20%2
-2%3f%0a%20%20TAutoPtr%3ct%5fsemicolon%3e%20sc%3f%3b%0a%20%20%22%20%22%3f%0a%7d%0
-at%5fstruct%5ffield%5fvalue%20%7b%0a%20%20%22%20%22%3f%0a%20%20%22%3d%22%3b%0a%2
-0%20%22%20%22%3f%0a%20%20TAutoPtr%3ct%5fcppcore%3a%3at%5fvarcall%5fexpr%3e%20exp
-r%3b%0a%7d%0at%5fqst%7b%0a%20%20%20%20string%20s%3dany%28%22%2a%3f%22%29%3b%0a%2
-0%20%7d%0at%5fstruct%5ffield%3ai%5fstruct%5ffield%7b%0a%20%20TAutoPtr%3ct%5fcppc
-ore%3a%3ai%5fexpr%3e%20type%3b%0a%20%20%22%20%22%3f%0a%20%20t%5fname%20name%3b%0
-a%20%20TAutoPtr%3ct%5fstruct%5ffield%5fvalue%3e%20value%3f%3b%0a%20%20%22%20%22%
-3f%0a%20%20TAutoPtr%3ct%5fqst%3e%20qst%3f%3b%0a%20%20%22%20%22%3f%0a%20%20%22%3b
-%22%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ct%5fattr%3e%20attr%3f%3b%0a%20%20%22
-%20%22%3f%0a%7d%0at%5ftempl%5fparams%7b%0a%20%20%22%3c%22%0a%20%20string%20body%
-3dstr%3cTAutoPtr%3ct%5ftype%5ftempl%5fparams%3e%3e%28%29%3b%0a%20%20%22%3e%22%0a
-%7d%0at%5fcmd%5fparam%3b%0at%5fcmd%5fparams%7b%0a%20%20vector%3ct%5fcmd%5fparam%
-3e%20arr%3dvec%28%22%2c%22%29%3b%0a%7d%0at%5fcmd%5fparam%7b%0a%20%20t%5fimpl%7b%
-0a%20%20%20%20vector%3cTAutoPtr%3ci%5fcmd%5fparam%5fexpr%3e%3e%20arr%3dvec%28%22
-%2b%22%29%3b%0a%20%20%7d%0a%20%20t%5fexpr%5fcall%3ai%5fcmd%5fparam%5fexpr%7b%0a%
-20%20%20%20t%5fname%20func%3b%0a%20%20%20%20%22%28%22%0a%20%20%20%20TAutoPtr%3ct
-%5fcmd%5fparams%3e%20params%3b%0a%20%20%20%20%22%29%22%0a%20%20%7d%0a%20%20t%5fe
-xpr%5fstr%3ai%5fcmd%5fparam%5fexpr%7b%0a%20%20%20%20string%20body%3dstr%3ct%5fst
-r%5fseq%3e%28%29%3b%0a%20%20%7d%0a%20%20t%5fexpr%5fvar%3ai%5fcmd%5fparam%5fexpr%
-7b%0a%20%20%20%20t%5fthis%7b%22this%2d%3e%22%7d%0a%20%20%20%20t%5fimpl%7b%0a%20%
-20%20%20%20%20TAutoPtr%3ct%5fthis%3e%20self%3f%3b%0a%20%20%20%20%20%20t%5fname%2
-0name%3b%0a%20%20%20%20%7d%0a%20%20%20%20string%20body%3dstr%3ct%5fimpl%3e%28%29
-%3b%0a%20%20%7d%0a%20%20string%20body%3dstr%3ct%5fimpl%3e%28%29%3b%0a%7d%0at%5fs
-truct%5fcmd%5fanno%3ai%5fstruct%5fcmd%5fxxxx%7b%0a%20%20string%20mode%3dany%5fst
-r%5ffrom%5fvec%28split%28%22%40mandatory%2c%40optional%2c%40mand%2c%40opti%2c%40
-man%2c%40opt%2c%40ma%2c%40op%2c%40m%2c%40o%2cm%2co%22%2c%22%2c%22%29%29%3b%0a%20
-%20%22%20%22%0a%7d%0at%5fstruct%5fcmd%5fsuffix%3ai%5fstruct%5fcmd%5fso%7b%0a%20%
-20char%20value%3dany%5fchar%28%22%3f%21%22%29%3b%0a%7d%0at%5fstruct%5fcmd%5fopti
-onal%3ai%5fstruct%5fcmd%5fso%7b%0a%20%20%22%5b%22%0a%20%20string%20value%3dany%5
-fstr%5ffrom%5fvec%28split%28%22optional%2cmandatory%22%2c%22%2c%22%29%29%3b%0a%2
-0%20%22%5d%22%0a%7d%0at%5fstruct%5fcmd%5fopt%5fv2%3ai%5fstruct%5fcmd%5fso%7b%0a%
-20%20%22%3b%22%0a%20%20%22%20%22%3f%0a%20%20string%20value%3dany%5fstr%5ffrom%5f
-vec%28split%28%22optional%2cmandatory%22%2c%22%2c%22%29%29%3b%0a%7d%0at%5fstruct
-%5fcmd%7b%0a%20%20TAutoPtr%3ci%5fstruct%5fcmd%5fxxxx%3e%20mode%3f%3b%0a%20%20t%5
-fname%20func%3b%0a%20%20%22%20%22%3f%0a%20%20string%20templ%5fparams%3dstr%3cTAu
-toPtr%3ct%5ftempl%5fparams%3e%3e%28%29%3f%3b%0a%20%20%22%28%22%0a%20%20t%5fcmd%5
-fparams%20params%3b%0a%20%20%22%29%22%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ci%
-5fstruct%5fcmd%5fso%3e%20cmdso%3f%3b%0a%20%20%22%20%22%3f%0a%20%20%22%3b%22%0a%7
-d%0at%5fsep%5fstruct%5fcmd%7b%0a%20%20%22%20%22%3f%0a%20%20t%5fstruct%5fcmd%20bo
-dy%3b%0a%7d%0at%5fstruct%5fcmds%7b%0a%20%20%22%7b%22%0a%20%20vector%3ct%5fsep%5f
-struct%5fcmd%3e%20arr%3f%3b%0a%20%20%22%20%22%3f%0a%20%20%22%7d%22%0a%7d%0at%5fs
-ep%5fstruct%5fcmds%7b%0a%20%20%22%20%22%3f%0a%20%20t%5fstruct%5fcmds%20body%3b%0
-a%7d%0at%5fcpp%5fcode%5fsep%3ai%5fcpp%5fcode%7b%0a%20%20t%5fsep%20sep%3b%0a%7d%0
-at%5fcpp%5fcode%5fmain%3ai%5fcpp%5fcode%7b%0a%20%20TAutoPtr%3ci%5fcode%5fwith%5f
-sep%3e%20body%3b%0a%7d%0at%5fcpp%5fcode%7b%0a%20%20t%5fbayan%7b%22%5b%3a%3a%5d%2
-2%7d%0a%20%20t%5ffields%3ai%5fmajor%7bt%5fstruct%5ffield%20f%3b%7d%0a%20%20t%5fc
-mds%3ai%5fmajor%7bt%5fstruct%5fcmds%20c%3b%7d%0a%20%20t%5fatr%3ai%5fmajor%7bTAut
-oPtr%3ct%5fattr%3e%20attr%3b%7d%0a%20%20t%5feater%7bvector%3cTAutoPtr%3ci%5fcpp%
-5fcode%3e%3e%20arr%3b%7d%0a%20%20t%5fwith%5fbayan%3ai%5fbayan%7b%0a%20%20%20%20t
-%5fbayan%20bayan%3b%0a%20%20%20%20t%5feater%20eater%3f%3b%0a%20%20%7d%0a%20%20t%
-5fminor%5feater%7bt%5feater%20eater%3dminor%3cTAutoPtr%3ci%5fmajor%3e%3e%28%29%3
-b%7d%0a%20%20t%5fwithout%5fbayan%3ai%5fbayan%7b%0a%20%20%20%20t%5fminor%5feater%
-20eater%3dminor%3ct%5fwith%5fbayan%3e%28%29%3b%0a%20%20%7d%0a%20%20%22%20%22%3f%
-0a%20%20TAutoPtr%3ci%5fbayan%3e%20bayan%3b%0a%7d%0at%5ftarget%5fstruct%3ai%5ftar
-get%5fitem%7b%0a%20%20t%5fkeyword%7bstring%20kw%3dany%5fstr%5ffrom%5fvec%28split
-%28%22struct%2cclass%22%2c%22%2c%22%29%29%3b%22%20%22%3f%7d%0a%20%20t%5fbody%5fs
-emicolon%3ai%5fstruct%5fimpl%7b%22%3b%22%7d%0a%20%20t%5fbody%5fimpl%3ai%5fstruct
-%5fimpl%7b%0a%20%20%20%20%22%7b%22%0a%20%20%20%20vector%3cTAutoPtr%3ci%5ftarget%
-5fitem%3e%3e%20nested%3f%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20vector%3cTA
-utoPtr%3ci%5fstruct%5ffield%3e%3e%20arr%3f%3b%0a%20%20%20%20%22%20%22%3f%0a%20%2
-0%20%20TAutoPtr%3ct%5fstruct%5fcmds%3e%20cmds%3f%3b%0a%20%20%20%20%22%20%22%3f%0
-a%20%20%20%20TAutoPtr%3ct%5fcpp%5fcode%3e%20c%3f%3b%0a%20%20%20%20%22%20%22%3f%0
-a%20%20%20%20%22%7d%22%0a%20%20%7d%0a%20%20t%5fparent%7b%0a%20%20%20%20string%20
-arrow%5for%5fcolon%3dany%5fstr%5ffrom%5fvec%28split%28%22%3d%3e%2c%3a%22%2c%22%2
-c%22%29%29%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20t%5fname%20parent%3b%0a%2
-0%20%7d%0a%20%20TAutoPtr%3ct%5fkeyword%3e%20kw%3f%3b%0a%20%20t%5fname%20name%3b%
-0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ct%5fparent%3e%20parent%3f%3b%0a%20%20%22
-%20%22%3f%0a%20%20TAutoPtr%3ci%5fstruct%5fimpl%3e%20body%3b%0a%7d%0at%5ftarget%5
-fsemicolon%3ai%5ftarget%5fitem%7bvector%3ct%5fsemicolon%3e%20arr%3b%7d%0at%5ftar
-get%5fsep%3ai%5ftarget%5fitem%7bt%5fsep%20sep%3b%7d%0at%5ftarget%5fusing%3ai%5ft
-arget%5fitem%7b%0a%20%20t%5fstr%5fap%3ai%5fqa%7b%0a%20%20%20%20%22%27%22%0a%20%2
-0%20%20string%20body%3dstr%3cTAutoPtr%3ci%5fchar%5fitem%3e%3e%28%29%3b%0a%20%20%
-20%20%22%27%22%0a%20%20%7d%0a%20%20t%5fstr%5fqu%3ai%5fqa%7b%0a%20%20%20%20%22%5c
-%22%22%0a%20%20%20%20string%20body%3dstr%3cvector%3cTAutoPtr%3ci%5fstr%5fitem%3e
-%3e%3e%28%29%3b%0a%20%20%20%20%22%5c%22%22%0a%20%20%7d%0a%20%20%22using%22%0a%20
-%20%22%20%22%0a%20%20string%20s%3dstr%3cTAutoPtr%3ci%5fqa%3e%3e%28%29%3b%0a%20%2
-0%22%20%22%0a%20%20%22as%22%0a%20%20%22%20%22%0a%20%20string%20lexer%3dstr%3ct%5
-fname%3e%28%29%3b%0a%20%20%22%20%22%3f%0a%20%20%22%3b%22%0a%7d%0at%5ftarget%5fty
-pedef%3ai%5ftarget%5fitem%7b%0a%20%20%22typedef%22%0a%20%20%22%20%22%0a%20%20t%5
-fcppcore%3a%3at%5fvarcall%5fexpr%3a%3at%5fvar%20type%3b%0a%20%20%22%20%22%3f%0a%
-20%20t%5fname%20name%3b%0a%20%20%22%20%22%3f%0a%20%20%22%3b%22%0a%7d%0at%5ftarge
-t%7b%0a%20%20vector%3cTAutoPtr%3ci%5ftarget%5fitem%3e%3e%20arr%3b%0a%7d%0a%7d%0a
-%2f%2f
+22%20%22%0a%20%20%20%20%2f%2ft%5fbar%3at%5fparent%5fholder%3a%3ai%5fbase%7b%7d%0
+a%20%20%7d%0a%20%20%22P%22%0a%7d%0at%5fusing%5ftest%5f20250628%3axiface%7b%0a%20
+%20t%5fsep%7b%22%20%22%7d%0a%20%20using%20%22%20%22%20as%20t%5fsep%3b%0a%20%20t%
+5ffoo%3b%0a%20%20t%5ffoo%7b%0a%20%20%20%20t%5fbar%7bt%5fbaz%7bstring%20s%3dany%2
+8%22xyz%22%29%3b%7d%22uv%22%7d%0a%20%20%20%20t%5fbar%20b%3b%0a%20%20%20%20%22%20
+%22%0a%20%20%20%20t%5fbar%20c%3f%3b%0a%20%20%20%20t%5fbar%20d%3f%3b%0a%20%20%20%
+20%22%20%22%3f%0a%20%20%7d%0a%20%20t%5ffoo%20foo%3b%0a%7d%0at%5fnumber%7b%0a%20%
+20string%20body%3dany%28gen%5fdips%28%2209%22%29%29%3b%0a%7d%0atypedef%20array%3
+cchar%2c2%3e%20ARRAY2char%3b%0atypedef%20array%3cchar%2c4%3e%20ARRAY4char%3b%0at
+%5fstr%5fitem%5fraw%3ai%5fstr%5fitem%7b%0a%20%20string%20body%3dany%28dip%5finv%
+28%22%5c%22%5c%5c%5cn%22%29%29%3b%0a%7d%0at%5fstr%5fitem%5fhex%3ai%5fstr%5fitem%
+7b%0a%20%20%22%5c%5cx%22%0a%20%20ARRAY2char%20body%3dany%5farr%5fchar%28gen%5fdi
+ps%28%2209afAF%22%29%29%3b%0a%7d%0at%5fstr%5fitem%5fnum%3ai%5fstr%5fitem%7b%0a%2
+0%20%22%5c%5cu%22%0a%20%20ARRAY2char%20body%3dany%5farr%5fchar%28gen%5fdips%28%2
+209%22%29%29%3b%0a%7d%0at%5fstr%5fitem%5ffix%3ai%5fstr%5fitem%7b%0a%20%20%22%5c%
+5c%22%0a%20%20char%20body%3dany%5fchar%28%22tfbrn%5c%5c%5c%22%5c%27%22%2bgen%5fd
+ips%28%2207%22%29%29%3b%0a%7d%0at%5fstr%5fitem%7b%0a%20%20t%5fimpl%7b%0a%20%20%2
+0%20%22%5c%22%22%0a%20%20%20%20vector%3cTAutoPtr%3ci%5fstr%5fitem%3e%3e%20arr%3b
+%0a%20%20%20%20%22%5c%22%22%0a%20%20%7d%0a%20%20string%20value%3dstr%3ct%5fimpl%
+3e%28%29%3b%0a%7d%0at%5fchar%5fitem%5fraw%3ai%5fchar%5fitem%7b%0a%20%20string%20
+body%3dany%28dip%5finv%28%22%27%5c%5c%5cn%22%29%29%3b%0a%7d%0at%5fchar%5fitem%5f
+hex%3ai%5fchar%5fitem%7b%0a%20%20%22%5c%5cx%22%0a%20%20ARRAY2char%20body%3dany%5
+farr%5fchar%28gen%5fdips%28%2209afAF%22%29%29%3b%0a%7d%0at%5fchar%5fitem%5fnum%3
+ai%5fchar%5fitem%7b%0a%20%20%22%5c%5cu%22%0a%20%20ARRAY4char%20body%3dany%5farr%
+5fchar%28gen%5fdips%28%2209%22%29%29%3b%0a%7d%0at%5fchar%5fitem%5ffix%3ai%5fchar
+%5fitem%7b%0a%20%20%22%5c%5c%22%0a%20%20char%20body%3dany%5fchar%28%22tfbrn%5c%5
+c%5c%22%5c%27%22%2bgen%5fdips%28%2207%22%29%29%3b%0a%7d%0at%5fchar%5fitem%7b%0a%
+20%20t%5fimpl%7b%0a%20%20%20%20%22%27%22%0a%20%20%20%20TAutoPtr%3ci%5fchar%5fite
+m%3e%20body%3b%0a%20%20%20%20%22%27%22%0a%20%20%7d%0a%20%20string%20value%3dstr%
+3ct%5fimpl%3e%28%29%3b%0a%7d%0at%5fsep%5fseq%3ai%5fsep%7b%0a%20%20string%20body%
+3dany%28%22%20%5ct%5cr%5cn%22%29%3b%0a%7d%0at%5fc%5fcomment%3ai%5fsep%7b%0a%20%2
+0%22%2f%2a%22%0a%20%20string%20body%3dend%28%22%2a%2f%22%29%3b%0a%7d%0at%5fcpp%5
+fcomment%3ai%5fsep%7b%0a%20%20%22%2f%2f%22%0a%20%20string%20body%3dany%28dip%5fi
+nv%28%22%5cn%22%29%29%3f%3b%0a%7d%0at%5fsep%7b%0a%20%20t%5fimpl%7b%0a%20%20%20%2
+0vector%3cTAutoPtr%3ci%5fsep%3e%3e%20arr%3b%0a%20%20%7d%0a%20%20string%20value%3
+dstr%3ct%5fimpl%3e%28%29%3b%0a%7d%0at%5fname%7b%0a%20%20t%5fkeyword%7b%0a%20%20%
+20%20string%20value%3dany%5fstr%5ffrom%5fvec%28split%28%22new%2cdelete%2cdefault
+%2cconsteval%2cfalse%2ctrue%2cnullptr%2cthis%2cstruct%2cclass%2cfor%2cif%2cwhile
+%2cdo%2cconst%2cconstexpr%2celse%2coperator%2cauto%2ccontinue%2cbreak%2creturn%2
+cgoto%2cvirtual%2coverride%2cpublic%2cprivate%2cprotected%2cfriend%2ctemplate%2c
+typedef%2cusing%2cnamespace%2cdecltype%22%2c%22%2c%22%29%29%3b%0a%20%20%7d%0a%20
+%20t%5fimpl%7b%0a%20%20%20%20char%20A%3dany%5fchar%28gen%5fdips%28%22azAZ%22%29%
+2b%22%5f%24%40%22%29%3b%0a%20%20%20%20string%20B%3dany%28gen%5fdips%28%22azAZ09%
+22%29%2b%22%5f%24%40%22%29%3f%3b%0a%20%20%7d%0a%20%20t%5fimpl%5fex%7b%0a%20%20%2
+0%20t%5fimpl%20impl%3ddiff%3ct%5fkeyword%3e%28%29%3b%0a%20%20%7d%0a%20%20string%
+20value%3dstr%3ct%5fimpl%5fex%3e%28%29%3b%0a%7d%0at%5fstr%3ai%5fsimple%5fexpr%7b
+%0a%20%20t%5fstr%5fitem%20body%3b%0a%7d%0at%5fchar%3ai%5fsimple%5fexpr%7b%0a%20%
+20t%5fchar%5fitem%20body%3b%0a%7d%0at%5fnum%3ai%5fsimple%5fexpr%7b%0a%20%20t%5fn
+umber%20body%3b%0a%7d%0at%5fid%3ai%5fsimple%5fexpr%7b%0a%20%20t%5fname%20body%3b
+%0a%7d%0at%5fsign%3ai%5fsimple%5fexpr%7b%0a%20%20char%20body%3dany%5fchar%28%22%
+7e%7c%26%3d%3c%3e%21%3a%3f%3b%2c%2e%2b%2d%2a%2f%25%5e%22%29%3b%0a%7d%0at%5fcppco
+re%7b%0at%5flev03%7b%0a%20%20string%20oper%3dany%5fstr%5ffrom%5fvec%28split%28%2
+2%2b%2c%2d%2c%21%2c%7e%22%2c%22%2c%22%29%29%3f%3b%0a%20%20TAutoPtr%3ci%5fexpr%3e
+%20expr%3b%0a%7d%0at%5flev05%7b%0a%20%20t%5foper%7bstring%20value%3dany%5fstr%5f
+from%5fvec%28split%28%22%2a%2c%2f%2c%25%22%2c%22%2c%22%29%29%3b%7d%0a%20%20t%5fi
+tem%7bt%5foper%20oper%3bt%5flev03%20expr%3b%7d%0a%20%20t%5flev03%20expr%3b%0a%20
+%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev06%7b%0a%20%20t%5foper%7bstri
+ng%20value%3dany%5fstr%5ffrom%5fvec%28split%28%22%2b%2c%2d%22%2c%22%2c%22%29%29%
+3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3bt%5flev05%20expr%3b%7d%0a%20%20t%5fle
+v05%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev07%7b%0a%2
+0%20t%5foper%7bstring%20value%3dany%5fstr%5ffrom%5fvec%28split%28%22%3c%3c%2c%3e
+%3e%22%2c%22%2c%22%29%29%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3bt%5flev06%20
+expr%3b%7d%0a%20%20t%5flev06%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%
+0a%7d%0at%5flev08%7b%0a%20%20t%5foper%7bstring%20value%3dany%5fstr%5ffrom%5fvec%
+28split%28%22%3c%2c%3c%3d%2c%3e%2c%3e%3d%22%2c%22%2c%22%29%29%3b%7d%0a%20%20t%5f
+item%7bt%5foper%20oper%3bt%5flev07%20expr%3b%7d%0a%20%20t%5flev07%20expr%3b%0a%2
+0%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev09%7b%0a%20%20t%5foper%7bstr
+ing%20value%3dany%5fstr%5ffrom%5fvec%28split%28%22%3d%3d%2c%21%3d%22%2c%22%2c%22
+%29%29%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3bt%5flev08%20expr%3b%7d%0a%20%2
+0t%5flev08%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev10%
+7b%0a%20%20t%5foper%7b%22%26%22%20inline%20static%20const%20string%20value%3d%22
+%26%22%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20t%5flev09%20expr%3b%7d%0a%2
+0%20t%5flev09%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5flev
+11%7b%0a%20%20t%5foper%7b%22%5e%22%20inline%20static%20const%20string%20value%3d
+%22%5e%22%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20t%5flev10%20expr%3b%7d%0
+a%20%20t%5flev10%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5f
+lev12%7b%0a%20%20t%5foper%7b%22%7c%22%20inline%20static%20const%20string%20value
+%3d%22%7c%22%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20t%5flev11%20expr%3b%7
+d%0a%20%20t%5flev11%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at
+%5flev13%7b%0a%20%20t%5foper%7b%22%26%26%22%20inline%20static%20const%20string%2
+0value%3d%22%26%26%22%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20t%5flev12%20
+expr%3b%7d%0a%20%20t%5flev12%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%
+0a%7d%0at%5flev14%7b%0a%20%20t%5foper%7b%22%7c%7c%22%20inline%20static%20const%2
+0string%20value%3d%22%7c%7c%22%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20t%5
+flev13%20expr%3b%7d%0a%20%20t%5flev13%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20a
+rr%3f%3b%0a%7d%0a%2f%2a%0avar%20pad2%3dnum%3d%3e%28num%3c10%3f%220%22%2bnum%3a%2
+2%22%2bnum%29%3b%0areturn%28%0a%60%2b%2c%2d%2c%21%2c%7e%0a%2a%2c%2f%2c%25%0a%2b%
+2c%2d%0a%3c%3c%2c%3e%3e%0a%3c%2c%3c%3d%2c%3e%2c%3e%3d%0a%3d%3d%2c%21%3d%0a%26%0a
+%5e%0a%7c%0a%26%26%0a%7c%7c%60%2esplit%28%22%5cr%22%29%2ejoin%28%22%22%29%2espli
+t%28%22%5cn%22%29%2emap%28%28ops%2ci%29%3d%3e%7b%0a%20%20var%20e%3d%22t%5flev%22
+%2bpad2%28i%3d%3d1%3f3%3ai%2b3%29%3b%0a%20%20var%20n%3d%22t%5flev%22%2bpad2%28i%
+2b4%29%3b%0a%20%20if%28%21i%29%7b%0a%20%20%20%20return%20%60t%5flev03%7b%0a%20%2
+0string%20oper%3dany%5fstr%5ffrom%5fvec%28split%28%60%2bJSON%2estringify%28ops%2
+9%2b%60%2c%22%2c%22%29%29%3f%3b%0a%20%20TAutoPtr%3ci%5fexpr%3e%20expr%3b%0a%7d%6
+0%3b%0a%20%20%7d%0a%20%20var%20oa%3dops%2esplit%28%22%2c%22%29%3b%0a%20%20if%28o
+a%2elength%3d%3d1%29%7b%0a%20%20%20%20return%20n%2b%60%7b%0a%20%20t%5foper%7b%22
+%60%2boa%5b0%5d%2b%60%22%20inline%20static%20const%20string%20value%3d%22%60%2bo
+a%5b0%5d%2b%60%22%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%20%60%2be%2b%60%20
+expr%3b%7d%0a%20%20%60%2be%2b%60%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f
+%3b%0a%7d%60%3b%0a%20%20%7d%0a%20%20return%20n%2b%60%7b%0a%20%20t%5foper%7bstrin
+g%20value%3dany%5fstr%5ffrom%5fvec%28split%28%22%60%2bops%2b%60%22%2c%22%2c%22%2
+9%29%3b%7d%0a%20%20t%5fitem%7bt%5foper%20oper%3b%60%2be%2b%60%20expr%3b%7d%0a%20
+%20%60%2be%2b%60%20expr%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%60%3b%
+0a%7d%29%2ejoin%28%22%5cn%22%29%29%3b%0a%2a%2f%0at%5fstring%7b%0a%20%20%22%5c%22
+%22%0a%20%20string%20value%3dstr%3cvector%3cTAutoPtr%3ci%5fstr%5fitem%3e%3e%3e%2
+8%29%3f%3b%0a%20%20%22%5c%22%22%0a%7d%0at%5fint%5fexpr%3ai%5fexpr%7b%0a%20%20t%5
+fzero%3ai%5fval%7b%220%22%7d%0a%20%20t%5fnum%3ai%5fval%7b%0a%20%20%20%20char%20f
+irst%3dany%5fchar%28gen%5fdips%28%2219%22%29%29%3b%0a%20%20%20%20string%20num%3d
+any%28gen%5fdips%28%2209%22%29%29%3f%3b%0a%20%20%7d%0a%20%20string%20value%3dstr
+%3cTAutoPtr%3ci%5fval%3e%3e%28%29%3b%0a%7d%0at%5ftype%5fexpr%7b%0a%20%20t%5fpara
+ms%7b%0a%20%20%20%20%22%7b%22%0a%20%20%20%20string%20type%3dstr%3ct%5ftype%5fexp
+r%3e%28%29%3b%0a%20%20%20%20%22%2c%22%0a%20%20%20%20t%5fint%5fexpr%20count%3b%0a
+%20%20%20%20%22%7d%22%0a%20%20%7d%0a%20%20t%5felem%7b%0a%20%20%20%20t%5fname%20n
+ame%3b%0a%20%20%20%20TAutoPtr%3ct%5fparams%3e%20params%3f%3b%0a%20%20%7d%0a%20%2
+0t%5fitem%7b%0a%20%20%20%20t%5fsep%20sep0%3f%3b%0a%20%20%20%20%22%3a%3a%22%0a%20
+%20%20%20t%5fsep%20sep1%3f%3b%0a%20%20%20%20t%5felem%20body%3b%0a%20%20%7d%0a%20
+%20t%5felem%20first%3b%0a%20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%7d%0at%5fchar
+%5fexpr%3ai%5fexpr%7b%0a%20%20t%5fchar%5fitem%20body%3b%0a%7d%0at%5fbool%5fexpr%
+3ai%5fexpr%7b%0a%20%20string%20value%3dany%5fstr%5ffrom%5fvec%28split%28%22true%
+2cfalse%22%2c%22%2c%22%29%29%3b%0a%7d%0at%5fstring%5fexpr%3ai%5fexpr%7b%0a%20%20
+t%5fstring%20body%3b%0a%7d%0at%5freal%5fexpr%3ai%5fexpr%7b%0a%20%20t%5ffrac%7b%0
+a%20%20%20%20%22%2e%22%0a%20%20%20%20string%20arr%3dany%28gen%5fdips%28%2209%22%
+29%29%3b%0a%20%20%7d%0a%20%20t%5fsign%7b%0a%20%20%20%20char%20sign%3dany%5fchar%
+28%22%2d%2b%22%29%3b%0a%20%20%7d%0a%20%20t%5fexp%7b%0a%20%20%20%20char%20e%3dany
+%5fchar%28%22eE%22%29%3b%0a%20%20%20%20TAutoPtr%3ct%5fsign%3e%20sign%3f%3b%0a%20
+%20%20%20string%20arr%3dany%28gen%5fdips%28%2209%22%29%29%3b%0a%20%20%7d%0a%20%2
+0t%5fnum%3ai%5fval%7b%0a%20%20%20%20char%20first%3dany%5fchar%28gen%5fdips%28%22
+19%22%29%29%3b%0a%20%20%20%20string%20num%3dany%28gen%5fdips%28%2209%22%29%29%3f
+%3b%0a%20%20%7d%0a%20%20t%5fzero%3ai%5fval%7b%220%22%7d%0a%20%20t%5fimpl%7b%0a%2
+0%20%20%20TAutoPtr%3ci%5fval%3e%20val%3b%0a%20%20%20%20TAutoPtr%3ct%5ffrac%3e%20
+frac%3b%0a%20%20%20%20TAutoPtr%3ct%5fexp%3e%20exp%3f%3b%0a%20%20%7d%0a%20%20stri
+ng%20value%3dstr%3ct%5fimpl%3e%28%29%3b%0a%7d%0at%5fcall%5fparam%7b%0a%20%20t%5f
+sep%20sep0%3f%3b%0a%20%20t%5flev14%20body%3b%0a%20%20t%5fsep%20sep1%3f%3b%0a%7d%
+0at%5fcall%5fparams%7b%0a%20%20%22%28%22%0a%20%20t%5fsep%20sep%3f%3b%0a%20%20vec
+tor%3ct%5fcall%5fparam%3e%20arr%3dvec%28%22%2c%22%29%3f%3b%0a%20%20%22%29%22%0a%
+7d%0at%5fvarcall%5fexpr%3ai%5fexpr%7b%0a%20%20t%5fsb%5fexpr%7b%0a%20%20%20%20%22
+%5b%22%0a%20%20%20%20t%5fsep%20sep0%3f%3b%0a%20%20%20%20t%5flev14%20expr%3b%0a%2
+0%20%20%20t%5fsep%20sep1%3f%3b%0a%20%20%20%20%22%5d%22%0a%20%20%7d%0a%20%20t%5fd
+d%5fpart%3ai%5fpart%7b%0a%20%20%20%20t%5felem%7b%0a%20%20%20%20%20%20t%5fsep%20s
+ep0%3f%3b%0a%20%20%20%20%20%20%22%3a%3a%22%0a%20%20%20%20%20%20t%5fsep%20sep1%3f
+%3b%0a%20%20%20%20%20%20t%5fname%20name%3b%0a%20%20%20%20%7d%0a%20%20%20%20vecto
+r%3ct%5felem%3e%20arr%3b%0a%20%20%7d%0a%20%20t%5ftemplate%5fpart%3ai%5fpart%7b%0
+a%20%20%20%20%22%3c%22%0a%20%20%20%20t%5fsep%20sep0%3f%3b%0a%20%20%20%20vector%3
+ct%5flev14%3e%20expr%3dvec%28%22%2c%22%29%3b%0a%20%20%20%20t%5fsep%20sep1%3f%3b%
+0a%20%20%20%20%22%3e%22%0a%20%20%20%20TAutoPtr%3ct%5fdd%5fpart%3e%20ddp%3f%3b%0a
+%20%20%7d%0a%20%20t%5farr%7b%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%20%20%20vec
+tor%3ct%5fsb%5fexpr%3e%20arr%3b%0a%20%20%7d%0a%20%20t%5fitem%7b%0a%20%20%20%20t%
+5fsep%20sepB%3f%3b%0a%20%20%20%20%22%2e%22%0a%20%20%20%20t%5fsep%20sep0%3f%3b%0a
+%20%20%20%20t%5fname%20name%3b%0a%20%20%20%20t%5farr%20arr%3f%3b%0a%20%20%7d%0a%
+20%20t%5fvar%7b%0a%20%20%20%20t%5fname%20name%3b%0a%20%20%20%20t%5fsep%20sep0%3f
+%3b%0a%20%20%20%20TAutoPtr%3ci%5fpart%3e%20tp%3f%3b%0a%20%20%20%20TAutoPtr%3ct%5
+farr%3e%20arr%3f%3b%0a%20%20%20%20vector%3ct%5fitem%3e%20items%3f%3b%0a%20%20%7d
+%0a%20%20t%5fvar%20var%3b%0a%20%20t%5fsep%20sep%3f%3b%0a%20%20TAutoPtr%3ct%5fcal
+l%5fparams%3e%20params%3f%3b%0a%7d%0at%5fblock%5fexpr%3ai%5fexpr%7b%0a%20%20%22%
+28%22%0a%20%20t%5flev14%20body%3b%0a%20%20%22%29%22%0a%7d%0a%2f%2a%0at%5fcall%5f
+expr%3ai%5fexpr%7b%0a%20%20t%5fvar%5fexpr%20call%3b%0a%20%20t%5fsep%20sep%3f%3b%
+0a%20%20t%5fcall%5fparams%20params%3b%0a%7d%2a%2f%0a%7d%0ausing%20%22%20%22%20as
+%20t%5fsep%3b%0at%5ftest20250618%5fatrr%7b%0a%20%20t%5ffoo%7b%7bgo%5fconst%28%22
+G%22%29%3b%7d%5b%3a%3a%5dint%20i%3d0%3b%7d%0a%20%20t%5ffoo%20foo%3b%20%5bskip%5d
+%0a%20%20t%5fsep%20sep%3b%20%5boptimize%2c%22sep%22%2c%28%22sep%22%29%2csep%5bx%
+5d%5d%0a%7d%0a%2f%2ft%5ftest20250620%5fdev%7b%0a%2f%2f%20%20t%5ffoo%7b%7b%7d%7d%
+0a%2f%2f%20%20t%5fbar%7b%0a%2f%2f%20%20%20%20%22more%20tests%22%0a%2f%2f%20%20%2
+0%20%22test%22%0a%2f%2f%20%20%20%20t%5fsep%20sep%3b%0a%2f%2f%20%20%20%20%22anoth
+er%20test%22%20%2f%2a%20yes%20%60%20%22%3b%22%20%2a%2f%20%3b%0a%2f%2f%20%20%20%2
+0t%5ffoo%20foo%3f%3b%0a%2f%2f%20%20%20%20%22nope%22%3b%0a%2f%2f%20%20%7d%0a%2f%2
+f%20%20string%20dev%3dany%28%22%3b%3f%27%2d%3e%3d%3c%60%28%29%2f%5c%5c%2b%22%29%
+3f%3b%0a%2f%2f%20%20t%5ffoo%20%24dev0%3b%0a%2f%2f%20%20t%5fbar%20%24dev1%3b%0a%2
+f%2f%20%20%2f%2a%7b%0a%2f%2f%20%20%20%20go%5fany%28dev%2c%22%3b%3f%27%2d%3e%3d%3
+c%60%28%29%2f%5c%5c%2b%22%29%3b%0a%2f%2f%20%20%20%20go%5fauto%28%24dev0%29%3b%0a
+%2f%2f%20%20%20%20go%5fauto%28%24dev1%29%3b%0a%2f%2f%20%20%7d%2a%2f%0a%2f%2f%7d%
+0at%5fmeta%5flexer%7b%0at%5fname%5fcode%3ai%5fcode%7b%0a%20%20string%20value%3ds
+tr%3ct%5fname%3a%3at%5fimpl%3e%28%29%3b%0a%7d%0at%5fnum%5fcode%3ai%5fcode%7b%0a%
+20%20t%5fnumber%20body%3b%0a%7d%0at%5fstr%5fseq%7b%0a%20%20%22%5c%22%22%0a%20%20
+vector%3cTAutoPtr%3ci%5fstr%5fitem%3e%3e%20arr%3f%3b%0a%20%20%22%5c%22%22%0a%20%
+20%7d%0at%5fsep%5fstr%5fseq%7b%0a%20%20%22%20%22%0a%20%20t%5fstr%5fseq%20body%3b
+%0a%7d%0at%5fstr%5fcode%3ai%5fcode%7b%0a%20%20t%5fstr%5fseq%20first%3b%0a%20%20v
+ector%3ct%5fsep%5fstr%5fseq%3e%20arr%3f%3b%0a%7d%0at%5fchar%5fcode%3ai%5fcode%7b
+%0a%20%20%22%27%22%0a%20%20TAutoPtr%3ci%5fchar%5fitem%3e%20body%3b%0a%20%20%22%2
+7%22%0a%7d%0at%5fsign%5fcode%3ai%5fcode%7b%0a%20%20t%5fsign%20body%3b%0a%7d%0at%
+5fname%5fcode%5fwith%5fsep%3ai%5fcode%5fwith%5fsep%7bt%5fname%5fcode%20body%3bt%
+5fsep%20sep%3f%3b%7d%0at%5fnum%5fcode%5fwith%5fsep%3ai%5fcode%5fwith%5fsep%7bt%5
+fnum%5fcode%20body%3bt%5fsep%20sep%3f%3b%7d%0at%5fstr%5fcode%5fwith%5fsep%3ai%5f
+code%5fwith%5fsep%7bt%5fstr%5fcode%20body%3bt%5fsep%20sep%3f%3b%7d%0at%5fchar%5f
+code%5fwith%5fsep%3ai%5fcode%5fwith%5fsep%7bt%5fchar%5fcode%20body%3bt%5fsep%20s
+ep%3f%3b%7d%0at%5fsign%5fcode%5fwith%5fsep%3ai%5fcode%5fwith%5fsep%7bt%5fsign%5f
+code%20body%3bt%5fsep%20sep%3f%3b%7d%0at%5fsoft%5fbrackets%5fcode%5fwith%5fsep%3
+ai%5fcode%5fwith%5fsep%7b%0a%20%20%22%28%22%20%22%20%22%3f%20vector%3cTAutoPtr%3
+ci%5fcode%5fwith%5fsep%3e%3e%20body%3f%3b%20%22%29%22%20%22%20%22%3f%0a%7d%0at%5
+fhard%5fbrackets%5fcode%5fwith%5fsep%3ai%5fcode%5fwith%5fsep%7b%0a%20%20%22%5b%2
+2%20%22%20%22%3f%20vector%3cTAutoPtr%3ci%5fcode%5fwith%5fsep%3e%3e%20body%3f%3b%
+20%22%5d%22%20%22%20%22%3f%0a%7d%0at%5fcurly%5fbrackets%5fcode%5fwith%5fsep%3ai%
+5fcode%5fwith%5fsep%7b%0a%20%20%22%7b%22%20%22%20%22%3f%20vector%3cTAutoPtr%3ci%
+5fcode%5fwith%5fsep%3e%3e%20body%3f%3b%20%22%7d%22%20%22%20%22%3f%0a%7d%0a%2f%2f
+real%5fsource%5fdata%3a%0a%2f%2a%0at%5fname%5fcode%0at%5fnum%5fcode%0at%5fstr%5f
+code%0at%5fchar%5fcode%0at%5fsign%5fcode%0at%5fsoft%5fbrackets%5fcode%0at%5fhard
+%5fbrackets%5fcode%0at%5fcurly%5fbrackets%5fcode%0a%40%40%40%0a%2a%2f%0a%2f%2fre
+al%5fsource%5fcode%3a%0a%2f%2a%0avar%20mk%3dPOST%5b%27data%27%5d%2esplit%28%22%4
+0%40%40%22%29%5b1%5d%3b%0avar%20gen%3dfunction%28lex%2cmk%29%7b%0a%20%20if%28lex
+%2eincludes%28%22brackets%22%29%29%7b%0a%20%20%20%20var%20json%3dJSON%2estringif
+y%3b%0a%20%20%20%20var%20m%3d%7bsoft%3a%5b%22%28%22%2c%22%29%22%5d%2chard%3a%5b%
+22%5b%22%2c%22%5d%22%5d%2ccurly%3a%5b%22%7b%22%2c%22%7d%22%5d%7d%0a%20%20%20%20f
+or%28var%20k%20in%20m%29if%28lex%2eincludes%28k%29%29return%20%5b%0a%20%20%20%20
+%20%20lex%2b%22%5fwith%5fsep%3ai%5fcode%5fwith%5fsep%7b%22%2c%0a%20%20%20%20%20%
+20%22%20%20%22%2bjson%28m%5bk%5d%5b0%5d%29%2b%27%20%22%20%22%3f%20vector%3cTAuto
+Ptr%3ci%5fcode%5fwith%5fsep%3e%3e%20body%3f%3b%20%27%2bjson%28m%5bk%5d%5b1%5d%29
+%2b%27%20%22%20%22%3f%27%2c%0a%20%20%20%20%20%20%22%7d%22%0a%20%20%20%20%5d%2ejo
+in%28%22%5cn%22%29%3b%0a%20%20%7d%0a%20%20return%20lex%2b%22%5fwith%5fsep%3ai%5f
+code%5fwith%5fsep%7b%22%2blex%2b%22%20body%3bt%5fsep%20sep%3f%3b%7d%22%3b%0a%7d%
+0avar%20out%3d%5b%5d%3b%0avar%20arr%3dPOST%5b%27data%27%5d%2esplit%28%22%5cn%40%
+40%40%22%29%5b0%5d%2esplit%28%22%5cr%22%29%2ejoin%28%22%22%29%2esplit%28%22%5cn%
+22%29%3b%0afor%28var%20i%3d0%3bi%3carr%2elength%3bi%2b%2b%29%7b%0a%20%20out%2epu
+sh%28gen%28arr%5bi%5d%2cmk%29%29%3b%0a%7d%0areturn%20out%2ejoin%28%22%5cn%22%29%
+3b%0a%2a%2f%0at%5fcode%7b%0a%20%20vector%3cTAutoPtr%3ci%5fcode%3e%3e%20arr%3b%0a
+%7d%0at%5fsoft%5fbrackets%5fcode%3ai%5fcode%7b%0a%20%20%22%28%22%0a%20%20t%5fsep
+%20sep0%3f%3b%0a%20%20TAutoPtr%3ct%5fcode%3e%20body%3f%3b%0a%20%20t%5fsep%20sep1
+%3f%3b%0a%20%20%22%29%22%0a%7d%0at%5fhard%5fbrackets%5fcode%3ai%5fcode%7b%0a%20%
+20%22%5b%22%0a%20%20t%5fsep%20sep0%3f%3b%0a%20%20TAutoPtr%3ct%5fcode%3e%20body%3
+f%3b%0a%20%20t%5fsep%20sep1%3f%3b%0a%20%20%22%5d%22%0a%7d%0at%5fcurly%5fbrackets
+%5fcode%3ai%5fcode%7b%0a%20%20%22%7b%22%0a%20%20t%5fsep%20sep0%3f%3b%0a%20%20TAu
+toPtr%3ct%5fcode%3e%20body%3f%3b%0a%20%20t%5fsep%20sep1%3f%3b%0a%20%20%22%7d%22%
+0a%7d%0at%5fsemicolon%7b%0a%20%20%22%3b%22%0a%7d%0at%5fvalue%5fitem%7b%0a%20%20s
+tring%20body%3dstr%3cTAutoPtr%3ct%5fcppcore%3a%3ai%5fexpr%3e%3e%28%29%3b%0a%7d%0
+at%5fvalue%7b%0a%20%20%22%20%22%3f%0a%20%20%22%3d%22%0a%20%20string%20body%3dstr
+%3cTAutoPtr%3ct%5fcppcore%3a%3ai%5fexpr%3e%3e%28%29%3b%0a%7d%0at%5ftype%5fscope%
+7b%0a%20%20%22%3a%3a%22%0a%7d%0at%5ftype%5ftempl%7b%0a%20%20TAutoPtr%3ci%5ftype%
+5ftempl%3e%20body%3b%0a%7d%0at%5ftype%5fitem%5fstring%3ai%5ftype%5fitem%7b%0a%20
+%20t%5fstr%5fitem%20body%3b%0a%7d%0at%5ftype%5fitem%5fchar%3ai%5ftype%5fitem%7b%
+0a%20%20t%5fchar%5fitem%20body%3b%0a%7d%0at%5ftype%5fitem%5fnumber%3ai%5ftype%5f
+item%7b%0a%20%20t%5fnumber%20body%3b%0a%7d%0at%5ftype%5fitem%5ftype%3b%0at%5fsco
+pe%5ftype%5fitem%7b%0a%20%20t%5ftype%5fscope%20scope%3b%0a%20%20TAutoPtr%3ct%5ft
+ype%5fitem%5ftype%3e%20body%3b%0a%7d%0at%5ftype%5fitem%5ftype%3ai%5ftype%5fitem%
+20%7b%0a%20%20TAutoPtr%3ct%5ftype%5fscope%3e%20scope%3f%3b%0a%20%20t%5fname%20ty
+pe%3b%0a%20%20TAutoPtr%3ct%5ftype%5ftempl%3e%20param%3f%3b%0a%20%20vector%3ct%5f
+scope%5ftype%5fitem%3e%20arr%3f%3b%0a%7d%0at%5ftype%5fexpr2%7b%0a%20%20TAutoPtr%
+3ct%5ftype%5fscope%3e%20scope%3f%3b%0a%20%20t%5ftype%5fitem%5ftype%20body%3b%0a%
+7d%0at%5ftype%5ftempl%5fparam%7b%0a%20%20TAutoPtr%3ci%5ftype%5fitem%3e%20body%3b
+%0a%7d%0at%5fsep%5ftype%5ftempl%5fparam%7b%0a%20%20%22%2c%22%0a%20%20t%5ftype%5f
+templ%5fparam%20body%3b%0a%7d%0at%5ftype%5ftempl%5fparams%7b%0a%20%20t%5ftype%5f
+templ%5fparam%20first%3b%0a%20%20vector%3ct%5fsep%5ftype%5ftempl%5fparam%3e%20ar
+r%3f%3b%0a%7d%0at%5ftype%5ftempl%5fangle%3ai%5ftype%5ftempl%7b%0a%20%20%22%3c%22
+%0a%20%20TAutoPtr%3ct%5ftype%5ftempl%5fparams%3e%20params%3f%3b%0a%20%20%22%3e%2
+2%0a%7d%0at%5ftype%5ftempl%5fsoft%3ai%5ftype%5ftempl%7b%0a%20%20%22%28%22%0a%20%
+20TAutoPtr%3ct%5ftype%5ftempl%5fparams%3e%20params%3f%3b%0a%20%20%22%29%22%0a%7d
+%0at%5fstruct%5fcmd%5fmode%3ai%5fstruct%5fcmd%5fxxxx%7b%0a%20%20char%20body%3dan
+y%5fchar%28%22DMO%22%29%3b%0a%20%20%22%20%22%3f%0a%20%20%22%2b%3d%22%0a%20%20%22
+%20%22%3f%0a%7d%0at%5fsep%5fvalue%7b%0a%20%20%22%20%22%3f%0a%20%20t%5fvalue%5fit
+em%20value%3b%0a%20%20%22%20%22%3f%0a%7d%0at%5fattr%7b%0a%20%20%22%5b%22%0a%20%2
+0vector%3ct%5fsep%5fvalue%3e%20arr%3dvec%28%22%2c%22%29%3f%3b%0a%20%20%22%20%22%
+3f%0a%20%20%22%5d%22%0a%7d%0at%5fsep%5ffield%3ai%5fstruct%5ffield%7b%22%20%22%3f
+%7d%0at%5fsemicolon%5ffield%3ai%5fstruct%5ffield%7bTAutoPtr%3ct%5fsemicolon%3e%2
+0sc%3b%7d%0at%5fconst%5ffield%3ai%5fstruct%5ffield%7b%0a%20%20t%5fqst%7b%22%3f%2
+2%7d%0a%20%20t%5fc%5fitem%3ai%5fsc%5fitem%7bt%5fchar%5fitem%20body%3b%7d%0a%20%2
+0t%5fs%5fitem%3ai%5fsc%5fitem%7bt%5fstr%5fitem%20body%3b%7d%0a%20%20string%20val
+ue%3dstr%3cTAutoPtr%3ci%5fsc%5fitem%3e%3e%28%29%3b%0a%20%20%22%20%22%3f%0a%20%20
+TAutoPtr%3ct%5fqst%3e%20qst%3f%3b%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ct%5fse
+micolon%3e%20sc%3f%3b%0a%20%20%22%20%22%3f%0a%7d%0at%5fstruct%5ffield%5fvalue%20
+%7b%0a%20%20%22%20%22%3f%0a%20%20%22%3d%22%3b%0a%20%20%22%20%22%3f%0a%20%20TAuto
+Ptr%3ct%5fcppcore%3a%3at%5fvarcall%5fexpr%3e%20expr%3b%0a%7d%0at%5fqst%7b%0a%20%
+20%20%20string%20s%3dany%28%22%2a%3f%22%29%3b%0a%20%20%7d%0at%5fstruct%5ffield%3
+ai%5fstruct%5ffield%7b%0a%20%20TAutoPtr%3ct%5fcppcore%3a%3ai%5fexpr%3e%20type%3b
+%0a%20%20%22%20%22%3f%0a%20%20t%5fname%20name%3b%0a%20%20TAutoPtr%3ct%5fstruct%5
+ffield%5fvalue%3e%20value%3f%3b%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ct%5fqst%
+3e%20qst%3f%3b%0a%20%20%22%20%22%3f%0a%20%20%22%3b%22%0a%20%20%22%20%22%3f%0a%20
+%20TAutoPtr%3ct%5fattr%3e%20attr%3f%3b%0a%20%20%22%20%22%3f%0a%7d%0at%5ftempl%5f
+params%7b%0a%20%20%22%3c%22%0a%20%20string%20body%3dstr%3cTAutoPtr%3ct%5ftype%5f
+templ%5fparams%3e%3e%28%29%3b%0a%20%20%22%3e%22%0a%7d%0at%5fcmd%5fparam%3b%0at%5
+fcmd%5fparams%7b%0a%20%20vector%3ct%5fcmd%5fparam%3e%20arr%3dvec%28%22%2c%22%29%
+3b%0a%7d%0at%5fcmd%5fparam%7b%0a%20%20t%5fimpl%7b%0a%20%20%20%20vector%3cTAutoPt
+r%3ci%5fcmd%5fparam%5fexpr%3e%3e%20arr%3dvec%28%22%2b%22%29%3b%0a%20%20%7d%0a%20
+%20t%5fexpr%5fcall%3ai%5fcmd%5fparam%5fexpr%7b%0a%20%20%20%20t%5fname%20func%3b%
+0a%20%20%20%20%22%28%22%0a%20%20%20%20TAutoPtr%3ct%5fcmd%5fparams%3e%20params%3b
+%0a%20%20%20%20%22%29%22%0a%20%20%7d%0a%20%20t%5fexpr%5fstr%3ai%5fcmd%5fparam%5f
+expr%7b%0a%20%20%20%20string%20body%3dstr%3ct%5fstr%5fseq%3e%28%29%3b%0a%20%20%7
+d%0a%20%20t%5fexpr%5fvar%3ai%5fcmd%5fparam%5fexpr%7b%0a%20%20%20%20t%5fthis%7b%2
+2this%2d%3e%22%7d%0a%20%20%20%20t%5fimpl%7b%0a%20%20%20%20%20%20TAutoPtr%3ct%5ft
+his%3e%20self%3f%3b%0a%20%20%20%20%20%20t%5fname%20name%3b%0a%20%20%20%20%7d%0a%
+20%20%20%20string%20body%3dstr%3ct%5fimpl%3e%28%29%3b%0a%20%20%7d%0a%20%20string
+%20body%3dstr%3ct%5fimpl%3e%28%29%3b%0a%7d%0at%5fstruct%5fcmd%5fanno%3ai%5fstruc
+t%5fcmd%5fxxxx%7b%0a%20%20string%20mode%3dany%5fstr%5ffrom%5fvec%28split%28%22%4
+0mandatory%2c%40optional%2c%40mand%2c%40opti%2c%40man%2c%40opt%2c%40ma%2c%40op%2
+c%40m%2c%40o%2cm%2co%22%2c%22%2c%22%29%29%3b%0a%20%20%22%20%22%0a%7d%0at%5fstruc
+t%5fcmd%5fsuffix%3ai%5fstruct%5fcmd%5fso%7b%0a%20%20char%20value%3dany%5fchar%28
+%22%3f%21%22%29%3b%0a%7d%0at%5fstruct%5fcmd%5foptional%3ai%5fstruct%5fcmd%5fso%7
+b%0a%20%20%22%5b%22%0a%20%20string%20value%3dany%5fstr%5ffrom%5fvec%28split%28%2
+2optional%2cmandatory%22%2c%22%2c%22%29%29%3b%0a%20%20%22%5d%22%0a%7d%0at%5fstru
+ct%5fcmd%5fopt%5fv2%3ai%5fstruct%5fcmd%5fso%7b%0a%20%20%22%3b%22%0a%20%20%22%20%
+22%3f%0a%20%20string%20value%3dany%5fstr%5ffrom%5fvec%28split%28%22optional%2cma
+ndatory%22%2c%22%2c%22%29%29%3b%0a%7d%0at%5fstruct%5fcmd%7b%0a%20%20TAutoPtr%3ci
+%5fstruct%5fcmd%5fxxxx%3e%20mode%3f%3b%0a%20%20t%5fname%20func%3b%0a%20%20%22%20
+%22%3f%0a%20%20string%20templ%5fparams%3dstr%3cTAutoPtr%3ct%5ftempl%5fparams%3e%
+3e%28%29%3f%3b%0a%20%20%22%28%22%0a%20%20t%5fcmd%5fparams%20params%3b%0a%20%20%2
+2%29%22%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ci%5fstruct%5fcmd%5fso%3e%20cmdso
+%3f%3b%0a%20%20%22%20%22%3f%0a%20%20%22%3b%22%0a%7d%0at%5fsep%5fstruct%5fcmd%7b%
+0a%20%20%22%20%22%3f%0a%20%20t%5fstruct%5fcmd%20body%3b%0a%7d%0at%5fstruct%5fcmd
+s%7b%0a%20%20%22%7b%22%0a%20%20vector%3ct%5fsep%5fstruct%5fcmd%3e%20arr%3f%3b%0a
+%20%20%22%20%22%3f%0a%20%20%22%7d%22%0a%7d%0at%5fsep%5fstruct%5fcmds%7b%0a%20%20
+%22%20%22%3f%0a%20%20t%5fstruct%5fcmds%20body%3b%0a%7d%0at%5fcpp%5fcode%5fsep%3a
+i%5fcpp%5fcode%7b%0a%20%20t%5fsep%20sep%3b%0a%7d%0at%5fcpp%5fcode%5fmain%3ai%5fc
+pp%5fcode%7b%0a%20%20TAutoPtr%3ci%5fcode%5fwith%5fsep%3e%20body%3b%0a%7d%0at%5fc
+pp%5fcode%7b%0a%20%20t%5fbayan%7b%22%5b%3a%3a%5d%22%7d%0a%20%20t%5ffields%3ai%5f
+major%7bt%5fstruct%5ffield%20f%3b%7d%0a%20%20t%5fcmds%3ai%5fmajor%7bt%5fstruct%5
+fcmds%20c%3b%7d%0a%20%20t%5fatr%3ai%5fmajor%7bTAutoPtr%3ct%5fattr%3e%20attr%3b%7
+d%0a%20%20t%5feater%7bvector%3cTAutoPtr%3ci%5fcpp%5fcode%3e%3e%20arr%3b%7d%0a%20
+%20t%5fwith%5fbayan%3ai%5fbayan%7b%0a%20%20%20%20t%5fbayan%20bayan%3b%0a%20%20%2
+0%20t%5feater%20eater%3f%3b%0a%20%20%7d%0a%20%20t%5fminor%5feater%7bt%5feater%20
+eater%3dminor%3cTAutoPtr%3ci%5fmajor%3e%3e%28%29%3b%7d%0a%20%20t%5fwithout%5fbay
+an%3ai%5fbayan%7b%0a%20%20%20%20t%5fminor%5feater%20eater%3dminor%3ct%5fwith%5fb
+ayan%3e%28%29%3b%0a%20%20%7d%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ci%5fbayan%3
+e%20bayan%3b%0a%7d%0at%5ftarget%5fstruct%3ai%5ftarget%5fitem%7b%0a%20%20t%5fkeyw
+ord%7bstring%20kw%3dany%5fstr%5ffrom%5fvec%28split%28%22struct%2cclass%22%2c%22%
+2c%22%29%29%3b%22%20%22%3f%7d%0a%20%20t%5fbody%5fsemicolon%3ai%5fstruct%5fimpl%7
+b%22%3b%22%7d%0a%20%20t%5fbody%5fimpl%3ai%5fstruct%5fimpl%7b%0a%20%20%20%20%22%7
+b%22%0a%20%20%20%20vector%3cTAutoPtr%3ci%5ftarget%5fitem%3e%3e%20nested%3f%3b%0a
+%20%20%20%20%22%20%22%3f%0a%20%20%20%20vector%3cTAutoPtr%3ci%5fstruct%5ffield%3e
+%3e%20arr%3f%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20TAutoPtr%3ct%5fstruct%5
+fcmds%3e%20cmds%3f%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20TAutoPtr%3ct%5fcp
+p%5fcode%3e%20c%3f%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20%22%7d%22%0a%20%2
+0%7d%0a%20%20t%5fparent%7b%0a%20%20%20%20string%20arrow%5for%5fcolon%3dany%5fstr
+%5ffrom%5fvec%28split%28%22%3d%3e%2c%3a%22%2c%22%2c%22%29%29%3b%0a%20%20%20%20%2
+2%20%22%3f%0a%20%20%20%20t%5fname%20parent%3b%0a%20%20%7d%0a%20%20TAutoPtr%3ct%5
+fkeyword%3e%20kw%3f%3b%0a%20%20t%5fname%20name%3b%0a%20%20%22%20%22%3f%0a%20%20T
+AutoPtr%3ct%5fparent%3e%20parent%3f%3b%0a%20%20%22%20%22%3f%0a%20%20TAutoPtr%3ci
+%5fstruct%5fimpl%3e%20body%3b%0a%7d%0at%5ftarget%5fsemicolon%3ai%5ftarget%5fitem
+%7bvector%3ct%5fsemicolon%3e%20arr%3b%7d%0at%5ftarget%5fsep%3ai%5ftarget%5fitem%
+7bt%5fsep%20sep%3b%7d%0at%5ftarget%5fusing%3ai%5ftarget%5fitem%7b%0a%20%20t%5fst
+r%5fap%3ai%5fqa%7b%0a%20%20%20%20%22%27%22%0a%20%20%20%20string%20body%3dstr%3cT
+AutoPtr%3ci%5fchar%5fitem%3e%3e%28%29%3b%0a%20%20%20%20%22%27%22%0a%20%20%7d%0a%
+20%20t%5fstr%5fqu%3ai%5fqa%7b%0a%20%20%20%20%22%5c%22%22%0a%20%20%20%20string%20
+body%3dstr%3cvector%3cTAutoPtr%3ci%5fstr%5fitem%3e%3e%3e%28%29%3b%0a%20%20%20%20
+%22%5c%22%22%0a%20%20%7d%0a%20%20%22using%22%0a%20%20%22%20%22%0a%20%20string%20
+s%3dstr%3cTAutoPtr%3ci%5fqa%3e%3e%28%29%3b%0a%20%20%22%20%22%0a%20%20%22as%22%0a
+%20%20%22%20%22%0a%20%20string%20lexer%3dstr%3ct%5fname%3e%28%29%3b%0a%20%20%22%
+20%22%3f%0a%20%20%22%3b%22%0a%7d%0at%5ftarget%5ftypedef%3ai%5ftarget%5fitem%7b%0
+a%20%20%22typedef%22%0a%20%20%22%20%22%0a%20%20t%5fcppcore%3a%3at%5fvarcall%5fex
+pr%3a%3at%5fvar%20type%3b%0a%20%20%22%20%22%3f%0a%20%20t%5fname%20name%3b%0a%20%
+20%22%20%22%3f%0a%20%20%22%3b%22%0a%7d%0at%5ftarget%7b%0a%20%20vector%3cTAutoPtr
+%3ci%5ftarget%5fitem%3e%3e%20arr%3b%0a%7d%0a%22end%22%0a%7d%0a%2f%2f
 */

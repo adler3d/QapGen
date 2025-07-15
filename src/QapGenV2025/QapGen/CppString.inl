@@ -160,8 +160,8 @@ public:
 public:
   void operator=(const string&ref){oper_set(ref);}
 public:
-  static string fullCppStr2RawStr(const string&cpp){
-    QapAssert(cpp.size()>2);
+  static string fullCppStr2RawStr(const string&cpp,bool can_be_empty=false){
+    if(!can_be_empty){QapAssert(cpp.size()>2);}else{QapAssert(cpp.size()>=2);}
     QapAssert(cpp.front()=='"');
     QapAssert(cpp.back()=='"');
     BinString bin=cpp.substr(1,cpp.size()-2);

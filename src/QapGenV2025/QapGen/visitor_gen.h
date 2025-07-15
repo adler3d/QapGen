@@ -736,15 +736,17 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           if(t==string::npos)continue;
           id++;
           auto&lrcmd=lexer.cmds[id];
-          auto rcmd=line.substr(t);
+          auto lcmd=line.substr(t);
+          auto rcmd=lcmd;
           bool opt=rcmd[0]!='o';
           rcmd=!opt?rcmd.substr(lenof("ok=")+dev.size()):rcmd.substr(dev.size()+1);
           auto r=lexercmd2vecofchar(lexer,lrcmd,false);
           if(true)
           {
             string code=generate_gen_dips_code(r.out,true);
-            string q="if(!ok)dev.log_error("+string(opt?"0":"1")+",\""+r.ftfn+","+escape_cpp_string(code,true)+"\");";
-            line=opt?line.substr(0,t)+"{bool ok="+dev+"."+rcmd+q+"}":(line+q);
+            string O=opt?"0":"1";
+            string q=s+"("+O+",ok,\""+r.ftfn+","+escape_cpp_string(code,true)+"\");";
+            line=line.substr(0,t)+s+"("+O+");"+(opt?"{bool ok="+dev+"."+rcmd+q+"}":(lcmd+q));
           }else{
             //auto voc=cpa0b;
             //string q="if(!ok)dev.log_error(\","+escape_cpp_string(voc,true)+"\");";
@@ -1259,9 +1261,6 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       return result;
     }
     if(fn=="go_str"){
-      if("t_value_item"==lexer.name){
-        int gg=1;
-      }
       QapAssert(cmd.params.arr.size()==1);
       auto&cpa0b=cmd.params.arr[0].body;
       auto&f=find_field(lexer,cpa0b);
@@ -1320,7 +1319,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       result.ret=true;
       return result;
     }
-    if(fn=="go_minor"){
+    if(fn=="go_minor"||fn=="go_diff"){
       QapAssert(cmd.params.arr.size()==1);
       auto&cpa0b=cmd.params.arr[0].body;
       auto&f=find_field(lexer,cpa0b);
@@ -1484,7 +1483,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       std::string code=generate_gen_dips_code(u);
       lines.push_back("    F("+plexer->name+","+code+")");
       if(code[0]=='"'&&code.back()=='"'){
-        auto c=BinString::fullCppStr2RawStr(code);
+        auto c=BinString::fullCppStr2RawStr(code,true);
+        if(c.empty())QapDebugMsg("lexer with empty impl is not allowed: "+plexer->fullname);
         //auto&b=qap_add_back(cases);
         CharMask m;
         if(c.size()>16)mega_fast=false;
@@ -1530,7 +1530,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     prepare_lexers_chached_fields();
     for(auto&lexer:lexers){
       if(!lexer.is_interface)continue;
-      out+=lexer2vecofchar_v2(lexer)+"\n";
+      lexer2vecofchar_v2(lexer)+"\n";
       int gg_lexer=1;
     }
     for(auto&lexer:lexers){

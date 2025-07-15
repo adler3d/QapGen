@@ -1,15 +1,17 @@
 t_parent_fullname_reslove_algo_test_20250701{
   //t_parent_holder{t_foo:i_base{}}
   t_other{
+    " "
     //t_bar:t_parent_holder::i_base{}
   }
+  "P"
 }
-t_using_test_20250628{
+t_using_test_20250628:iface{
   t_sep{" "}
   using " " as t_sep;
   t_foo;
   t_foo{
-    t_bar{t_baz{}}
+    t_bar{t_baz{string s=any("xyz");}"uv"}
     t_bar b;
     " "
     t_bar c?;
@@ -95,7 +97,7 @@ t_name{
     string B=any(gen_dips("azAZ09")+"_$@")?;
   }
   t_impl_ex{
-    t_impl impl=minor<t_keyword>();
+    t_impl impl=diff<t_keyword>();
   }
   string value=str<t_impl_ex>();
 }
@@ -358,7 +360,7 @@ t_call_expr:i_expr{
 }
 using " " as t_sep;
 t_test20250618_atrr{
-  t_foo{{}[::]}
+  t_foo{{go_const("G");}[::]int i=0;}
   t_foo foo; [skip]
   t_sep sep; [optimize,"sep",("sep"),sep[x]]
 }
@@ -756,5 +758,6 @@ t_target_typedef:i_target_item{
 t_target{
   vector<TAutoPtr<i_target_item>> arr;
 }
+"end"
 }
 //

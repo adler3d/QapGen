@@ -11,6 +11,8 @@ struct t_scope_tool{
 struct i_dev_base{
   virtual void push(t_fallback*ptr){QapDebugMsg("no way.");}
   virtual void pop(t_fallback*ptr){QapDebugMsg("no way.");}
+  virtual void setPos(int pos){QapDebugMsg("no way.");}
+  virtual void getPos(int&pos){QapDebugMsg("no way.");}
 };
 
 static int&get_qap_fallback_counter(){static int counter=0;return counter;}
@@ -21,6 +23,7 @@ struct t_fallback{
   bool&ok;
   size_t pos;
   const char*const ptr;
+  const char*const ptr2;
   int err_count;
   struct t_err{
     int M=0;
@@ -30,7 +33,8 @@ struct t_fallback{
   vector<t_err> errs;
   t_scope_tool mandatory;
   t_scope_tool optional;
-  t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev),ok(mandatory.ok),ptr(ptr),pos(-1),err_count(0){
+  bool mode=0;
+  t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev),ok(mandatory.ok),ptr(ptr),ptr2(ptr2),pos(-1),err_count(0){
     if(ptr)dev.push(this);
   }
  ~t_fallback(){
@@ -42,6 +46,36 @@ struct t_fallback{
   }
   void log_clear(){err_count=0;}
   int getErr()const{return err_count;}
+  void operator()(int M){mode=M;}
+  void operator()(int M,bool ok,const char*perr){
+    if(ok){
+      //log_clear();
+      errs.clear();
+      return;
+    }
+    int cur_pos;dev.getPos(cur_pos);
+    t_err curerr{M,cur_pos,perr};
+    errs.push_back(curerr);
+    /*
+    if(errs.empty()){
+      errs.push_back(curerr);
+      //err_count=1;
+      //pos=cur_pos;
+      //pmsg=perr;
+      return;
+    }
+    t_err&last_err=errs.back();
+    if(cur_pos>last_err.maxpos){
+      errs.push_back(curerr);
+      //err_count++;
+      //pos=cur_pos;
+      //pmsg = perr;
+    }else if(cur_pos==last_err.maxpos){
+      errs.push_back(curerr);
+      //err_count++;
+    }
+    */
+  }
 };
 
 struct t_load_dev;
@@ -50,8 +84,6 @@ struct t_save_dev;
 class i_dev:public i_dev_base{
 public:
   //virtual IEnvRTTI&getEnv(){QapDebugMsg("no way.");return *(IEnvRTTI*)nullptr;}
-public:
-  virtual void log_error(int M,const char*perr){QapDebugMsg("no way.");}
 public:
   virtual void setPos(int pos){QapDebugMsg("no way.");}
   virtual void getPos(int&pos){QapDebugMsg("no way.");}
@@ -129,7 +161,7 @@ public:
   bool go_without(string&ref){return go_str_without<TYPE>(ref);}
 public:
   template<class TYPE_TEMP,class TYPE>
-  bool old_go_diff(TYPE&ref);
+  bool go_diff(TYPE&ref);
 public:
   template<class TYPE_TEMP,class TYPE>
   bool go_minor(TYPE&ref);
@@ -173,7 +205,7 @@ public:
 public:
   t_load_dev(/*IEnvRTTI&Env,*/const string&mem,size_t pos=0):/*Env(Env),*/mem(mem),pos(pos),maxpos(pos),maxpos_pop(pos),main(*(i_dev*)nullptr,nullptr){stack.push_back(&main);}
 public:
-  void push(t_fallback*ptr){
+  void push(t_fallback*ptr)override{
     QapAssert(ptr);
     //for(int i=0;i<stack.size();i++)QapAssert(stack[i]!=ptr);
     stack.push_back(ptr);
@@ -184,7 +216,7 @@ public:
     ptr->optional.scope=ptr;
     maxpos=std::max(maxpos,pos);
   }
-  void pop(t_fallback*ptr){
+  void pop(t_fallback*ptr)override{
     maxpos_pop=std::max(maxpos_pop,pos);
     QapAssert(ptr);
     QapAssert(!stack.empty());
@@ -205,18 +237,8 @@ public:
     //stack.back()->log.err(SToS(ptr->ptr)+" ["+IToS(this->pos)+"=>"+IToS(ptr->pos)+"]");
     this->pos=ptr->pos;
   }
-  void setPos(int pos){this->pos=pos;}
-  void getPos(int&pos){pos=this->pos;}
-public:
-  string err_msg;
-  void log_error(int M,const char*perr)override{
-    if(M)stack.back()->errs.clear();
-    string lexer_name=stack.back()->ptr;
-    //string err=perr;
-    //auto v=split(err,",");
-    //string rule=v[0];QapPopFront(v);
-    //string expr=join(v,",");
-  }
+  void setPos(int pos)override{this->pos=pos;}
+  void getPos(int&pos)override{pos=this->pos;}
 public:
   //IEnvRTTI&getEnv(){return Env;}
 public:
@@ -561,12 +583,8 @@ public:
     if(ptr->ok)return;
     this->mem.resize(ptr->pos);
   }
-  void getPos(int&pos){pos=mem.size();}
-  void setPos(int pos){QapAssert(mem.size()>=pos);mem.resize(pos);}
-public:
-  void log_error(int M,const char*perr)override{
-    // no need at all
-  }
+  void getPos(int&pos)override{pos=mem.size();}
+  void setPos(int pos)override{QapAssert(mem.size()>=pos);mem.resize(pos);}
 public:
   //IEnvRTTI&getEnv(){return Env;}
 public:
@@ -729,9 +747,10 @@ bool i_dev::go_str_without(string&ref)
 }
 
 template<class TYPE_TEMP,class TYPE>
-bool i_dev::old_go_diff(TYPE&ref)
+bool i_dev::go_diff(TYPE&ref)
 {
   //Adler: lex_a=read<TYPE_TEMP>(); lex_b=read<lex_b>(); return lex_a.size()!=lex_b.size();
+  //Adler: compared to old_go_sep this algo allow start from TYPE_TEMP. old_go_sep don't allow.
   TYPE_TEMP temp;
   int def_pos=0;
   getPos(def_pos);
@@ -769,7 +788,6 @@ bool i_dev::old_go_diff(TYPE&ref)
       QapAssert(ok);
       if(!ok)return ok;
     }
-    for(;;)
     {
       TYPE obj;
       t_load_dev dev(/*Env,*/tmp_mem);
@@ -779,9 +797,7 @@ bool i_dev::old_go_diff(TYPE&ref)
       bool obj_ok=dev.go_auto(obj);
       int obj_pos=dev.pos;
       QapAssert(obj_ok);
-      if(!tmp_ok)break;
-      QapAssert(obj_pos>tmp_pos);
-      break;
+      if(tmp_ok)QapAssert(obj_pos>tmp_pos);      
     }
   }
   ok=go_for_item(*this,ref);
@@ -792,6 +808,7 @@ template<class TYPE_TEMP,class TYPE>
 bool i_dev::old_go_sep(TYPE&ref)
 {
   //Adler: lex_a=read<TYPE_TEMP>(); if(lex_a.ok){return false;}else{lex_b=read<TYPE>();return lex_b.ok;}
+  //Adler: compared to go_diff this algo don't allow start from TYPE_TEMP.
   TYPE_TEMP temp;
   t_fallback scope(*this,__FUNCTION__);
   auto&ok=scope.ok;
@@ -850,7 +867,7 @@ bool i_dev::go_minor(TYPE&ref){
   
   // Запускаем go_diff
   QapClock clock;
-  bool result_diff = old_go_diff<TYPE_TEMP>(ref);
+  bool result_diff = go_diff<TYPE_TEMP>(ref);
   int pos_after_diff; getPos(pos_after_diff);
   auto ms=clock.MS();
   // Восстанавливаем состояние парсера
