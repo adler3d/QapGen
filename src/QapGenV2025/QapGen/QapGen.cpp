@@ -398,6 +398,10 @@ void printMapsJsonLike(
 #pragma comment(lib,"shell32.lib")
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
+  string msg;
+  TAutoPtr<t_ploy_test20250715> pt;
+  auto res=load_obj_full(pt,"ccXz",true,&msg);
+  //t_meta_lexer::t_ploy_test20250715 pt;
   //t_d7::t_unit u;
   //auto res=load_obj_full(u,file_get_contents("Basa.pas"));
   //int gg=1;

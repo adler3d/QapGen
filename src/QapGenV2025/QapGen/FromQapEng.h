@@ -15,6 +15,7 @@
 #endif
 #else
 #endif
+#include <set>
 #include <vector>
 #include <map>
 #include <functional>
@@ -256,6 +257,17 @@ static string join(const vector<string>&arr,const string&glue)
   for(int i=0;i<arr.size();i++){if(i)c+=dc;c+=arr[i].size();}
   out.reserve(c);
   for(int i=0;i<arr.size();i++){if(i)out+=glue;out+=arr[i];}
+  return out;
+}
+static string join(const set<string>&arr,const string&glue)
+{
+  string out;
+  size_t c=0;
+  size_t dc=glue.size();
+  int i=-1;
+  for(auto&ex:arr){if(++i)c+=dc;c+=ex.size();}
+  out.reserve(c);i=-1;
+  for(auto&ex:arr){if(++i)out+=glue;out+=ex;}
   return out;
 }
 struct TScreenMode{

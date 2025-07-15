@@ -579,7 +579,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       vector<TAutoPtr<i_struct_field>>*pfs{};
       string c;
       void Do(t_cpp_code::t_with_bayan&r)override{save_obj(r.eater,c);}
-      void Do(t_cpp_code::t_without_bayan&r)override{save_obj(r.eater,c);}
+      //void Do(t_cpp_code::t_without_bayan&r)override{save_obj(r.eater,c);}
       void Do(t_body_semicolon&r)override{}
       void Do(t_body_impl&r)override{if(r.cmds)pcmds=r.cmds.get();if(r.arr.size())pfs=&r.arr;if(r.c)r.c->bayan->Use(*this);}
       void Do(TAutoPtr<i_struct_impl>&r){if(r)r->Use(*this);}
@@ -745,8 +745,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           {
             string code=generate_gen_dips_code(r.out,true);
             string O=opt?"0":"1";
-            string q=s+"("+O+",ok,\""+r.ftfn+","+escape_cpp_string(code,true)+"\");";
-            line=line.substr(0,t)+s+"("+O+");"+(opt?"{bool ok="+dev+"."+rcmd+q+"}":(lcmd+q));
+            string q=s+"(ok,\""+r.ftfn+","+escape_cpp_string(code,true)+"\");";
+            line=line.substr(0,t)+(opt?"{bool ok="+dev+"."+rcmd+q+"}":(lcmd+q));
           }else{
             //auto voc=cpa0b;
             //string q="if(!ok)dev.log_error(\","+escape_cpp_string(voc,true)+"\");";
@@ -1326,7 +1326,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
       QapAssert(pvc);
       auto&v=pvc->var;
-      result.ftfn="minor!"+vcev2str(v);
+      result.ftfn=(fn=="go_minor"?"minor":"diff")+cmd.templ_params+"!"+vcev2str(v);
       if(v.name.value=="string")QapDebugMsg("go_diff dont support string type of field");
       struct t_for_autoptr_r2{
         bool con=false;
@@ -1659,8 +1659,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
   bool pass2_with_log_err_gen=false;
   string main(const string&data,bool dontoptimize){
     init();
-    t_target tar;QapClock clock;
-    auto r=load_obj_full(tar,data);
+    t_target tar;QapClock clock;string errmsg;
+    auto r=load_obj_full(tar,data,true,&errmsg);
     parse_ms=clock.MS();
     std::cerr<<"{\"parse_ms\":"<<parse_ms<<"}"<<endl;
     if(!r.ok){QapDebugMsg(r.msg);return {};}
@@ -1694,7 +1694,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     auto msg=clock.MS();std::cerr<<"{\"pass_with_log_err_gen done in \":"<<(msg-msb)<<"}"<<endl;
     pass_with_log_err_gen=true;
     pass2_with_log_err_gen=true;
-    dev.top.out=interface_out;dev.top.sep_lexs.clear();
+    dev.top.out=interface_out;dev.top.sep_lexs.clear();fields_counter=0;target_item_counter=0;
     Do(tar);
     pass2_with_log_err_gen=false;
     pass_with_log_err_gen=false;
@@ -1967,6 +1967,6 @@ static void test_2025_06_10(/*IEnvRTTI&Env*/string fn,bool dontoptimize=false)
   //string str=v4.main(inp);
   string out="// "+FToS(clock.MS())+" ms\n"+str2;
   std::cout<<out;
-  std::cerr<<"{\"parse_ms\":"<<v5.parse_ms<<",\"total_ms\":"<<clock.MS()<<",\"lexers\":"<<v5.target_item_counter<<",\"fields\":"<<v5.fields_counter<<",\"g_unique_pool_ptr_counter\":"<<g_unique_pool_ptr_counter<<"}"<<endl;
+  std::cerr<<"{\"parse_ms\":"<<v5.parse_ms<<",\"total_ms\":"<<clock.MS()<<",\"lexers\":"<<v5.lexers.size()<<",\"fields\":"<<v5.fields_counter<<",\"g_unique_pool_ptr_counter\":"<<g_unique_pool_ptr_counter<<"}"<<endl;
   gg=2;
 }

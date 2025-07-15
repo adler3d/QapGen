@@ -26,14 +26,18 @@ struct t_fallback{
   const char*const ptr2;
   int err_count;
   struct t_err{
-    int M=0;
+    int M=-1;
     int maxpos=0;
     const char*pmsg=nullptr;
+    const char*ptr=nullptr;
+    const char*ptr2=nullptr;
   };
   vector<t_err> errs;
+  t_err best_err;
   t_scope_tool mandatory;
   t_scope_tool optional;
-  bool mode=0;
+  bool keep_errs=false;
+  //int mode=0;
   t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev),ok(mandatory.ok),ptr(ptr),ptr2(ptr2),pos(-1),err_count(0){
     if(ptr)dev.push(this);
   }
@@ -46,35 +50,22 @@ struct t_fallback{
   }
   void log_clear(){err_count=0;}
   int getErr()const{return err_count;}
-  void operator()(int M){mode=M;}
-  void operator()(int M,bool ok,const char*perr){
+  //void operator()(int M){mode=M;}
+  void operator()(bool ok,const char*perr){
     if(ok){
       //log_clear();
-      errs.clear();
+      if(!keep_errs)errs.clear();
       return;
     }
     int cur_pos;dev.getPos(cur_pos);
-    t_err curerr{M,cur_pos,perr};
-    errs.push_back(curerr);
-    /*
-    if(errs.empty()){
+    t_err curerr{0,cur_pos,perr,ptr,ptr2};
+    if(best_err.M<0||cur_pos>best_err.maxpos){
+      best_err=curerr;
+      errs.clear();
       errs.push_back(curerr);
-      //err_count=1;
-      //pos=cur_pos;
-      //pmsg=perr;
-      return;
+    }else if(cur_pos==best_err.maxpos){
+      errs.push_back(curerr);
     }
-    t_err&last_err=errs.back();
-    if(cur_pos>last_err.maxpos){
-      errs.push_back(curerr);
-      //err_count++;
-      //pos=cur_pos;
-      //pmsg = perr;
-    }else if(cur_pos==last_err.maxpos){
-      errs.push_back(curerr);
-      //err_count++;
-    }
-    */
   }
 };
 
@@ -223,19 +214,32 @@ public:
     QapAssert(stack.back()==ptr);
     stack.pop_back();
     t_fallback::t_rec status;
-    bool skip=this->pos==ptr->pos;
-    bool ok=ptr->ok;
-    bool dep_err=ptr->getErr();
+    auto&fb=*ptr;
+    bool skip=pos==fb.pos;
+    bool ok=fb.ok;
+    bool dep_err=fb.getErr();
     bool error=(!skip&&!ok)||dep_err;
     status.E=error;
     status.ok=ok;
     status.D=dep_err;
-    stack.back()->add_status(status);
-    if(ptr->ok)return;
-    if(this->pos==ptr->pos)return;
-    /*QapAssert(!stack.empty());*/
-    //stack.back()->log.err(SToS(ptr->ptr)+" ["+IToS(this->pos)+"=>"+IToS(ptr->pos)+"]");
-    this->pos=ptr->pos;
+    auto&b=*stack.back();
+    b.add_status(status);
+    if(fb.ok&&!fb.keep_errs)return;
+    // parse fail or we need to pass fb.errs to stack.back().errs
+    bool all_failed=skip;//pos==fb.pos;
+    // but someone before fail eat more compared to other. some times maxpos confirm this
+    // but errs know more, because errs adds even after go_any fail.
+    // so we need take info from errs.
+    if(b.best_err.M<0||b.best_err.maxpos<fb.best_err.maxpos){
+      b.best_err=fb.best_err;
+      b.errs=std::move(fb.errs);
+      if(fb.keep_errs)b.keep_errs=true;
+    }else if(b.best_err.maxpos==fb.best_err.maxpos){
+      b.errs+=fb.errs;
+      if(fb.keep_errs)b.keep_errs=true;
+    }
+    if(all_failed||ok)return;
+    pos=fb.pos;
   }
   void setPos(int pos)override{this->pos=pos;}
   void getPos(int&pos)override{pos=this->pos;}
@@ -931,9 +935,11 @@ bool i_dev::go_str(string&ref)
     }
     if(isLoad())
     {
+      t_fallback scope(*this,__FUNCTION__);
+      bool&ok=scope.ok;
       TYPE value;
       int pos=0;getPos(pos);
-      bool ok=go_auto(value);
+      ok=go_auto(value);
       if(!ok)return ok;
       int curpos=0;getPos(curpos);
       QapAssert(curpos>pos);
@@ -1201,6 +1207,7 @@ static bool internal_go_for_vec_lt(i_dev&dev,vector<TYPE>&arr){
     QapAssert(CheckTAutoPtrIsNotEmpty(tmp));
     arr.push_back(std::move(tmp));
   }
+  scope.keep_errs=arr.size();
   ok=!arr.empty();
   return ok;
 }
@@ -1296,8 +1303,7 @@ static bool go_for_item(i_dev&dev,vector<TYPE>&arr){
   bool&ok=scope.ok;
   if(dev.isLoad()){
     ok=go_for_arr_lt(dev,arr);
-  }
-  if(dev.isSave()){
+  }else if(dev.isSave()){
     ok=go_for_arr_st(dev,arr);
   }
   return ok;
@@ -1331,7 +1337,7 @@ static string two_text_diff(const string&out,const string&data)
 };
 
 template<class TYPE>
-bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
+bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr,string*perrmsg=nullptr)
 {
   out=std::move(TYPE{});
   t_load_dev dev(data);auto&ldev=dev;
@@ -1345,6 +1351,7 @@ bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
     QapAssert(ok==ret);
     if(ok&&ret)if(output!=data)
     {
+      ok=false;
       auto d=data;
       QapAssert(output.size()<=data.size());
       d.resize(output.size());
@@ -1360,17 +1367,30 @@ bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr)
   if(!ok&&pmaxpos){
     *pmaxpos=Clamp<int>(dev.maxpos+1,1,data.size())-1;
   }
+  if(!ok&&perrmsg){
+    auto&b=*dev.stack.back();
+    QapAssert(b.best_err.M>=0);
+    if(pmaxpos)*pmaxpos=b.best_err.maxpos;
+    set<string> s;vector<string> arr;
+    for(auto&ex:b.errs){
+      auto str="lexer: "+(ex.ptr?string(ex.ptr):"")+"; expected: "+ex.pmsg;
+      if(!s.insert(str).second)continue;
+      arr.push_back(str);
+      //*perrmsg+="lexer: "+(ex.ptr?string(ex.ptr):"")+"; expected: "+ex.pmsg+"\n";
+    }
+    *perrmsg+=join(arr,"\n");
+  }
   return ok;
 }
 
 template<class TYPE>
-string load_obj_ex(/*IEnvRTTI&Env,*/TYPE&obj,const string&data){
+string load_obj_ex(/*IEnvRTTI&Env,*/TYPE&obj,const string&data,string*perrmsg=nullptr){
   int pos=0;
-  bool ok=load_obj(/*Env,*/obj,data,&pos);
+  bool ok=load_obj(/*Env,*/obj,data,&pos,perrmsg);
   string main="{\"ok\":"+BToS(ok)+",\"date\":\""+cur_date_str()+"\"}";
   if(ok)return main;
   auto out=t_error_tool::get_codefrag(data,pos);
-  out="{\"offset\":"+IToS(pos)+"}\n"+out;
+  out="{\"offset\":"+IToS(pos)+"}\n"+out+(perrmsg?"\n"+*perrmsg:"");
   return main+"@@@"+out;
 }
 
@@ -1381,14 +1401,14 @@ struct t_load_obj_result{
 };
 
 template<class TYPE>
-t_load_obj_result load_obj_full(/*IEnvRTTI&Env,*/TYPE&obj,const string&data,bool fast_ok=true){
+t_load_obj_result load_obj_full(/*IEnvRTTI&Env,*/TYPE&obj,const string&data,bool fast_ok=true,string*perrmsg=nullptr){
   t_load_obj_result out;
   out.pos=0;
-  out.ok=load_obj(/*Env,*/obj,data,&out.pos);
+  out.ok=load_obj(/*Env,*/obj,data,&out.pos,perrmsg);
   if(!out.ok||!fast_ok)out.msg="{\"ok\":"+BToS(out.ok)+",\"date\":\""+cur_date_str()+"\"}";
   if(out.ok)return out;
   auto buff=t_error_tool::get_codefrag(data,out.pos);
-  buff="{\"offset\":"+IToS(out.pos)+"}\n"+buff;
+  buff="{\"offset\":"+IToS(out.pos)+"}\n"+buff+(perrmsg?"\n"+*perrmsg:"");;
   out.msg+="@@@"+buff;
   return out;
 }
