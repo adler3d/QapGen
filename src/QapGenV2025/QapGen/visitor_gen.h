@@ -704,9 +704,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           auto cmd=p?field.cmdout:plexer?string(pc->qst?"O":"M")+"+=go_auto($sep"+IToS(i)+");":"M+=go_const("+pc->value+");";
           static map<string,string> cmd2procmds;
           auto key=IToS(i)+":"+cmd;
-          auto it=cmd2procmds.find(key);
-          if(it==cmd2procmds.end()){
-            it=cmd2procmds.insert({key,string{}}).first;
+          auto ex=cmd2procmds.find(key);
+          if(ex==cmd2procmds.end()){
+            ex=cmd2procmds.insert({key,string{}}).first;
             t_struct_cmd sc;
             auto res=load_obj_full(sc,cmd);
             if(!res.ok){
@@ -715,11 +715,11 @@ struct t_templ_sys_v05:t_templ_sys_v04,
             procmds.clear();
             cmd_id=i-1;
             Do(sc);
-            it->second=std::move(procmds);
+            ex->second=std::move(procmds);
           }else{
             lexer_cmds.push_back(cmd);
           }
-          cmds.push_back(it->second);
+          cmds.push_back(ex->second);
           //t_struct_cmd sc;
           //auto res=load_obj_full(sc,cmd);
           //if(!res.ok){
@@ -1526,7 +1526,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     prepare_lexers_chached_fields();
     for(auto&lexer:lexers){
       if(!lexer.is_interface)continue;
-      lexer2vecofchar_v2(lexer)+"\n";
+      lexer2vecofchar_v2(lexer);
       int gg_lexer=1;
     }
     for(auto&lexer:lexers){
