@@ -702,15 +702,33 @@ struct t_templ_sys_v05:t_templ_sys_v04,
             field.as_cmd=false;
           }
           auto cmd=p?field.cmdout:plexer?string(pc->qst?"O":"M")+"+=go_auto($sep"+IToS(i)+");":"M+=go_const("+pc->value+");";
-          t_struct_cmd sc;
-          auto res=load_obj_full(sc,cmd);
-          if(!res.ok){
-            QapDebugMsg("t_struct_field::make_cmd return wrong code:\n"+res.msg);
+          static map<string,string> cmd2procmds;
+          auto key=IToS(i)+":"+cmd;
+          auto it=cmd2procmds.find(key);
+          if(it==cmd2procmds.end()){
+            it=cmd2procmds.insert({key,string{}}).first;
+            t_struct_cmd sc;
+            auto res=load_obj_full(sc,cmd);
+            if(!res.ok){
+              QapDebugMsg("t_struct_field::make_cmd return wrong code:\n"+res.msg);
+            }
+            procmds.clear();
+            cmd_id=i-1;
+            Do(sc);
+            it->second=std::move(procmds);
+          }else{
+            lexer_cmds.push_back(cmd);
           }
-          procmds.clear();
-          cmd_id=i-1;
-          Do(sc);
-          cmds.push_back(procmds);
+          cmds.push_back(it->second);
+          //t_struct_cmd sc;
+          //auto res=load_obj_full(sc,cmd);
+          //if(!res.ok){
+          //  QapDebugMsg("t_struct_field::make_cmd return wrong code:\n"+res.msg);
+          //}
+          //procmds.clear();
+          //cmd_id=i-1;
+          //Do(sc);
+          //cmds.push_back(procmds);
         }
         buf=join(cmds,"\n");
       }
@@ -747,32 +765,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
             string O=opt?"0":"1";
             string q=s+"(ok,\""+r.ftfn+","+escape_cpp_string(code,true)+"\");";
             line=line.substr(0,t)+(opt?"{bool ok="+dev+"."+rcmd+q+"}":(lcmd+q));
-          }else{
-            //auto voc=cpa0b;
-            //string q="if(!ok)dev.log_error(\","+escape_cpp_string(voc,true)+"\");";
-            //line=line.substr(0,t)+(opt?"{bool ok="+line+q+"}":(line+q));
           }
-          //t_struct_cmd cmd;
-          //QapAssert(load_obj(cmd,rcmd));
-          //const auto&fn=cmd.func.value;
-          //QapAssert(cmd.params.arr.size()>=1);
-          //auto&cpa0b=cmd.params.arr[0].body;
-          //if(fn!="go_const"){
-          //  auto&f=find_field(lexer,cpa0b);
-          //  auto*pvc=t_cppcore::t_varcall_expr::UberCast(f.type.get());
-          //  auto type=pvc->var.name.value;
-          //  auto*pftl=find_lexer_by_name_but_relative(type,lexer);
-          //  QapAssert(pftl);
-          //  auto ftfn=pftl->fullname;
-          //  auto&voc=lexer2vecofchar_v2(*pftl);
-          //  string code=generate_gen_dips_code(voc);
-          //  string q="if(!ok)dev.log_error(\""+ftfn+","+escape_cpp_string(code,true)+"\");";
-          //  line=opt?"{bool ok="+line+q+"}":(line+q);
-          //}else{
-          //  auto voc=cpa0b;
-          //  string q="if(!ok)dev.log_error(\","+escape_cpp_string(voc,true)+"\");";
-          //  line=line.substr(0,t)+(opt?"{bool ok="+line+q+"}":(line+q));
-          //}
         }
       }
       t_templ_sys_v02::t_inp inp;
@@ -782,7 +775,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       inp.add("LEXER_FULL_NAME",escape_cpp_string(fullname));
       body+=get_templ("GO_IMPL").eval(inp);
     }
-    if(!c.out.nested.empty())if(c.out.nested.size()>2)
+    if(!c.out.nested.empty()&&!ignore_dev_top_out)if(c.out.nested.size()>2)
     {
       auto iarr=get_iarr(c.out.nested);
       auto nesteds=get_nested_list(c.out.nested);
@@ -797,7 +790,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       inp.add("DO_LIST",join(dolist,"\n"));
       body+=get_templ("NESTED_VISITOR").eval(inp);
     }
-    if(bool need_attrs=true)for(int iter=1;iter;iter--){
+    if(bool need_attrs=!ignore_dev_top_out)for(int iter=1;iter;iter--){
       vector<string> oarr;
       if(!v.pfs)break;
       auto&arr=*v.pfs;
@@ -817,7 +810,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       }
       body+=join(oarr,"\n")+"\n";
     }
-    if(is_interface){
+    if(is_interface&&!ignore_dev_top_out){
       QapAssert(L.parent.empty());
       auto&pcarr=dev.arr.back().nesteds.pcarr;
       vector<string> list;
@@ -851,11 +844,13 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         before_head+=bh;
       }
       string body2;
+      if(!ignore_dev_top_out)
       {
         t_templ_sys_v02::t_inp inp;
         inp.add("I_BASE",L.name);
         body2+=get_templ("USE_BASE").eval(inp);
       }
+      if(!ignore_dev_top_out)
       {
         auto&arr=list;
         string list,qist;
@@ -864,7 +859,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         t_templ_sys_v02::t_inp inp;
         inp.add("NAME",L.name);
         inp.add("LIST",list);
-        body2+=drop_empty_lines(get_templ("GO_BASE").eval(inp));
+        body2+=get_templ("GO_BASE").eval(inp);
         //vector<string> full_owner;
         //for(auto&ex:dev.arr)if(ex.lexer.name.size())full_owner.push_back(ex.lexer.name);
         t_at_end ae={fullowner,L.name,qist,arr};
@@ -874,9 +869,9 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         body2+="\n"+v.c;
       }
       out+=body2;
-      out=drop_empty_lines(out);
+      //drop_empty_lines_v2(out);
       //out+="\n"+string(owner.empty()?"":"  ")+"};";
-      body+=drop_empty_lines(out);
+      body+=out;
     }
     if(!c.out.cppcode.empty()){
       //QapDebugMsg("[2014.02.12 14:14]:\nuse 't_static_visitor' instead of 'usercode inside lexem'.");
@@ -885,9 +880,10 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       body+=c.out.cppcode;
     }
     body=std::move(before_head+out+body);
-    body=drop_empty_lines(body);
+    //body=drop_empty_lines(body);
     body+="\n};\n";
-    body=drop_empty_lines(body);
+    //body=drop_empty_lines(body);
+    drop_empty_lines_v2(body);
     dev.arr.back().out+=move_block("\n"+body+"\n",owner.empty()?"":"  ");
     bool found=false;
     for(int i=int(lexers.size())-1;i>=0;i--){
@@ -1655,6 +1651,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     QapAssert(pl);
     return pl->lexer;
   }
+  bool ignore_dev_top_out=false;
   bool pass_with_log_err_gen=false;
   bool pass2_with_log_err_gen=false;
   string main(const string&data,bool dontoptimize){
@@ -1683,13 +1680,17 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     Do(tar);
     only_lexers_grab=false;
     auto msl=clock.MS();std::cerr<<"{\"lexers_grab done in \":"<<(msl-msa)<<"}"<<endl;
+    ignore_dev_top_out=0;true;
     Do(tar);
+    ignore_dev_top_out=false;
     auto mst=clock.MS();std::cerr<<"{\"Do(tar) done in \":"<<(mst-msl)<<"}"<<endl;
     buildLexerTree();
     auto msb=clock.MS();std::cerr<<"{\"buildLexerTree done in \":"<<(msb-mst)<<"}"<<endl;
     pass_with_log_err_gen=true;
     dev.top.out=interface_out;dev.top.sep_lexs.clear();
+    ignore_dev_top_out=0;true;
     Do(tar);
+    ignore_dev_top_out=false;
     pass_with_log_err_gen=false;
     auto msg=clock.MS();std::cerr<<"{\"pass_with_log_err_gen done in \":"<<(msg-msb)<<"}"<<endl;
     pass_with_log_err_gen=true;

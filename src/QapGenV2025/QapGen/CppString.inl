@@ -152,6 +152,53 @@ string drop_empty_lines(const string&s){
   for(auto&ex:lines){if(ex.find_first_not_of(' ')==string::npos)continue;o.push_back(ex);}
   return join(o,"\n");
 }
+#include <string>
+#include <cctype> // для std::isspace
+
+void drop_empty_lines_v2(std::string&s) {
+  size_t write_pos = 0;
+  size_t read_pos = 0;
+  const size_t len = s.size();
+
+  while (read_pos < len) {
+    // Найти начало текущей строки
+    size_t line_start = read_pos;
+
+    // Найти конец строки (символ '\n' или конец строки)
+    size_t line_end = s.find('\n', read_pos);
+    if (line_end == std::string::npos)
+      line_end = len;
+
+    // Проверить, есть ли в строке непустые символы (не пробелы)
+    bool has_non_space = false;
+    for (size_t i = line_start; i < line_end; ++i) {
+      //if (!std::isspace(static_cast<unsigned char>(s[i]))) {
+        if (s[i] != ' '){
+        has_non_space = true;
+        break;
+      }
+    }
+
+    // Если строка не пустая, копируем её на позицию write_pos
+    if (has_non_space) {
+      // Если не первая строка, добавляем '\n' перед ней, если write_pos > 0
+      if (write_pos != 0) {
+        s[write_pos++] = '\n';
+      }
+      // Копируем символы строки
+      for (size_t i = line_start; i < line_end; ++i) {
+        s[write_pos++] = s[i];
+      }
+    }
+
+    // Переходим к следующей строке
+    read_pos = line_end + 1; // +1 пропускаем '\n'
+  }
+
+  // Обрезаем строку до нового размера
+  s.resize(write_pos);
+}
+
 class BinString{
 public:
   string data;
