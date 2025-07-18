@@ -707,8 +707,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
           auto ex=cmd2procmds.find(key);
           if(ex==cmd2procmds.end()){
             ex=cmd2procmds.insert({key,string{}}).first;
-            t_struct_cmd sc;
-            auto res=load_obj_full(sc,cmd);
+            t_struct_cmd sc;string errmsg;
+            auto res=load_obj_full(sc,cmd,true,&errmsg);
             if(!res.ok){
               QapDebugMsg("t_struct_field::make_cmd return wrong code:\n"+res.msg);
             }

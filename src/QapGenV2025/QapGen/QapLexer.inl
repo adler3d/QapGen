@@ -1371,14 +1371,21 @@ bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr,st
     auto&b=*dev.stack.back();
     QapAssert(b.best_err.M>=0);
     if(pmaxpos)*pmaxpos=b.best_err.maxpos;
-    set<string> s;vector<string> arr;
+    set<string> s;map<string,string> m;vector<string> arr;
     for(auto&ex:b.errs){
       auto str="lexer: "+(ex.ptr?string(ex.ptr):"")+"; expected: "+ex.pmsg;
+      auto t=split(ex.pmsg,",");QapPopFront(t);string jt=join(t,",");
+      auto it=m.find(jt);
+      if(it!=m.end()){
+        if(it->second.size()>str.size())it->second=str;
+        continue;
+      }else m[jt]=str;
       if(!s.insert(str).second)continue;
       arr.push_back(str);
       //*perrmsg+="lexer: "+(ex.ptr?string(ex.ptr):"")+"; expected: "+ex.pmsg+"\n";
     }
-    *perrmsg+=join(arr,"\n");
+    vector<string> arr2;for(auto&ex:m)arr2.push_back(ex.second);
+    *perrmsg+=join(arr2,"\n");
   }
   return ok;
 }
