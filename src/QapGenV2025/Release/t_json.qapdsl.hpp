@@ -47,8 +47,9 @@ t_json{
 
   t_comma_value{
     ","
-    t_value body;
     " "?
+    t_value body;
+    //" "?
   }
 
   t_array=>i_value{

@@ -1,4 +1,4 @@
-// 582.203900 ms
+// 60.278800 ms
 struct t_json{
   //===>>===i_value_visitor
   #define DEF_PRO_BLANK()
@@ -37,14 +37,6 @@ struct t_json{
       LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
       #undef ADD
     };
-    // 10kk bench:     31.81 ns/call               59.41 ns/call
-    // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-    // Od   :          1678.17     vs              1610.70
-    // Debug:          4948.20     vs              4892.66
-    // compilation time:
-    // UC 32.21 // 4.61 sec //408%
-    // DC 28.73 // 1.13 sec
-    // empty 27.60 
     template<class TYPE>
     static TYPE*UberCast(i_value*p){
       if(!p)return nullptr;Is<TYPE,i_value_visitor> IS;p->Use(IS);return IS.ptr;
@@ -112,9 +104,9 @@ struct t_json{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_true");
       auto&ok=$.ok;
-      ok=dev.go_const("true");
+      ok=dev.go_const("true");$(ok,",\"t\"");
       if(!ok)return ok;
       return ok;
     }
@@ -132,9 +124,9 @@ struct t_json{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_false");
       auto&ok=$.ok;
-      ok=dev.go_const("false");
+      ok=dev.go_const("false");$(ok,",\"f\"");
       if(!ok)return ok;
       return ok;
     }
@@ -152,9 +144,9 @@ struct t_json{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_null");
       auto&ok=$.ok;
-      ok=dev.go_const("null");
+      ok=dev.go_const("null");$(ok,",\"n\"");
       if(!ok)return ok;
       return ok;
     }
@@ -194,14 +186,6 @@ struct t_json{
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
-      // 10kk bench:     31.81 ns/call               59.41 ns/call
-      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-      // Od   :          1678.17     vs              1610.70
-      // Debug:          4948.20     vs              4892.66
-      // compilation time:
-      // UC 32.21 // 4.61 sec //408%
-      // DC 28.73 // 1.13 sec
-      // empty 27.60 
       template<class TYPE>
       static TYPE*UberCast(i_item*p){
         if(!p)return nullptr;Is<TYPE,i_item_visitor> IS;p->Use(IS);return IS.ptr;
@@ -262,10 +246,10 @@ struct t_json{
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_json::t_string::t_raw");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr(dip_inv("\"\\\n"));
-        ok=dev.go_any(body,g_static_var_0);
+        ok=dev.go_any(body,g_static_var_0);$(ok,",gen_dips(\"\\x00\\t\\x0B!#[]\\xFF\")");
         if(!ok)return ok;
         return ok;
       }
@@ -284,12 +268,12 @@ struct t_json{
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_json::t_string::t_fix");
         auto&ok=$.ok;
-        ok=dev.go_const("\\");
+        ok=dev.go_const("\\");$(ok,",\"\\\\\"");
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr("\"\\/bfnrt");
-        ok=dev.go_any_char(body,g_static_var_1);
+        ok=dev.go_any_char(body,g_static_var_1);$(ok,",\"\\\"\\\\/bfnrt\"");
         if(!ok)return ok;
         return ok;
       }
@@ -308,12 +292,12 @@ struct t_json{
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_json::t_string::t_hex");
         auto&ok=$.ok;
-        ok=dev.go_const("\\u");
+        ok=dev.go_const("\\u");$(ok,",\"\\\\\"");
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09afAF"));
-        ok=dev.go_any_arr_char(arr,g_static_var_1);
+        ok=dev.go_any_arr_char(arr,g_static_var_1);$(ok,",gen_dips(\"09AFaf\")");
         if(!ok)return ok;
         return ok;
       }
@@ -329,9 +313,9 @@ struct t_json{
     //<<<<<+=====t_items
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_json::t_string::t_items");
         auto&ok=$.ok;
-        ok=dev.go_auto(arr);
+        ok=dev.go_auto(arr);$(ok,"vector<TAutoPtr<i_item>>,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");
         if(!ok)return ok;
         return ok;
       }
@@ -356,13 +340,13 @@ struct t_json{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_string");
       auto&ok=$.ok;
-      ok=dev.go_const("\"");
+      ok=dev.go_const("\"");$(ok,",\"\\\"\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);$(ok,"t_items,gen_dips(\"\\x00\\t\\x0B!#\\xFF\")");
       if(!ok)return ok;
-      ok=dev.go_const("\"");
+      ok=dev.go_const("\"");$(ok,",\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -401,14 +385,6 @@ struct t_json{
         LIST(DEF_PRO_BLANK,ADD,DEF_PRO_BLANK)
         #undef ADD
       };
-      // 10kk bench:     31.81 ns/call               59.41 ns/call
-      // O2   : UberCast(318.157 ms) vs dynamic_cast(594.17 ms) //  53.546%
-      // Od   :          1678.17     vs              1610.70
-      // Debug:          4948.20     vs              4892.66
-      // compilation time:
-      // UC 32.21 // 4.61 sec //408%
-      // DC 28.73 // 1.13 sec
-      // empty 27.60 
       template<class TYPE>
       static TYPE*UberCast(i_int*p){
         if(!p)return nullptr;Is<TYPE,i_int_visitor> IS;p->Use(IS);return IS.ptr;
@@ -463,9 +439,9 @@ struct t_json{
     //<<<<<+=====t_minus
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_json::t_number::t_minus");
         auto&ok=$.ok;
-        ok=dev.go_const("-");
+        ok=dev.go_const("-");$(ok,",\"-\"");
         if(!ok)return ok;
         return ok;
       }
@@ -481,12 +457,12 @@ struct t_json{
     //<<<<<+=====t_frac
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_json::t_number::t_frac");
         auto&ok=$.ok;
-        ok=dev.go_const(".");
+        ok=dev.go_const(".");$(ok,",\".\"");
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-        ok=dev.go_any(arr,g_static_var_1);
+        ok=dev.go_any(arr,g_static_var_1);$(ok,",\"0123456789\"");
         if(!ok)return ok;
         return ok;
       }
@@ -502,10 +478,10 @@ struct t_json{
     //<<<<<+=====t_sign
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_json::t_number::t_sign");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr("-+");
-        ok=dev.go_any_char(sign,g_static_var_0);
+        ok=dev.go_any_char(sign,g_static_var_0);$(ok,",\"-+\"");
         if(!ok)return ok;
         return ok;
       }
@@ -523,14 +499,14 @@ struct t_json{
     //<<<<<+=====t_exp
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_json::t_number::t_exp");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr("eE");
-        ok=dev.go_any_char(e,g_static_var_0);
+        ok=dev.go_any_char(e,g_static_var_0);$(ok,",\"eE\"");
         if(!ok)return ok;
-        dev.go_auto(sign);
+        {bool ok=dev.go_auto(sign);$(ok,"TAutoPtr<t_sign>,\"+-\"");}
         static const auto g_static_var_2=CharMask::fromStr(gen_dips("09"));
-        ok=dev.go_any(arr,g_static_var_2);
+        ok=dev.go_any(arr,g_static_var_2);$(ok,",\"0123456789\"");
         if(!ok)return ok;
         return ok;
       }
@@ -550,13 +526,13 @@ struct t_json{
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_json::t_number::t_num");
         auto&ok=$.ok;
         static const auto g_static_var_0=CharMask::fromStr(gen_dips("19"));
-        ok=dev.go_any_char(first,g_static_var_0);
+        ok=dev.go_any_char(first,g_static_var_0);$(ok,",\"123456789\"");
         if(!ok)return ok;
         static const auto g_static_var_1=CharMask::fromStr(gen_dips("09"));
-        dev.go_any(num,g_static_var_1);
+        {bool ok=dev.go_any(num,g_static_var_1);$(ok,",\"0123456789\"");}
         return ok;
       }
     };
@@ -573,9 +549,9 @@ struct t_json{
       static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
     public:
       bool go(i_dev&dev){
-        t_fallback $(dev,__FUNCTION__);
+        t_fallback $(dev,"t_json::t_number::t_zero");
         auto&ok=$.ok;
-        ok=dev.go_const("0");
+        ok=dev.go_const("0");$(ok,",\"0\"");
         if(!ok)return ok;
         return ok;
       }
@@ -605,13 +581,13 @@ struct t_json{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_number");
       auto&ok=$.ok;
-      dev.go_auto(minus);
-      ok=dev.go_auto(val);
+      {bool ok=dev.go_auto(minus);$(ok,"TAutoPtr<t_minus>,\"-\"");}
+      ok=dev.go_auto(val);$(ok,"TAutoPtr<i_int>,\"0123456789\"");
       if(!ok)return ok;
-      dev.go_auto(frac);
-      dev.go_auto(exp);
+      {bool ok=dev.go_auto(frac);$(ok,"TAutoPtr<t_frac>,\".\"");}
+      {bool ok=dev.go_auto(exp);$(ok,"TAutoPtr<t_exp>,\"Ee\"");}
       return ok;
     }
   public:
@@ -627,21 +603,14 @@ struct t_json{
   //<<<<<+=====t_sep
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_sep");
       auto&ok=$.ok;
       static const auto g_static_var_0=CharMask::fromStr(" \t\r\n");
-      ok=dev.go_any(body,g_static_var_0);
+      ok=dev.go_any(body,g_static_var_0);$(ok,",\" \\t\\r\\n\"");
       if(!ok)return ok;
       return ok;
     }
   };
-    /*
-    t_empty_array=>i_value{
-      "["
-      t_sep sep?;
-      "]"
-      t_sep sep2?;
-    }*/
   struct t_value{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_value)OWNER(t_json)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
@@ -654,11 +623,11 @@ struct t_json{
   //<<<<<+=====t_value
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_value");
       auto&ok=$.ok;
-      ok=dev.go_auto(body);
+      ok=dev.go_auto(body);$(ok,"TAutoPtr<i_value>,gen_dips(\"09\")+\"\\\"-[fnt{\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
+      {bool ok=dev.go_auto($sep1);$(ok,"t_sep,\"\\t\\n\\r \"");}
       return ok;
     }
   };
@@ -666,21 +635,21 @@ struct t_json{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_comma_value)OWNER(t_json)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
   ADDBEG()\
+  ADDVAR(t_sep,$sep1,DEF,$,$)\
   ADDVAR(t_value,body,DEF,$,$)\
-  ADDVAR(t_sep,$sep2,DEF,$,$)\
   ADDEND()
   //=====+>>>>>t_comma_value
   #include "QapGenStructNoTemplate.inl"
   //<<<<<+=====t_comma_value
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_comma_value");
       auto&ok=$.ok;
-      ok=dev.go_const(",");
+      ok=dev.go_const(",");$(ok,",\",\"");
       if(!ok)return ok;
-      ok=dev.go_auto(body);
+      {bool ok=dev.go_auto($sep1);$(ok,"t_sep,\"\\t\\n\\r \"");}
+      ok=dev.go_auto(body);$(ok,"t_value,gen_dips(\"09\")+\"\\\"-[fnt{\"");
       if(!ok)return ok;
-      dev.go_auto($sep2);
       return ok;
     }
   };
@@ -701,26 +670,19 @@ struct t_json{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_array");
       auto&ok=$.ok;
-      ok=dev.go_const("[");
+      ok=dev.go_const("[");$(ok,",\"[\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
-      dev.go_auto(first);
-      dev.go_auto(arr);
-      ok=dev.go_const("]");
+      {bool ok=dev.go_auto($sep1);$(ok,"t_sep,\"\\t\\n\\r \"");}
+      {bool ok=dev.go_auto(first);$(ok,"t_value,gen_dips(\"09\")+\"\\\"-[fnt{\"");}
+      {bool ok=dev.go_auto(arr);$(ok,"vector<t_comma_value>,\",\"");}
+      ok=dev.go_const("]");$(ok,",\"]\"");
       if(!ok)return ok;
-      dev.go_auto($sep5);
+      {bool ok=dev.go_auto($sep5);$(ok,"t_sep,\"\\t\\n\\r \"");}
       return ok;
     }
   };
-    /*
-    t_empty_object=>i_value{
-      "{"
-      t_sep sep?;
-      "}"
-      t_sep sep2?;
-    }*/
   struct t_pair{
   #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_pair)OWNER(t_json)
   #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
@@ -735,15 +697,15 @@ struct t_json{
   //<<<<<+=====t_pair
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_pair");
       auto&ok=$.ok;
-      ok=dev.go_auto(key);
+      ok=dev.go_auto(key);$(ok,"t_string,\"\\\"\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
-      ok=dev.go_const(":");
+      {bool ok=dev.go_auto($sep1);$(ok,"t_sep,\"\\t\\n\\r \"");}
+      ok=dev.go_const(":");$(ok,",\":\"");
       if(!ok)return ok;
-      dev.go_auto($sep3);
-      ok=dev.go_auto(value);
+      {bool ok=dev.go_auto($sep3);$(ok,"t_sep,\"\\t\\n\\r \"");}
+      ok=dev.go_auto(value);$(ok,"t_value,gen_dips(\"09\")+\"\\\"-[fnt{\"");
       if(!ok)return ok;
       return ok;
     }
@@ -760,12 +722,12 @@ struct t_json{
   //<<<<<+=====t_comma_pair
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_comma_pair");
       auto&ok=$.ok;
-      ok=dev.go_const(",");
+      ok=dev.go_const(",");$(ok,",\",\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
-      ok=dev.go_auto(body);
+      {bool ok=dev.go_auto($sep1);$(ok,"t_sep,\"\\t\\n\\r \"");}
+      ok=dev.go_auto(body);$(ok,"t_pair,\"\\\"\"");
       if(!ok)return ok;
       return ok;
     }
@@ -788,17 +750,17 @@ struct t_json{
     static SelfClass*UberCast(ParentClass*ptr){return i_visitor::UberCast<SelfClass>(ptr);}
   public:
     bool go(i_dev&dev){
-      t_fallback $(dev,__FUNCTION__);
+      t_fallback $(dev,"t_json::t_object");
       auto&ok=$.ok;
-      ok=dev.go_const("{");
+      ok=dev.go_const("{");$(ok,",\"{\"");
       if(!ok)return ok;
-      dev.go_auto($sep1);
-      dev.go_auto(first);
-      dev.go_auto(arr);
-      dev.go_auto($sep4);
-      ok=dev.go_const("}");
+      {bool ok=dev.go_auto($sep1);$(ok,"t_sep,\"\\t\\n\\r \"");}
+      {bool ok=dev.go_auto(first);$(ok,"t_pair,\"\\\"\"");}
+      {bool ok=dev.go_auto(arr);$(ok,"vector<t_comma_pair>,\",\"");}
+      {bool ok=dev.go_auto($sep4);$(ok,"t_sep,\"\\t\\n\\r \"");}
+      ok=dev.go_const("}");$(ok,",\"}\"");
       if(!ok)return ok;
-      dev.go_auto($sep6);
+      {bool ok=dev.go_auto($sep6);$(ok,"t_sep,\"\\t\\n\\r \"");}
       return ok;
     }
   };
@@ -826,7 +788,7 @@ ADDEND()
 //<<<<<+=====t_json
 public:
   bool go(i_dev&dev){
-    t_fallback $(dev,__FUNCTION__);
+    t_fallback $(dev,"t_json");
     auto&ok=$.ok;
     return ok;
   }
@@ -836,12 +798,12 @@ void t_json::i_value::t_poly_impl::load()
 {
   i_dev::t_result r=dev.get_char_lt();
   if(!r.ok){scope.ok=false;return;}
-  #define F(TYPE,MASK)
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
   switch(r.c){
-    case 't':{t_true L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_true>(std::move(L));return;}
-    case 'f':{t_false L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_false>(std::move(L));return;}
-    case 'n':{t_null L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_null>(std::move(L));return;}
-    case '"':{t_string L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_string>(std::move(L));return;}
+    case 't':F(t_true);
+    case 'f':F(t_false);
+    case 'n':F(t_null);
+    case '"':F(t_string);
     case '-':
     case '0':
     case '1':
@@ -852,9 +814,9 @@ void t_json::i_value::t_poly_impl::load()
     case '6':
     case '7':
     case '8':
-    case '9':{t_number L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_number>(std::move(L));return;}
-    case '[':{t_array L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_array>(std::move(L));return;}
-    case '{':{t_object L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_object>(std::move(L));return;}
+    case '9':F(t_number);
+    case '[':F(t_array);
+    case '{':F(t_object);
     default:{scope.ok=false;return;}
   }
   #undef F
@@ -876,7 +838,7 @@ void t_json::t_number::i_int::t_poly_impl::load()
 {
   i_dev::t_result r=dev.get_char_lt();
   if(!r.ok){scope.ok=false;return;}
-  #define F(TYPE,MASK)
+  #define F(T){T L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<T>(std::move(L));return;}
   switch(r.c){
     case '1':
     case '2':
@@ -886,8 +848,8 @@ void t_json::t_number::i_int::t_poly_impl::load()
     case '6':
     case '7':
     case '8':
-    case '9':{t_num L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_num>(std::move(L));return;}
-    case '0':{t_zero L;scope.ok=dev.go_auto(L);if(scope.ok)ref=make_unique<t_zero>(std::move(L));return;}
+    case '9':F(t_num);
+    case '0':F(t_zero);
     default:{scope.ok=false;return;}
   }
   #undef F
@@ -923,23 +885,18 @@ ps%28%2209%22%29%29%3f%3b%0a%20%20%20%20%7d%0a%20%20%20%20t%5fzero%3d%3ei%5fint%
 AutoPtr%3ci%5fint%3e%20val%3b%0a%20%20%20%20TAutoPtr%3ct%5ffrac%3e%20frac%3f%3b%
 0a%20%20%20%20TAutoPtr%3ct%5fexp%3e%20exp%3f%3b%0a%20%20%7d%0a%0a%20%20t%5fsep%7
 b%0a%20%20%20%20string%20body%3dany%28%22%20%5ct%5cr%5cn%22%29%3b%0a%20%20%7d%0a
-%20%20using%20%22%20%22%20as%20t%5fsep%3b%0a%20%20%2f%2a%0a%20%20t%5fempty%5farr
-ay%3d%3ei%5fvalue%7b%0a%20%20%20%20%22%5b%22%0a%20%20%20%20t%5fsep%20sep%3f%3b%0
-a%20%20%20%20%22%5d%22%0a%20%20%20%20t%5fsep%20sep2%3f%3b%0a%20%20%7d%2a%2f%0a%0
-a%20%20t%5fvalue%7b%0a%20%20%20%20TAutoPtr%3ci%5fvalue%3e%20body%3b%0a%20%20%20%
-20%22%20%22%3f%0a%20%20%7d%0a%0a%20%20t%5fcomma%5fvalue%7b%0a%20%20%20%20%22%2c%
-22%0a%20%20%20%20t%5fvalue%20body%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%7d%0a%0
-a%20%20t%5farray%3d%3ei%5fvalue%7b%0a%20%20%20%20%22%5b%22%0a%20%20%20%20%22%20%
-22%3f%0a%20%20%20%20t%5fvalue%20first%3f%3b%0a%20%20%20%20vector%3ct%5fcomma%5fv
-alue%3e%20arr%3f%3b%0a%20%20%20%20%22%5d%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%
-7d%0a%20%20%2f%2a%0a%20%20t%5fempty%5fobject%3d%3ei%5fvalue%7b%0a%20%20%20%20%22
-%7b%22%0a%20%20%20%20t%5fsep%20sep%3f%3b%0a%20%20%20%20%22%7d%22%0a%20%20%20%20t
-%5fsep%20sep2%3f%3b%0a%20%20%7d%2a%2f%0a%0a%20%20t%5fpair%7b%0a%20%20%20%20t%5fs
-tring%20key%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20%22%3a%22%0a%20%20%20%20
-%22%20%22%3f%0a%20%20%20%20t%5fvalue%20value%3b%0a%20%20%7d%0a%0a%20%20t%5fcomma
-%5fpair%7b%0a%20%20%20%20%22%2c%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20t%5f
-pair%20body%3b%0a%20%20%7d%0a%0a%20%20t%5fobject%3d%3ei%5fvalue%7b%0a%20%20%20%2
-0%22%7b%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20t%5fpair%20first%3f%3b%0a%20
-%20%20%20vector%3ct%5fcomma%5fpair%3e%20arr%3f%3b%0a%20%20%20%20%22%20%22%3f%0a%
-20%20%20%20%22%7d%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%7d%0a%0a%7d
+%20%20using%20%22%20%22%20as%20t%5fsep%3b%0a%0a%20%20t%5fvalue%7b%0a%20%20%20%20
+TAutoPtr%3ci%5fvalue%3e%20body%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%7d%0a%0a%2
+0%20t%5fcomma%5fvalue%7b%0a%20%20%20%20%22%2c%22%0a%20%20%20%20%22%20%22%3f%0a%2
+0%20%20%20t%5fvalue%20body%3b%0a%20%20%7d%0a%0a%20%20t%5farray%3d%3ei%5fvalue%7b
+%0a%20%20%20%20%22%5b%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20t%5fvalue%20fi
+rst%3f%3b%0a%20%20%20%20vector%3ct%5fcomma%5fvalue%3e%20arr%3f%3b%0a%20%20%20%20
+%22%5d%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%7d%0a%0a%20%20t%5fpair%7b%0a%20%20
+%20%20t%5fstring%20key%3b%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20%22%3a%22%0a%
+20%20%20%20%22%20%22%3f%0a%20%20%20%20t%5fvalue%20value%3b%0a%20%20%7d%0a%0a%20%
+20t%5fcomma%5fpair%7b%0a%20%20%20%20%22%2c%22%0a%20%20%20%20%22%20%22%3f%0a%20%2
+0%20%20t%5fpair%20body%3b%0a%20%20%7d%0a%0a%20%20t%5fobject%3d%3ei%5fvalue%7b%0a
+%20%20%20%20%22%7b%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%20%20t%5fpair%20first%
+3f%3b%0a%20%20%20%20vector%3ct%5fcomma%5fpair%3e%20arr%3f%3b%0a%20%20%20%20%22%2
+0%22%3f%0a%20%20%20%20%22%7d%22%0a%20%20%20%20%22%20%22%3f%0a%20%20%7d%0a%0a%7d
 */

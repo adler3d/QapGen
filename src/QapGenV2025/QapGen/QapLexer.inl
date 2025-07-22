@@ -20,11 +20,12 @@ static int&get_qap_fallback_counter(){static int counter=0;return counter;}
 struct t_fallback{
   struct t_rec{bool E;bool ok;bool D;};
   i_dev_base&dev;
-  bool&ok;
+  bool ok;
   size_t pos;
   const char*const ptr;
   const char*const ptr2;
   int err_count;
+  #ifdef QAP_LOAD_DEV_WITH_STACK
   struct t_err{
     int M=-1;
     int maxpos=0;
@@ -34,11 +35,12 @@ struct t_fallback{
   };
   vector<t_err> errs;
   t_err best_err;
-  t_scope_tool mandatory;
-  t_scope_tool optional;
   bool keep_errs=false;
+  #endif
+  //t_scope_tool mandatory;
+  //t_scope_tool optional;
   //int mode=0;
-  t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev),ok(mandatory.ok),ptr(ptr),ptr2(ptr2),pos(-1),err_count(0){
+  t_fallback(i_dev_base&dev,const char*const ptr,const char*const ptr2=nullptr):dev(dev)/*,ok(mandatory.ok)*/,ptr(ptr),ptr2(ptr2),pos(-1),err_count(0){
     if(ptr)dev.push(this);
   }
  ~t_fallback(){
@@ -51,6 +53,7 @@ struct t_fallback{
   void log_clear(){err_count=0;}
   int getErr()const{return err_count;}
   //void operator()(int M){mode=M;}
+  #ifdef QAP_LOAD_DEV_WITH_STACK
   void operator()(bool ok,const char*perr){
     if(ok){
       //log_clear();
@@ -67,6 +70,9 @@ struct t_fallback{
       errs.push_back(curerr);
     }
   }
+  #else
+  void operator()(...){}
+  #endif
 };
 
 struct t_load_dev;
@@ -199,20 +205,24 @@ public:
   void push(t_fallback*ptr)override{
     QapAssert(ptr);
     //for(int i=0;i<stack.size();i++)QapAssert(stack[i]!=ptr);
+    #ifdef QAP_LOAD_DEV_WITH_STACK
     stack.push_back(ptr);
+    #endif
     ptr->pos=this->pos;
-    ptr->mandatory.ok=true;
-    ptr->mandatory.scope=ptr;
-    ptr->optional.ok=false;
-    ptr->optional.scope=ptr;
+    //ptr->mandatory.ok=true;
+    //ptr->mandatory.scope=ptr;
+    //ptr->optional.ok=false;
+    //ptr->optional.scope=ptr;
     maxpos=std::max(maxpos,pos);
   }
   void pop(t_fallback*ptr)override{
     maxpos_pop=std::max(maxpos_pop,pos);
     QapAssert(ptr);
     QapAssert(!stack.empty());
+    #ifdef QAP_LOAD_DEV_WITH_STACK
     QapAssert(stack.back()==ptr);
     stack.pop_back();
+    #endif
     t_fallback::t_rec status;
     auto&fb=*ptr;
     bool skip=pos==fb.pos;
@@ -222,6 +232,15 @@ public:
     status.E=error;
     status.ok=ok;
     status.D=dep_err;
+    #ifndef QAP_LOAD_DEV_WITH_STACK
+    stack.back()->add_status(status);
+    if(ptr->ok)return;
+    if(this->pos==ptr->pos)return;
+    /*QapAssert(!stack.empty());*/
+    //stack.back()->log.err(SToS(ptr->ptr)+" ["+IToS(this->pos)+"=>"+IToS(ptr->pos)+"]");
+    this->pos=ptr->pos;
+    return;
+    #else
     auto&b=*stack.back();
     b.add_status(status);
     if(fb.ok&&!fb.keep_errs)return;
@@ -240,6 +259,7 @@ public:
     }
     if(all_failed||ok)return;
     pos=fb.pos;
+    #endif
   }
   void setPos(int pos)override{this->pos=pos;}
   void getPos(int&pos)override{pos=this->pos;}
@@ -571,13 +591,13 @@ public:
 public:
   void push(t_fallback*ptr){
     QapAssert(ptr);
-    for(int i=0;i<stack.size();i++)QapAssert(stack[i]!=ptr);
+    //for(int i=0;i<stack.size();i++)QapAssert(stack[i]!=ptr);
     stack.push_back(ptr);
     ptr->pos=this->mem.size();
-    ptr->mandatory.ok=true;
-    ptr->mandatory.scope=ptr;
-    ptr->optional.ok=false;
-    ptr->optional.scope=ptr;
+    //ptr->mandatory.ok=true;
+    //ptr->mandatory.scope=ptr;
+    //ptr->optional.ok=false;
+    //ptr->optional.scope=ptr;
   }
   void pop(t_fallback*ptr){
     QapAssert(ptr);
@@ -1207,7 +1227,9 @@ static bool internal_go_for_vec_lt(i_dev&dev,vector<TYPE>&arr){
     QapAssert(CheckTAutoPtrIsNotEmpty(tmp));
     arr.push_back(std::move(tmp));
   }
+  #ifdef QAP_LOAD_DEV_WITH_STACK
   scope.keep_errs=arr.size();
+  #endif
   ok=!arr.empty();
   return ok;
 }
@@ -1341,7 +1363,7 @@ bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr,st
 {
   out=std::move(TYPE{});
   t_load_dev dev(data);auto&ldev=dev;
-  bool ok=dev.go_auto(out);
+  bool ok=dev.go_auto(out);if(pmaxpos){*pmaxpos=dev.pos;}
   if(ok)
   {
     #ifdef QAP_LOAD_OBJ_DEBUG
@@ -1369,6 +1391,7 @@ bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr,st
   }
   if(!ok&&perrmsg){
     auto&b=*dev.stack.back();
+    #ifdef QAP_LOAD_DEV_WITH_STACK
     QapAssert(b.best_err.M>=0);
     if(pmaxpos)*pmaxpos=b.best_err.maxpos;
     set<string> s;map<string,string> m;vector<string> arr;
@@ -1386,6 +1409,7 @@ bool load_obj(/*IEnvRTTI&Env,*/TYPE&out,const string&data,int*pmaxpos=nullptr,st
     }
     vector<string> arr2;for(auto&ex:m)arr2.push_back(ex.second);
     *perrmsg+=join(arr2,"\n");
+    #endif
   }
   return ok;
 }
