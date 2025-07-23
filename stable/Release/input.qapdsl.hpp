@@ -1,15 +1,32 @@
-t_parent_fullname_reslove_algo_test_20250701{
+t_metaboy{"G"}
+t_meta{t_for;"L"}
+
+typedef array<char,2> ARRAY2char;
+typedef array<char,4> ARRAY4char;
+t_ploy_test20250715{
+  //t_a:interface_x{"a"}
+  //t_b:interface_x{"b"}
+  //t_c:interface_x{"c"}
+  t_c{"c"}
+  t_foo{"X"}t_bar{"Y"}
+  vector<t_c> body?;
+  TAutoPtr<t_foo> foo;
+  TAutoPtr<t_bar> bar;
+}
+t_parent_fullname_reslove_algo_test_20250701:ifx{
   //t_parent_holder{t_foo:i_base{}}
   t_other{
+    " "
     //t_bar:t_parent_holder::i_base{}
   }
+  "P"
 }
-t_using_test_20250628{
+t_using_test_20250628:ifx{
   t_sep{" "}
   using " " as t_sep;
   t_foo;
   t_foo{
-    t_bar{t_baz{}}
+    t_bar{t_baz{string s=any("xyz");}"uv"}
     t_bar b;
     " "
     t_bar c?;
@@ -21,8 +38,6 @@ t_using_test_20250628{
 t_number{
   string body=any(gen_dips("09"));
 }
-typedef array<char,2> ARRAY2char;
-typedef array<char,4> ARRAY4char;
 t_str_item_raw:i_str_item{
   string body=any(dip_inv("\"\\\n"));
 }
@@ -95,7 +110,7 @@ t_name{
     string B=any(gen_dips("azAZ09")+"_$@")?;
   }
   t_impl_ex{
-    t_impl impl=minor<t_keyword>();
+    t_impl impl=diff<t_keyword>();
   }
   string value=str<t_impl_ex>();
 }
@@ -150,31 +165,31 @@ t_lev09{
   vector<t_item> arr?;
 }
 t_lev10{
-  t_oper{"&" inline static const string value="&";}
+  t_oper{"&"[::]inline static const string value="&";}
   t_item{t_oper oper; t_lev09 expr;}
   t_lev09 expr;
   vector<t_item> arr?;
 }
 t_lev11{
-  t_oper{"^" inline static const string value="^";}
+  t_oper{"^"[::]inline static const string value="^";}
   t_item{t_oper oper; t_lev10 expr;}
   t_lev10 expr;
   vector<t_item> arr?;
 }
 t_lev12{
-  t_oper{"|" inline static const string value="|";}
+  t_oper{"|"[::]inline static const string value="|";}
   t_item{t_oper oper; t_lev11 expr;}
   t_lev11 expr;
   vector<t_item> arr?;
 }
 t_lev13{
-  t_oper{"&&" inline static const string value="&&";}
+  t_oper{"&&"[::]inline static const string value="&&";}
   t_item{t_oper oper; t_lev12 expr;}
   t_lev12 expr;
   vector<t_item> arr?;
 }
 t_lev14{
-  t_oper{"||" inline static const string value="||";}
+  t_oper{"||"[::]inline static const string value="||";}
   t_item{t_oper oper; t_lev13 expr;}
   t_lev13 expr;
   vector<t_item> arr?;
@@ -204,7 +219,7 @@ return(
   var oa=ops.split(",");
   if(oa.length==1){
     return n+`{
-  t_oper{"`+oa[0]+`" inline static const string value="`+oa[0]+`";}
+  t_oper{"`+oa[0]+`"[::]inline static const string value="`+oa[0]+`";}
   t_item{t_oper oper; `+e+` expr;}
   `+e+` expr;
   vector<t_item> arr?;
@@ -358,7 +373,7 @@ t_call_expr:i_expr{
 }
 using " " as t_sep;
 t_test20250618_atrr{
-  t_foo{{}[::]}
+  t_foo{{go_const("G");}[::]int i=0;}
   t_foo foo; [skip]
   t_sep sep; [optimize,"sep",("sep"),sep[x]]
 }
@@ -687,10 +702,10 @@ t_cpp_code{
     t_bayan bayan;
     t_eater eater?;
   }
-  t_minor_eater{t_eater eater=minor<TAutoPtr<i_major>>();}
-  t_without_bayan:i_bayan{
-    t_minor_eater eater=minor<t_with_bayan>();
-  }
+  //t_minor_eater{t_eater eater=minor<TAutoPtr<i_major>>();}
+  //t_without_bayan:i_bayan{
+  //  t_minor_eater eater=minor<t_with_bayan>();
+  //}
   " "?
   TAutoPtr<i_bayan> bayan;
 }
@@ -756,5 +771,6 @@ t_target_typedef:i_target_item{
 t_target{
   vector<TAutoPtr<i_target_item>> arr;
 }
+"end"
 }
 //
