@@ -34,6 +34,7 @@
 #include <math.h>
 #include <iomanip>
 #include <iostream>
+using namespace std;
 //#include <ctype.h>
 
 enum TMouseButton{mbLeft=257,mbRight=258,mbMiddle=259,};
