@@ -32,6 +32,8 @@ size_t g_unique_pool_ptr_counter=0;
 #include "t_error_tool.inl"
 #include "QapLexer.inl"
 #include "t_config.inl"
+string g_qap_poly_tool_config_path;
+string g_qap_poly_tool_config_path2;
 #include "t_poly_tool.inl"
 
 #include "t_simple_calc.inl"

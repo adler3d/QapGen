@@ -4,8 +4,24 @@ struct t_poly_tool:public t_config_2013{
   //  CharMask m;
   //};
   t_doc doc;
+  static bool config_api(string&inout/*,string&fn*/,bool save){
+    static const string rfn="config.cfg";
+    static string fn=g_qap_poly_tool_config_path+rfn;// near grammar file
+    if(save){
+      return file_put_contents(fn,inout);
+    }
+    CrutchIO IO;
+    bool ok=IO.LoadFile(fn);
+    if(ok){inout=IO.mem;return true;}
+    fn=rfn;//in working dir
+    ok=IO.LoadFile(fn);
+    if(ok){inout=IO.mem;return true;}
+    fn=g_qap_poly_tool_config_path2+rfn;//near app
+    ok=IO.LoadFile(fn);
+    if(ok){inout=IO.mem;return true;}
+    return false;
+  }
   static t_poly_tool&get(/*IEnvRTTI&Env*/){
-    static const string fn="config.cfg";
     static t_poly_tool tool;
     static t_doc&doc=tool.doc;
     static QapClock clock;
@@ -15,25 +31,32 @@ struct t_poly_tool:public t_config_2013{
     first=false;
     clock.Stop();clock.Start();
     CrutchIO IO;
-    bool ok=IO.LoadFile(fn);
+    bool ok=config_api(IO.mem,false);
+    if(IO.mem.find("\r")!=string::npos){
+      if(IO.mem.find("\n")!=string::npos){
+        IO.mem=join(split(IO.mem,"\r"),"");
+      }else{
+        IO.mem=join(split(IO.mem,"\r"),"\n");
+      }
+    }
     if(ok){t_doc tmp;doc=std::move(tmp);/*doc.lines.reserve(2048);*/}
     if(!ok){
       IO.mem.clear();
-      QapAssert(save_obj(/*Env,*/doc,IO.mem));
-      IO.SaveFile(fn);
+      if(doc.lines.size())QapAssert(save_obj(/*Env,*/doc,IO.mem));
+      config_api(IO.mem,true);
       return tool;
     }
     clock.Stop();clock.Start();
-    QapAssert(load_obj(/*Env,*/doc,IO.mem));clock.Stop();clock.Start();
+    if(IO.mem.size())QapAssert(load_obj(/*Env,*/doc,IO.mem));clock.Stop();clock.Start();
     real time=clock.MS();
     clock.Stop();clock.Start();
     //doc.lines.reserve(2048);
     return tool;
   }
-  void save_doc(/*IEnvRTTI&Env,*/const string&fn){
+  void save_doc(/*IEnvRTTI&Env,const string&fn*/){
     CrutchIO IO;
     QapAssert(save_obj(/*Env,*/this->doc,IO.mem));
-    IO.SaveFile(fn);
+    config_api(IO.mem,true);
   }
 public:
   t_line&find(const string&type){
@@ -66,7 +89,7 @@ public:
       auto&ex=arr[i];
       ex.type=inp[i].info;
     }
-    save_doc(/*Env,*/"config.cfg");
+    save_doc(/*Env,"config.cfg"*/);
     return arr;
   }
   static int get_mass(const vector<t_item>&arr,const string&type){
@@ -383,7 +406,7 @@ public:
           auto&base=tool.find(strbasetype);
           auto&events=base.events;
           tool.remake(base.arr,events);
-          tool.save_doc(/*Env,*/"config.cfg");
+          tool.save_doc(/*Env,"config.cfg"*/);
           update_mass();
         }
       }

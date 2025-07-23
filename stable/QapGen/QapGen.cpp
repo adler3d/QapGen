@@ -5,13 +5,14 @@
 typedef unsigned char uchar;
 size_t g_unique_pool_ptr_counter=0;
 string g_version="{\"version\":\"1.0\"}";
+#define QAP_LOAD_DEV_WITH_STACK
 #define QAP_USE_UNIQUE_POOL_PTR
 #define QAP_STD_DEBUG
 #ifdef QAP_STD_DEBUG
 #define QAP_LOAD_OBJ_DEBUG
 #define QAP_POLY_TOOL_DEBUG
 #else
-//#define QAP_WITHOUT_ALL_DEBUG
+#define QAP_WITHOUT_ALL_DEBUG
 #endif
 #ifdef QAP_WITHOUT_ALL_DEBUG
 #undef QapAssert
@@ -39,7 +40,10 @@ string g_qap_poly_tool_config_path2;
 //typedef array<char,4> ARRAY4char;
 //#include "raw_cpp_lexem.inl"
 //#include "t_line_lexer.inl"
-//#define JSON_TEST
+namespace t_d7{
+//#include "t_d7_module.hpp"
+};
+#define JSON_TEST
 #ifdef JSON_TEST
 #include "t_json.hpp"
 #else
@@ -351,11 +355,24 @@ void ssd_test(){
 }*/
 #ifdef JSON_TEST
 void test20250630_json_test(){
-  for(;;){
-  TAutoPtr<t_json::i_value> v;
-  QapClock clock;
-  load_obj_full(v,file_get_contents("test.json"));
-  cerr<<clock.MS()<<endl;
+  string msg;
+  double tms=0;int n=0;double tms2=0;double lms=+1e9;double hms=-1e9;
+  QapClock clock2;
+  auto content=file_get_contents("test.json");
+  auto Lms=clock2.MS();
+  cerr<<"load_time:"<<FToS2(Lms)<<" size:"<<content.size()<<endl;
+  for(int i=1;;i++){
+    TAutoPtr<t_json::i_value> v;
+    if(n==20){tms=0;n=1;}else n++;
+    QapClock clock;
+    auto r=load_obj_full(v,content,true,&msg);
+    auto ms=clock.MS();
+    tms+=ms;tms2+=ms;lms=std::min(lms,ms);hms=std::max(hms,ms);
+    cerr<<"time:"<<FToS2(ms)<<" ms; spd:"<<FToS2(content.size()*1e-6/(tms2/i/1000))<<" MB/s; avg:"<<FToS2(tms2/i)<<"; pavg:"<<FToS2(tms/n)<<"; min:"<<FToS2(lms)<<"; max:"<<FToS2(hms)<<"; status:"<<(r.ok?"ok":"fail")<<"; pos:"<<r.pos<<endl;// 411ms/iter vs 232.69ms/iter - old way
+    if(!r.ok){
+      cerr<<r.msg<<endl;
+      exit(0);
+    }
   }
 }
 #endif
@@ -395,6 +412,13 @@ void printMapsJsonLike(
 #pragma comment(lib,"shell32.lib")
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
+  //string msg;
+  //TAutoPtr<t_ploy_test20250715> pt;
+  //auto res=load_obj_full(pt,"ccXz",true,&msg);
+  //t_meta_lexer::t_ploy_test20250715 pt;
+  //t_d7::t_unit u;
+  //auto res=load_obj_full(u,file_get_contents("Basa.pas"));
+  //int gg=1;
   cerr<<g_version<<endl;
   int argc=0;
   LPWSTR*argv=CommandLineToArgvW(GetCommandLineW(),&argc);
@@ -402,7 +426,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   wcstombs(&path[0],argv[0],wcslen(argv[0])+1);
   g_qap_poly_tool_config_path2=get_path(path);
   #ifdef JSON_TEST
-  test20250630_json_test();  return 0;
+  test20250630_json_test(); return 0;
   #else// 655.864 ms for 2 251 060 באיע 3.4322 mb/s vs nodejs(10.42mb/sec)
                                        // 536.882 ms - 4.199 mb/sec - new version
                                        // 272.522 ms - 8.260 mb/sec - without debug stuff

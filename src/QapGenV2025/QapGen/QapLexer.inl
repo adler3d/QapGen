@@ -1,5 +1,4 @@
 #include "QapStrFinder.inl"
-#include <set>
 struct t_fallback;
 
 struct t_scope_tool{

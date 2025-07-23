@@ -15,6 +15,7 @@
 #endif
 #else
 #endif
+#include <set>
 #include <vector>
 #include <map>
 #include <functional>
@@ -33,6 +34,7 @@
 #include <math.h>
 #include <iomanip>
 #include <iostream>
+using namespace std;
 //#include <ctype.h>
 
 enum TMouseButton{mbLeft=257,mbRight=258,mbMiddle=259,};
@@ -258,6 +260,17 @@ static string join(const vector<string>&arr,const string&glue)
   for(int i=0;i<arr.size();i++){if(i)out+=glue;out+=arr[i];}
   return out;
 }
+static string join(const set<string>&arr,const string&glue)
+{
+  string out;
+  size_t c=0;
+  size_t dc=glue.size();
+  int i=-1;
+  for(auto&ex:arr){if(++i)c+=dc;c+=ex.size();}
+  out.reserve(c);i=-1;
+  for(auto&ex:arr){if(++i)out+=glue;out+=ex;}
+  return out;
+}
 struct TScreenMode{
   int W,H,BPP,Freq;
 };
@@ -294,12 +307,17 @@ enum QapMsgBoxRetval{qmbrSkip,qmbrBreak,qmbrIgnore};
 inline int WinMessageBox(const string&caption,const string&text)
 {
   #ifdef _WIN32
+  #ifdef ADLER_GUI_DEBUG
   string full_text=text+"\n\n    [Skip]            [Break]            [Ignore]";
   const int nCode=MessageBoxA(NULL,full_text.c_str(),caption.c_str(),MB_CANCELTRYCONTINUE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL);
   QapMsgBoxRetval retval=qmbrSkip;
   if(IDCONTINUE==nCode)retval=qmbrIgnore;
   if(IDTRYAGAIN==nCode)retval=qmbrBreak;
   return retval;
+  #else
+  std::cerr << "WinMessageBox suppressed on non-interactive environment:\n" << caption << ":\n" << text << std::endl;
+  return qmbrBreak;
+  #endif
   #else
   #ifdef __EMSCRIPTEN__
   EM_ASM({alert(UTF8ToString($0)+"\n"+UTF8ToString($1));},int(caption.c_str()),int(text.c_str()));
@@ -1076,20 +1094,28 @@ std::string escape_char(char c,bool str=true) {
   }
 }
 
-std::string generate_gen_dips_code(const std::string&chars){
-  if (chars.empty()) return "\"\"";
+string make_unique_voc(const string&voc){
+  auto m=CharMask::fromStr(voc,true);
+  string u;
+  for(size_t i=0;i<256;i++){
+    if(m.mask[i])u.push_back((char)i);
+  }
+  return std::move(u);
+}
+
+std::string generate_gen_dips_code(const std::string&chars,bool need_sort=false){
+  if(chars.empty())return "\"\"";
   if(chars.size()==1)return "\""+escape_char(chars[0])+"\"";
   if(chars.size()<16){
     std::string escaped;
     for(char c:chars){escaped+=escape_char(c);}
     return "\""+escaped+"\"";
   }
-  std::string sorted_chars = chars;
+  string sorted_chars=need_sort?make_unique_voc(chars):chars;
+  if(!need_sort&&sorted_chars!=chars)QapNoWay();
   auto r=build_ranges_string(sorted_chars);
   auto r2=(gen_dips(r.ranges)+r.singles);
-  auto m=CharMask::fromStr(r2,true);
-  string u;
-  for(size_t i=0;i<256;i++)if(m.mask[i])u.push_back((char)i);
+  string u=make_unique_voc(r2);
   QapAssert(sorted_chars==u);
   string out,so;
   for(auto&ex:r.ranges)out+=escape_char(ex);//CppString::toCode((uchar&)ex);
@@ -1103,3 +1129,14 @@ std::string generate_gen_dips_code(const std::string&chars){
   return code;
 }
 
+string get_path(const string&fn){
+  string s=fn;
+  auto apos=s.rfind("/");
+  auto bpos=s.rfind("\\");
+  auto split_by=[&](const string&it){auto arr=split(s,it);arr.pop_back();s=join(arr,it)+it;};
+  if(apos==string::npos&&bpos==string::npos){return "";}else if(apos!=string::npos&&bpos!=string::npos){
+    if(apos>bpos)split_by("/");
+    if(bpos>apos)split_by("\\");
+  }else if(apos==string::npos){split_by("\\");}else split_by("/");
+  return s;
+}
