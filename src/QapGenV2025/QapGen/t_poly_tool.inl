@@ -47,7 +47,11 @@ struct t_poly_tool:public t_config_2013{
       return tool;
     }
     clock.Stop();clock.Start();
-    if(IO.mem.size())QapAssert(load_obj(/*Env,*/doc,IO.mem));clock.Stop();clock.Start();
+    if(IO.mem.size()){
+      string msg;
+      auto r=load_obj_full(/*Env,*/doc,IO.mem,true,&msg);
+      if(!r.ok)QapDebugMsg(r.msg);clock.Stop();clock.Start();
+    }
     real time=clock.MS();
     clock.Stop();clock.Start();
     //doc.lines.reserve(2048);

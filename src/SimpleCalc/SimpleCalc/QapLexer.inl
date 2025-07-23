@@ -19,7 +19,7 @@ static int&get_qap_fallback_counter(){static int counter=0;return counter;}
 struct t_fallback{
   struct t_rec{bool E;bool ok;bool D;};
   i_dev_base&dev;
-  bool ok;
+  bool ok=true;
   size_t pos;
   const char*const ptr;
   const char*const ptr2;
@@ -285,7 +285,7 @@ public:
     auto n=mem.size();
     if(pos>=n)return false;
     const auto*p=&mem[pos];
-    auto e=p+n;
+    auto e=p+(n-pos);
     auto&mask=any.mask;
     for(;p<e;p++)
     {
@@ -293,7 +293,7 @@ public:
       auto body_size=p-&mem[pos];
       body=mem.substr(pos,body_size);
       pos+=body_size;
-      return body_size;
+      return bool(body_size);
     }
     body=mem.substr(pos);
     pos+=body.size();

@@ -1256,6 +1256,12 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       result.con=true;
       return result;
     }
+    if(fn=="go_str_without"){
+      out+=gen_dips("\x00\xff");
+      if(!opt){result.ret=true;return result;}
+      result.con=true;
+      return result;
+    }
     if(fn=="go_str"){
       QapAssert(cmd.params.arr.size()==1);
       auto&cpa0b=cmd.params.arr[0].body;

@@ -285,7 +285,7 @@ public:
     auto n=mem.size();
     if(pos>=n)return false;
     const auto*p=&mem[pos];
-    auto e=p+n;
+    auto e=p+(n-pos);
     auto&mask=any.mask;
     for(;p<e;p++)
     {
@@ -293,7 +293,7 @@ public:
       auto body_size=p-&mem[pos];
       body=mem.substr(pos,body_size);
       pos+=body_size;
-      return body_size;
+      return bool(body_size);
     }
     body=mem.substr(pos);
     pos+=body.size();
