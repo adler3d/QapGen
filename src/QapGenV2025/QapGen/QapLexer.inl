@@ -19,7 +19,7 @@ static int&get_qap_fallback_counter(){static int counter=0;return counter;}
 struct t_fallback{
   struct t_rec{bool E;bool ok;bool D;};
   i_dev_base&dev;
-  bool ok;
+  bool ok=true;
   size_t pos;
   const char*const ptr;
   const char*const ptr2;

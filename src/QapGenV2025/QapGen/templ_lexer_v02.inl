@@ -105,10 +105,7 @@ public:
       bool go(i_dev&dev){
         t_fallback scope(dev,__FUNCTION__);
         auto&ok=scope.ok;
-        auto&D=scope.mandatory;
-        auto&M=scope.mandatory;
-        auto&O=scope.optional;
-        D+=dev.go_auto(arr);
+        ok=dev.go_auto(arr);
         if(!ok)return ok;
         return ok;
       }
@@ -127,10 +124,7 @@ public:
     bool go(i_dev&dev){
       t_fallback scope(dev,__FUNCTION__);
       auto&ok=scope.ok;
-      auto&D=scope.mandatory;
-      auto&M=scope.mandatory;
-      auto&O=scope.optional;
-      D+=dev.go_str<t_impl>(body);
+      ok=dev.go_str<t_impl>(body);
       if(!ok)return ok;
       return ok;
     }
@@ -152,15 +146,12 @@ public:
     bool go(i_dev&dev){
       t_fallback scope(dev,__FUNCTION__);
       auto&ok=scope.ok;
-      auto&D=scope.mandatory;
-      auto&M=scope.mandatory;
-      auto&O=scope.optional;
-      D+=dev.go_const("^^^");
+      ok=dev.go_const("^^^");
       if(!ok)return ok;
       static const string g_static_dip_1=gen_dips("azAZ09")+"_$@";
-      D+=dev.go_any(name,g_static_dip_1);
+      ok=dev.go_any(name,g_static_dip_1);
       if(!ok)return ok;
-      D+=dev.go_const("^^^");
+      ok=dev.go_const("^^^");
       if(!ok)return ok;
       return ok;
     }
@@ -186,11 +177,8 @@ public:
     bool go(i_dev&dev){
       t_fallback scope(dev,__FUNCTION__);
       auto&ok=scope.ok;
-      auto&D=scope.mandatory;
-      auto&M=scope.mandatory;
-      auto&O=scope.optional;
       static const string g_static_dip_0=dip_inv("^");
-      D+=dev.go_any(body,g_static_dip_0);
+      ok=dev.go_any(body,g_static_dip_0);
       if(!ok)return ok;
       return ok;
     }
@@ -209,10 +197,7 @@ public:
       bool go(i_dev&dev){
         t_fallback scope(dev,__FUNCTION__);
         auto&ok=scope.ok;
-        auto&D=scope.mandatory;
-        auto&M=scope.mandatory;
-        auto&O=scope.optional;
-        D+=dev.go_const("^");
+        ok=dev.go_const("^");
         if(!ok)return ok;
         return ok;
       }
@@ -231,10 +216,7 @@ public:
     bool go(i_dev&dev){
       t_fallback scope(dev,__FUNCTION__);
       auto&ok=scope.ok;
-      auto&D=scope.mandatory;
-      auto&M=scope.mandatory;
-      auto&O=scope.optional;
-      D+=dev.go_minor<t_var>(body);
+      ok=dev.go_minor<t_var>(body);
       if(!ok)return ok;
       return ok;
     }
@@ -253,10 +235,7 @@ public:
   bool go(i_dev&dev){
     t_fallback scope(dev,__FUNCTION__);
     auto&ok=scope.ok;
-    auto&D=scope.mandatory;
-    auto&M=scope.mandatory;
-    auto&O=scope.optional;
-    D+=dev.go_auto(arr);
+    ok=dev.go_auto(arr);
     if(!ok)return ok;
     return ok;
   }
