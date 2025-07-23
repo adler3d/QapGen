@@ -13,19 +13,16 @@ public:
     bool go(i_dev&dev){
       t_fallback scope(dev,__FUNCTION__);
       auto&ok=scope.ok;
-      auto&D=scope.mandatory;
-      auto&M=scope.mandatory;
-      auto&O=scope.optional;
-      D+=dev.go_const("----------------------------------------------------------------\n");
+      ok=dev.go_const("----------------------------------------------------------------\n");
       if(!ok)return ok;
-      D+=dev.go_const("#####-");
+      ok=dev.go_const("#####-");
       if(!ok)return ok;
       static const string g_static_dip_2=gen_dips("azAZ09")+"_$@";
-      D+=dev.go_any(name,g_static_dip_2);
+      ok=dev.go_any(name,g_static_dip_2);
       if(!ok)return ok;
-      D+=dev.go_const("-#####\n");
+      ok=dev.go_const("-#####\n");
       if(!ok)return ok;
-      D+=dev.go_const("----------------------------------------------------------------\n");
+      ok=dev.go_const("----------------------------------------------------------------\n");
       if(!ok)return ok;
       return ok;
     }
@@ -44,12 +41,9 @@ public:
     bool go(i_dev&dev){
       t_fallback scope(dev,__FUNCTION__);
       auto&ok=scope.ok;
-      auto&D=scope.mandatory;
-      auto&M=scope.mandatory;
-      auto&O=scope.optional;
-      M+=dev.go_auto(head);
+      ok=dev.go_auto(head);
       if(!ok)return ok;
-      O+=dev.go_str_without<t_head>(body);
+      dev.go_str_without<t_head>(body);
       if(!ok)return ok;
       return ok;
     }
@@ -72,10 +66,7 @@ public:
   bool go(i_dev&dev){
     t_fallback scope(dev,__FUNCTION__);
     auto&ok=scope.ok;
-    auto&D=scope.mandatory;
-    auto&M=scope.mandatory;
-    auto&O=scope.optional;
-    D+=dev.go_auto(arr);
+    ok=dev.go_auto(arr);
     if(!ok)return ok;
     return ok;
   }
