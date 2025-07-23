@@ -43,7 +43,7 @@ string g_qap_poly_tool_config_path2;
 namespace t_d7{
 //#include "t_d7_module.hpp"
 };
-#define JSON_TEST
+//#define JSON_TEST
 #ifdef JSON_TEST
 #include "t_json.hpp"
 #else
