@@ -684,6 +684,8 @@ struct t_templ_sys_v05:t_templ_sys_v04,
         static string buf;pcmds=&buf;buf={};
         vector<string> cmds;
         auto&arr=*v.pfs;
+        lexer_cmds.clear();
+        //QapAssert(lexer_cmds.empty());
         int i=-1;
         for(auto&it:arr){
           i++;

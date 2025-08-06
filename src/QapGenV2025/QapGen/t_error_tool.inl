@@ -50,7 +50,7 @@ struct t_error_tool{
     auto go=[&subline_go,&pos](const t_line_info&info,const string&line,size_t offset,const string&sep)->string{
       auto sub=subline_go(line,offset);
       QapAssert(sub.error.empty());
-      return "{\"line\":"+IToS(info.line_id)+",\"pos\":"+IToS(pos-info.curpos)+"}\n\""+sub.cpp+"\" "+sep+"\n-"+sub.low;
+      return "{\"line\":"+IToS(info.line_id+1)+",\"pos\":"+IToS(pos-info.curpos)+"}\n\""+sub.cpp+"\" "+sep+"\n-"+sub.low;
     };
     QapAssert(!code.empty());
     if(code.size()==pos)pos--;
