@@ -5,7 +5,7 @@
 typedef unsigned char uchar;
 size_t g_unique_pool_ptr_counter=0;
 string g_version="{\"version\":\"1.0\"}";
-#define QAP_LOAD_DEV_WITH_STACK
+//#define QAP_LOAD_DEV_WITH_STACK
 #define QAP_USE_UNIQUE_POOL_PTR
 //#define QAP_STD_DEBUG
 #ifdef QAP_STD_DEBUG
@@ -46,8 +46,10 @@ namespace t_d7{
 #define JSON_TEST
 #ifdef JSON_TEST
 #include "t_json.hpp"
-#include "sql.hpp"
-#include "sql_kw2lc.hpp"
+//#include "sql.hpp"
+//#include "sql_kw2lc.hpp"
+#include "tma_lang.hpp"
+#include "pascal_kw2lc.h"
 #else
 #include "visitor_gen.h"
 #endif
@@ -377,6 +379,7 @@ void test20250630_json_test(){
     }
   }
 }
+/*
 void test20250805_sql_test(){
   string msg;
   double tms=0;int n=0;double tms2=0;double lms=+1e9;double hms=-1e9;
@@ -393,6 +396,30 @@ void test20250805_sql_test(){
     auto ms=clock.MS();
     tms+=ms;tms2+=ms;lms=std::min(lms,ms);hms=std::max(hms,ms);
     cerr<<"time:"<<FToS2(ms)<<" ms; spd:"<<FToS2(content.size()*1e-6/(tms2/i/1000))<<" MB/s; avg:"<<FToS2(tms2/i)<<"; pavg:"<<FToS2(tms/n)<<"; min:"<<FToS2(lms)<<"; max:"<<FToS2(hms)<<"; status:"<<(r.ok?"ok":"fail")<<"; pos:"<<r.pos<<endl;// 411ms/iter vs 232.69ms/iter - old way
+    if(!r.ok){
+      cerr<<r.msg<<endl;
+      exit(0);
+    }
+    //break;
+  }
+}*/
+string tma_script_fn="pascal_example.pas";
+void test20250815_tma_test(){
+  string msg;
+  double tms=0;int n=0;double tms2=0;double lms=+1e9;double hms=-1e9;
+  QapClock clock2;
+  auto content2=file_get_contents(tma_script_fn);
+  auto Lms=clock2.MS();
+  cerr<<"load_time:"<<FToS2(Lms)<<" size:"<<content2.size()<<endl;
+  for(int i=1;;i++){
+    vector<TAutoPtr<i_stat>> root;
+    if(n==20){tms=0;n=1;}else n++;
+    QapClock clock;
+    auto content=process_code(content2);
+    auto r=load_obj_full(root,content,true,&msg);
+    auto ms=clock.MS();
+    tms+=ms;tms2+=ms;lms=std::min(lms,ms);hms=std::max(hms,ms);
+    cerr<<"time:"<<FToS2(ms)<<" ms; spd:"<<FToS4(content.size()*1e-6/(tms2/i/1000))<<" MB/s; avg:"<<FToS2(tms2/i)<<"; pavg:"<<FToS2(tms/n)<<"; min:"<<FToS2(lms)<<"; max:"<<FToS2(hms)<<"; status:"<<(r.ok?"ok":"fail")<<"; pos:"<<r.pos<<endl;// 411ms/iter vs 232.69ms/iter - old way
     if(!r.ok){
       cerr<<r.msg<<endl;
       exit(0);
@@ -451,7 +478,8 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   wcstombs(&path[0],argv[0],wcslen(argv[0])+1);
   g_qap_poly_tool_config_path2=get_path(path);
   #ifdef JSON_TEST
-  test20250805_sql_test(); return 0;
+  test20250815_tma_test(); return 0;
+  //test20250805_sql_test(); return 0;
   test20250630_json_test(); return 0;
   #else// 655.864 ms for 2 251 060 באיע 3.4322 mb/s vs nodejs(10.42mb/sec)
                                        // 536.882 ms - 4.199 mb/sec - new version

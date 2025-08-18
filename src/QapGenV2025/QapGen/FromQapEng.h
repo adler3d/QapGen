@@ -216,8 +216,8 @@ static bool file_put_contents(const string&fn,const string&mem){
   return true;
 }
 #else
-static bool file_put_contents(const string&FN,const string&mem){std::fstream f(FN,std::ios::out|std::ios::trunc);f<<mem;return true;}
-static string file_get_contents(const string&fn){std::ifstream file(fn);return std::string((std::istreambuf_iterator<char>(file)),(std::istreambuf_iterator<char>()));}
+static bool file_put_contents(const string&FN,const string&mem){std::fstream f(FN,std::ios::binary|std::ios::out|std::ios::trunc);f<<mem;return true;}
+static string file_get_contents(const string&fn){std::ifstream file(fn,std::ios::binary);return std::string((std::istreambuf_iterator<char>(file)),(std::istreambuf_iterator<char>()));}
 #endif
 
 template<class TYPE>
@@ -279,6 +279,7 @@ static const int Sys_UPD=64;
 inline string IToS(const int&val){return to_string(val);}
 inline string FToS(const double&val){return to_string(val);}
 inline string FToS2(const float&val){std::stringstream ss;ss<<std::fixed<<std::setprecision(2)<<val;return ss.str();}
+inline string FToS4(const float&val){std::stringstream ss;ss<<std::fixed<<std::setprecision(4)<<val;return ss.str();}
 #ifdef __EMSCRIPTEN__
 #define __debugbreak()EM_ASM({throw new Error("__debugbreak");});
 #else

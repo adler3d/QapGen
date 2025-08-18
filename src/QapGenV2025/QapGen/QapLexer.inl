@@ -995,6 +995,9 @@ bool i_dev::go_str(string&ref)
         QapAssert(CheckTAutoPtrIsNotEmpty(tmp));
         arr.push_back(std::move(tmp));
       }
+      #ifdef QAP_LOAD_DEV_WITH_STACK
+      scope.keep_errs=arr.size();
+      #endif
       ok=!arr.empty();
       return ok;
     }
