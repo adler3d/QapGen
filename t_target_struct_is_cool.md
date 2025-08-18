@@ -1,10 +1,10 @@
-### Self-Describing Grammar — The Key Feature
+### Self-Describing Grammar â€” The Key Feature
 
 ```cpp
-t_target_struct:i_target_item{
-  t_keyword{string kw=any_str_from_vec(split("struct,class",","));" "?}
-  t_body_semicolon:i_struct_impl{";"}
-  t_body_impl:i_struct_impl{
+struct t_target_struct:i_target_item{
+  struct t_keyword{string kw=any_str_from_vec(split("struct,class",","));" "?};
+  struct t_body_semicolon:i_struct_impl{";"};
+  struct t_body_impl:i_struct_impl{
     "{"  // This brace corresponds to the opening brace in the declaration line "t_target_struct:i_target_item{"
     vector<TAutoPtr<i_target_item>> nested?;
     " "?
@@ -15,23 +15,36 @@ t_target_struct:i_target_item{
     TAutoPtr<t_cpp_code> c?;
     " "?
     "}"  // This closing brace corresponds to the closing brace of the structure body
-  }
-  t_parent{
+  };
+  struct t_parent{
     string arrow_or_colon=any_str_from_vec(split("=>,:",","));
     " "?
     t_name parent;
-  }
+  };
   TAutoPtr<t_keyword> kw?;
   t_name name;
   " "?
   TAutoPtr<t_parent> parent?;
   " "?
   TAutoPtr<i_struct_impl> body;
-}
+};
+struct t_struct_field:i_struct_field{
+  TAutoPtr<t_cppcore::i_expr> type;
+  " "?
+  t_name name;
+  TAutoPtr<t_struct_field_value> value?;
+  " "?
+  TAutoPtr<t_qst> qst?;
+  " "?
+  ";"
+  " "?
+  TAutoPtr<t_attr> attr?;
+  " "?
+};
 ```
 
 - In this example, the very beginning of the structure description is **not just the keyword** `struct` or `class`, but the **mandatory field** `t_name name;` which defines the name of the structure.
-- This means that the grammar describes **not only the syntax of the language but also itself** — this lexer is capable of reading and understanding its own description.
+- This means that the grammar describes **not only the syntax of the language but also itself** â€” this lexer is capable of reading and understanding its own description.
 - The curly braces `"{"` and `"}"` in `t_body_impl` are **not merely syntactic symbols**, but part of a mechanism that allows the grammar to recursively extend itself, including nested definitions.
 - This approach enables building **flexible, extensible, and self-documenting parsers** that can adapt and evolve along with the language.
 
