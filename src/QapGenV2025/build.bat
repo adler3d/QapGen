@@ -1,7 +1,7 @@
 setlocal enabledelayedexpansion
 rem ¬ключаем прерывание при ошибке
 set ERRORLEVEL=0
-cl.exe /std:c++17 /bigobj /EHsc /DQAP_DEBUG /Zi /Od /DEBUG /Fd"QapGen.pdb" QapGen/QapGen.cpp
+cl.exe /std:c++17 /bigobj /EHsc /DQAP_DEBUG /DGITHUB /Zi /Od /DEBUG /Fd"QapGen.pdb" QapGen/QapGen.cpp
 if errorlevel 1 (
   echo err, stop working
   exit /b %errorlevel%

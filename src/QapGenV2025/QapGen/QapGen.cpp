@@ -477,6 +477,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   string path;path.resize(wcslen(argv[0]));
   wcstombs(&path[0],argv[0],wcslen(argv[0])+1);
   g_qap_poly_tool_config_path2=get_path(path);
+  #ifndef GITHUB
   #ifdef JSON_TEST
   test20250815_tma_test(); return 0;
   //test20250805_sql_test(); return 0;
@@ -484,6 +485,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   #else// 655.864 ms for 2 251 060 באיע 3.4322 mb/s vs nodejs(10.42mb/sec)
                                        // 536.882 ms - 4.199 mb/sec - new version
                                        // 272.522 ms - 8.260 mb/sec - without debug stuff
+  #endif
   //for(;;);
   //main2();
   //file_put_contents("test.bin",s);
