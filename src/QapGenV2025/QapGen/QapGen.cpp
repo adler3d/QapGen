@@ -18,7 +18,7 @@ string g_version="{\"version\":\"1.0\"}";
 #undef QapAssert
 #undef QapNoWay
 #undef QapDebugMsg
-#define QapAssert(CODE){CODE;}
+#define QapAssert(CODE){(void)(CODE);}
 #define QapNoWay(...){}
 #define QapDebugMsg(...){}
 #endif
@@ -485,7 +485,6 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   #else// 655.864 ms for 2 251 060 באיע 3.4322 mb/s vs nodejs(10.42mb/sec)
                                        // 536.882 ms - 4.199 mb/sec - new version
                                        // 272.522 ms - 8.260 mb/sec - without debug stuff
-  #endif
   //for(;;);
   //main2();
   //file_put_contents("test.bin",s);
@@ -505,6 +504,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   //}
   #ifdef QAP_UPP_COUNTERS
   printMapsJsonLike(t2maxn,t2c);
+  #endif
   #endif
   #endif
   return 0;
