@@ -115,13 +115,13 @@ t_sql{
       " "?
       "is"
       " "?
-      TAutoPtr<t_not> not?;
+      TAutoPtr<t_not> neg?;
       " "?
       "null"
     }
     t_in_list:i_lev06_ext{
       " "?
-      TAutoPtr<t_not> not?;
+      TAutoPtr<t_not> neg?;
       " "?
       "in"
       " "?

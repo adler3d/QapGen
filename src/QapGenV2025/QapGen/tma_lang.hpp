@@ -1,4 +1,4 @@
-// 5358.817100 ms
+// 5136.105300 ms
 //===>>===i_expr_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -1682,7 +1682,7 @@ struct t_sql{
     ADDBEG()\
     ADDVAR(t_sep,$sep0,DEF,$,$)\
     ADDVAR(t_sep,$sep2,DEF,$,$)\
-    ADDVAR(TAutoPtr<t_not>,not,DEF,$,$)\
+    ADDVAR(TAutoPtr<t_not>,neg,DEF,$,$)\
     ADDVAR(t_sep,$sep4,DEF,$,$)\
     ADDEND()
     //=====+>>>>>t_is_null
@@ -1699,7 +1699,7 @@ struct t_sql{
         ok=dev.go_const("is");$(ok,",\"i\"");
         if(!ok)return ok;
         {bool ok=dev.go_auto($sep2);$(ok,"t_sep,\"\\t\\n\\r -/\"");}
-        {bool ok=dev.go_auto(not);$(ok,"TAutoPtr<t_not>,\"n\"");}
+        {bool ok=dev.go_auto(neg);$(ok,"TAutoPtr<t_not>,\"n\"");}
         {bool ok=dev.go_auto($sep4);$(ok,"t_sep,\"\\t\\n\\r -/\"");}
         ok=dev.go_const("null");$(ok,",\"n\"");
         if(!ok)return ok;
@@ -1711,7 +1711,7 @@ struct t_sql{
     #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
     ADDBEG()\
     ADDVAR(t_sep,$sep0,DEF,$,$)\
-    ADDVAR(TAutoPtr<t_not>,not,DEF,$,$)\
+    ADDVAR(TAutoPtr<t_not>,neg,DEF,$,$)\
     ADDVAR(t_sep,$sep2,DEF,$,$)\
     ADDVAR(t_sep,$sep4,DEF,$,$)\
     ADDVAR(TAutoPtr<i_in_operand>,operand,DEF,$,$)\
@@ -1727,7 +1727,7 @@ struct t_sql{
         t_fallback $(dev,"t_sql::t_lev06::t_in_list");
         auto&ok=$.ok;
         {bool ok=dev.go_auto($sep0);$(ok,"t_sep,\"\\t\\n\\r -/\"");}
-        {bool ok=dev.go_auto(not);$(ok,"TAutoPtr<t_not>,\"n\"");}
+        {bool ok=dev.go_auto(neg);$(ok,"TAutoPtr<t_not>,\"n\"");}
         {bool ok=dev.go_auto($sep2);$(ok,"t_sep,\"\\t\\n\\r -/\"");}
         ok=dev.go_const("in");$(ok,",\"i\"");
         if(!ok)return ok;
@@ -6750,10 +6750,10 @@ f%0a%20%20%20%20%20%20%22between%22%0a%20%20%20%20%20%20%22%20%22%3f%0a%20%20%20
 0%22and%22%0a%20%20%20%20%20%20%22%20%22%3f%0a%20%20%20%20%20%20t%5flev05%20high
 %3b%0a%20%20%20%20%7d%0a%20%20%20%20t%5fis%5fnull%3ai%5flev06%5fext%7b%0a%20%20%
 20%20%20%20%22%20%22%3f%0a%20%20%20%20%20%20%22is%22%0a%20%20%20%20%20%20%22%20%
-22%3f%0a%20%20%20%20%20%20TAutoPtr%3ct%5fnot%3e%20not%3f%3b%0a%20%20%20%20%20%20
+22%3f%0a%20%20%20%20%20%20TAutoPtr%3ct%5fnot%3e%20neg%3f%3b%0a%20%20%20%20%20%20
 %22%20%22%3f%0a%20%20%20%20%20%20%22null%22%0a%20%20%20%20%7d%0a%20%20%20%20t%5f
 in%5flist%3ai%5flev06%5fext%7b%0a%20%20%20%20%20%20%22%20%22%3f%0a%20%20%20%20%2
-0%20TAutoPtr%3ct%5fnot%3e%20not%3f%3b%0a%20%20%20%20%20%20%22%20%22%3f%0a%20%20%
+0%20TAutoPtr%3ct%5fnot%3e%20neg%3f%3b%0a%20%20%20%20%20%20%22%20%22%3f%0a%20%20%
 20%20%20%20%22in%22%0a%20%20%20%20%20%20%22%20%22%3f%0a%20%20%20%20%20%20TAutoPt
 r%3ci%5fin%5foperand%3e%20operand%3b%0a%20%20%20%20%7d%0a%20%20%20%20t%5foper%7b
 string%20value%3dany%5fstr%5ffrom%5fvec%28split%28%22%3d%2c%3c%3e%2c%3c%2c%3e%2c
