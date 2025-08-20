@@ -1,4 +1,4 @@
-// 5410.794300 ms
+// 5358.817100 ms
 //===>>===i_expr_visitor
 #define DEF_PRO_BLANK()
 #define LIST(ADDBEG,ADD,ADDEND)\
@@ -1642,7 +1642,7 @@ struct t_sql{
     #define DEF_PRO_STRUCT_INFO(NAME,PARENT,OWNER)NAME(t_between)PARENT(i_lev06_ext)OWNER(t_lev06)
     #define DEF_PRO_VARIABLE(ADDBEG,ADDVAR,ADDEND)\
     ADDBEG()\
-    ADDVAR(TAutoPtr<t_not>,not,DEF,$,$)\
+    ADDVAR(TAutoPtr<t_not>,neg,DEF,$,$)\
     ADDVAR(t_sep,$sep1,DEF,$,$)\
     ADDVAR(t_sep,$sep3,DEF,$,$)\
     ADDVAR(t_lev05,low,DEF,$,$)\
@@ -1660,7 +1660,7 @@ struct t_sql{
       bool go(i_dev&dev){
         t_fallback $(dev,"t_sql::t_lev06::t_between");
         auto&ok=$.ok;
-        {bool ok=dev.go_auto(not);$(ok,"TAutoPtr<t_not>,\"n\"");}
+        {bool ok=dev.go_auto(neg);$(ok,"TAutoPtr<t_not>,\"n\"");}
         {bool ok=dev.go_auto($sep1);$(ok,"t_sep,\"\\t\\n\\r -/\"");}
         ok=dev.go_const("between");$(ok,",\"b\"");
         if(!ok)return ok;
@@ -6358,9 +6358,6 @@ public:
   }
 public:
 };
-//---
-//2025.08.14 13:30:12.222
-//2025.08.15 09:41:22.667
 void i_expr::t_poly_impl::load()
 {
   #define F(TYPE,MASK)t_lex{#TYPE,[](t_poly_impl*self){self->go_for<TYPE>();},CharMask::fromStr(MASK,true)}
@@ -6747,7 +6744,7 @@ value%3d%22%7c%7c%22%3b%7d%0a%20%20%20%20t%5fitem%7b%22%20%22%3ft%5foper%20oper%
 3b%22%20%22%3ft%5flev04%20expr%3b%7d%0a%20%20%20%20t%5flev04%20expr%3b%0a%20%20%
 20%20vector%3ct%5fitem%3e%20arr%3f%3b%0a%20%20%7d%0a%20%20t%5flev06%7b%0a%20%20%
 20%20t%5fnot%7b%22not%22%7d%0a%20%20%20%20t%5fbetween%3ai%5flev06%5fext%7b%0a%20
-%20%20%20%20%20TAutoPtr%3ct%5fnot%3e%20not%3f%3b%0a%20%20%20%20%20%20%22%20%22%3
+%20%20%20%20%20TAutoPtr%3ct%5fnot%3e%20neg%3f%3b%0a%20%20%20%20%20%20%22%20%22%3
 f%0a%20%20%20%20%20%20%22between%22%0a%20%20%20%20%20%20%22%20%22%3f%0a%20%20%20
 %20%20%20t%5flev05%20low%3b%0a%20%20%20%20%20%20%22%20%22%3f%0a%20%20%20%20%20%2
 0%22and%22%0a%20%20%20%20%20%20%22%20%22%3f%0a%20%20%20%20%20%20t%5flev05%20high
@@ -7077,6 +7074,5 @@ fret%5ftype%3e%20type%3f%3b%0a%20%20%22%20%22%3f%0a%20%20%22%3b%22%0a%20%20%22%2
 0%22%3f%0a%20%20vector%3cTAutoPtr%3ci%5fd%3e%3e%20darr%3f%3b%0a%20%20%22%20%22%3
 f%0a%20%20%22begin%22%0a%20%20%22%20%22%3f%0a%20%20vector%3ci%5fstat%3e%20arr%3f
 %3b%0a%20%20%22%20%22%3f%0a%20%20%22end%22%0a%20%20%22%20%22%3f%0a%20%20%22%3b%2
-2%0a%20%20%22%20%22%3f%0a%7d%0a%2f%2f%2d%2d%2d%0a%2f%2f2025%2e08%2e14%2013%3a30%
-3a12%2e222%0a%2f%2f2025%2e08%2e15%2009%3a41%3a22%2e667
+2%0a%20%20%22%20%22%3f%0a%7d
 */

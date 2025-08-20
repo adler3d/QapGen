@@ -101,7 +101,7 @@ t_sql{
   t_lev06{
     t_not{"not"}
     t_between:i_lev06_ext{
-      TAutoPtr<t_not> not?;
+      TAutoPtr<t_not> neg?;
       " "?
       "between"
       " "?

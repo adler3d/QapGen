@@ -5,9 +5,9 @@
 typedef unsigned char uchar;
 size_t g_unique_pool_ptr_counter=0;
 string g_version="{\"version\":\"1.0\"}";
-//#define QAP_LOAD_DEV_WITH_STACK
+#define QAP_LOAD_DEV_WITH_STACK
 #define QAP_USE_UNIQUE_POOL_PTR
-//#define QAP_STD_DEBUG
+#define QAP_STD_DEBUG
 #ifdef QAP_STD_DEBUG
 #define QAP_LOAD_OBJ_DEBUG
 #define QAP_POLY_TOOL_DEBUG
