@@ -1138,7 +1138,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       if(fn=="go_any")QapAssert(bad_type_checker(f.type,"string"));
       if(fn=="go_any_char")QapAssert(bad_type_checker(f.type,"char"));
       auto p0=cmd.params.arr[0].body;
-      auto p1=cmd.params.arr[1].body;// выражение типа gen_dips("09")+"str"+"other_str"
+      auto p1=cmd.params.arr[1].body;// ГўГ»Г°Г Г¦ГҐГ­ГЁГҐ ГІГЁГЇГ  gen_dips("09")+"str"+"other_str"
       t_cmd_param p1p;
       QapAssert(load_obj(p1p,p1));
       collect_expected_chars(p1p,out);
@@ -1152,7 +1152,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       auto&f=find_field(lexer,cpa0b);
       QapAssert(bad_type_checker(f.type,"string"));
       auto p0=cmd.params.arr[0].body;
-      auto p1=cmd.params.arr[1].body;// выражение типа split("0,9",",")
+      auto p1=cmd.params.arr[1].body;// ГўГ»Г°Г Г¦ГҐГ­ГЁГҐ ГІГЁГЇГ  split("0,9",",")
       t_cmd_param p1p;
       QapAssert(load_obj(p1p,p1));
       collect_expected_chars(p1p,out,true);
@@ -1580,7 +1580,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     }
     return nullptr;
   }
-  // Рекурсивный поиск лексера с именем name внутри узла node
+  // ГђГҐГЄГіГ°Г±ГЁГўГ­Г»Г© ГЇГ®ГЁГ±ГЄ Г«ГҐГЄГ±ГҐГ°Г  Г± ГЁГ¬ГҐГ­ГҐГ¬ name ГўГ­ГіГІГ°ГЁ ГіГ§Г«Г  node
   const t_lexer_node* findByNameInside(const t_lexer_node* node, const std::string& name) const {
     if (!node) return nullptr;
 
@@ -1596,7 +1596,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
     return nullptr;
   }
   const t_lexer_node* findLexerByNameRelative(const std::string& name, const t_lexer& from) const {
-    // 1. Найти корневой узел для from.name
+    // 1. ГЌГ Г©ГІГЁ ГЄГ®Г°Г­ГҐГўГ®Г© ГіГ§ГҐГ« Г¤Г«Гї from.name
     const t_lexer_node* fromNode = nullptr;
     for (auto& n : lexers_nodes) {
       if (n.lexer->fullname == from.fullname) {
@@ -1605,14 +1605,14 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       }
     }
 
-    // 2. Если нашли fromNode — ищем внутри него
+    // 2. Г…Г±Г«ГЁ Г­Г ГёГ«ГЁ fromNode В— ГЁГ№ГҐГ¬ ГўГ­ГіГІГ°ГЁ Г­ГҐГЈГ®
     if (fromNode) {
       if (auto* inside = findByNameInside(fromNode, name)) {
         return inside;
       }
     }
 
-    // 3. Если не нашли внутри, ищем по абсолютному пути (если есть)
+    // 3. Г…Г±Г«ГЁ Г­ГҐ Г­Г ГёГ«ГЁ ГўГ­ГіГІГ°ГЁ, ГЁГ№ГҐГ¬ ГЇГ® Г ГЎГ±Г®Г«ГѕГІГ­Г®Г¬Гі ГЇГіГІГЁ (ГҐГ±Г«ГЁ ГҐГ±ГІГј)
     if (name.size() >= 2 && name[0] == ':' && name[1] == ':') {
       std::string absName = name.substr(2);
       for (auto& root : lexers_nodes) {
@@ -1623,7 +1623,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       return nullptr;
     }
 
-    // 4. Если from.fullowner не пустой — ищем по составному имени
+    // 4. Г…Г±Г«ГЁ from.fullowner Г­ГҐ ГЇГіГ±ГІГ®Г© В— ГЁГ№ГҐГ¬ ГЇГ® Г±Г®Г±ГІГ ГўГ­Г®Г¬Гі ГЁГ¬ГҐГ­ГЁ
     if (!from.fullowner.empty()) {
       std::vector<std::string> fromParts = split(from.fullowner, "::");
       for (auto i = static_cast<long long int>(fromParts.size()) - 1; i >= 0; --i) {
@@ -1641,7 +1641,7 @@ struct t_templ_sys_v05:t_templ_sys_v04,
       }
     }
 
-    // 5. И, наконец, глобальный поиск по имени
+    // 5. Г€, Г­Г ГЄГ®Г­ГҐГ¶, ГЈГ«Г®ГЎГ Г«ГјГ­Г»Г© ГЇГ®ГЁГ±ГЄ ГЇГ® ГЁГ¬ГҐГ­ГЁ
     for (auto& root : lexers_nodes) {
       if (auto* found = findByFullname(root, name)) {
         return found;
@@ -1950,6 +1950,7 @@ static void test_2025_06_10(/*IEnvRTTI&Env*/string fn,bool dontoptimize=false)
   gg=1;
   string inp;
   if(fn.empty()){
+    cerr<<"waiting when you type your grammar to stdin"<<endl;
     string line;
     while(std::getline(std::cin,line)){
       inp+=line+"\n";
