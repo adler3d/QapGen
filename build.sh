@@ -1,3 +1,4 @@
+set -e
 set -o errexit
 set -o pipefail
 cd stable
