@@ -11,7 +11,9 @@ extern void UberInfoBox(const string&caption,const string&text);
 
 auto lex2str=[](auto&lex){
   string out;
-  save_obj(lex,out);
+  /* Handle const objects by casting away const temporarily */
+  auto&non_const_ref=const_cast<std::remove_reference_t<decltype(lex)>&>(lex); // TODO: remove this hack by minimax later
+  save_obj(non_const_ref,out);
   return out;
 };
 
