@@ -885,18 +885,18 @@ struct t_off_detector{~t_off_detector(){
 template<class TYPE_TEMP,class TYPE>
 bool i_dev::go_minor(TYPE&ref){
   return old_go_sep<TYPE_TEMP>(ref);
-  // Сохраняем текущее состояние парсера
+  // Г‘Г®ГµГ°Г Г­ГїГҐГ¬ ГІГҐГЄГіГ№ГҐГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ ГЇГ Г°Г±ГҐГ°Г 
   int pos_before; getPos(pos_before);
   
-  // Запускаем go_diff
+  // Г‡Г ГЇГіГ±ГЄГ ГҐГ¬ go_diff
   QapClock clock;
   bool result_diff = go_diff<TYPE_TEMP>(ref);
   int pos_after_diff; getPos(pos_after_diff);
   auto ms=clock.MS();
-  // Восстанавливаем состояние парсера
+  // Г‚Г®Г±Г±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ ГЇГ Г°Г±ГҐГ°Г 
   setPos(pos_before);
   if(isLoad())ref={};
-  // Запускаем old_go_sep
+  // Г‡Г ГЇГіГ±ГЄГ ГҐГ¬ old_go_sep
   
   clock.Start();
   bool result_minor = old_go_sep<TYPE_TEMP>(ref);
@@ -908,9 +908,9 @@ bool i_dev::go_minor(TYPE&ref){
   }}else if(result_diff){St0+=ms;St1+=ms2;}else{
     St0f+=ms;St1f+=ms2;
   }
-  // Сравниваем результаты
+  // Г‘Г°Г ГўГ­ГЁГўГ ГҐГ¬ Г°ГҐГ§ГіГ«ГјГІГ ГІГ»
   if (result_diff != result_minor || pos_after_diff != pos_after_minor) {
-    // Логируем расхождения для анализа
+    // Г‹Г®ГЈГЁГ°ГіГҐГ¬ Г°Г Г±ГµГ®Г¦Г¤ГҐГ­ГЁГї Г¤Г«Гї Г Г­Г Г«ГЁГ§Г 
     string log="Discrepancy detected between go_diff and old_go_sep\n";
     log+="Result go_diff: "+BToS(result_diff)+", pos: "+IToS(pos_after_diff)+"\n";
     log+="Result go_minor: "+BToS(result_minor)+ ", pos: "+IToS(pos_after_minor)+"\n";
@@ -918,7 +918,7 @@ bool i_dev::go_minor(TYPE&ref){
   }
   //QapDebugMsg("ok="+BToS(result_diff)+" +ms(go_diff)="+FToS2(ms)+" ms(go_sep)="+FToS2(ms2));
   
-  // Возвращаем результат (можно выбрать любой или комбинировать)
+  // Г‚Г®Г§ГўГ°Г Г№Г ГҐГ¬ Г°ГҐГ§ГіГ«ГјГІГ ГІ (Г¬Г®Г¦Г­Г® ГўГ»ГЎГ°Г ГІГј Г«ГѕГЎГ®Г© ГЁГ«ГЁ ГЄГ®Г¬ГЎГЁГ­ГЁГ°Г®ГўГ ГІГј)
   return result_diff && result_minor;
 }
 
@@ -1060,6 +1060,13 @@ static bool go_for_item(i_dev&dev,const TYPE&ref,...){
   return false;
 }
 
+template<class TYPE>
+static bool go_for_item(i_dev&dev,const TYPE&ref,...){
+  /* TEMPORARY FIX: Handle const objects by casting away const */
+  auto&non_const = const_cast<TYPE&>(ref); //TODO: fix this hack by minimax
+  return go_for_item(dev, non_const);
+}
+
 template<class T,T v>struct detail_test_value{static const bool value=true;};
 
 template<typename,typename=std::void_t<>>
@@ -1154,16 +1161,16 @@ static bool go_for_item(
   return go_for_poly(dev,ref);
 }
 
-// Проверка, что TYPE наследует от Base (интерфейса)
+// ГЏГ°Г®ГўГҐГ°ГЄГ , Г·ГІГ® TYPE Г­Г Г±Г«ГҐГ¤ГіГҐГІ Г®ГІ Base (ГЁГ­ГІГҐГ°ГґГҐГ©Г±Г )
 template <typename TYPE, typename Base>
 struct is_derived_from {
   static constexpr bool value = std::is_base_of<Base, TYPE>::value && !std::is_same<Base, TYPE>::value;
 };
 
 /*
-я проверил можно ли убрать хоть какие-то из эти проверок и оказалось что ни одну нельзя.
-как "perplexity.ai" догадался что они все нужны не очень понятно. мне вот нифига не очевидно.
-можешь рассказать свои мысли по этому поводу.
+Гї ГЇГ°Г®ГўГҐГ°ГЁГ« Г¬Г®Г¦Г­Г® Г«ГЁ ГіГЎГ°Г ГІГј ГµГ®ГІГј ГЄГ ГЄГЁГҐ-ГІГ® ГЁГ§ ГЅГІГЁ ГЇГ°Г®ГўГҐГ°Г®ГЄ ГЁ Г®ГЄГ Г§Г Г«Г®Г±Гј Г·ГІГ® Г­ГЁ Г®Г¤Г­Гі Г­ГҐГ«ГјГ§Гї.
+ГЄГ ГЄ "perplexity.ai" Г¤Г®ГЈГ Г¤Г Г«Г±Гї Г·ГІГ® Г®Г­ГЁ ГўГ±ГҐ Г­ГіГ¦Г­Г» Г­ГҐ Г®Г·ГҐГ­Гј ГЇГ®Г­ГїГІГ­Г®. Г¬Г­ГҐ ГўГ®ГІ Г­ГЁГґГЁГЈГ  Г­ГҐ Г®Г·ГҐГўГЁГ¤Г­Г®.
+Г¬Г®Г¦ГҐГёГј Г°Г Г±Г±ГЄГ Г§Г ГІГј Г±ГўГ®ГЁ Г¬Г»Г±Г«ГЁ ГЇГ® ГЅГІГ®Г¬Гі ГЇГ®ГўГ®Г¤Гі.
 */
 template<class TYPE>
 static typename std::enable_if<
@@ -1182,13 +1189,13 @@ go_for_item(i_dev&dev,TAutoPtr<TYPE>&ref){
       return ok;
     }
     auto*p=ref.get();
-    ok=p->go(dev);// все полиморфные ноды имеют метод go(и ещё в добавок поддерживаю go_for_poly базовым классом) иначе зачем они нужны?
+    ok=p->go(dev);// ГўГ±ГҐ ГЇГ®Г«ГЁГ¬Г®Г°ГґГ­Г»ГҐ Г­Г®Г¤Г» ГЁГ¬ГҐГѕГІ Г¬ГҐГІГ®Г¤ go(ГЁ ГҐГ№Вё Гў Г¤Г®ГЎГ ГўГ®ГЄ ГЇГ®Г¤Г¤ГҐГ°Г¦ГЁГўГ Гѕ go_for_poly ГЎГ Г§Г®ГўГ»Г¬ ГЄГ«Г Г±Г±Г®Г¬) ГЁГ­Г Г·ГҐ Г§Г Г·ГҐГ¬ Г®Г­ГЁ Г­ГіГ¦Г­Г»?
     return ok;
   }
-  TYPE tmp;// создаём на стэке, т.к при загрузке основной сценарий - это скорее всего фэйл(таки надо это проверить). нам не нужно дополнительные выделения памяти.
+  TYPE tmp;// Г±Г®Г§Г¤Г ВёГ¬ Г­Г  Г±ГІГЅГЄГҐ, ГІ.ГЄ ГЇГ°ГЁ Г§Г ГЈГ°ГіГ§ГЄГҐ Г®Г±Г­Г®ГўГ­Г®Г© Г±Г¶ГҐГ­Г Г°ГЁГ© - ГЅГІГ® Г±ГЄГ®Г°ГҐГҐ ГўГ±ГҐГЈГ® ГґГЅГ©Г«(ГІГ ГЄГЁ Г­Г Г¤Г® ГЅГІГ® ГЇГ°Г®ГўГҐГ°ГЁГІГј). Г­Г Г¬ Г­ГҐ Г­ГіГ¦Г­Г® Г¤Г®ГЇГ®Г«Г­ГЁГІГҐГ«ГјГ­Г»ГҐ ГўГ»Г¤ГҐГ«ГҐГ­ГЁГї ГЇГ Г¬ГїГІГЁ.
   ok=tmp.go(dev);
   if(!ok)return ok;
-  ref=make_unique<TYPE>(std::move(tmp)); // редкий сценарий, можно и память выделить.
+  ref=make_unique<TYPE>(std::move(tmp)); // Г°ГҐГ¤ГЄГЁГ© Г±Г¶ГҐГ­Г Г°ГЁГ©, Г¬Г®Г¦Г­Г® ГЁ ГЇГ Г¬ГїГІГј ГўГ»Г¤ГҐГ«ГЁГІГј.
   return ok;
 }
 
