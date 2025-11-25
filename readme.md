@@ -55,10 +55,10 @@ with
 5. Modify the `main_2021` function to the following minimal example:
 ```cpp
 string input = "your_script_or_code_or_text";
-t_your_root_lexer root_lexer;
+TAutoPtr<t_your_root_lexer> root_lexer; // load_obj almost always don't work without TAutoPtr
 auto ok = load_obj(root_lexer, input);
 if (!ok) return;
-// Then traverse the tree stored in root_lexer using visitors
+// Then traverse the tree stored in root_lexer using visitors or your functions
 ```
 
 **Build and Run the SimpleCalc Project**
